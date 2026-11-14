@@ -1,0 +1,898 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>校准、敏感性分析和不确定性量化 &mdash; RELIC 1.0.0 Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=mono5" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=86952a2f"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/translations.js?v=beaddf03"></script>
+      <script src="../_static/language_switch.js?v=mono5"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="设备与分布式执行" href="devices_and_distributed.html" />
+    <link rel="prev" title="耦合工作流" href="coupling_workflows.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            RELIC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">RELIC 指南</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../architecture.html">系统架构</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#scope-and-architectural-contract">范围与架构契约</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#architecture-capability-map">架构能力图</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#package-ownership-and-seven-layer-map">软件包职责归属与七层架构映射</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#four-scientific-abstractions">四类科学抽象</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#functor-lifecycle-and-metadata">Functor lifecycle 与 metadata</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#variable-roles-and-state-ownership">变量角色与状态归属</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#parameters-constants-units-and-time">参数、常量、单位与时间</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#simulator-execution-rates-and-device-policy">Simulator、执行频率与 device policy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#structural-scientific-layer">结构化科学层</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#end-to-end-assembly-and-execution">端到端装配与执行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#connection-and-conservation-rules">连接与守恒规则</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/index.html">科学理论与控制方程</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../theory/foundations.html">数学基础、状态、单位与守恒</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#architectural-contract-and-notation">架构契约与符号约定</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#four-scientific-abstractions-and-functor-lifecycle">四类科学抽象与 Functor 生命周期</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#spatial-quantity-basis-and-temporal-overlap-laws">空间物理量基准与时间重叠守恒律</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#universal-conservation-and-balance-laws">普适守恒与平衡定律</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#transactional-statemanager-governance-i1-i7">事务型 StateManager 状态治理（<code class="docutils literal notranslate"><span class="pre">I1</span></code>--<code class="docutils literal notranslate"><span class="pre">I7</span></code>）</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#centralized-parametermanager-and-physical-constant-ssot">集中式 ParameterManager 与物理常数单点事实源</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#piecewise-smooth-discrete-adjoint-differentiation-and-device-policy">分段光滑离散伴随微分与设备策略</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#bounded-mathematical-contracts-and-runtime-boundary-i-vs-n">有界数学契约与运行时边界（<code class="docutils literal notranslate"><span class="pre">[I]</span></code> 与 <code class="docutils literal notranslate"><span class="pre">[N]</span></code>）</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/dec_iphs_generic.html">DEC、IPHS、GENERIC、端口与反应结构</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/dec_iphs_generic.html#structural-governance-lifecycle">结构治理生命周期</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/dec_iphs_generic.html#discrete-exterior-calculus-relic-computation-operators-dec">离散外微分（<code class="docutils literal notranslate"><span class="pre">relic.computation.operators.dec</span></code>）</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/dec_iphs_generic.html#irreversible-port-hamiltonian-and-generic-lowering">不可逆端口哈密顿与 GENERIC 降阶</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/dec_iphs_generic.html#equivalence-certificates-and-live-repository-inventory">等价性证书与现行代码库清单</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/dec_iphs_generic.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/numerics.html">数值积分、算子分裂、稳定性、尺度耦合与混杂事件</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#method-of-lines-formulation-and-solver-registry">线方法表述与求解器注册表</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#deterministic-time-stepping-linear-and-nonlinear-solvers">确定性时间步进、线性与非线性求解器</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#multi-rate-execution-operator-splitting-and-step-control">多速率执行、算子分裂与步长控制</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#transport-stability-and-nonlinear-richards-closure">输运稳定性与非线性 Richards 闭合</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#conservative-spatial-remapping-and-internal-cross-domain-couplers">空间守恒重映射与内部跨域耦合器</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#transverse-hybrid-events-and-saltation-matrix-sensitivities">横截混杂事件与跃变矩阵灵敏度</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#stochastic-memory-ale-dae-and-topology-transition-families">随机、记忆、任意拉格朗日-欧拉（Arbitrary Lagrangian-Eulerian, ALE）、DAE 与拓扑跃迁族</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/atmosphere.html">大气圈过程理论</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/atmosphere.html#scope-process-inventory-and-certificate-map">范围、过程清单与证书映射</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/atmosphere.html#solar-thermal-and-canopy-radiation">太阳短波、热长波与冠层辐射</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/atmosphere.html#surface-layer-turbulence-and-boundary-layer-tracer-transport">近地层湍流与边界层示踪物输运</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/atmosphere.html#gas-phase-chemistry-open-tropospheric-kinetics-and-closed-level-5-generic-point">气相化学：开放对流层动力学与封闭 Level-5 GENERIC 运行点</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/atmosphere.html#stochastic-atmospheric-forcing-and-replay-contracts">随机大气强迫与重放契约</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/atmosphere.html#atmospheric-observation-operators">大气观测算子</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/atmosphere.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/biosphere.html">生物圈过程理论</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/biosphere.html#scope-process-inventory-and-certificate-map">范围、过程清单与证书映射</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/biosphere.html#photosynthesis-and-stomatal-conductance">光合作用与气孔导度</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/biosphere.html#autotrophic-respiration-allocation-and-structural-growth">自养呼吸、分配与结构生长</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/biosphere.html#phenology-and-abiotic-stress-closures">物候与非生物胁迫闭合</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/biosphere.html#biogenic-volatile-organic-compound-bvoc-synthesis-and-emission">生物源挥发性有机化合物（BVOC）合成与排放</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/biosphere.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/hydrosphere.html">水圈过程理论</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/hydrosphere.html#scope-process-inventory-and-certificate-map">范围、过程清单与证书映射</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/hydrosphere.html#evapotranspiration-closures">蒸散发闭合格式</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/hydrosphere.html#snowpack-mass-energy-balance-and-snow-albedo">积雪质量-能量平衡与积雪反照率</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/hydrosphere.html#soil-water-retention-bucket-storage-and-richards-vadose-flow">土壤持水特征、单桶蓄水与 Richards 包气带渗流</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/hydrosphere.html#surface-runoff-and-hybrid-event-driven-hortonian-ponding">地表径流与混杂事件驱动的霍顿积水</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/hydrosphere.html#subsurface-stormflow-vadose-aquifer-exchange-and-groundwater">壤中暴雨流、包气带-含水层交换与地下水</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/hydrosphere.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/pedosphere.html">土壤圈过程理论</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/pedosphere.html#scope-process-inventory-and-certificate-map">范围、过程清单与证书映射</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/pedosphere.html#soil-organic-carbon-turnover-and-cross-sphere-interface-maps">土壤有机碳周转与跨圈层界面映射</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/pedosphere.html#soil-nitrogen-root-p-uptake-and-c-n-stoichiometry-boundaries">土壤氮循环、根系磷吸收与碳氮化学计量边界</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/pedosphere.html#wetland-methane-request-and-coupler-architecture">湿地甲烷请求-耦合器架构</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/pedosphere.html#porous-media-water-gas-solute-dae-ale-and-memory-transport">多孔介质水分、气体、溶质、DAE、ALE 与记忆核输运</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/pedosphere.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/anthroposphere.html">人类圈理论</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/anthroposphere.html#scope-process-inventory-and-fail-closed-boundary-status">范围、过程清单与故障封闭边界状态</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/anthroposphere.html#fail-closed-level-0-boundaries-vs-implemented-emission-operators">故障封闭 Level-0 边界与已实现排放算子</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/anthroposphere.html#continuous-time-markov-land-use-transitions-and-parameter-projection">连续时间马尔可夫土地利用转移与参数投影</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/anthroposphere.html#management-coordination-and-agricultural-water-nutrient-ports">管理协调与农业水肥端口</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/anthroposphere.html#managed-biomass-removal-livestock-grazing-fire-and-tillage">受管生物量移除、家畜放牧、火扰动与耕作</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/anthroposphere.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/isotopes_transport.html">稳定同位素与一般输运理论</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/isotopes_transport.html#scope-component-inventory-and-certificate-map">范围、组件清单与证书映射</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/isotopes_transport.html#stable-isotope-ratios-exact-binary-fractionation-and-fail-closed-ledger-status">稳定同位素比值、精确二元分馏与故障封闭账本状态</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/isotopes_transport.html#general-conservative-transport-functors">一般守恒输运 Functor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/isotopes_transport.html#references">参考文献</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../science/index.html">核心科学类参考</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../science/anthroposphere.html">人类圈科学类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#atmosphere-coupling">atmosphere_coupling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#sector-allocation">sector_allocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#species-mapping">species_mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#anthroposphere-interface-mapping">anthroposphere_interface_mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#emission-inventory">emission_inventory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#land-use-parameter-mapping">land_use_parameter_mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#land-use-transitions">land_use_transitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#management-coordinator">management_coordinator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#fertilization-management">fertilization_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#fire-management">fire_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#grazing-management">grazing_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#harvest-management">harvest_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#irrigationmanagement">IrrigationManagement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#tillagemanagement">TillageManagement</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/atmosphere.html">大气科学类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#chemistryfunctor">ChemistryFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#class-atmosphere-chemistry-chemistry-functor-closed-constant-volume">ChemistryFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#environmentalforcingfunctor">EnvironmentalForcingFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#radiationenergyconservationvalidator">RadiationEnergyConservationValidator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#radiationfield">RadiationField</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#radiationfunctor">RadiationFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#markedpoissonrainfallfunctor">MarkedPoissonRainfallFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#ornsteinuhlenbecktemperaturefunctor">OrnsteinUhlenbeckTemperatureFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#atmosphericadvectiondiffusionfunctor">AtmosphericAdvectionDiffusionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#drydepositionaggregator">DryDepositionAggregator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#eddydiffusionblmfunctor">EddyDiffusionBLMFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#turbulencefunctor">TurbulenceFunctor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/biosphere.html">生物圈科学类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#meganmodel">MEGANModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#isoprenesynthesis">IsopreneSynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#monoterpenesynthesis">MonoterpeneSynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#sesquiterpenestressmodel">SesquiterpeneStressModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#sesquiterpenesynthesis">SesquiterpeneSynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#biomassallocation">BiomassAllocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#phenologygrowth">PhenologyGrowth</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#structuralgrowth">StructuralGrowth</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#cropphenology">CropPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#gddphenology">GDDPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#gsiphenology">GSIPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#staticphenology">StaticPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#phenologyfunctor">PhenologyFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#farquharphotosynthesis">FarquharPhotosynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#medlynstomatalconductance">MedlynStomatalConductance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#autotrophicrespiration">AutotrophicRespiration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#growthrespiration">GrowthRespiration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#maintenancerespiration">MaintenanceRespiration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#nutrientstress">NutrientStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#ozonestress">OzoneStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#thermalstress">ThermalStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#waterstress">WaterStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#simplecanopyphotosynthesis">SimpleCanopyPhotosynthesis</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/hydrosphere.html">水圈科学类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#penman-monteith-et">penman_monteith_et</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#priestley-taylor-et">priestley_taylor_et</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#groundwater-dynamics">groundwater_dynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#subsurface-runoff">subsurface_runoff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#hortonianpondingeventfunctor">HortonianPondingEventFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#surfacepondingfunctor">SurfacePondingFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#surface-runoff">surface_runoff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#snow-albedo">snow_albedo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#snow-pack">snow_pack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#bucket-soil-moisture">bucket_soil_moisture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#soilwaterretention">SoilWaterRetention</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#richards-soil-moisture">richards_soil_moisture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#capillary-rise-transport">capillary_rise_transport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#vertical-percolation-transport">vertical_percolation_transport</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/pedosphere.html">土壤圈科学类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#carbonpoolsfunctor">CarbonPoolsFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#poolsmatrix">PoolsMatrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#firstorderdecomposition">FirstOrderDecomposition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#microbialenzymedecomposition">MicrobialEnzymeDecomposition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#litterfallinterfacemapper">LitterfallInterfaceMapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#pedosphereinterfacemapper">PedosphereInterfaceMapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methanebudgetcoupler">MethaneBudgetCoupler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methaneoxidationfunctor">MethaneOxidationFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methaneproductionfunctor">MethaneProductionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methanescalecouplingfunctor">MethaneScaleCouplingFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methanetransportfunctor">MethaneTransportFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#denitrification-process">denitrification_process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#mineralizationprocess">MineralizationProcess</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#nitrification-process">nitrification_process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#nitrogenleachingprocess">NitrogenLeachingProcess</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#nitrogencycling">NitrogenCycling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#rootnutrientuptake">RootNutrientUptake</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#stoichiometryconstraint">StoichiometryConstraint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#equilibriumsorptionfunctor">EquilibriumSorptionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#gasdiffusion1d">GasDiffusion1D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#movingdomaindiffusionfunctor">MovingDomainDiffusionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#soil-water-transport">soil_water_transport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#soluteadvectiondiffusion1d">SoluteAdvectionDiffusion1D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#tworegionmasstransferfunctor">TwoRegionMassTransferFunctor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/isotopes.html">稳定同位素科学类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/isotopes.html#isotopeheartbeatfunctor">IsotopeHeartbeatFunctor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/transport.html">通用 Transport 科学类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#advection-diffusion">advection_diffusion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#linear-advection">linear_advection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#fickian-diffusion">fickian_diffusion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#class-transport-diffusion-fickian-diffusion-strict-runtime-point">fickian_diffusion</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/index.html#complete-coverage-matrix">完整覆盖矩阵</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">RELIC 工作流</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#learning-tracks">学习路线</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#how-to-use-a-tutorial">如何使用教程</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="installation_and_imports.html">安装与导入</a></li>
+<li class="toctree-l3"><a class="reference internal" href="configuration_and_parameters.html">配置与参数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="state_functors_and_simulation.html">状态、Functors 与模拟</a></li>
+<li class="toctree-l3"><a class="reference internal" href="graph_validation_and_execution.html">Graph 验证与执行</a></li>
+<li class="toctree-l3"><a class="reference internal" href="persistence_outputs_and_data_io.html">持久化、输出与 Data I/O</a></li>
+<li class="toctree-l3"><a class="reference internal" href="coupling_workflows.html">耦合工作流</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">校准、敏感性分析和不确定性量化</a></li>
+<li class="toctree-l3"><a class="reference internal" href="devices_and_distributed.html">设备与分布式执行</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_and_extensions.html">CLI 与扩展</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestration.html">Graph 编排</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#canonical-owners">canonical owners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#graphir">GraphIR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#portspec-and-the-contract-boundary">PortSpec 与契约边界</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#validation">验证</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#adapters">Adapter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#compilation-and-execution">编译与执行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#strict-iphs-dec-boundary">Strict IPHS/DEC 边界</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../operations.html">操作快速入门</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#select-a-workflow">选择 workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#environment-preflight">环境预检</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#first-successful-run">首次成功运行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#benchmark-style-acceptance-checklist">Benchmark 式验收清单</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#minimal-runtime-sequence">最小 runtime 流程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#troubleshooting-order">故障排查顺序</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#immediate-stop-conditions">必须立即停止的条件</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../extension_contracts.html">扩展契约</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#reuse-first-decision">复用优先决策</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#adding-a-scientific-functor">添加科学 Functor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#parameter-extension">参数扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#variable-contract-extension">Variable contract 扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#graph-and-adapter-extension">Graph 与 adapter 扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#external-extension-paths">外部扩展路径</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#scientific-structure-claims">科学结构声明</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#explicit-unavailable-scientific-boundaries">显式声明不可用的科学边界</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#anti-redundancy-boundary">Anti-redundancy boundary（防冗余边界）</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">核心 API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/index.html#coverage-contract">覆盖范围契约</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/core_runtime.html">Core Runtime API（核心运行时 API）</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/parameters_contracts.html">参数与参数契约</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/orchestration_validation.html">编排、Contract 与 Validation API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/scientific_structure_extensions.html">科学结构与扩展 API</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">RELIC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">RELIC 工作流</a></li>
+      <li class="breadcrumb-item active">校准、敏感性分析和不确定性量化</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="calibration-sensitivity-analysis-and-uncertainty-quantification">
+<h1>校准、敏感性分析和不确定性量化<a class="headerlink" href="#calibration-sensitivity-analysis-and-uncertainty-quantification" title="Link to this heading"></a></h1>
+<p>RELIC 基于权威参数系统，以 Python API 形式提供参数校准、由 Python 灵敏度分析库（Sensitivity Analysis Library in Python, SALib）支撑的全局灵敏度分析、不确定性量化（Uncertainty Quantification, UQ）以及数据同化组件。每个模型回调函数均接收一份参数映射，由回调负责运行目标 RELIC 模型并返回约定形状的输出结果。</p>
+<section id="availability">
+<h2>可用性<a class="headerlink" href="#availability" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">relic.optimization</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_available_optimizers</span>
+
+<span class="n">status</span> <span class="o">=</span> <span class="n">get_available_optimizers</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">status</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>返回的映射报告了校准、同化、敏感性和不确定性家族的导入可用性。导入可用性并不保证模型回调、观测映射、参数范围或可选数值后端有效。</p>
+</section>
+<section id="parameter-calibration">
+<h2>参数校准<a class="headerlink" href="#parameter-calibration" title="Link to this heading"></a></h2>
+<p>可学习参数由 ParameterManager 管理。通过 <code class="docutils literal notranslate"><span class="pre">manager.get_trainable_parameters()</span></code> 获取实时 <code class="docutils literal notranslate"><span class="pre">nn.Parameter</span></code> 对象，用于管理器校准路径。Functor 按引用持有自身管理器的绑定，因此模块的 <code class="docutils literal notranslate"><span class="pre">parameters()</span></code> 和 <code class="docutils literal notranslate"><span class="pre">state_dict()</span></code> 不包含它。<code class="docutils literal notranslate"><span class="pre">parameter_sensitivity(parameter_name,</span> <span class="pre">state,</span> <span class="pre">*,</span> <span class="pre">time,</span> <span class="pre">dt,</span> <span class="pre">...)</span></code> 通过函数式替换模块成员计算，对管理器绑定抛出 <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>。形状和 dtype 不变时，重新注册会原地更新值，保留 Functor 与优化器持有的引用。</p>
+<section id="parameterbounds">
+<h3><code class="docutils literal notranslate"><span class="pre">ParameterBounds</span></code><a class="headerlink" href="#parameterbounds" title="Link to this heading"></a></h3>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>ParameterBounds(
+    lower: float,
+    upper: float,
+    scale: str,
+    initial: Optional[float] = None,
+)
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">lower</span></code> 必须小于 <code class="docutils literal notranslate"><span class="pre">upper</span></code>。显式 <code class="docutils literal notranslate"><span class="pre">initial</span></code> 必须在区间内。<code class="docutils literal notranslate"><span class="pre">scale</span></code> 必填，取 <code class="docutils literal notranslate"><span class="pre">linear</span></code> 或 <code class="docutils literal notranslate"><span class="pre">log</span></code>；其他值抛出 <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>。</p>
+</section>
+<section id="calibrationconfig">
+<h3><code class="docutils literal notranslate"><span class="pre">CalibrationConfig</span></code><a class="headerlink" href="#calibrationconfig" title="Link to this heading"></a></h3>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>CalibrationConfig(
+    method: CalibrationMethod,
+    target_parameters: list[str],
+    parameter_bounds: dict[str, ParameterBounds],
+    max_iterations: int = ...,
+    tolerance: float = ...,
+    population_size: Optional[int] = None,
+    random_seed: Optional[int] = None,
+    parallel: bool = False,
+    n_workers: Optional[int] = None,
+    method_kwargs: dict[str, Any] = {},
+    cross_validation_folds: Optional[int] = None,
+    save_progress: bool = True,
+    progress_file: Optional[pathlib.Path] = None,
+    verbose: bool = True,
+)
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>参数</p></th>
+<th class="head"><p>含义</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">method</span></code></p></td>
+<td><p>优化算法</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">target_parameters</span></code></p></td>
+<td><p>完全限定的参数键用于校准</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">parameter_bounds</span></code></p></td>
+<td><p>每个目标参数由Bounds键控。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">max_iterations</span></code></p></td>
+<td><p>优化器最大迭代数或代数；未设置时读取 <code class="docutils literal notranslate"><span class="pre">optimization.calibration.max_iterations</span></code>。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">tolerance</span></code></p></td>
+<td><p>收敛容差；未设置时读取 <code class="docutils literal notranslate"><span class="pre">optimization.calibration.objective_tolerance</span></code>。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">population_size</span></code></p></td>
+<td><p>基于人口的方法的人口规模。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">random_seed</span></code></p></td>
+<td><p>NumPy和PyTorch采样的可重复性种子。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">parallel</span></code>， <code class="docutils literal notranslate"><span class="pre">n_workers</span></code></p></td>
+<td><p>并行评估请求和工作限速。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">method_kwargs</span></code></p></td>
+<td><p>算法特定选项。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">cross_validation_folds</span></code></p></td>
+<td><p>Optional折叠次数</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">save_progress</span></code>， <code class="docutils literal notranslate"><span class="pre">progress_file</span></code></p></td>
+<td><p>持久性进展控制。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">verbose</span></code></p></td>
+<td><p>优化器日志控制</p></td>
+</tr>
+</tbody>
+</table>
+<p>受支持的 <code class="docutils literal notranslate"><span class="pre">CalibrationMethod</span></code> 枚举值包括差分进化、遗传算法、模拟退火、粒子群优化、贝叶斯优化、梯度下降、Adam 以及有限内存拟牛顿法（Limited-memory Broyden-Fletcher-Goldfarb-Shanno, L-BFGS）。</p>
+<p>该 enum 是共享的方法标识，而不是一个囊括八种算法的执行 facade。<code class="docutils literal notranslate"><span class="pre">ParameterCalibrator</span></code> 仅拥有五种无导数方法：differential evolution、genetic algorithm、simulated annealing、particle swarm 和 Bayesian optimization。<code class="docutils literal notranslate"><span class="pre">GradientCalibrator</span></code> 单独拥有 gradient descent、Adam 和 L-BFGS。将梯度方法传给 <code class="docutils literal notranslate"><span class="pre">ParameterCalibrator.calibrate(...)</span></code> 会在日志、hook、RNG、ParameterManager 修改、目标函数求值、分派或进度效果发生之前抛出异常。</p>
+</section>
+<section id="parametercalibrator-derivative-free-owner">
+<h3><code class="docutils literal notranslate"><span class="pre">ParameterCalibrator</span></code>（无导数方法 owner）<a class="headerlink" href="#parametercalibrator-derivative-free-owner" title="Link to this heading"></a></h3>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>ParameterCalibrator(
+    parameter_manager: Optional[UnifiedParameterManager] = None,
+    hooks: Optional[CalibrationHooks] = None,
+)
+</pre></div>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>calibrator.calibrate(
+    config: CalibrationConfig,
+    objective_function: ObjectiveFunction,
+    observations: torch.Tensor,
+    initial_parameters: Optional[dict[str, float]] = None,
+) -&gt; CalibrationResult
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">ObjectiveFunction.__call__(parameters,</span> <span class="pre">observations)</span></code> 返回待最小化的标量目标值。内置目标函数类包括均方误差（Mean Squared Error, <code class="docutils literal notranslate"><span class="pre">MSEObjective</span></code>）、均方根误差（Root Mean Squared Error, <code class="docutils literal notranslate"><span class="pre">RMSEObjective</span></code>）以及纳什-萨特克利夫效率系数目标 <code class="docutils literal notranslate"><span class="pre">NashSutcliffeObjective</span></code>。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">relic.parameters.calibration</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">CalibrationConfig</span><span class="p">,</span>
+    <span class="n">CalibrationMethod</span><span class="p">,</span>
+    <span class="n">MSEObjective</span><span class="p">,</span>
+    <span class="n">ParameterBounds</span><span class="p">,</span>
+    <span class="n">ParameterCalibrator</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">model_runner</span><span class="p">(</span><span class="n">parameters</span><span class="p">):</span>
+    <span class="n">rate</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;model.rate&quot;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">rate</span><span class="p">,</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">rate</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">CalibrationConfig</span><span class="p">(</span>
+    <span class="n">method</span><span class="o">=</span><span class="n">CalibrationMethod</span><span class="o">.</span><span class="n">DIFFERENTIAL_EVOLUTION</span><span class="p">,</span>
+    <span class="n">target_parameters</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;model.rate&quot;</span><span class="p">],</span>
+    <span class="n">parameter_bounds</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;model.rate&quot;</span><span class="p">:</span> <span class="n">ParameterBounds</span><span class="p">(</span>
+            <span class="n">lower</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+            <span class="n">upper</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+            <span class="n">scale</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span>
+            <span class="n">initial</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="p">},</span>
+    <span class="n">max_iterations</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+    <span class="n">random_seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
+    <span class="n">parallel</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">save_progress</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">objective</span> <span class="o">=</span> <span class="n">MSEObjective</span><span class="p">(</span><span class="n">model_runner</span><span class="p">,</span> <span class="n">variable_names</span><span class="o">=</span><span class="p">[])</span>
+<span class="n">observations</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+<span class="n">calibrator</span> <span class="o">=</span> <span class="n">ParameterCalibrator</span><span class="p">()</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">calibrator</span><span class="o">.</span><span class="n">calibrate</span><span class="p">(</span>
+    <span class="n">config</span><span class="p">,</span>
+    <span class="n">objective</span><span class="p">,</span>
+    <span class="n">observations</span><span class="p">,</span>
+    <span class="n">initial_parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;model.rate&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">success</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">optimized_parameters</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>目标键必须对活动参数管理器有效，回调返回值必须与观测张量兼容。模型失败或内置标量目标缺少输出变量时会报错，不返回无穷惩罚值。校准失败会触发 <code class="docutils literal notranslate"><span class="pre">CALIBRATION_ERROR</span></code> 钩子事件并重新抛出异常。</p>
+</section>
+<section id="gradientcalibrator-gradient-owner">
+<h3><code class="docutils literal notranslate"><span class="pre">GradientCalibrator</span></code>（梯度方法 owner）<a class="headerlink" href="#gradientcalibrator-gradient-owner" title="Link to this heading"></a></h3>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>GradientCalibrationConfig(
+    method: CalibrationMethod,
+    learning_rate: float = ...,
+    max_iterations: int = ...,
+    tolerance: float = ...,
+    beta1: float = ...,
+    beta2: float = ...,
+    epsilon: float = ...,
+    weight_decay: float = ...,
+    max_eval: Optional[int] = None,
+    history_size: int = ...,
+    line_search_fn: Optional[str] = None,
+    patience: int = ...,
+    min_delta: float = ...,
+    verbose: bool = True,
+    save_progress: bool = True,
+    progress_file: Optional[pathlib.Path] = None,
+)
+</pre></div>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>GradientCalibrator(
+    parameter_manager: UnifiedParameterManager,
+    config: Optional[GradientCalibrationConfig] = None,
+    hooks: Optional[CalibrationHooks] = None,
+)
+
+gradient_calibrator.calibrate(
+    objective_function,
+    observations,
+    target_parameters: Optional[list[str]] = None,
+    parameter_bounds: Optional[dict[str, tuple[float, float]]] = None,
+) -&gt; CalibrationResult
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">method</span></code> 必填。未设置的数值选项（显示为 <code class="docutils literal notranslate"><span class="pre">...</span></code>）从参数数据库的 <code class="docutils literal notranslate"><span class="pre">optimization.calibration.*</span></code> 读取，其中 Adam 设置采用 Kingma 和 Ba（2015）算法 1 的值。<code class="docutils literal notranslate"><span class="pre">GradientCalibrator</span></code> 同时要求调用方的 ParameterManager 和 <code class="docutils literal notranslate"><span class="pre">config</span></code>；缺少任一项均抛出 <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>，因此不允许隐式进程全局校准状态或默认优化器。目标必须返回单个有限、可微的标量，每个请求的目标参数必须产生有限梯度。在将一个接受点作为原子管理器批次提交前，候选值始终与规范管理器状态隔离。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">relic.parameters</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_global_manager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">relic.parameters.calibration</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">CalibrationMethod</span><span class="p">,</span>
+    <span class="n">GradientCalibrationConfig</span><span class="p">,</span>
+    <span class="n">GradientCalibrator</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">manager</span> <span class="o">=</span> <span class="n">get_global_manager</span><span class="p">()</span>
+<span class="n">snapshot</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">snapshot</span><span class="p">()</span>
+<span class="n">target_key</span> <span class="o">=</span> <span class="s2">&quot;stochastic.weather.temperature.reversion_rate&quot;</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">grad_config</span> <span class="o">=</span> <span class="n">GradientCalibrationConfig</span><span class="p">(</span>
+        <span class="n">method</span><span class="o">=</span><span class="n">CalibrationMethod</span><span class="o">.</span><span class="n">ADAM</span><span class="p">,</span>
+        <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
+        <span class="n">max_iterations</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span>
+        <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">save_progress</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">grad_calibrator</span> <span class="o">=</span> <span class="n">GradientCalibrator</span><span class="p">(</span><span class="n">manager</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">grad_config</span><span class="p">)</span>
+    <span class="n">observations</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">differentiable_objective</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">obs</span><span class="p">):</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="n">target_key</span><span class="p">]</span>
+        <span class="n">prediction</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">alpha</span><span class="p">,</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">alpha</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">prediction</span> <span class="o">-</span> <span class="n">obs</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">grad_result</span> <span class="o">=</span> <span class="n">grad_calibrator</span><span class="o">.</span><span class="n">calibrate</span><span class="p">(</span>
+        <span class="n">differentiable_objective</span><span class="p">,</span>
+        <span class="n">observations</span><span class="p">,</span>
+        <span class="n">target_parameters</span><span class="o">=</span><span class="p">[</span><span class="n">target_key</span><span class="p">],</span>
+        <span class="n">parameter_bounds</span><span class="o">=</span><span class="p">{</span><span class="n">target_key</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)},</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">grad_result</span><span class="o">.</span><span class="n">optimized_parameters</span><span class="p">[</span><span class="n">target_key</span><span class="p">],</span> <span class="mi">2</span><span class="p">))</span>
+<span class="k">finally</span><span class="p">:</span>
+    <span class="n">manager</span><span class="o">.</span><span class="n">restore</span><span class="p">(</span><span class="n">snapshot</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="calibrationresult">
+<h3><code class="docutils literal notranslate"><span class="pre">CalibrationResult</span></code><a class="headerlink" href="#calibrationresult" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>结果组</p></th>
+<th class="head"><p>字段</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>标识</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">method</span></code>， <code class="docutils literal notranslate"><span class="pre">target_parameters</span></code>， <code class="docutils literal notranslate"><span class="pre">parameter_bounds</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>参数</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">initial_parameters</span></code>， <code class="docutils literal notranslate"><span class="pre">optimized_parameters</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>目标</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">objective_value</span></code>， <code class="docutils literal notranslate"><span class="pre">initial_objective_value</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>收敛</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">convergence_history</span></code>， <code class="docutils literal notranslate"><span class="pre">iteration_count</span></code>， <code class="docutils literal notranslate"><span class="pre">elapsed_time</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>状态</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">success</span></code>， <code class="docutils literal notranslate"><span class="pre">status</span></code>， <code class="docutils literal notranslate"><span class="pre">termination_reason</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>分析</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">metrics</span></code>， <code class="docutils literal notranslate"><span class="pre">parameter_uncertainties</span></code>， <code class="docutils literal notranslate"><span class="pre">sensitivity_analysis</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>证据</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">model_outputs</span></code>， <code class="docutils literal notranslate"><span class="pre">observations</span></code>， <code class="docutils literal notranslate"><span class="pre">calibrator_config</span></code>， <code class="docutils literal notranslate"><span class="pre">random_seed</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p>在使用优化参数前检查<code class="docutils literal notranslate"><span class="pre">success</span></code>、<code class="docutils literal notranslate"><span class="pre">status</span></code>和<code class="docutils literal notranslate"><span class="pre">termination_reason</span></code>。返回结果并不等同于收敛或科学接受。</p>
+</section>
+</section>
+<section id="global-sensitivity-analysis">
+<h2>全球敏感性分析<a class="headerlink" href="#global-sensitivity-analysis" title="Link to this heading"></a></h2>
+<section id="parameterrange">
+<h3><code class="docutils literal notranslate"><span class="pre">ParameterRange</span></code><a class="headerlink" href="#parameterrange" title="Link to this heading"></a></h3>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>ParameterRange(
+    name: str,
+    lower_bound: float,
+    upper_bound: float,
+    mean: Optional[float] = None,
+    std: Optional[float] = None,
+    integer_valued: bool = False,
+    log_scale: bool = False,
+    units: str = &quot;&quot;,
+    description: str = &quot;&quot;,
+    *,
+    distribution: str,
+)
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">distribution</span></code> 是必填的仅关键字参数，取 <code class="docutils literal notranslate"><span class="pre">uniform</span></code>、<code class="docutils literal notranslate"><span class="pre">normal</span></code>、<code class="docutils literal notranslate"><span class="pre">lognormal</span></code> 或 <code class="docutils literal notranslate"><span class="pre">triangular</span></code>。上下界必须有序。<code class="docutils literal notranslate"><span class="pre">normal</span></code> 和 <code class="docutils literal notranslate"><span class="pre">lognormal</span></code> 需要显式 <code class="docutils literal notranslate"><span class="pre">mean</span></code> 和有限正值 <code class="docutils literal notranslate"><span class="pre">std</span></code>（<code class="docutils literal notranslate"><span class="pre">lognormal</span></code> 的 <code class="docutils literal notranslate"><span class="pre">mean</span></code> 为正中位数）；<code class="docutils literal notranslate"><span class="pre">triangular</span></code> 需要用边界内的 <code class="docutils literal notranslate"><span class="pre">mean</span></code> 指定众数，不从边界推导这些值。<code class="docutils literal notranslate"><span class="pre">sample(n_samples,</span> <span class="pre">random_state=None)</span></code> 使用局部生成器抽样，将正态和对数正态样本裁剪到边界，并按请求应用整数或对数变换。声明的 <code class="docutils literal notranslate"><span class="pre">units</span></code> 必须等于同名参数键 <code class="docutils literal notranslate"><span class="pre">ParameterSpec</span></code> 的单位；分析器验证范围时，为非参数名称声明单位会抛出 <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>。Morris 和 Sobol 仅接受不带对数缩放或整数值的均匀范围；其他声明抛出 <code class="docutils literal notranslate"><span class="pre">NotImplementedError</span></code>。</p>
+</section>
+<section id="callback-contract">
+<h3>回调契约<a class="headerlink" href="#callback-contract" title="Link to this heading"></a></h3>
+<p>两者分析器使用：</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>analyze(
+    model_runner: Callable[
+        [dict[str, float]],
+        dict[str, float],
+    ],
+    parameter_ranges: dict[str, ParameterRange],
+    baseline_parameters: Optional[dict[str, float]] = None,
+) -&gt; SensitivityResult
+</pre></div>
+</div>
+<p>跑者接受一个参数映射并以名称返回标量输出。<code class="docutils literal notranslate"><span class="pre">baseline_parameters</span></code>提供固定参数并与每个采样映射合并。</p>
+</section>
+<section id="morrisanalyzer">
+<h3><code class="docutils literal notranslate"><span class="pre">MorrisAnalyzer</span></code><a class="headerlink" href="#morrisanalyzer" title="Link to this heading"></a></h3>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>MorrisAnalyzer(
+    parameter_manager: UnifiedParameterManager,
+    config: Optional[MorrisConfig] = None,
+)
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">config</span></code> 必填，未提供时构造分析器会抛出 <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>。<code class="docutils literal notranslate"><span class="pre">MorrisConfig</span></code> 要求关键字 <code class="docutils literal notranslate"><span class="pre">aggregation_method</span></code>（<code class="docutils literal notranslate"><span class="pre">mean</span></code>、<code class="docutils literal notranslate"><span class="pre">sum</span></code>、<code class="docutils literal notranslate"><span class="pre">max</span></code>、<code class="docutils literal notranslate"><span class="pre">std</span></code> 或 <code class="docutils literal notranslate"><span class="pre">final</span></code>）；其数值字段 <code class="docutils literal notranslate"><span class="pre">n_trajectories</span></code>、<code class="docutils literal notranslate"><span class="pre">n_levels</span></code> 和 <code class="docutils literal notranslate"><span class="pre">grid_jump</span></code> 未设置时读取 <code class="docutils literal notranslate"><span class="pre">optimization.sensitivity.morris.*</span></code>。构造器要求轨迹数和网格跳跃量为正、至少两个水平，并满足 2 x <code class="docutils literal notranslate"><span class="pre">grid_jump</span></code> &lt;= <code class="docutils literal notranslate"><span class="pre">n_levels</span></code>。</p>
+<p>使用Morris筛选法按较少的评估次数排名许多参数。结果包含基本效应统计、输出级敏感性指数、执行次数、时间以及收敛metadata。</p>
+</section>
+<section id="sobolanalyzer">
+<h3><code class="docutils literal notranslate"><span class="pre">SobolAnalyzer</span></code><a class="headerlink" href="#sobolanalyzer" title="Link to this heading"></a></h3>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>SobolAnalyzer(
+    parameter_manager: UnifiedParameterManager,
+    config: Optional[SobolConfig] = None,
+)
+</pre></div>
+</div>
+<p>此处 <code class="docutils literal notranslate"><span class="pre">config</span></code> 也必填（缺少时抛出 <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>）。<code class="docutils literal notranslate"><span class="pre">SobolConfig</span></code> 要求关键字 <code class="docutils literal notranslate"><span class="pre">aggregation_method</span></code> 和 <code class="docutils literal notranslate"><span class="pre">estimator</span></code>；仅实现 <code class="docutils literal notranslate"><span class="pre">saltelli</span></code> 估计器（<code class="docutils literal notranslate"><span class="pre">janon</span></code>、<code class="docutils literal notranslate"><span class="pre">glen</span></code> 和 <code class="docutils literal notranslate"><span class="pre">owen</span></code> 均抛出 <code class="docutils literal notranslate"><span class="pre">NotImplementedError</span></code>）。其余字段为 <code class="docutils literal notranslate"><span class="pre">n_samples</span></code>、<code class="docutils literal notranslate"><span class="pre">skip_values</span></code>、<code class="docutils literal notranslate"><span class="pre">scramble</span></code>、<code class="docutils literal notranslate"><span class="pre">calc_second_order</span></code>、<code class="docutils literal notranslate"><span class="pre">convergence_check</span></code>、<code class="docutils literal notranslate"><span class="pre">convergence_samples</span></code> 和 <code class="docutils literal notranslate"><span class="pre">batch_size</span></code>；<code class="docutils literal notranslate"><span class="pre">n_samples</span></code> 与 <code class="docutils literal notranslate"><span class="pre">skip_values</span></code> 未设置时读取 <code class="docutils literal notranslate"><span class="pre">optimization.sensitivity.sobol.*</span></code>。样本数和批次数必须为正。</p>
+<p>使用 Sobol 分析计算一阶和总阶方差分解；尚未实现二阶指数（<code class="docutils literal notranslate"><span class="pre">calc_second_order=True</span></code> 抛出 <code class="docutils literal notranslate"><span class="pre">NotImplementedError</span></code>）。参数范围映射为空时抛出 <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>；分析失败包装为 <code class="docutils literal notranslate"><span class="pre">RuntimeError</span></code>。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">relic.optimization.sensitivity</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">MorrisAnalyzer</span><span class="p">,</span>
+    <span class="n">MorrisConfig</span><span class="p">,</span>
+    <span class="n">ParameterRange</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">relic.parameters</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_global_manager</span>
+
+<span class="n">ranges</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;rate&quot;</span><span class="p">:</span> <span class="n">ParameterRange</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;rate&quot;</span><span class="p">,</span>
+        <span class="n">lower_bound</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+        <span class="n">upper_bound</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+        <span class="n">distribution</span><span class="o">=</span><span class="s2">&quot;uniform&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">runner</span><span class="p">(</span><span class="n">parameters</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;response&quot;</span><span class="p">:</span> <span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;rate&quot;</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">}</span>
+
+
+<span class="n">analyzer</span> <span class="o">=</span> <span class="n">MorrisAnalyzer</span><span class="p">(</span>
+    <span class="n">get_global_manager</span><span class="p">(),</span>
+    <span class="n">MorrisConfig</span><span class="p">(</span><span class="n">n_trajectories</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">n_levels</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">random_seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">aggregation_method</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">sensitivity</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">runner</span><span class="p">,</span> <span class="n">ranges</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">sensitivity</span><span class="o">.</span><span class="n">method</span><span class="p">,</span> <span class="n">sensitivity</span><span class="o">.</span><span class="n">n_model_evaluations</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="uncertainty-quantification">
+<h2>不确定性量化<a class="headerlink" href="#uncertainty-quantification" title="Link to this heading"></a></h2>
+<section id="uncertainparameter">
+<h3><code class="docutils literal notranslate"><span class="pre">UncertainParameter</span></code><a class="headerlink" href="#uncertainparameter" title="Link to this heading"></a></h3>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>UncertainParameter(
+    name: str,
+    distribution: DistributionType,
+    mean: Optional[float] = None,
+    std: Optional[float] = None,
+    lower_bound: float = -inf,
+    upper_bound: float = inf,
+    alpha: Optional[float] = None,
+    beta: Optional[float] = None,
+    mode: Optional[float] = None,
+    integer_valued: bool = False,
+    log_transform: bool = False,
+    units: str = &quot;&quot;,
+    description: str = &quot;&quot;,
+)
+</pre></div>
+</div>
+<p>支持均匀、正态、对数正态、beta、gamma 和三角分布。上下界必须有序。<code class="docutils literal notranslate"><span class="pre">NORMAL</span></code> 和 <code class="docutils literal notranslate"><span class="pre">LOGNORMAL</span></code> 参数必须给出 <code class="docutils literal notranslate"><span class="pre">mean</span></code> 与 <code class="docutils literal notranslate"><span class="pre">std</span></code>；<code class="docutils literal notranslate"><span class="pre">UNIFORM</span></code> 参数缺少这两项时使用由边界确定的矩，三角分布参数需要显式 <code class="docutils literal notranslate"><span class="pre">mode</span></code>。<code class="docutils literal notranslate"><span class="pre">alpha</span></code>、<code class="docutils literal notranslate"><span class="pre">beta</span></code> 和 <code class="docutils literal notranslate"><span class="pre">mode</span></code> 配置各分布的形状。<code class="docutils literal notranslate"><span class="pre">sample()</span></code> 应用物理边界以及请求的整数或对数变换。</p>
+</section>
+<section id="ensembleuq-and-bootstrapuq">
+<h3><code class="docutils literal notranslate"><span class="pre">EnsembleUQ</span></code>和<code class="docutils literal notranslate"><span class="pre">BootstrapUQ</span></code><a class="headerlink" href="#ensembleuq-and-bootstrapuq" title="Link to this heading"></a></h3>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>EnsembleUQ(
+    parameter_manager: UnifiedParameterManager,
+    config: Optional[EnsembleConfig] = None,
+)
+
+BootstrapUQ(
+    parameter_manager: UnifiedParameterManager,
+    config: Optional[BootstrapConfig] = None,
+)
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">config</span></code> 为必传参数：任一类在未传入该参数时构造均会抛出 <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>。<code class="docutils literal notranslate"><span class="pre">EnsembleConfig</span></code> 要求以关键字参数传入 <code class="docutils literal notranslate"><span class="pre">sampling_strategy</span></code>（可选 <code class="docutils literal notranslate"><span class="pre">random</span></code>、拉丁超立方抽样（Latin Hypercube Sampling）<code class="docutils literal notranslate"><span class="pre">lhs</span></code> 或 <code class="docutils literal notranslate"><span class="pre">sobol</span></code>）；<code class="docutils literal notranslate"><span class="pre">BootstrapConfig</span></code> 要求以关键字参数传入 <code class="docutils literal notranslate"><span class="pre">bootstrap_type</span></code>（<code class="docutils literal notranslate"><span class="pre">parametric</span></code> 或 <code class="docutils literal notranslate"><span class="pre">residual</span></code>）与 <code class="docutils literal notranslate"><span class="pre">ci_method</span></code>（<code class="docutils literal notranslate"><span class="pre">percentile</span></code> 或 <code class="docutils literal notranslate"><span class="pre">bca</span></code>）。</p>
+<p>均暴露：</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>quantify(
+    model_runner: Callable[
+        [dict[str, float]],
+        dict[str, float],
+    ],
+    uncertain_parameters: dict[str, UncertainParameter],
+    baseline_parameters: Optional[dict[str, float]] = None,
+    observations: Optional[dict[str, numpy.ndarray]] = None,
+) -&gt; UQResult
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">EnsembleUQ</span></code>通过回调传播采样参数分布。其配置控制ensemble大小、采样、并行评估、局部化、自适应采样、分块和异常值处理。<code class="docutils literal notranslate"><span class="pre">BootstrapUQ</span></code>支持参数和残差重采样；残差自助法使用<code class="docutils literal notranslate"><span class="pre">observations</span></code>。</p>
+<p><code class="docutils literal notranslate"><span class="pre">UQResult</span></code>报告输出均值、标准差、方差、百分位数、置信区间、可选样本、偏度、峰度、相关性、样本和评估计数、时间、收敛性、有效样本大小以及蒙特卡罗误差。</p>
+<p>默认情况下，失败样本和缺失输出不予接受。仅当下游处理过程中明确处理结果 sentinel 值时才修改<code class="docutils literal notranslate"><span class="pre">allow_failed_samples</span></code>或<code class="docutils literal notranslate"><span class="pre">allow_missing_outputs</span></code>。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">relic.optimization.uncertainty</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DistributionType</span><span class="p">,</span>
+    <span class="n">EnsembleConfig</span><span class="p">,</span>
+    <span class="n">EnsembleUQ</span><span class="p">,</span>
+    <span class="n">UncertainParameter</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">relic.parameters</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_global_manager</span>
+
+<span class="n">uq</span> <span class="o">=</span> <span class="n">EnsembleUQ</span><span class="p">(</span>
+    <span class="n">get_global_manager</span><span class="p">(),</span>
+    <span class="n">EnsembleConfig</span><span class="p">(</span>
+        <span class="n">ensemble_size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
+        <span class="n">sampling_strategy</span><span class="o">=</span><span class="s2">&quot;lhs&quot;</span><span class="p">,</span>
+        <span class="n">random_seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
+        <span class="n">parallel_evaluation</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+<span class="n">uq_result</span> <span class="o">=</span> <span class="n">uq</span><span class="o">.</span><span class="n">quantify</span><span class="p">(</span>
+    <span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;flux&quot;</span><span class="p">:</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="s2">&quot;alpha&quot;</span><span class="p">]},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;alpha&quot;</span><span class="p">:</span> <span class="n">UncertainParameter</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;alpha&quot;</span><span class="p">,</span>
+            <span class="n">distribution</span><span class="o">=</span><span class="n">DistributionType</span><span class="o">.</span><span class="n">UNIFORM</span><span class="p">,</span>
+            <span class="n">lower_bound</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+            <span class="n">upper_bound</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="p">},</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">uq_result</span><span class="o">.</span><span class="n">output_mean</span><span class="p">[</span><span class="s2">&quot;flux&quot;</span><span class="p">],</span> <span class="mi">2</span><span class="p">),</span> <span class="n">uq_result</span><span class="o">.</span><span class="n">n_model_evaluations</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="data-assimilation">
+<h2>数据同化<a class="headerlink" href="#data-assimilation" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">relic.optimization.assimilation</span></code> 提供共享 <code class="docutils literal notranslate"><span class="pre">Assimilator</span></code>、<code class="docutils literal notranslate"><span class="pre">ObservationSet</span></code> 与 <code class="docutils literal notranslate"><span class="pre">ObservationOperator</span></code> 抽象接口的组件级状态估计算法：</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>类名</p></th>
+<th class="head"><p>配置项</p></th>
+<th class="head"><p>状态与适用范围</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">EnsembleKalmanFilter</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">EnKFConfig</span></code></p></td>
+<td><p>集合卡尔曼滤波（Ensemble Kalman Filter, EnKF）单步随机状态更新，支持可选协方差局地化与膨胀。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ThreeDVar</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">VariationalConfig(method=AssimilationMethod.VARIATIONAL_3D)</span></code></p></td>
+<td><p>三维变分同化（Three-Dimensional Variational, 3D-Var）单时刻变分状态分析。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">FourDVar</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">VariationalConfig(method=AssimilationMethod.VARIATIONAL_4D)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[N]</span></code> 四维变分同化（Four-Dimensional Variational Assimilation, 4D-Var）框架外壳（<code class="docutils literal notranslate"><span class="pre">relic\optimization\assimilation\variational.py</span></code>）；仅定义类骨架，尚未实现伴随模型、多时间窗梯度积分及生产运行时绑定。</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="identifiability">
+<h2>可识别性<a class="headerlink" href="#identifiability" title="Link to this heading"></a></h2>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>compute_identifiability(
+    jacobian: dict[str, dict[str, Tensor]] | Tensor | numpy.ndarray,
+    tol: float = 1e-6,
+) -&gt; dict[str, Any]
+</pre></div>
+</div>
+<p>该函数计算观测雅可比矩阵的奇异值、秩、零空间维度、条件数以及不可识别方向。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">relic.optimization.identifiability</span><span class="w"> </span><span class="kn">import</span> <span class="n">compute_identifiability</span>
+
+<span class="n">jacobian</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+    <span class="p">],</span>
+    <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">compute_identifiability</span><span class="p">(</span><span class="n">jacobian</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;rank&quot;</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;nullity&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>预期输出：</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>1 1
+</pre></div>
+</div>
+</section>
+<section id="cli-boundary">
+<h2>CLI边界<a class="headerlink" href="#cli-boundary" title="Link to this heading"></a></h2>
+<p>请使用本页的 Python API 进行有界的组件级校准、敏感性分析与 UQ。公开的优化 CLI 与 HTTP 路由被显式标记为 <code class="docutils literal notranslate"><span class="pre">[N]</span> <span class="pre">runtime_unbound</span></code>：由于没有绑定已封闭的 GraphIR/ExecutionPlan/GraphExecutor 与 simulator 生命周期，它们会在执行目标函数、构造优化器工作流或修改参数之前拒绝。它们的命令与 schema 的存在不得被视为端到端的模型工作流。</p>
+</section>
+<section id="related-documentation">
+<h2>相关文档<a class="headerlink" href="#related-documentation" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="../architecture.html"><span class="std std-doc">架构</span></a></p></li>
+<li><p><a class="reference internal" href="configuration_and_parameters.html"><span class="std std-doc">配置与参数</span></a></p></li>
+<li><p><a class="reference internal" href="state_functors_and_simulation.html"><span class="std std-doc">State、Functors 与模拟</span></a></p></li>
+<li><p><a class="reference internal" href="../api/parameters_contracts.html"><span class="std std-doc">Parameter Contracts API（参数契约）</span></a></p></li>
+<li><p><a class="reference internal" href="../science/index.html"><span class="std std-doc">Science 索引</span></a></p></li>
+<li><p><a class="reference internal" href="../theory/index.html"><span class="std std-doc">Theory 索引</span></a></p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="coupling_workflows.html" class="btn btn-neutral float-left" title="耦合工作流" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="devices_and_distributed.html" class="btn btn-neutral float-right" title="设备与分布式执行" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

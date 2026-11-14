@@ -1,0 +1,918 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>配置与参数 &mdash; RELIC 1.0.0 Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=mono5" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=86952a2f"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/translations.js?v=beaddf03"></script>
+      <script src="../_static/language_switch.js?v=mono5"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="状态、Functors 与模拟" href="state_functors_and_simulation.html" />
+    <link rel="prev" title="安装与导入" href="installation_and_imports.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            RELIC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">RELIC 指南</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../architecture.html">系统架构</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#scope-and-architectural-contract">范围与架构契约</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#architecture-capability-map">架构能力图</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#package-ownership-and-seven-layer-map">软件包职责归属与七层架构映射</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#four-scientific-abstractions">四类科学抽象</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#functor-lifecycle-and-metadata">Functor lifecycle 与 metadata</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#variable-roles-and-state-ownership">变量角色与状态归属</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#parameters-constants-units-and-time">参数、常量、单位与时间</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#simulator-execution-rates-and-device-policy">Simulator、执行频率与 device policy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#structural-scientific-layer">结构化科学层</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#end-to-end-assembly-and-execution">端到端装配与执行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#connection-and-conservation-rules">连接与守恒规则</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/index.html">科学理论与控制方程</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../theory/foundations.html">数学基础、状态、单位与守恒</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#architectural-contract-and-notation">架构契约与符号约定</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#four-scientific-abstractions-and-functor-lifecycle">四类科学抽象与 Functor 生命周期</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#spatial-quantity-basis-and-temporal-overlap-laws">空间物理量基准与时间重叠守恒律</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#universal-conservation-and-balance-laws">普适守恒与平衡定律</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#transactional-statemanager-governance-i1-i7">事务型 StateManager 状态治理（<code class="docutils literal notranslate"><span class="pre">I1</span></code>--<code class="docutils literal notranslate"><span class="pre">I7</span></code>）</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#centralized-parametermanager-and-physical-constant-ssot">集中式 ParameterManager 与物理常数单点事实源</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#piecewise-smooth-discrete-adjoint-differentiation-and-device-policy">分段光滑离散伴随微分与设备策略</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#bounded-mathematical-contracts-and-runtime-boundary-i-vs-n">有界数学契约与运行时边界（<code class="docutils literal notranslate"><span class="pre">[I]</span></code> 与 <code class="docutils literal notranslate"><span class="pre">[N]</span></code>）</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/dec_iphs_generic.html">DEC、IPHS、GENERIC、端口与反应结构</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/dec_iphs_generic.html#structural-governance-lifecycle">结构治理生命周期</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/dec_iphs_generic.html#discrete-exterior-calculus-relic-computation-operators-dec">离散外微分（<code class="docutils literal notranslate"><span class="pre">relic.computation.operators.dec</span></code>）</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/dec_iphs_generic.html#irreversible-port-hamiltonian-and-generic-lowering">不可逆端口哈密顿与 GENERIC 降阶</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/dec_iphs_generic.html#equivalence-certificates-and-live-repository-inventory">等价性证书与现行代码库清单</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/dec_iphs_generic.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/numerics.html">数值积分、算子分裂、稳定性、尺度耦合与混杂事件</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#method-of-lines-formulation-and-solver-registry">线方法表述与求解器注册表</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#deterministic-time-stepping-linear-and-nonlinear-solvers">确定性时间步进、线性与非线性求解器</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#multi-rate-execution-operator-splitting-and-step-control">多速率执行、算子分裂与步长控制</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#transport-stability-and-nonlinear-richards-closure">输运稳定性与非线性 Richards 闭合</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#conservative-spatial-remapping-and-internal-cross-domain-couplers">空间守恒重映射与内部跨域耦合器</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#transverse-hybrid-events-and-saltation-matrix-sensitivities">横截混杂事件与跃变矩阵灵敏度</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#stochastic-memory-ale-dae-and-topology-transition-families">随机、记忆、任意拉格朗日-欧拉（Arbitrary Lagrangian-Eulerian, ALE）、DAE 与拓扑跃迁族</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/atmosphere.html">大气圈过程理论</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/atmosphere.html#scope-process-inventory-and-certificate-map">范围、过程清单与证书映射</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/atmosphere.html#solar-thermal-and-canopy-radiation">太阳短波、热长波与冠层辐射</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/atmosphere.html#surface-layer-turbulence-and-boundary-layer-tracer-transport">近地层湍流与边界层示踪物输运</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/atmosphere.html#gas-phase-chemistry-open-tropospheric-kinetics-and-closed-level-5-generic-point">气相化学：开放对流层动力学与封闭 Level-5 GENERIC 运行点</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/atmosphere.html#stochastic-atmospheric-forcing-and-replay-contracts">随机大气强迫与重放契约</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/atmosphere.html#atmospheric-observation-operators">大气观测算子</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/atmosphere.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/biosphere.html">生物圈过程理论</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/biosphere.html#scope-process-inventory-and-certificate-map">范围、过程清单与证书映射</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/biosphere.html#photosynthesis-and-stomatal-conductance">光合作用与气孔导度</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/biosphere.html#autotrophic-respiration-allocation-and-structural-growth">自养呼吸、分配与结构生长</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/biosphere.html#phenology-and-abiotic-stress-closures">物候与非生物胁迫闭合</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/biosphere.html#biogenic-volatile-organic-compound-bvoc-synthesis-and-emission">生物源挥发性有机化合物（BVOC）合成与排放</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/biosphere.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/hydrosphere.html">水圈过程理论</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/hydrosphere.html#scope-process-inventory-and-certificate-map">范围、过程清单与证书映射</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/hydrosphere.html#evapotranspiration-closures">蒸散发闭合格式</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/hydrosphere.html#snowpack-mass-energy-balance-and-snow-albedo">积雪质量-能量平衡与积雪反照率</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/hydrosphere.html#soil-water-retention-bucket-storage-and-richards-vadose-flow">土壤持水特征、单桶蓄水与 Richards 包气带渗流</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/hydrosphere.html#surface-runoff-and-hybrid-event-driven-hortonian-ponding">地表径流与混杂事件驱动的霍顿积水</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/hydrosphere.html#subsurface-stormflow-vadose-aquifer-exchange-and-groundwater">壤中暴雨流、包气带-含水层交换与地下水</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/hydrosphere.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/pedosphere.html">土壤圈过程理论</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/pedosphere.html#scope-process-inventory-and-certificate-map">范围、过程清单与证书映射</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/pedosphere.html#soil-organic-carbon-turnover-and-cross-sphere-interface-maps">土壤有机碳周转与跨圈层界面映射</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/pedosphere.html#soil-nitrogen-root-p-uptake-and-c-n-stoichiometry-boundaries">土壤氮循环、根系磷吸收与碳氮化学计量边界</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/pedosphere.html#wetland-methane-request-and-coupler-architecture">湿地甲烷请求-耦合器架构</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/pedosphere.html#porous-media-water-gas-solute-dae-ale-and-memory-transport">多孔介质水分、气体、溶质、DAE、ALE 与记忆核输运</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/pedosphere.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/anthroposphere.html">人类圈理论</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/anthroposphere.html#scope-process-inventory-and-fail-closed-boundary-status">范围、过程清单与故障封闭边界状态</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/anthroposphere.html#fail-closed-level-0-boundaries-vs-implemented-emission-operators">故障封闭 Level-0 边界与已实现排放算子</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/anthroposphere.html#continuous-time-markov-land-use-transitions-and-parameter-projection">连续时间马尔可夫土地利用转移与参数投影</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/anthroposphere.html#management-coordination-and-agricultural-water-nutrient-ports">管理协调与农业水肥端口</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/anthroposphere.html#managed-biomass-removal-livestock-grazing-fire-and-tillage">受管生物量移除、家畜放牧、火扰动与耕作</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/anthroposphere.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/isotopes_transport.html">稳定同位素与一般输运理论</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/isotopes_transport.html#scope-component-inventory-and-certificate-map">范围、组件清单与证书映射</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/isotopes_transport.html#stable-isotope-ratios-exact-binary-fractionation-and-fail-closed-ledger-status">稳定同位素比值、精确二元分馏与故障封闭账本状态</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/isotopes_transport.html#general-conservative-transport-functors">一般守恒输运 Functor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/isotopes_transport.html#references">参考文献</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../science/index.html">核心科学类参考</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../science/anthroposphere.html">人类圈科学类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#atmosphere-coupling">atmosphere_coupling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#sector-allocation">sector_allocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#species-mapping">species_mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#anthroposphere-interface-mapping">anthroposphere_interface_mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#emission-inventory">emission_inventory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#land-use-parameter-mapping">land_use_parameter_mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#land-use-transitions">land_use_transitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#management-coordinator">management_coordinator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#fertilization-management">fertilization_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#fire-management">fire_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#grazing-management">grazing_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#harvest-management">harvest_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#irrigationmanagement">IrrigationManagement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#tillagemanagement">TillageManagement</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/atmosphere.html">大气科学类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#chemistryfunctor">ChemistryFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#class-atmosphere-chemistry-chemistry-functor-closed-constant-volume">ChemistryFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#environmentalforcingfunctor">EnvironmentalForcingFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#radiationenergyconservationvalidator">RadiationEnergyConservationValidator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#radiationfield">RadiationField</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#radiationfunctor">RadiationFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#markedpoissonrainfallfunctor">MarkedPoissonRainfallFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#ornsteinuhlenbecktemperaturefunctor">OrnsteinUhlenbeckTemperatureFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#atmosphericadvectiondiffusionfunctor">AtmosphericAdvectionDiffusionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#drydepositionaggregator">DryDepositionAggregator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#eddydiffusionblmfunctor">EddyDiffusionBLMFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#turbulencefunctor">TurbulenceFunctor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/biosphere.html">生物圈科学类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#meganmodel">MEGANModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#isoprenesynthesis">IsopreneSynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#monoterpenesynthesis">MonoterpeneSynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#sesquiterpenestressmodel">SesquiterpeneStressModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#sesquiterpenesynthesis">SesquiterpeneSynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#biomassallocation">BiomassAllocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#phenologygrowth">PhenologyGrowth</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#structuralgrowth">StructuralGrowth</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#cropphenology">CropPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#gddphenology">GDDPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#gsiphenology">GSIPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#staticphenology">StaticPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#phenologyfunctor">PhenologyFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#farquharphotosynthesis">FarquharPhotosynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#medlynstomatalconductance">MedlynStomatalConductance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#autotrophicrespiration">AutotrophicRespiration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#growthrespiration">GrowthRespiration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#maintenancerespiration">MaintenanceRespiration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#nutrientstress">NutrientStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#ozonestress">OzoneStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#thermalstress">ThermalStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#waterstress">WaterStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#simplecanopyphotosynthesis">SimpleCanopyPhotosynthesis</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/hydrosphere.html">水圈科学类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#penman-monteith-et">penman_monteith_et</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#priestley-taylor-et">priestley_taylor_et</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#groundwater-dynamics">groundwater_dynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#subsurface-runoff">subsurface_runoff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#hortonianpondingeventfunctor">HortonianPondingEventFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#surfacepondingfunctor">SurfacePondingFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#surface-runoff">surface_runoff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#snow-albedo">snow_albedo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#snow-pack">snow_pack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#bucket-soil-moisture">bucket_soil_moisture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#soilwaterretention">SoilWaterRetention</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#richards-soil-moisture">richards_soil_moisture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#capillary-rise-transport">capillary_rise_transport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#vertical-percolation-transport">vertical_percolation_transport</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/pedosphere.html">土壤圈科学类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#carbonpoolsfunctor">CarbonPoolsFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#poolsmatrix">PoolsMatrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#firstorderdecomposition">FirstOrderDecomposition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#microbialenzymedecomposition">MicrobialEnzymeDecomposition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#litterfallinterfacemapper">LitterfallInterfaceMapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#pedosphereinterfacemapper">PedosphereInterfaceMapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methanebudgetcoupler">MethaneBudgetCoupler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methaneoxidationfunctor">MethaneOxidationFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methaneproductionfunctor">MethaneProductionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methanescalecouplingfunctor">MethaneScaleCouplingFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methanetransportfunctor">MethaneTransportFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#denitrification-process">denitrification_process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#mineralizationprocess">MineralizationProcess</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#nitrification-process">nitrification_process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#nitrogenleachingprocess">NitrogenLeachingProcess</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#nitrogencycling">NitrogenCycling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#rootnutrientuptake">RootNutrientUptake</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#stoichiometryconstraint">StoichiometryConstraint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#equilibriumsorptionfunctor">EquilibriumSorptionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#gasdiffusion1d">GasDiffusion1D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#movingdomaindiffusionfunctor">MovingDomainDiffusionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#soil-water-transport">soil_water_transport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#soluteadvectiondiffusion1d">SoluteAdvectionDiffusion1D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#tworegionmasstransferfunctor">TwoRegionMassTransferFunctor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/isotopes.html">稳定同位素科学类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/isotopes.html#isotopeheartbeatfunctor">IsotopeHeartbeatFunctor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/transport.html">通用 Transport 科学类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#advection-diffusion">advection_diffusion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#linear-advection">linear_advection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#fickian-diffusion">fickian_diffusion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#class-transport-diffusion-fickian-diffusion-strict-runtime-point">fickian_diffusion</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/index.html#complete-coverage-matrix">完整覆盖矩阵</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">RELIC 工作流</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#learning-tracks">学习路线</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#how-to-use-a-tutorial">如何使用教程</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="installation_and_imports.html">安装与导入</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">配置与参数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="state_functors_and_simulation.html">状态、Functors 与模拟</a></li>
+<li class="toctree-l3"><a class="reference internal" href="graph_validation_and_execution.html">Graph 验证与执行</a></li>
+<li class="toctree-l3"><a class="reference internal" href="persistence_outputs_and_data_io.html">持久化、输出与 Data I/O</a></li>
+<li class="toctree-l3"><a class="reference internal" href="coupling_workflows.html">耦合工作流</a></li>
+<li class="toctree-l3"><a class="reference internal" href="calibration_sensitivity_and_uq.html">校准、敏感性分析和不确定性量化</a></li>
+<li class="toctree-l3"><a class="reference internal" href="devices_and_distributed.html">设备与分布式执行</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_and_extensions.html">CLI 与扩展</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestration.html">Graph 编排</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#canonical-owners">canonical owners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#graphir">GraphIR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#portspec-and-the-contract-boundary">PortSpec 与契约边界</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#validation">验证</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#adapters">Adapter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#compilation-and-execution">编译与执行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#strict-iphs-dec-boundary">Strict IPHS/DEC 边界</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../operations.html">操作快速入门</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#select-a-workflow">选择 workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#environment-preflight">环境预检</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#first-successful-run">首次成功运行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#benchmark-style-acceptance-checklist">Benchmark 式验收清单</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#minimal-runtime-sequence">最小 runtime 流程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#troubleshooting-order">故障排查顺序</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#immediate-stop-conditions">必须立即停止的条件</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../extension_contracts.html">扩展契约</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#reuse-first-decision">复用优先决策</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#adding-a-scientific-functor">添加科学 Functor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#parameter-extension">参数扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#variable-contract-extension">Variable contract 扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#graph-and-adapter-extension">Graph 与 adapter 扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#external-extension-paths">外部扩展路径</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#scientific-structure-claims">科学结构声明</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#explicit-unavailable-scientific-boundaries">显式声明不可用的科学边界</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#anti-redundancy-boundary">Anti-redundancy boundary（防冗余边界）</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">核心 API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/index.html#coverage-contract">覆盖范围契约</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/core_runtime.html">Core Runtime API（核心运行时 API）</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/parameters_contracts.html">参数与参数契约</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/orchestration_validation.html">编排、Contract 与 Validation API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/scientific_structure_extensions.html">科学结构与扩展 API</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">RELIC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">RELIC 工作流</a></li>
+      <li class="breadcrumb-item active">配置与参数</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="configuration-and-parameters">
+<h1>配置与参数<a class="headerlink" href="#configuration-and-parameters" title="Link to this heading"></a></h1>
+<p>RELIC 将结构化配置与科学参数值分离。<code class="docutils literal notranslate"><span class="pre">RELICConfig</span></code> 基于 <code class="docutils literal notranslate"><span class="pre">relic.core.config.models</span></code> 中的 15 个 Pydantic V2 <code class="docutils literal notranslate"><span class="pre">BaseModel</span></code> 类校验子系统结构（包括基类 <code class="docutils literal notranslate"><span class="pre">ConfigurationModel</span></code>、架构版本 <code class="docutils literal notranslate"><span class="pre">2.0.0</span></code> 的根模型 <code class="docutils literal notranslate"><span class="pre">RELICConfig</span></code>、10 个子系统配置模型，以及 <code class="docutils literal notranslate"><span class="pre">DataConfig</span></code> 下属的 3 个嵌套子模型 <code class="docutils literal notranslate"><span class="pre">DataIOConfig</span></code>、<code class="docutils literal notranslate"><span class="pre">DataQualityConfig</span></code> 与 <code class="docutils literal notranslate"><span class="pre">DataTransformConfig</span></code>，即 <code class="docutils literal notranslate"><span class="pre">RELICConfig</span></code> 下辖共计 13 个子系统及嵌套模型）；<code class="docutils literal notranslate"><span class="pre">UnifiedParameterManager</span></code> 则作为版本化科学参数值与元数据的单点事实源（Single Source of Truth, SSOT）。<code class="docutils literal notranslate"><span class="pre">RELICSimulator</span></code> 接收运行时映射，不直接消费 <code class="docutils literal notranslate"><span class="pre">RELICConfig</span></code> 对象。</p>
+<section id="canonical-owners">
+<h2>canonical owners<a class="headerlink" href="#canonical-owners" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>关注点</p></th>
+<th class="head"><p>公共API</p></th>
+<th class="head"><p>规范实现</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>类型配置模型</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">RELICConfig</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">relic\core\config\models.py</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>配置加载</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ConfigLoader</span></code>， <code class="docutils literal notranslate"><span class="pre">load_config</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">relic\core\config\loader.py</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>参数值所有权</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">UnifiedParameterManager</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">relic\parameters\manager.py</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>metadata 参数</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ParameterSpec</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">relic\parameters\spec.py</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Functor参数访问</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">FunctorBase.get_parameter_value()</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">relic\core\functor\functor_base.py</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>物理常数</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">get_physical_constant()</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">relic\utils\physical_constants.py</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p>参见<a class="reference internal" href="../api/parameters_contracts.html"><span class="std std-doc">Parameter Contracts API</span></a>以获取完整参考。</p>
+</section>
+<section id="relicconfig">
+<h2><code class="docutils literal notranslate"><span class="pre">RELICConfig</span></code><a class="headerlink" href="#relicconfig" title="Link to this heading"></a></h2>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>RELICConfig(
+    *,
+    config_version: str = &quot;2.0.0&quot;,
+    simulation_name: str = &quot;relic_simulation&quot;,
+    description: str = &quot;&quot;,
+    created_at: datetime = ...,
+    physics: PhysicsConfig = ...,
+    simulation: SimulationConfig = ...,
+    stochastic: StochasticConfig = ...,
+    optimization: OptimizationConfig = ...,
+    surrogates: dict[str, SurrogateConfig] = ...,
+    data: DataConfig = ...,
+    parameters: ParametersConfig = ...,
+    computation: ComputationConfig = ...,
+    logging: LoggingConfig = ...,
+    feature_flags: FeatureFlagConfig = ...,
+)
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>参数</p></th>
+<th class="head"><p>含义</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">config_version</span></code></p></td>
+<td><p>配置类型schema的版本。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">simulation_name</span></code></p></td>
+<td><p>可安全用于文件系统的 simulation 标识符。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">description</span></code></p></td>
+<td><p>人类可读的模型配置描述。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">created_at</span></code></p></td>
+<td><p>配置创建时间戳；默认为构建对象时的时间。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">physics</span></code></p></td>
+<td><p>物理和生物过程家族的开关和设置。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">simulation</span></code></p></td>
+<td><p>类型时间、网格、积分、检查点和保守设置。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">stochastic</span></code></p></td>
+<td><p>随机过程和采样设置。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">optimization</span></code></p></td>
+<td><p>类型优化和校准设置。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">surrogates</span></code></p></td>
+<td><p>基于Functor名称键的代理配置。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">data</span></code></p></td>
+<td><p>输入、输出、气候与预报（Climate and Forecast, CF）元数据、质量控制与数据变换配置。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">parameters</span></code></p></td>
+<td><p>Parameter database 与 validation 设置。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">computation</span></code></p></td>
+<td><p>精度、并行性、分布和内存设置。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">logging</span></code></p></td>
+<td><p>日志与监控设置。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">feature_flags</span></code></p></td>
+<td><p>显式功能开关.</p></td>
+</tr>
+</tbody>
+</table>
+<p><code class="docutils literal notranslate"><span class="pre">RELICConfig</span></code>拒绝未定义字段，验证赋值，将枚举序列化为值，并验证截面约束。验证失败的示例包括结束时间不大于开始时间，或时间步长超过配置的持续时间。</p>
+<section id="load-and-serialize-typed-configuration">
+<h3>加载和序列化类型配置<a class="headerlink" href="#load-and-serialize-typed-configuration" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">relic.core.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">RELICConfig</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">RELICConfig</span><span class="o">.</span><span class="n">from_yaml</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;configs\simulation_minimal.yaml&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">config_version</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">simulation</span><span class="o">.</span><span class="n">time_step</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">tmpdir</span><span class="p">:</span>
+    <span class="n">exported_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;exported_config.yaml&quot;</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">to_yaml</span><span class="p">(</span><span class="n">exported_path</span><span class="p">)</span>
+    <span class="n">reloaded</span> <span class="o">=</span> <span class="n">RELICConfig</span><span class="o">.</span><span class="n">from_yaml</span><span class="p">(</span><span class="n">exported_path</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">reloaded</span><span class="o">.</span><span class="n">simulation</span><span class="o">.</span><span class="n">time_step</span> <span class="o">==</span> <span class="n">config</span><span class="o">.</span><span class="n">simulation</span><span class="o">.</span><span class="n">time_step</span>
+
+<span class="n">as_mapping</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+<span class="n">yaml_text</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">to_yaml</span><span class="p">()</span>
+<span class="n">schema</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">to_schema</span><span class="p">()</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>方法</p></th>
+<th class="head"><p>返回值</p></th>
+<th class="head"><p>异常</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">RELICConfig.from_yaml(path)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">RELICConfig</span></code>通过验证</p></td>
+<td><p>与 <code class="docutils literal notranslate"><span class="pre">ConfigLoader().load_config(path)</span></code> 相同：应用环境覆盖，将 <code class="docutils literal notranslate"><span class="pre">parameters.parameter_overrides</span></code> 写入 ParameterManager，并执行 <code class="docutils literal notranslate"><span class="pre">ConfigValidator</span></code>。任何加载失败都会抛出 <code class="docutils literal notranslate"><span class="pre">relic.core.config.loader.ConfigurationError</span></code>（见下文）。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">to_dict()</span></code></p></td>
+<td><p>嵌套Python映射</p></td>
+<td><p>Pydantic的序列化异常被传播。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">to_yaml(path=None)</span></code></p></td>
+<td><p>当<code class="docutils literal notranslate"><span class="pre">path</span></code>被省略时为YAML；否则为<code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>文件错误向上传播。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">to_schema()</span></code></p></td>
+<td><p>JSON 类型映射</p></td>
+<td><p>模型schema错误被传播。</p></td>
+</tr>
+</tbody>
+</table>
+<p><code class="docutils literal notranslate"><span class="pre">relic.core.config</span></code> 在模块导入时导入 PyYAML、Hydra、OmegaConf 和 toml；缺少它们时，这些方法都无法运行。</p>
+</section>
+<section id="configloader-and-load-config">
+<h3><code class="docutils literal notranslate"><span class="pre">ConfigLoader</span></code>和<code class="docutils literal notranslate"><span class="pre">load_config</span></code><a class="headerlink" href="#configloader-and-load-config" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">relic.core.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConfigLoader</span><span class="p">,</span> <span class="n">load_config</span>
+
+<span class="n">loader</span> <span class="o">=</span> <span class="n">ConfigLoader</span><span class="p">()</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">load_config</span><span class="p">(</span>
+    <span class="n">config_path</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;configs\simulation_minimal.yaml&quot;</span><span class="p">,</span>
+    <span class="n">overrides</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;simulation.time_step&quot;</span><span class="p">:</span> <span class="mf">1800.0</span><span class="p">},</span>
+    <span class="n">env_overrides</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">config_unvalidated</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">(</span>
+    <span class="sa">r</span><span class="s2">&quot;configs\simulation_minimal.yaml&quot;</span><span class="p">,</span>
+    <span class="n">validate</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">ConfigLoader.load_config(config_path=None,</span> <span class="pre">overrides=None,</span> <span class="pre">env_overrides=True)</span></code> 是唯一配置加载路径。该方法以 UTF-8 编码读取配置文件，应用点分路径覆盖项，在 <code class="docutils literal notranslate"><span class="pre">env_overrides</span></code> 为真时应用环境变量覆盖，构建 <code class="docutils literal notranslate"><span class="pre">RELICConfig</span></code>，将 <code class="docutils literal notranslate"><span class="pre">parameters.parameter_overrides</span></code> 写入参数管理器（ParameterManager）并执行边界校验，随后运行 <code class="docutils literal notranslate"><span class="pre">ConfigValidator</span></code>。<code class="docutils literal notranslate"><span class="pre">overrides</span></code> 可为映射（如 <code class="docutils literal notranslate"><span class="pre">{&quot;simulation.time_step&quot;:</span> <span class="pre">1800.0}</span></code>）或 <code class="docutils literal notranslate"><span class="pre">&quot;dotted.key=value&quot;</span></code> 字符串列表；列表元素缺少 <code class="docutils literal notranslate"><span class="pre">=</span></code> 时直接抛出异常。环境变量仅在名称满足“<code class="docutils literal notranslate"><span class="pre">RELIC_</span></code> 前缀加 <code class="docutils literal notranslate"><span class="pre">RELICConfig</span></code> 字段路径大写并以 <code class="docutils literal notranslate"><span class="pre">&quot;_&quot;</span></code> 连接”时才会被读取，例如 <code class="docutils literal notranslate"><span class="pre">simulation.time_step</span></code> 对应 <code class="docutils literal notranslate"><span class="pre">RELIC_SIMULATION_TIME_STEP</span></code>；其余 <code class="docutils literal notranslate"><span class="pre">RELIC_*</span></code> 变量不属于配置项。模块级函数 <code class="docutils literal notranslate"><span class="pre">load_config(config_path=None,</span> <span class="pre">overrides=None,</span> <span class="pre">validate=True)</span></code> 内部调用 <code class="docutils literal notranslate"><span class="pre">ConfigLoader(validate_on_load=validate)</span></code>；仅传入 <code class="docutils literal notranslate"><span class="pre">validate=False</span></code> 可跳过 <code class="docutils literal notranslate"><span class="pre">ConfigValidator</span></code>。<code class="docutils literal notranslate"><span class="pre">ConfigValidator</span></code> 支持在 YAML 中以字符串形式指定枚举字段，例如 <code class="docutils literal notranslate"><span class="pre">integration_method:</span> <span class="pre">&quot;euler&quot;</span></code>。</p>
+<p>指定的配置（优先采用 <code class="docutils literal notranslate"><span class="pre">config_path</span></code> 参数，否则采用 <code class="docutils literal notranslate"><span class="pre">RELIC_CONFIG_PATH</span></code>）不存在时，抛出 <code class="docutils literal notranslate"><span class="pre">FileNotFoundError</span></code>。没有指定配置时，读取 <code class="docutils literal notranslate"><span class="pre">relic.core.config.loader.DEFAULT_CONFIG_PATHS</span></code> 中第一个存在的文件；都不存在时，使用全局默认配置（<code class="docutils literal notranslate"><span class="pre">RELICConfig</span></code> 的默认值，应用显式覆盖和环境覆盖）并记录该选择；<code class="docutils literal notranslate"><span class="pre">relic.core.config.resolve_config_source</span></code> 是 <code class="docutils literal notranslate"><span class="pre">ConfigLoader</span></code>、<code class="docutils literal notranslate"><span class="pre">get_global_config</span></code> 和 <code class="docutils literal notranslate"><span class="pre">load_runtime_config</span></code> 共用的唯一规则。其他所有加载失败都抛出 <code class="docutils literal notranslate"><span class="pre">relic.core.config.loader.ConfigurationError</span></code>，存在原始异常时将其设为 <code class="docutils literal notranslate"><span class="pre">__cause__</span></code>：包括不支持的后缀、无效 YAML、模型验证错误、格式错误的覆盖、不是已注册参数的 <code class="docutils literal notranslate"><span class="pre">parameter_overrides</span></code> 键，以及 <code class="docutils literal notranslate"><span class="pre">ConfigValidator</span></code> 错误。</p>
+</section>
+</section>
+<section id="runtime-configuration-mapping">
+<h2>Runtime配置映射<a class="headerlink" href="#runtime-configuration-mapping" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">RELICSimulator</span></code> 读取一个Python映射，使用<code class="docutils literal notranslate"><span class="pre">.get()</span></code>。不要直接传递<code class="docutils literal notranslate"><span class="pre">RELICConfig</span></code>实例。将类型化的设置映射到runtime键名：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">relic.core.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">RELICConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">relic.core.simulator</span><span class="w"> </span><span class="kn">import</span> <span class="n">RELICSimulator</span>
+
+<span class="n">typed</span> <span class="o">=</span> <span class="n">RELICConfig</span><span class="o">.</span><span class="n">from_yaml</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;configs\simulation_minimal.yaml&quot;</span><span class="p">)</span>
+<span class="n">runtime_config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;time_step&quot;</span><span class="p">:</span> <span class="n">typed</span><span class="o">.</span><span class="n">simulation</span><span class="o">.</span><span class="n">time_step</span><span class="p">,</span>
+    <span class="s2">&quot;max_time&quot;</span><span class="p">:</span> <span class="n">typed</span><span class="o">.</span><span class="n">simulation</span><span class="o">.</span><span class="n">end_time</span><span class="p">,</span>
+    <span class="s2">&quot;output_frequency&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>  <span class="c1"># simulator steps between time_series records</span>
+    <span class="s2">&quot;enable_checkpointing&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;time_integration_method&quot;</span><span class="p">:</span> <span class="n">typed</span><span class="o">.</span><span class="n">simulation</span><span class="o">.</span><span class="n">integration_method</span><span class="p">,</span>
+    <span class="s2">&quot;device&quot;</span><span class="p">:</span> <span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="n">simulator</span> <span class="o">=</span> <span class="n">RELICSimulator</span><span class="p">(</span><span class="n">runtime_config</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>运行时键可置于映射根部，或置于 <code class="docutils literal notranslate"><span class="pre">simulator</span></code>、<code class="docutils literal notranslate"><span class="pre">runtime</span></code>、<code class="docutils literal notranslate"><span class="pre">computation</span></code> 节下。<code class="docutils literal notranslate"><span class="pre">RELICSimulator</span></code> 优先从根部读取各键，未命中时按上述顺序从首个包含该键的分节读取；<code class="docutils literal notranslate"><span class="pre">device</span></code> 与 <code class="docutils literal notranslate"><span class="pre">require_gpu</span></code> 遵循同一查找顺序。<code class="docutils literal notranslate"><span class="pre">device_overrides</span></code> 与 <code class="docutils literal notranslate"><span class="pre">module_device_overrides</span></code> 映射按根部、<code class="docutils literal notranslate"><span class="pre">simulator</span></code>、<code class="docutils literal notranslate"><span class="pre">runtime</span></code>、<code class="docutils literal notranslate"><span class="pre">computation</span></code> 的顺序合并，同名项以后出现者为准。<code class="docutils literal notranslate"><span class="pre">SimulationConfig</span></code> 不含 <code class="docutils literal notranslate"><span class="pre">output_frequency</span></code> 或检查点字段，此类运行时键需显式传入；该模型同样未声明自适应步长字段，自适应步进由运行时键 <code class="docutils literal notranslate"><span class="pre">adaptive_dt_enabled</span></code>、<code class="docutils literal notranslate"><span class="pre">adaptive_atol</span></code>、<code class="docutils literal notranslate"><span class="pre">adaptive_rtol</span></code>、<code class="docutils literal notranslate"><span class="pre">adaptive_dt_min</span></code> 与 <code class="docutils literal notranslate"><span class="pre">adaptive_dt_max</span></code> 配置，默认值取自 <code class="docutils literal notranslate"><span class="pre">computation.scheduling.adaptive.*</span></code> 参数。<code class="docutils literal notranslate"><span class="pre">end_time</span></code> 默认为 1 天，<code class="docutils literal notranslate"><span class="pre">time_step</span></code> 不得超过 1 小时（对应 <code class="docutils literal notranslate"><span class="pre">relic.utils.time_constants</span></code> 中的 <code class="docutils literal notranslate"><span class="pre">SECONDS_PER_DAY</span></code> 与 <code class="docutils literal notranslate"><span class="pre">SECONDS_PER_HOUR</span></code>）。模拟器不会将 <code class="docutils literal notranslate"><span class="pre">simulation.end_time</span></code> 这类类型化字段重命名为 <code class="docutils literal notranslate"><span class="pre">max_time</span></code>，也不会将 <code class="docutils literal notranslate"><span class="pre">simulation.integration_method</span></code> 重命名为 <code class="docutils literal notranslate"><span class="pre">time_integration_method</span></code>。</p>
+<section id="main-runtime-keys">
+<h3>主要runtimekeys<a class="headerlink" href="#main-runtime-keys" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>key</p></th>
+<th class="head"><p>含义</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">time_step</span></code></p></td>
+<td><p>Functors参数传递给默认的步长持续时间。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">max_time</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">run()</span></code>使用默认结束时间，当未提供显式结束时间时。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">output_frequency</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">time_series</span></code> 中两次 Functor 输出值记录之间的模拟器步数（正整数，默认 1）。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">enable_checkpointing</span></code></p></td>
+<td><p>选择启用自动检查点写入；默认为 <code class="docutils literal notranslate"><span class="pre">False</span></code>。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">checkpoint_directory</span></code></p></td>
+<td><p>显式的自动检查点目录；启用检查点时必需。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">checkpoint_frequency</span></code></p></td>
+<td><p>自动检查点之间的模拟时间间隔，单位为秒（默认 3600.0）；启用检查点时必须为正。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">time_integration_method</span></code></p></td>
+<td><p>输运时间积分方法：<code class="docutils literal notranslate"><span class="pre">euler</span></code>、<code class="docutils literal notranslate"><span class="pre">implicit_midpoint</span></code> 或 <code class="docutils literal notranslate"><span class="pre">crank_nicolson</span></code>，对应 <code class="docutils literal notranslate"><span class="pre">transport.numerical.time_integration_method</span></code> 允许的值；该键未设置时使用此参数的值。其他值会在构造时引发 <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>。此设置传给 <code class="docutils literal notranslate"><span class="pre">forward()</span></code> 声明了 <code class="docutils literal notranslate"><span class="pre">time_integration_method</span></code> 的 Functor。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">implicit_midpoint_max_iter</span></code>, <code class="docutils literal notranslate"><span class="pre">implicit_midpoint_tolerance</span></code></p></td>
+<td><p>隐式输运步的迭代上限和收敛容差；未设置时使用 <code class="docutils literal notranslate"><span class="pre">transport.numerical.implicit_midpoint_max_iter</span></code> 和 <code class="docutils literal notranslate"><span class="pre">transport.numerical.implicit_midpoint_tolerance</span></code>，显式配置值按其边界验证。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">splitting_mode</span></code></p></td>
+<td><p>执行循环使用的分裂求解模式。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">strict_dependencies</span></code></p></td>
+<td><p>在支持的情况下，升级依赖关系和普通输出重叠冲突。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">conservation_checks</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code> 或 <code class="docutils literal notranslate"><span class="pre">False</span></code> 在运行时提交路径中启用守恒核算；映射只能设置 StateManager 的 <code class="docutils literal notranslate"><span class="pre">enabled</span></code>、<code class="docutils literal notranslate"><span class="pre">raise_on_violation</span></code>、<code class="docutils literal notranslate"><span class="pre">rollback_on_failure</span></code>（各为 <code class="docutils literal notranslate"><span class="pre">True</span></code> 或 <code class="docutils literal notranslate"><span class="pre">False</span></code>）以及 <code class="docutils literal notranslate"><span class="pre">tolerance</span></code>。其他类型、未知键或无效值会抛出 <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>，并指出键和值。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">conservation_raise_on_violation</span></code>, <code class="docutils literal notranslate"><span class="pre">conservation_rollback_on_failure</span></code></p></td>
+<td><p>设置该映射的 <code class="docutils literal notranslate"><span class="pre">raise_on_violation</span></code> 和 <code class="docutils literal notranslate"><span class="pre">rollback_on_failure</span></code>。仅接受 <code class="docutils literal notranslate"><span class="pre">True</span></code> 或 <code class="docutils literal notranslate"><span class="pre">False</span></code>；<code class="docutils literal notranslate"><span class="pre">&quot;false&quot;</span></code> 这样的字符串或整数 <code class="docutils literal notranslate"><span class="pre">0</span></code>/<code class="docutils literal notranslate"><span class="pre">1</span></code> 会引发 <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>；若值与 <code class="docutils literal notranslate"><span class="pre">conservation_checks</span></code> 中的同名键冲突，也会报错。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">conservation_tolerance</span></code></p></td>
+<td><p>显式覆盖 StateManager 提交时账本容差，其默认值为 <code class="docutils literal notranslate"><span class="pre">validation.conservation.conservation_tolerance</span></code>。必须是位于该参数声明边界内的有限实数（当前为 <code class="docutils literal notranslate"><span class="pre">[1e-10,</span> <span class="pre">1e-3]</span></code>）；其他值会引发 <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>，并指出键和值。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">strict_conservation_enabled</span></code></p></td>
+<td><p>升级配置的保护失败。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">adaptive_dt_enabled</span></code></p></td>
+<td><p>启用自适应时间步长控制。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">adaptive_atol</span></code>， <code class="docutils literal notranslate"><span class="pre">adaptive_rtol</span></code></p></td>
+<td><p>绝对和相对适应性误差容限。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">adaptive_dt_min</span></code>， <code class="docutils literal notranslate"><span class="pre">adaptive_dt_max</span></code></p></td>
+<td><p>Bounds 用于自适应时间步长。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">adaptive_monitor_vars</span></code></p></td>
+<td><p>用于自适应误差控制的状态变量。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">device</span></code></p></td>
+<td><p>全球设备策略：<code class="docutils literal notranslate"><span class="pre">auto</span></code>、<code class="docutils literal notranslate"><span class="pre">cpu</span></code>、<code class="docutils literal notranslate"><span class="pre">cuda</span></code> 或 <code class="docutils literal notranslate"><span class="pre">cuda:N</span></code>。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">require_gpu</span></code></p></td>
+<td><p>拒绝在<code class="docutils literal notranslate"><span class="pre">true</span></code>时使用CPU的后备方案。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">device_overrides</span></code></p></td>
+<td><p>设备按Functor名称请求。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">module_device_overrides</span></code></p></td>
+<td><p>设备按模块名称请求键。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">state_units</span></code></p></td>
+<td><p>初始状态变量的单位，以变量名到单位的映射提供；<code class="docutils literal notranslate"><span class="pre">initialize_state()</span></code> 构建 <code class="docutils literal notranslate"><span class="pre">StateManager</span></code> 时读取。单位与变量契约或目录声明不一致时，抛出 <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">enable_distributed</span></code></p></td>
+<td><p>启用模拟器侧分布式执行上下文.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">enable_diagnostic_export</span></code></p></td>
+<td><p>启用配置的diagnostic导出。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">diagnostic_output_frequency</span></code></p></td>
+<td><p>Diagnostic导出间隔.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">diagnostic_output_path</span></code></p></td>
+<td><p>Diagnostic输出路径.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">diagnostic_reference_date</span></code></p></td>
+<td><p>参考时间用于diagnostic时间坐标。</p></td>
+</tr>
+</tbody>
+</table>
+<p>不存在隐式的自动检查点目录。要启用自动持久化，请显式映射所有必需的值：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">relic.core.simulator</span><span class="w"> </span><span class="kn">import</span> <span class="n">RELICSimulator</span>
+
+<span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">tmpdir</span><span class="p">:</span>
+    <span class="n">checkpoint_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;automatic&quot;</span>
+    <span class="n">runtime_config</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;time_step&quot;</span><span class="p">:</span> <span class="mf">1800.0</span><span class="p">,</span>
+        <span class="s2">&quot;max_time&quot;</span><span class="p">:</span> <span class="mf">3600.0</span><span class="p">,</span>
+        <span class="s2">&quot;enable_checkpointing&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">&quot;checkpoint_directory&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">checkpoint_dir</span><span class="p">),</span>
+        <span class="s2">&quot;checkpoint_frequency&quot;</span><span class="p">:</span> <span class="mf">3600.0</span><span class="p">,</span>  <span class="c1"># [s] simulation time</span>
+    <span class="p">}</span>
+    <span class="n">simulator</span> <span class="o">=</span> <span class="n">RELICSimulator</span><span class="p">(</span><span class="n">runtime_config</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">simulator</span><span class="o">.</span><span class="n">enable_checkpointing</span> <span class="ow">is</span> <span class="kc">True</span>
+</pre></div>
+</div>
+<p>在启用自动检查点时，<code class="docutils literal notranslate"><span class="pre">checkpoint_directory=None</span></code> 或非正的频率会被拒绝。手动的 <code class="docutils literal notranslate"><span class="pre">simulator.create_checkpoint(checkpoint_path)</span></code> 独立于自动开关，且始终要求一个显式且尚不存在的目标文件。</p>
+</section>
+</section>
+<section id="parameterspec">
+<h2><code class="docutils literal notranslate"><span class="pre">ParameterSpec</span></code><a class="headerlink" href="#parameterspec" title="Link to this heading"></a></h2>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>ParameterSpec(
+    key: str,
+    value: Any,
+    units: str,
+    dtype: str,
+    bounds: Optional[tuple[Any, Any]],
+    category: ParameterCategory,
+    default: Any = None,
+    description: str = &quot;&quot;,
+    references: list[str] = [],
+    tags: set[str] = set(),
+    dimension: str = &quot;&quot;,
+    provenance: dict[str, Any] = {},
+    requires_grad: bool = False,
+    allowed_values: Optional[list[Any]] = None,
+)
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>参数</p></th>
+<th class="head"><p>含义</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">key</span></code></p></td>
+<td><p>完全限定参数标识符</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">value</span></code></p></td>
+<td><p>当前参数值。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">default</span></code></p></td>
+<td><p>作为 metadata 保留的可选 declared fallback。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">units</span></code></p></td>
+<td><p>规范物理单位或 <code class="docutils literal notranslate"><span class="pre">dimensionless</span></code>（必填）。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">dtype</span></code></p></td>
+<td><p>声明的存储类型或张量数据类型（必填）。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bounds</span></code></p></td>
+<td><p>包含端点的允许区间（必填）：数值 <code class="docutils literal notranslate"><span class="pre">dtype</span></code> 将无界的一侧写为 <code class="docutils literal notranslate"><span class="pre">-inf</span></code> 或 <code class="docutils literal notranslate"><span class="pre">inf</span></code>（YAML 中为 <code class="docutils literal notranslate"><span class="pre">-.inf</span></code> / <code class="docutils literal notranslate"><span class="pre">.inf</span></code>）；<code class="docutils literal notranslate"><span class="pre">None</span></code>（<code class="docutils literal notranslate"><span class="pre">null</span></code>）表示不适用区间，仅非数值 <code class="docutils literal notranslate"><span class="pre">dtype</span></code>（如文本值、布尔开关、列表或映射）可使用。数值端点、值和默认值必须为 YAML 数字（<code class="docutils literal notranslate"><span class="pre">1.0e+7</span></code>、<code class="docutils literal notranslate"><span class="pre">1.0e-6</span></code>）；<code class="docutils literal notranslate"><span class="pre">1.0e7</span></code> 或 <code class="docutils literal notranslate"><span class="pre">1e-6</span></code> 这样的文本会直接被拒绝，不执行转换。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">category</span></code></p></td>
+<td><p>用于验证和发现的参数分类（必填）。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">description</span></code></p></td>
+<td><p>参数的科学含义。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">references</span></code></p></td>
+<td><p>文献或权威来源标识符</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">tags</span></code></p></td>
+<td><p>搜索和分组标签</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">dimension</span></code></p></td>
+<td><p>物理量单位书写无关。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">provenance</span></code></p></td>
+<td><p>源与转化metadata</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">requires_grad</span></code></p></td>
+<td><p>优化是否可以将值视为可训练的。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">allowed_values</span></code></p></td>
+<td><p>可选有限有效集 for 类别值</p></td>
+</tr>
+</tbody>
+</table>
+<p>科学YAML预期应包含entries<code class="docutils literal notranslate"><span class="pre">value</span></code>， <code class="docutils literal notranslate"><span class="pre">units</span></code>， <code class="docutils literal notranslate"><span class="pre">dtype</span></code>， <code class="docutils literal notranslate"><span class="pre">bounds</span></code>， <code class="docutils literal notranslate"><span class="pre">category</span></code>， <code class="docutils literal notranslate"><span class="pre">description</span></code>， <code class="docutils literal notranslate"><span class="pre">references</span></code>， <code class="docutils literal notranslate"><span class="pre">tags</span></code>， <code class="docutils literal notranslate"><span class="pre">requires_grad</span></code>，<code class="docutils literal notranslate"><span class="pre">provenance</span></code>物理常数仅属于<code class="docutils literal notranslate"><span class="pre">relic\parameters\database\relic\physical\constants.yaml</span></code>.</p>
+</section>
+<section id="unifiedparametermanager">
+<h2><code class="docutils literal notranslate"><span class="pre">UnifiedParameterManager</span></code><a class="headerlink" href="#unifiedparametermanager" title="Link to this heading"></a></h2>
+<p>在生产模式下（未设置 <code class="docutils literal notranslate"><span class="pre">RELIC_SKIP_CALIBRATED</span></code>），<code class="docutils literal notranslate"><span class="pre">UnifiedParameterManager</span></code> 从 <code class="docutils literal notranslate"><span class="pre">relic\parameters\database\</span></code> 下的 138 个 YAML 文件（包含 4,642 个叶节点条目的 134 个权威 <code class="docutils literal notranslate"><span class="pre">relic\</span></code> 文件，以及包含 109 个叶节点条目的 4 个 <code class="docutils literal notranslate"><span class="pre">calibrated\</span></code> 覆盖文件，共计 4,751 个 YAML 叶节点条目）加载 4,643 个运行时参数，其中 810 个设置 <code class="docutils literal notranslate"><span class="pre">requires_grad=True</span></code> 的可训练参数可通过 <code class="docutils literal notranslate"><span class="pre">get_trainable_parameters(with_gradients=True)</span></code> 获取。</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>manager.get(
+    key,
+    default=None,
+    namespace=None,
+    units=None,
+    expected_type=None,
+    required=False,
+    bounds=None,
+)
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>参数</p></th>
+<th class="head"><p>含义</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">key</span></code></p></td>
+<td><p>参数键，可相对<code class="docutils literal notranslate"><span class="pre">namespace</span></code>解析。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">default</span></code></p></td>
+<td><p>返回值当键不存在且<code class="docutils literal notranslate"><span class="pre">required</span></code>为假时。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">namespace</span></code></p></td>
+<td><p>Namespace前缀在解决过程中使用。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">units</span></code></p></td>
+<td><p>请求的输出单位；请求的单位转换始终检查（读取操作没有验证开关，其他任何关键字都会引发 <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>）。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">expected_type</span></code></p></td>
+<td><p>要求的 Python 或兼容张量的值类型；期望 <code class="docutils literal notranslate"><span class="pre">float</span></code> 时可将整数值拓宽，布尔值绝不视为数字，也不会对任何值进行窄化转换。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">required</span></code></p></td>
+<td><p>键不存在时抛出 <code class="docutils literal notranslate"><span class="pre">KeyError</span></code>。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bounds</span></code></p></td>
+<td><p>可选访问时间 bounds. 超出范围的值被截断为 <code class="docutils literal notranslate"><span class="pre">UserWarning</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+<p><code class="docutils literal notranslate"><span class="pre">get_parameter(key)</span></code>返回<code class="docutils literal notranslate"><span class="pre">ParameterSpec</span></code> metadata对象，而非参数值。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">relic.parameters</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_global_manager</span>
+
+<span class="n">manager</span> <span class="o">=</span> <span class="n">get_global_manager</span><span class="p">()</span>
+<span class="n">density</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+    <span class="s2">&quot;relic.physical.constants.air.density_stp&quot;</span><span class="p">,</span>
+    <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">units</span><span class="o">=</span><span class="s2">&quot;kg m-3&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">spec</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">get_parameter</span><span class="p">(</span><span class="s2">&quot;relic.physical.constants.air.density_stp&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">density</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">units</span><span class="p">,</span> <span class="n">spec</span><span class="o">.</span><span class="n">description</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>其他管理操作包括<code class="docutils literal notranslate"><span class="pre">set_value</span></code>， <code class="docutils literal notranslate"><span class="pre">register</span></code>， <code class="docutils literal notranslate"><span class="pre">list</span></code>， <code class="docutils literal notranslate"><span class="pre">snapshot</span></code>， <code class="docutils literal notranslate"><span class="pre">restore</span></code>， <code class="docutils literal notranslate"><span class="pre">diff</span></code>， <code class="docutils literal notranslate"><span class="pre">export</span></code>， <code class="docutils literal notranslate"><span class="pre">freeze</span></code>， <code class="docutils literal notranslate"><span class="pre">unfreeze</span></code>， <code class="docutils literal notranslate"><span class="pre">get_trainable_parameters</span></code>和<code class="docutils literal notranslate"><span class="pre">validate_parameters</span></code>。在规范管理者上使用它们，不要创建第二个参数注册表。</p>
+</section>
+<section id="functor-parameter-access">
+<h2>Functor参数访问<a class="headerlink" href="#functor-parameter-access" title="Link to this heading"></a></h2>
+<p>在<code class="docutils literal notranslate"><span class="pre">FunctorBase</span></code>子类中使用Functor拥有的解析器：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">relic.core.functor</span><span class="w"> </span><span class="kn">import</span> <span class="n">BiologicalProcessFunctor</span><span class="p">,</span> <span class="n">FunctorMetadata</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">relic.core.functor.functor_types</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ProcessCategory</span><span class="p">,</span>
+    <span class="n">SpatialScale</span><span class="p">,</span>
+    <span class="n">VariableKind</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ParameterLookupDemo</span><span class="p">(</span><span class="n">BiologicalProcessFunctor</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="n">FunctorMetadata</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;param_lookup_demo&quot;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Resolve a governed parameter via FunctorBase.&quot;</span><span class="p">,</span>
+            <span class="n">category</span><span class="o">=</span><span class="n">ProcessCategory</span><span class="o">.</span><span class="n">BIOLOGICAL_PROCESS</span><span class="p">,</span>
+            <span class="n">mathematical_expression</span><span class="o">=</span><span class="s2">&quot;dx/dt = -alpha * x&quot;</span><span class="p">,</span>
+            <span class="n">references</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Executable documentation example&quot;</span><span class="p">],</span>
+            <span class="n">parameters</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;stochastic.weather.temperature.reversion_rate&quot;</span><span class="p">:</span> <span class="s2">&quot;Mean reversion rate [day-1]&quot;</span>
+            <span class="p">},</span>
+            <span class="n">input_variables</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">],</span>
+            <span class="n">output_variables</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">],</span>
+            <span class="n">spatial_scale</span><span class="o">=</span><span class="n">SpatialScale</span><span class="o">.</span><span class="n">POINT</span><span class="p">,</span>
+            <span class="n">variable_kind</span><span class="o">=</span><span class="n">VariableKind</span><span class="o">.</span><span class="n">STATE</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;param_lookup_demo&quot;</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="p">{},</span> <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">read_reversion_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="n">param</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_parameter_value</span><span class="p">(</span>
+            <span class="s2">&quot;stochastic.weather.temperature.reversion_rate&quot;</span><span class="p">,</span>
+            <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s2">&quot;day-1&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">raw</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">value</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">param</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">raw</span><span class="o">.</span><span class="n">detach</span><span class="p">())</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span> <span class="s2">&quot;detach&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">raw</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{}</span>
+
+
+<span class="n">demo</span> <span class="o">=</span> <span class="n">ParameterLookupDemo</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">demo</span><span class="o">.</span><span class="n">read_reversion_rate</span><span class="p">(),</span> <span class="mi">4</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>FunctorBase.get_parameter_value(
+    name,
+    *,
+    units=None,
+    bounds=None,
+    validate=True,
+    namespace=None,
+    source_order=(&quot;manager&quot;, &quot;config&quot;),
+    expected_type=None,
+    required=False,
+)
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">source_order</span></code> 控制 YAML 数据库（<code class="docutils literal notranslate"><span class="pre">&quot;manager&quot;</span></code>）与 Functor 配置（<code class="docutils literal notranslate"><span class="pre">&quot;config&quot;</span></code>，由 <code class="docutils literal notranslate"><span class="pre">set_parameter_value</span></code> 写入）之间的查找优先级；其他名称会引发 <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>。没有调用方提供的默认值，也不动态注册：缺失参数为 <code class="docutils literal notranslate"><span class="pre">None</span></code>，<code class="docutils literal notranslate"><span class="pre">required=True</span></code> 则使缺失立即报错。</p>
+<p>非Functor代码使用<code class="docutils literal notranslate"><span class="pre">get_global_manager().get(...)</span></code>。科学Functors不得直接调用全局管理器、硬编码科学后备方案或修改管理器缓存。</p>
+</section>
+<section id="physical-constants">
+<h2>物理常数<a class="headerlink" href="#physical-constants" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">relic.utils.physical_constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_physical_constant</span>
+
+<span class="n">rho_air</span> <span class="o">=</span> <span class="n">get_physical_constant</span><span class="p">(</span><span class="s2">&quot;air_density_standard&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">get_physical_constant(name)</span></code> 解析规范常量数据库；名称 <code class="docutils literal notranslate"><span class="pre">air_density_standard</span></code> 解析为 <code class="docutils literal notranslate"><span class="pre">relic.physical.constants.air.density_stp</span></code>（1.293 kg m-3），即 0 degC、101.325 kPa 下的干空气密度。这是参考常量，不是任意状态下的空气密度：需要当前空气密度的过程代码通过 <code class="docutils literal notranslate"><span class="pre">relic.scientific.hydrosphere.utils.psychrometrics.compute_moist_air_density</span></code>，由温度、压力和水汽压计算湿空气密度（如 <code class="docutils literal notranslate"><span class="pre">PenmanMonteithET</span></code> 所做的那样）。不要在 Python 或领域参数文件中重复定义常量。</p>
+</section>
+<section id="related-documentation">
+<h2>相关文档<a class="headerlink" href="#related-documentation" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="../architecture.html"><span class="std std-doc">架构</span></a></p></li>
+<li><p><a class="reference internal" href="../api/core_runtime.html"><span class="std std-doc">Core Runtime API（核心运行时）</span></a></p></li>
+<li><p><a class="reference internal" href="../api/parameters_contracts.html"><span class="std std-doc">Parameter Contracts API（参数契约）</span></a></p></li>
+<li><p><a class="reference internal" href="state_functors_and_simulation.html"><span class="std std-doc">State、Functors 与模拟</span></a></p></li>
+<li><p><a class="reference internal" href="../science/index.html"><span class="std std-doc">Science 索引</span></a></p></li>
+<li><p><a class="reference internal" href="../theory/index.html"><span class="std std-doc">Theory 索引</span></a></p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="installation_and_imports.html" class="btn btn-neutral float-left" title="安装与导入" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="state_functors_and_simulation.html" class="btn btn-neutral float-right" title="状态、Functors 与模拟" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

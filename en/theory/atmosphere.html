@@ -1,0 +1,874 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Atmosphere Theory &mdash; RELIC 1.0.0 Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=mono5" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=a12e3537"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../_static/language_switch.js?v=mono5"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Biosphere Theory" href="biosphere.html" />
+    <link rel="prev" title="Numerical Integration, Splitting, Stability, Scale Coupling, and Hybrid Events" href="numerics.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            RELIC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">RELIC Guide</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../architecture.html">System Architecture</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#scope-and-architectural-contract">Scope and architectural contract</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#architecture-capability-map">Architecture capability map</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#package-ownership-and-seven-layer-map">Package ownership and seven-layer map</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#four-scientific-abstractions">Four scientific abstractions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#functor-lifecycle-and-metadata">Functor lifecycle and metadata</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#variable-roles-and-state-ownership">Variable roles and state ownership</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#parameters-constants-units-and-time">Parameters, constants, units, and time</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#simulator-execution-rates-and-device-policy">Simulator, execution rates, and device policy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#structural-scientific-layer">Structural scientific layer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#end-to-end-assembly-and-execution">End-to-end assembly and execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#connection-and-conservation-rules">Connection and conservation rules</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Scientific Theory and Governing Equations</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="foundations.html">Mathematical Foundations, State, Units, and Conservation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="foundations.html#architectural-contract-and-notation">Architectural contract and notation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="foundations.html#four-scientific-abstractions-and-functor-lifecycle">Four scientific abstractions and Functor lifecycle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="foundations.html#spatial-quantity-basis-and-temporal-overlap-laws">Spatial quantity basis and temporal overlap laws</a></li>
+<li class="toctree-l3"><a class="reference internal" href="foundations.html#universal-conservation-and-balance-laws">Universal conservation and balance laws</a></li>
+<li class="toctree-l3"><a class="reference internal" href="foundations.html#transactional-statemanager-governance-i1-i7">Transactional StateManager governance (<code class="docutils literal notranslate"><span class="pre">I1</span></code>–<code class="docutils literal notranslate"><span class="pre">I7</span></code>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="foundations.html#centralized-parametermanager-and-physical-constant-ssot">Centralized ParameterManager and physical-constant SSOT</a></li>
+<li class="toctree-l3"><a class="reference internal" href="foundations.html#piecewise-smooth-discrete-adjoint-differentiation-and-device-policy">Piecewise-smooth discrete adjoint differentiation and device policy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="foundations.html#bounded-mathematical-contracts-and-runtime-boundary-i-vs-n">Bounded mathematical contracts and runtime boundary (<code class="docutils literal notranslate"><span class="pre">[I]</span></code> vs <code class="docutils literal notranslate"><span class="pre">[N]</span></code>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="foundations.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dec_iphs_generic.html">DEC, IPHS, GENERIC, Ports, and Reaction Structure</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dec_iphs_generic.html#structural-governance-lifecycle">Structural governance lifecycle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dec_iphs_generic.html#discrete-exterior-calculus-relic-computation-operators-dec">Discrete exterior calculus (<code class="docutils literal notranslate"><span class="pre">relic.computation.operators.dec</span></code>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dec_iphs_generic.html#irreversible-port-hamiltonian-and-generic-lowering">Irreversible port-Hamiltonian and GENERIC lowering</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dec_iphs_generic.html#equivalence-certificates-and-live-repository-inventory">Equivalence certificates and live repository inventory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dec_iphs_generic.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="numerics.html">Numerical Integration, Splitting, Stability, Scale Coupling, and Hybrid Events</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="numerics.html#method-of-lines-formulation-and-solver-registry">Method-of-lines formulation and solver registry</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numerics.html#deterministic-time-stepping-linear-and-nonlinear-solvers">Deterministic time-stepping, linear, and nonlinear solvers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numerics.html#multi-rate-execution-operator-splitting-and-step-control">Multi-rate execution, operator splitting, and step control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numerics.html#transport-stability-and-nonlinear-richards-closure">Transport stability and nonlinear Richards closure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numerics.html#conservative-spatial-remapping-and-internal-cross-domain-couplers">Conservative spatial remapping and internal cross-domain couplers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numerics.html#transverse-hybrid-events-and-saltation-matrix-sensitivities">Transverse hybrid events and saltation-matrix sensitivities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numerics.html#stochastic-memory-ale-dae-and-topology-transition-families">Stochastic, memory, ALE, DAE, and topology-transition families</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numerics.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Atmosphere Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#scope-process-inventory-and-certificate-map">Scope, process inventory, and certificate map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#solar-thermal-and-canopy-radiation">Solar, thermal, and canopy radiation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#surface-layer-turbulence-and-boundary-layer-tracer-transport">Surface-layer turbulence and boundary-layer tracer transport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#gas-phase-chemistry-open-tropospheric-kinetics-and-closed-level-5-generic-point">Gas-phase chemistry: open tropospheric kinetics and closed Level-5 GENERIC point</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#stochastic-atmospheric-forcing-and-replay-contracts">Stochastic atmospheric forcing and replay contracts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#atmospheric-observation-operators">Atmospheric observation operators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="biosphere.html">Biosphere Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="biosphere.html#scope-process-inventory-and-certificate-map">Scope, process inventory, and certificate map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="biosphere.html#photosynthesis-and-stomatal-conductance">Photosynthesis and stomatal conductance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="biosphere.html#autotrophic-respiration-allocation-and-structural-growth">Autotrophic respiration, allocation, and structural growth</a></li>
+<li class="toctree-l3"><a class="reference internal" href="biosphere.html#phenology-and-abiotic-stress-closures">Phenology and abiotic stress closures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="biosphere.html#biogenic-volatile-organic-compound-bvoc-synthesis-and-emission">Biogenic volatile organic compound (BVOC) synthesis and emission</a></li>
+<li class="toctree-l3"><a class="reference internal" href="biosphere.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hydrosphere.html">Hydrosphere Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hydrosphere.html#scope-process-inventory-and-certificate-map">Scope, process inventory, and certificate map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydrosphere.html#evapotranspiration-closures">Evapotranspiration closures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydrosphere.html#snowpack-mass-energy-balance-and-snow-albedo">Snowpack mass-energy balance and snow albedo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydrosphere.html#soil-water-retention-bucket-storage-and-richards-vadose-flow">Soil-water retention, bucket storage, and Richards vadose flow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydrosphere.html#surface-runoff-and-hybrid-event-driven-hortonian-ponding">Surface runoff and hybrid event-driven Hortonian ponding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydrosphere.html#subsurface-stormflow-vadose-aquifer-exchange-and-groundwater">Subsurface stormflow, vadose-aquifer exchange, and groundwater</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydrosphere.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pedosphere.html">Pedosphere Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pedosphere.html#scope-process-inventory-and-certificate-map">Scope, process inventory, and certificate map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pedosphere.html#soil-organic-carbon-turnover-and-cross-sphere-interface-maps">Soil organic carbon turnover and cross-sphere interface maps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pedosphere.html#soil-nitrogen-root-p-uptake-and-c-n-stoichiometry-boundaries">Soil nitrogen, root P uptake, and C:N stoichiometry boundaries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pedosphere.html#wetland-methane-request-and-coupler-architecture">Wetland methane request-and-coupler architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pedosphere.html#porous-media-water-gas-solute-dae-ale-and-memory-transport">Porous-media water, gas, solute, DAE, ALE, and memory transport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pedosphere.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="anthroposphere.html">Anthroposphere Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="anthroposphere.html#scope-process-inventory-and-fail-closed-boundary-status">Scope, process inventory, and fail-closed boundary status</a></li>
+<li class="toctree-l3"><a class="reference internal" href="anthroposphere.html#fail-closed-level-0-boundaries-vs-implemented-emission-operators">Fail-closed Level-0 boundaries vs implemented emission operators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="anthroposphere.html#continuous-time-markov-land-use-transitions-and-parameter-projection">Continuous-time Markov land-use transitions and parameter projection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="anthroposphere.html#management-coordination-and-agricultural-water-nutrient-ports">Management coordination and agricultural water-nutrient ports</a></li>
+<li class="toctree-l3"><a class="reference internal" href="anthroposphere.html#managed-biomass-removal-livestock-grazing-fire-and-tillage">Managed biomass removal, livestock grazing, fire, and tillage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="anthroposphere.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="isotopes_transport.html">Stable Isotopes and General Transport Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="isotopes_transport.html#scope-component-inventory-and-certificate-map">Scope, component inventory, and certificate map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="isotopes_transport.html#stable-isotope-ratios-exact-binary-fractionation-and-fail-closed-ledger-status">Stable-isotope ratios, exact binary fractionation, and fail-closed ledger status</a></li>
+<li class="toctree-l3"><a class="reference internal" href="isotopes_transport.html#general-conservative-transport-functors">General conservative transport Functors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="isotopes_transport.html#references">References</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../science/index.html">Core Scientific Class Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../science/anthroposphere.html">Anthroposphere Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#atmosphere-coupling">atmosphere_coupling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#sector-allocation">sector_allocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#species-mapping">species_mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#anthroposphere-interface-mapping">anthroposphere_interface_mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#emission-inventory">emission_inventory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#land-use-parameter-mapping">land_use_parameter_mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#land-use-transitions">land_use_transitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#management-coordinator">management_coordinator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#fertilization-management">fertilization_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#fire-management">fire_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#grazing-management">grazing_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#harvest-management">harvest_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#irrigationmanagement">IrrigationManagement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#tillagemanagement">TillageManagement</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/atmosphere.html">Atmosphere Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#chemistryfunctor">ChemistryFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#class-atmosphere-chemistry-chemistry-functor-closed-constant-volume">ChemistryFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#environmentalforcingfunctor">EnvironmentalForcingFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#radiationenergyconservationvalidator">RadiationEnergyConservationValidator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#radiationfield">RadiationField</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#radiationfunctor">RadiationFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#markedpoissonrainfallfunctor">MarkedPoissonRainfallFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#ornsteinuhlenbecktemperaturefunctor">OrnsteinUhlenbeckTemperatureFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#atmosphericadvectiondiffusionfunctor">AtmosphericAdvectionDiffusionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#drydepositionaggregator">DryDepositionAggregator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#eddydiffusionblmfunctor">EddyDiffusionBLMFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#turbulencefunctor">TurbulenceFunctor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/biosphere.html">Biosphere Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#meganmodel">MEGANModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#isoprenesynthesis">IsopreneSynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#monoterpenesynthesis">MonoterpeneSynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#sesquiterpenestressmodel">SesquiterpeneStressModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#sesquiterpenesynthesis">SesquiterpeneSynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#biomassallocation">BiomassAllocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#phenologygrowth">PhenologyGrowth</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#structuralgrowth">StructuralGrowth</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#cropphenology">CropPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#gddphenology">GDDPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#gsiphenology">GSIPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#staticphenology">StaticPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#phenologyfunctor">PhenologyFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#farquharphotosynthesis">FarquharPhotosynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#medlynstomatalconductance">MedlynStomatalConductance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#autotrophicrespiration">AutotrophicRespiration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#growthrespiration">GrowthRespiration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#maintenancerespiration">MaintenanceRespiration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#nutrientstress">NutrientStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#ozonestress">OzoneStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#thermalstress">ThermalStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#waterstress">WaterStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#simplecanopyphotosynthesis">SimpleCanopyPhotosynthesis</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/hydrosphere.html">Hydrosphere Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#penman-monteith-et">penman_monteith_et</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#priestley-taylor-et">priestley_taylor_et</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#groundwater-dynamics">groundwater_dynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#subsurface-runoff">subsurface_runoff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#hortonianpondingeventfunctor">HortonianPondingEventFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#surfacepondingfunctor">SurfacePondingFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#surface-runoff">surface_runoff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#snow-albedo">snow_albedo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#snow-pack">snow_pack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#bucket-soil-moisture">bucket_soil_moisture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#soilwaterretention">SoilWaterRetention</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#richards-soil-moisture">richards_soil_moisture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#capillary-rise-transport">capillary_rise_transport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#vertical-percolation-transport">vertical_percolation_transport</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/pedosphere.html">Pedosphere Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#carbonpoolsfunctor">CarbonPoolsFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#poolsmatrix">PoolsMatrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#firstorderdecomposition">FirstOrderDecomposition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#microbialenzymedecomposition">MicrobialEnzymeDecomposition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#litterfallinterfacemapper">LitterfallInterfaceMapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#pedosphereinterfacemapper">PedosphereInterfaceMapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methanebudgetcoupler">MethaneBudgetCoupler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methaneoxidationfunctor">MethaneOxidationFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methaneproductionfunctor">MethaneProductionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methanescalecouplingfunctor">MethaneScaleCouplingFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methanetransportfunctor">MethaneTransportFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#denitrification-process">denitrification_process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#mineralizationprocess">MineralizationProcess</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#nitrification-process">nitrification_process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#nitrogenleachingprocess">NitrogenLeachingProcess</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#nitrogencycling">NitrogenCycling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#rootnutrientuptake">RootNutrientUptake</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#stoichiometryconstraint">StoichiometryConstraint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#equilibriumsorptionfunctor">EquilibriumSorptionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#gasdiffusion1d">GasDiffusion1D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#movingdomaindiffusionfunctor">MovingDomainDiffusionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#soil-water-transport">soil_water_transport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#soluteadvectiondiffusion1d">SoluteAdvectionDiffusion1D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#tworegionmasstransferfunctor">TwoRegionMassTransferFunctor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/isotopes.html">Stable-Isotope Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/isotopes.html#isotopeheartbeatfunctor">IsotopeHeartbeatFunctor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/transport.html">General Transport Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#advection-diffusion">advection_diffusion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#linear-advection">linear_advection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#fickian-diffusion">fickian_diffusion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#class-transport-diffusion-fickian-diffusion-strict-runtime-point">fickian_diffusion</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/index.html#complete-coverage-matrix">Complete coverage matrix</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">RELIC Workflows</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#learning-tracks">Learning tracks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#how-to-use-a-tutorial">How to use a tutorial</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/installation_and_imports.html">Installation and Imports</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/configuration_and_parameters.html">Configuration and Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/state_functors_and_simulation.html">State, Functors, and Simulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/graph_validation_and_execution.html">Graph Validation and Execution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/persistence_outputs_and_data_io.html">Persistence, Outputs, and Data I/O</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/coupling_workflows.html">Coupling Workflows</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/calibration_sensitivity_and_uq.html">Calibration, Sensitivity Analysis, and Uncertainty Quantification</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/devices_and_distributed.html">Devices and Distributed Execution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/cli_and_extensions.html">CLI and Extensions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestration.html">Graph Orchestration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#canonical-owners">Canonical owners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#graphir">GraphIR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#portspec-and-the-contract-boundary">PortSpec and the contract boundary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#validation">Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#adapters">Adapters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#compilation-and-execution">Compilation and execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#strict-iphs-dec-boundary">Strict IPHS/DEC boundary</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../operations.html">Operations Quick Start</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#select-a-workflow">Select a workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#environment-preflight">Environment preflight</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#first-successful-run">First successful run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#benchmark-style-acceptance-checklist">Benchmark-style acceptance checklist</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#minimal-runtime-sequence">Minimal runtime sequence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#troubleshooting-order">Troubleshooting order</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#immediate-stop-conditions">Immediate stop conditions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../extension_contracts.html">Extension Contracts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#reuse-first-decision">Reuse-first decision</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#adding-a-scientific-functor">Adding a scientific Functor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#parameter-extension">Parameter extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#variable-contract-extension">Variable contract extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#graph-and-adapter-extension">Graph and adapter extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#external-extension-paths">External extension paths</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#scientific-structure-claims">Scientific structure claims</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#explicit-unavailable-scientific-boundaries">Explicit unavailable scientific boundaries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#anti-redundancy-boundary">Anti-redundancy boundary</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">Core API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/index.html#coverage-contract">Coverage contract</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/core_runtime.html">Core Runtime API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/parameters_contracts.html">Parameters and Parameter Contracts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/orchestration_validation.html">Orchestration, Contracts, and Validation API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/scientific_structure_extensions.html">Scientific Structure and Extension APIs</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">RELIC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Scientific Theory and Governing Equations</a></li>
+      <li class="breadcrumb-item active">Atmosphere Theory</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="atmosphere-theory">
+<h1>Atmosphere Theory<a class="headerlink" href="#atmosphere-theory" title="Link to this heading"></a></h1>
+<section id="scope-process-inventory-and-certificate-map">
+<h2>Scope, process inventory, and certificate map<a class="headerlink" href="#scope-process-inventory-and-certificate-map" title="Link to this heading"></a></h2>
+<p>The RELIC atmosphere domain (<code class="docutils literal notranslate"><span class="pre">relic.scientific.atmosphere</span></code>) supplies radiative
+energy partitioning, Monin-Obukhov surface-layer turbulence, vertical and
+three-dimensional boundary-layer tracer transport, parallel dry-deposition
+resistance networks, open photostationary and closed constant-volume gas-phase
+chemistry, and exact-replay stochastic weather generators (<em>Methods of
+Ecological Analysis</em>, Chapters 17, 18, and 27). In addition,
+<code class="docutils literal notranslate"><span class="pre">relic.coupling.observation</span></code> provides read-only <code class="docutils literal notranslate"><span class="pre">ScaleCouplingFunctor</span></code>
+observation operators that project surface fluxes and layered mixing ratios onto
+satellite column retrievals and eddy-covariance tower supports.</p>
+<p>Eleven concrete scientific Functors under <code class="docutils literal notranslate"><span class="pre">relic.scientific.atmosphere</span></code> carry
+twelve declarative <code class="docutils literal notranslate"><span class="pre">IPHSEquivalenceCertificate</span></code> files (eleven primary class
+certificates plus one secondary <code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">5</span></code> constructor-conditioned certificate on
+<code class="docutils literal notranslate"><span class="pre">ChemistryFunctor</span></code>):</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Functor</p></th>
+<th class="head"><p>Canonical bridge</p></th>
+<th class="head"><p>Cert. level</p></th>
+<th class="head"><p>Status</p></th>
+<th class="head"><p>Primary runtime role and state semantics</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference internal" href="../science/atmosphere.html#class-relic-scientific-atmosphere-radiation-radiationfunctor"><span class="std std-ref">RadiationFunctor</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">PhysicalFieldFunctor</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Shortwave, longwave, PAR/PPFD, and Beer-Lambert canopy APAR (<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../science/atmosphere.html#class-relic-scientific-atmosphere-radiation-radiationfield"><span class="std std-ref">RadiationField</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">PhysicalFieldFunctor</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">3</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Discrete cochain radiation field interpolation, finite-difference gradient, and clipping residual (<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../science/atmosphere.html#class-relic-scientific-atmosphere-radiation-energy-conservation-radiationenergyconservationvalidator"><span class="std std-ref">RadiationEnergyConservationValidator</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">PhysicalFieldFunctor</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">1</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Read-only radiative energy-balance residual observation (<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code> diagnostics)</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../science/atmosphere.html#class-relic-scientific-atmosphere-turbulence-turbulencefunctor"><span class="std std-ref">TurbulenceFunctor</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">TransportMechanismFunctor</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">3</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Monin-Obukhov similarity (<span class="math notranslate nohighlight">\(u_\ast\)</span>, <span class="math notranslate nohighlight">\(L\)</span>, <span class="math notranslate nohighlight">\(r_a\)</span>, <span class="math notranslate nohighlight">\(K_m\)</span>, <span class="math notranslate nohighlight">\(K_h\)</span>) and bulk aerodynamic fluxes (<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../science/atmosphere.html#class-relic-scientific-atmosphere-transport-eddy-diffusion-blm-eddydiffusionblmfunctor"><span class="std std-ref">EddyDiffusionBLMFunctor</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">TransportMechanismFunctor</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">3</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>1D vertical <span class="math notranslate nohighlight">\(K\)</span>-profile boundary-layer tracer diffusion (<code class="docutils literal notranslate"><span class="pre">ACCUMULATE</span></code>, <code class="docutils literal notranslate"><span class="pre">per_timestep=True</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../science/atmosphere.html#class-relic-scientific-atmosphere-transport-atmosphericadvectiondiffusionfunctor-atmosphericadvectiondiffusionfunctor"><span class="std std-ref">AtmosphericAdvectionDiffusionFunctor</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">TransportMechanismFunctor</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">3</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>3D finite-volume upwind advection and <span class="math notranslate nohighlight">\(K\)</span>-theory eddy diffusion (<code class="docutils literal notranslate"><span class="pre">ACCUMULATE</span></code>, <code class="docutils literal notranslate"><span class="pre">per_timestep=True</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../science/atmosphere.html#class-relic-scientific-atmosphere-environmental-forcing-environmentalforcingfunctor"><span class="std std-ref">EnvironmentalForcingFunctor</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">PhysicalFieldFunctor</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Validated boundary-forcing projection for meteorological and trace-gas inputs (<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../science/atmosphere.html#class-relic-scientific-atmosphere-transport-dry-deposition-aggregator-drydepositionaggregator"><span class="std std-ref">DryDepositionAggregator</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">TransportMechanismFunctor</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">3</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Wesely three-resistance dry-deposition velocity <span class="math notranslate nohighlight">\(v_d\)</span> and surface sink flux (<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../science/atmosphere.html#class-relic-scientific-atmosphere-chemistry-chemistryfunctor"><span class="std std-ref">ChemistryFunctor</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">PhysicalFieldFunctor</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">3</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Open tropospheric <span class="math notranslate nohighlight">\(\mathrm{NO}\)</span>-<span class="math notranslate nohighlight">\(\mathrm{NO}_2\)</span>-<span class="math notranslate nohighlight">\(\mathrm{O}_3\)</span> photostationary, BVOC oxidation, and <span class="math notranslate nohighlight">\(\mathrm{HO}_x\)</span> chemistry (<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../science/atmosphere.html#class-atmosphere-chemistry-chemistry-functor-closed-constant-volume"><span class="std std-ref">ChemistryFunctor (closed constant-volume)</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">PhysicalFieldFunctor</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">5</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Closed rigid adiabatic <span class="math notranslate nohighlight">\(\mathrm{NO} + \mathrm{O}_3 \rightarrow \mathrm{NO}_2 + \mathrm{O}_2\)</span> strict GENERIC runtime point (<code class="docutils literal notranslate"><span class="pre">ACCUMULATE</span></code> / <code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../science/atmosphere.html#class-relic-scientific-atmosphere-stochastic-temperature-ornsteinuhlenbecktemperaturefunctor"><span class="std std-ref">OrnsteinUhlenbeckTemperatureFunctor</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">PhysicalFieldFunctor</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Ornstein-Uhlenbeck air-temperature anomaly SDE via <code class="docutils literal notranslate"><span class="pre">EulerMaruyamaSolver</span></code> (<code class="docutils literal notranslate"><span class="pre">ACCUMULATE</span></code>, <code class="docutils literal notranslate"><span class="pre">per_timestep=True</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../science/atmosphere.html#class-relic-scientific-atmosphere-stochastic-rainfall-markedpoissonrainfallfunctor"><span class="std std-ref">MarkedPoissonRainfallFunctor</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">PhysicalFieldFunctor</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Compound Poisson-exponential storm generator via <code class="docutils literal notranslate"><span class="pre">GillespieSSA</span></code> (<code class="docutils literal notranslate"><span class="pre">ACCUMULATE</span></code>, <code class="docutils literal notranslate"><span class="pre">per_timestep=True</span></code>)</p></td>
+</tr>
+</tbody>
+</table>
+<p>General notation and conservation ledgers follow <a class="reference internal" href="foundations.html"><span class="std std-doc">Mathematical Foundations</span></a>,
+cochain and metriplectic brackets follow <a class="reference internal" href="dec_iphs_generic.html"><span class="std std-doc">DEC, IPHS, and GENERIC</span></a>,
+and time-stepping stability and stochastic replay rules follow <a class="reference internal" href="numerics.html"><span class="std std-doc">Numerical Methods</span></a>.</p>
+</section>
+<section id="solar-thermal-and-canopy-radiation">
+<h2>Solar, thermal, and canopy radiation<a class="headerlink" href="#solar-thermal-and-canopy-radiation" title="Link to this heading"></a></h2>
+<section id="surface-radiative-budget-and-spectral-par-partitioning">
+<h3>Surface radiative budget and spectral PAR partitioning<a class="headerlink" href="#surface-radiative-budget-and-spectral-par-partitioning" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">relic.scientific.atmosphere.radiation.RadiationFunctor</span></code> (<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>) evaluates
+downward and net shortwave and longwave irradiances [W m<span class="math notranslate nohighlight">\(^{-2}\)</span>] from potential
+insolation <span class="math notranslate nohighlight">\(S_{\mathrm{pot}}\)</span>, cosine solar zenith angle <span class="math notranslate nohighlight">\(\mu_0 = \cos\theta_z\)</span>,
+cloud fraction <span class="math notranslate nohighlight">\(f_c \in [0, 1]\)</span>, air and surface temperatures <span class="math notranslate nohighlight">\(T_a, T_s\)</span> [K],
+relative humidity <span class="math notranslate nohighlight">\(\mathrm{RH} \in [0, 100]\)</span>, surface albedo <span class="math notranslate nohighlight">\(\alpha \in [0, 1]\)</span>,
+and surface emissivity <span class="math notranslate nohighlight">\(\varepsilon_s \in (0, 1]\)</span> (<em>Methods of Ecological
+Analysis</em>, Chapter 17):</p>
+<div class="math notranslate nohighlight">
+\[
+S_\downarrow = S_{\mathrm{pot}}\,\tau_c(f_c),
+\qquad
+S_{\mathrm{net}} = (1 - \alpha)\,S_\downarrow,
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+L_\downarrow = \varepsilon_a(e_a, T_a, f_c)\,\sigma_{\mathrm{SB}} T_a^4,
+\qquad
+L_\uparrow = \varepsilon_s\,\sigma_{\mathrm{SB}} T_s^4 + (1 - \varepsilon_s)\,L_\downarrow,
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+L_{\mathrm{net}} = L_\downarrow - L_\uparrow
+= \varepsilon_s\left(L_\downarrow - \sigma_{\mathrm{SB}} T_s^4\right),
+\qquad
+R_n = S_{\mathrm{net}} + L_{\mathrm{net}},
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\sigma_{\mathrm{SB}}\)</span> is fetched from <code class="docutils literal notranslate"><span class="pre">relic.utils.physical_constants</span></code>
+(<code class="docutils literal notranslate"><span class="pre">get_physical_constant(&quot;stefan_boltzmann&quot;)</span></code>) and clear-sky atmospheric
+emissivity follows Brutsaert (1975), <span class="math notranslate nohighlight">\(\varepsilon_{a,\mathrm{clear}} = c_B\,(e_a / T_a)^{1/7}\)</span>,
+modulated by cloud cover. Photosynthetically active radiation (PAR) and
+photosynthetic photon flux density (<span class="math notranslate nohighlight">\(\mathrm{PPFD}\)</span>, [<span class="math notranslate nohighlight">\(\mu\)</span>mol m<span class="math notranslate nohighlight">\(^{-2}\)</span> s<span class="math notranslate nohighlight">\(^{-1}\)</span>])
+are split into direct-beam and diffuse components:</p>
+<div class="math notranslate nohighlight">
+\[
+I_{\mathrm{PAR}} = f_{\mathrm{PAR}}\,S_\downarrow,
+\qquad
+\mathrm{PPFD} = \kappa_{Q}\,I_{\mathrm{PAR}},
+\qquad
+\mathrm{PPFD}_{\mathrm{diff}} = f_{\mathrm{diff}}(\mu_0, f_c)\,\mathrm{PPFD},
+\qquad
+\mathrm{PPFD}_{\mathrm{dir}} = \mathrm{PPFD} - \mathrm{PPFD}_{\mathrm{diff}}.
+\]</div>
+<p>When <code class="docutils literal notranslate"><span class="pre">leaf_area_index</span></code> (<span class="math notranslate nohighlight">\(L_{\mathrm{AI}} \ge 0\)</span>) is present, canopy interception
+follows Beer-Lambert extinction with direct and diffuse extinction coefficients
+<span class="math notranslate nohighlight">\(k_b(\mu_0)\)</span> and <span class="math notranslate nohighlight">\(k_d\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+\tau_{\mathrm{dir}} = \exp\!\left(-k_b(\mu_0)\,L_{\mathrm{AI}}\right),
+\qquad
+\tau_{\mathrm{diff}} = \exp\!\left(-k_d\,L_{\mathrm{AI}}\right),
+\qquad
+f_{\mathrm{PAR,abs}} = 1 - \frac{I_{\mathrm{PAR,dir}}\tau_{\mathrm{dir}} + I_{\mathrm{PAR,diff}}\tau_{\mathrm{diff}}}{\max(I_{\mathrm{PAR}}, \varepsilon_I)}.
+\]</div>
+<p>Any positivity clamp applied to noisy shortwave or emissivity inputs is recorded
+explicitly in <code class="docutils literal notranslate"><span class="pre">diagnostics.radiation.shortwave_clipping_residual</span></code> and
+<code class="docutils literal notranslate"><span class="pre">diagnostics.radiation.emissivity_clipping_residual</span></code>.</p>
+</section>
+<section id="cochain-radiation-fields-and-radiative-balance-validation">
+<h3>Cochain radiation fields and radiative balance validation<a class="headerlink" href="#cochain-radiation-fields-and-radiative-balance-validation" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">relic.scientific.atmosphere.radiation.RadiationField</span></code> (<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">3</span></code>) treats
+gridded irradiance as a discrete scalar field on <code class="docutils literal notranslate"><span class="pre">grid_coordinates</span></code>, supporting
+bilinear or trilinear query projection onto <code class="docutils literal notranslate"><span class="pre">source_coordinates</span></code> and discrete
+gradient evaluation <span class="math notranslate nohighlight">\(g_h = d_h I_h\)</span> while reporting domain-clamp residuals in
+<code class="docutils literal notranslate"><span class="pre">diagnostics.radiation_field.clipping_residual</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">relic.scientific.atmosphere.radiation_energy_conservation.RadiationEnergyConservationValidator</span></code>
+(<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">1</span></code>) is a pure diagnostic observer (<span class="math notranslate nohighlight">\(\Delta x_h = 0\)</span>) verifying the
+pointwise radiative closure residual</p>
+<div class="math notranslate nohighlight">
+\[
+r_{\mathrm{rad}} = R_n - \left[(1 - \alpha)S_\downarrow + L_\downarrow - L_\uparrow\right]
+\]</div>
+<p>against the configured tolerance without overwriting any radiative flux channel.</p>
+</section>
+</section>
+<section id="surface-layer-turbulence-and-boundary-layer-tracer-transport">
+<h2>Surface-layer turbulence and boundary-layer tracer transport<a class="headerlink" href="#surface-layer-turbulence-and-boundary-layer-tracer-transport" title="Link to this heading"></a></h2>
+<section id="monin-obukhov-similarity-and-aerodynamic-resistance">
+<h3>Monin-Obukhov similarity and aerodynamic resistance<a class="headerlink" href="#monin-obukhov-similarity-and-aerodynamic-resistance" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">relic.scientific.atmosphere.turbulence.TurbulenceFunctor</span></code> (<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">3</span></code>) closes
+constant-flux surface-layer momentum and scalar exchange using Monin-Obukhov
+similarity theory (Monin and Obukhov, 1954; Businger et al., 1971; Dyer, 1974).
+For reference height <span class="math notranslate nohighlight">\(z_r\)</span>, displacement height <span class="math notranslate nohighlight">\(d_0\)</span>, aerodynamic and thermal
+roughness lengths <span class="math notranslate nohighlight">\(z_{0m}, z_{0h}\)</span>, von Karman constant <span class="math notranslate nohighlight">\(\kappa\)</span>, and virtual
+potential temperature <span class="math notranslate nohighlight">\(\theta_v\)</span>, the Obukhov length <span class="math notranslate nohighlight">\(L\)</span> and dimensionless
+stability parameter <span class="math notranslate nohighlight">\(\zeta = (z_r - d_0)/L\)</span> satisfy</p>
+<div class="math notranslate nohighlight">
+\[
+L = -\frac{\rho_a c_p \theta_v u_\ast^3}{\kappa g H_v},
+\qquad
+u_\ast = \frac{\kappa U(z_r)}{\ln\!\left(\frac{z_r - d_0}{z_{0m}}\right) - \Psi_m(\zeta) + \Psi_m\!\left(\frac{z_{0m}}{L}\right)},
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+r_a = \frac{\ln\!\left(\frac{z_r - d_0}{z_{0h}}\right) - \Psi_h(\zeta) + \Psi_h\!\left(\frac{z_{0h}}{L}\right)}{\kappa u_\ast},
+\qquad
+K_m(z) = \frac{\kappa u_\ast (z - d_0)}{\phi_m(\zeta)},
+\qquad
+K_h(z) = \frac{\kappa u_\ast (z - d_0)}{\phi_h(\zeta)},
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\phi_m, \phi_h\)</span> and their integrated stability corrections <span class="math notranslate nohighlight">\(\Psi_m, \Psi_h\)</span>
+follow Businger-Dyer unstable (<span class="math notranslate nohighlight">\(\zeta &lt; 0\)</span>) and linear stable (<span class="math notranslate nohighlight">\(\zeta \ge 0\)</span>)
+branches. Sensible and latent heat fluxes <span class="math notranslate nohighlight">\(H = \rho_a c_p (\theta_s - \theta_a)/r_a\)</span>
+and <span class="math notranslate nohighlight">\(\lambda E\)</span> are emitted as instantaneous <code class="docutils literal notranslate"><span class="pre">REPLACE</span></code> boundary fields.</p>
+</section>
+<section id="vertical-k-profile-and-3d-advection-diffusion-transport">
+<h3>Vertical K-profile and 3D advection-diffusion transport<a class="headerlink" href="#vertical-k-profile-and-3d-advection-diffusion-transport" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">relic.scientific.atmosphere.transport.eddy_diffusion_blm.EddyDiffusionBLMFunctor</span></code>
+(<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">3</span></code>) advances 1D vertical boundary-layer tracer concentrations <span class="math notranslate nohighlight">\(c(z,t)\)</span>
+across a boundary layer of height <span class="math notranslate nohighlight">\(h_{\mathrm{BL}}\)</span> with profile diffusivity
+(Troen and Mahrt, 1986; Holtslag and Boville, 1993):</p>
+<div class="math notranslate nohighlight">
+\[
+K_z(z) = \kappa\,w_s\,z\left(1 - \frac{z}{h_{\mathrm{BL}}}\right)^p,
+\qquad
+0 \le z \le h_{\mathrm{BL}},
+\]</div>
+<p>discretized in conservative finite-volume cochain form</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\mathrm{d}c_h}{\mathrm{d}t} = -D_h q_h + G_h u_h,
+\qquad
+q_h = -\star_{K_z} d_h c_h,
+\qquad
+\star_{K_z} = \star_{K_z}^{\mathsf{T}} \succeq 0,
+\]</div>
+<p>where surface emissions and dry-deposition sinks enter only through the boundary
+port <span class="math notranslate nohighlight">\(G_h u_h\)</span>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">relic.scientific.atmosphere.transport.AtmosphericAdvectionDiffusionFunctor.AtmosphericAdvectionDiffusionFunctor</span></code>
+(<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">3</span></code>) generalizes tracer transport to three-dimensional structured grids
+with wind components <span class="math notranslate nohighlight">\((u, v, w)\)</span> and anisotropic eddy diffusivities
+<span class="math notranslate nohighlight">\(\mathbf{K} = \operatorname{diag}(K_x, K_y, K_z)\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\partial c}{\partial t} + \nabla \cdot (\mathbf{v} c - \mathbf{K}\nabla c) = s_{\mathrm{ext}},
+\]</div>
+<p>using conservative upwind advective face fluxes and centered diffusive face
+fluxes. Both transport Functors emit integrated per-step concentration
+increments via <code class="docutils literal notranslate"><span class="pre">UpdateItem(ACCUMULATE,</span> <span class="pre">per_timestep=True)</span></code> and verify discrete
+column or volume mass closure against boundary fluxes.</p>
+</section>
+<section id="environmental-forcing-projection-and-wesely-dry-deposition">
+<h3>Environmental forcing projection and Wesely dry deposition<a class="headerlink" href="#environmental-forcing-projection-and-wesely-dry-deposition" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">relic.scientific.atmosphere.environmental_forcing.EnvironmentalForcingFunctor</span></code>
+(<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>) validates physical bounds, unit consistency, and finiteness of
+prescribed meteorological and trace-gas driver arrays before projecting them
+into <code class="docutils literal notranslate"><span class="pre">StateManager</span></code> via <code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">relic.scientific.atmosphere.transport.dry_deposition_aggregator.DryDepositionAggregator</span></code>
+(<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">3</span></code>) computes species-resolved dry-deposition velocities <span class="math notranslate nohighlight">\(v_{d,s}\)</span>
+[m s<span class="math notranslate nohighlight">\(^{-1}\)</span>] and downward surface removal fluxes <span class="math notranslate nohighlight">\(F_{\mathrm{dep},s} = v_{d,s} c_s(z_r)\)</span>
+using the Wesely (1989) series-parallel resistance network (aerodynamic
+resistance <span class="math notranslate nohighlight">\(r_a\)</span>, quasi-laminar sublayer resistance <span class="math notranslate nohighlight">\(r_{b,s} = \frac{2}{\kappa u_\ast}(\mathrm{Sc}_s / \mathrm{Pr})^{2/3}\)</span>,
+and bulk canopy/surface resistance <span class="math notranslate nohighlight">\(r_{c,s}\)</span> combining stomatal, cuticular,
+mesophyll, and ground pathways in parallel):</p>
+<div class="math notranslate nohighlight">
+\[
+v_{d,s} = \frac{1}{r_a + r_{b,s} + r_{c,s}} + v_{\mathrm{grav},s},
+\qquad
+F_{\mathrm{dep},s} = v_{d,s}\,c_s(z_r) \ge 0.
+\]</div>
+<p>Because <span class="math notranslate nohighlight">\(r_a, r_{b,s}, r_{c,s} &gt; 0\)</span>, conductance <span class="math notranslate nohighlight">\(v_{d,s}\)</span> is strictly positive
+and defines a passive linear boundary sink (<span class="math notranslate nohighlight">\(\star_{v_d} \succeq 0\)</span>) without
+directly mutating atmospheric concentration storage; the selected atmospheric
+transport owner consumes <span class="math notranslate nohighlight">\(F_{\mathrm{dep},s}\)</span> once.</p>
+</section>
+</section>
+<section id="gas-phase-chemistry-open-tropospheric-kinetics-and-closed-level-5-generic-point">
+<h2>Gas-phase chemistry: open tropospheric kinetics and closed Level-5 GENERIC point<a class="headerlink" href="#gas-phase-chemistry-open-tropospheric-kinetics-and-closed-level-5-generic-point" title="Link to this heading"></a></h2>
+<section id="open-tropospheric-photostationary-and-bvoc-hox-mode-level-3">
+<h3>Open tropospheric photostationary and BVOC-HOx mode (Level 3)<a class="headerlink" href="#open-tropospheric-photostationary-and-bvoc-hox-mode-level-3" title="Link to this heading"></a></h3>
+<p>In its default open-atmosphere configuration,
+<code class="docutils literal notranslate"><span class="pre">relic.scientific.atmosphere.chemistry.ChemistryFunctor</span></code> (<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">3</span></code>) evaluates
+tropospheric <span class="math notranslate nohighlight">\(\mathrm{NO}\)</span>-<span class="math notranslate nohighlight">\(\mathrm{NO}_2\)</span>-<span class="math notranslate nohighlight">\(\mathrm{O}_3\)</span> photostationary
+kinetics coupled to biogenic VOC (<span class="math notranslate nohighlight">\(\mathrm{C_5H_8}\)</span>, monoterpene, and
+sesquiterpene) oxidation by <span class="math notranslate nohighlight">\(\mathrm{OH}\)</span>, <span class="math notranslate nohighlight">\(\mathrm{O}_3\)</span>, and <span class="math notranslate nohighlight">\(\mathrm{NO}_3\)</span>
+(<em>Methods of Ecological Analysis</em>, Chapter 18; Leighton, 1961; Atkinson et al.,
+2006; Warneck and Williams, 2012). Key photolysis and thermal channels include:</p>
+<div class="math notranslate nohighlight">
+\[
+\mathrm{NO}_2 + h\nu \xrightarrow{J_{\mathrm{NO}_2}} \mathrm{NO} + \mathrm{O}(^3\mathrm{P}),
+\qquad
+\mathrm{O}(^3\mathrm{P}) + \mathrm{O}_2 + \mathrm{M} \longrightarrow \mathrm{O}_3 + \mathrm{M},
+\qquad
+\mathrm{NO} + \mathrm{O}_3 \xrightarrow{k_3(T)} \mathrm{NO}_2 + \mathrm{O}_2,
+\]</div>
+<p>with Arrhenius rate coefficient <span class="math notranslate nohighlight">\(k_3(T) = A_3 \exp(-E_3 / (R T))\)</span> and spectral
+quantum-yield temperature interpolation for <span class="math notranslate nohighlight">\(J_{\mathrm{NO}_2}\)</span> and
+<span class="math notranslate nohighlight">\(J_{\mathrm{O}(^1\mathrm{D})}\)</span>. In photostationary equilibrium without peroxy
+radical perturbation, the Leighton ratio satisfies</p>
+<div class="math notranslate nohighlight">
+\[
+\Phi_{\mathrm{PSS}} = \frac{J_{\mathrm{NO}_2}[\mathrm{NO}_2]}{k_3(T)[\mathrm{NO}][\mathrm{O}_3]} = 1,
+\qquad
+[\mathrm{O}_3]_{\mathrm{PSS}} = \frac{J_{\mathrm{NO}_2}[\mathrm{NO}_2]}{k_3(T)[\mathrm{NO}]}.
+\]</div>
+<p>Because actinic photon driving (<span class="math notranslate nohighlight">\(J_{\mathrm{NO}_2} &gt; 0\)</span>), external BVOC sources,
+and open boundary conditions supply external free energy, the default mode is
+certified at <code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">3</span></code> (stoichiometric reaction-operator factorization
+<span class="math notranslate nohighlight">\(\dot{\mathbf{c}} = \mathbf{N}\mathbf{r}(\mathbf{c}, T, J)\)</span> with verified <span class="math notranslate nohighlight">\(\mathrm{NO}_x\)</span>
+and oxidant accounting, without claiming closed thermodynamic GENERIC degeneracy).</p>
+</section>
+<section id="closed-constant-volume-adiabatic-generic-runtime-point-level-5">
+<h3>Closed constant-volume adiabatic GENERIC runtime point (Level 5)<a class="headerlink" href="#closed-constant-volume-adiabatic-generic-runtime-point-level-5" title="Link to this heading"></a></h3>
+<p>Under the secondary constructor-conditioned certificate
+<code class="docutils literal notranslate"><span class="pre">constructor_selection</span> <span class="pre">=</span> <span class="pre">{physical_boundary:</span> <span class="pre">&quot;closed_constant_volume&quot;}</span></code>
+(<a class="reference internal" href="../science/atmosphere.html#class-atmosphere-chemistry-chemistry-functor-closed-constant-volume"><span class="std std-ref">ChemistryFunctor closed constant-volume</span></a>,
+<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">5</span></code>), <code class="docutils literal notranslate"><span class="pre">ChemistryFunctor</span></code> restricts execution to an isolated, rigid,
+constant-volume (<span class="math notranslate nohighlight">\(V\)</span> = <code class="docutils literal notranslate"><span class="pre">box_volume</span></code> [m<span class="math notranslate nohighlight">\(^3\)</span>]) adiabatic gas cell containing
+dark thermal titration</p>
+<div class="math notranslate nohighlight">
+\[
+\mathrm{NO} + \mathrm{O}_3 \xrightarrow{k_3(T)} \mathrm{NO}_2 + \mathrm{O}_2
+\]</div>
+<p>with zero actinic flux (<span class="math notranslate nohighlight">\(J = 0\)</span>) and zero matter or heat ports. Let
+<span class="math notranslate nohighlight">\(\mathbf{x} = (n_{\mathrm{NO}}, n_{\mathrm{NO}_2}, n_{\mathrm{O}_3}, n_{\mathrm{O}_2}, U)^{\mathsf{T}}\)</span>
+denote the molar inventories <span class="math notranslate nohighlight">\(\mathbf{n}\)</span> [mol] (<code class="docutils literal notranslate"><span class="pre">box_no_amount</span></code>,
+<code class="docutils literal notranslate"><span class="pre">box_no2_amount</span></code>, <code class="docutils literal notranslate"><span class="pre">box_o3_amount</span></code>, <code class="docutils literal notranslate"><span class="pre">box_o2_amount</span></code>) and total NASA7 internal
+energy <span class="math notranslate nohighlight">\(U\)</span> [J] (<code class="docutils literal notranslate"><span class="pre">box_internal_energy</span></code>), with extended stoichiometric vector
+<span class="math notranslate nohighlight">\(\tilde{\boldsymbol{\nu}} = (\boldsymbol{\nu}^{\mathsf{T}}, 0)^{\mathsf{T}} = (-1, +1, -1, +1, 0)^{\mathsf{T}}\)</span>.
+On the strictly positive thermodynamic interior (<span class="math notranslate nohighlight">\(n_i &gt; 0\)</span>, <span class="math notranslate nohighlight">\(T &gt; 0\)</span>, partial
+pressures <span class="math notranslate nohighlight">\(p_i = n_i R T / V\)</span>, NASA7 chemical potentials
+<span class="math notranslate nohighlight">\(\mu_i = h_i(T) - T s_i(T) + R T \ln(p_i / p_0)\)</span>), the energy functional
+<span class="math notranslate nohighlight">\(E(\mathbf{x}) = U\)</span> and concave entropy <span class="math notranslate nohighlight">\(S(\mathbf{n}, U)\)</span> yield conjugate
+effort covectors</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbf{e}_E = \frac{\partial E}{\partial \mathbf{x}} = (\mathbf{0}^{\mathsf{T}}, 1)^{\mathsf{T}},
+\qquad
+\mathbf{e}_S = \frac{\partial S}{\partial \mathbf{x}} = \left(-\frac{\boldsymbol{\mu}(\mathbf{n}, T)}{T}^{\mathsf{T}},\; \frac{1}{T}\right)^{\mathsf{T}},
+\]</div>
+<p>with positive reaction affinity <span class="math notranslate nohighlight">\(\mathcal{A} = -\boldsymbol{\nu}^{\mathsf{T}}\boldsymbol{\mu} &gt; 0\)</span>
+and forward molar rate <span class="math notranslate nohighlight">\(r &gt; 0\)</span> (Grmela and Ottinger, 1997; Mielke, 2011).
+Advancement through <code class="docutils literal notranslate"><span class="pre">relic.computation.operators.iphs.advance_reaction_network</span></code>
+satisfies the canonical GENERIC evolution (<span class="math notranslate nohighlight">\(L_h = 0\)</span>)</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\mathrm{d}\mathbf{x}}{\mathrm{d}t}
+= L_h\mathbf{e}_E + M_h\mathbf{e}_S
+= \tilde{\boldsymbol{\nu}}\,r,
+\qquad
+M_h(\mathbf{x}) = \frac{r\,T}{\mathcal{A}}\,\tilde{\boldsymbol{\nu}}\,\tilde{\boldsymbol{\nu}}^{\mathsf{T}} \succeq 0,
+\]</div>
+<p>with exact energy degeneracy <span class="math notranslate nohighlight">\(M_h(\mathbf{x})\mathbf{e}_E = \mathbf{0}\)</span>
+(<span class="math notranslate nohighlight">\(\Delta U = 0\)</span>), exact atomic nitrogen and oxygen conservation
+(<span class="math notranslate nohighlight">\(\Delta(n_{\mathrm{NO}} + n_{\mathrm{NO}_2}) = 0\)</span>,
+<span class="math notranslate nohighlight">\(\Delta(n_{\mathrm{NO}} + 2n_{\mathrm{NO}_2} + 3n_{\mathrm{O}_3} + 2n_{\mathrm{O}_2}) = 0\)</span>),
+and non-negative entropy production
+<span class="math notranslate nohighlight">\(\sigma_S = \mathbf{e}_S^{\mathsf{T}} M_h(\mathbf{x})\mathbf{e}_S = \mathcal{A} r / T \ge 0\)</span>.
+This <code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">5</span></code> certificate applies exclusively to the closed constant-volume
+configuration and never transfers to photolytic or open-boundary runs.</p>
+</section>
+</section>
+<section id="stochastic-atmospheric-forcing-and-replay-contracts">
+<h2>Stochastic atmospheric forcing and replay contracts<a class="headerlink" href="#stochastic-atmospheric-forcing-and-replay-contracts" title="Link to this heading"></a></h2>
+<p>Both stochastic weather Functors inherit
+<code class="docutils literal notranslate"><span class="pre">relic.core.functor.stochastic_substream.FunctorSubstreamMixin</span></code> (<code class="docutils literal notranslate"><span class="pre">[I]</span></code>), binding
+an isolated PyTorch <code class="docutils literal notranslate"><span class="pre">Generator</span></code> substream whose byte state is persisted across
+checkpoint and restart so trajectories replay bit-identically (<em>Methods of
+Ecological Analysis</em>, Chapter 27). Step durations are converted to days via
+<span class="math notranslate nohighlight">\(\Delta t_{\mathrm{days}} = \Delta t / 86400\)</span>.</p>
+<section id="ornstein-uhlenbeck-air-temperature-anomaly">
+<h3>Ornstein-Uhlenbeck air-temperature anomaly<a class="headerlink" href="#ornstein-uhlenbeck-air-temperature-anomaly" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">relic.scientific.atmosphere.stochastic_temperature.OrnsteinUhlenbeckTemperatureFunctor</span></code>
+(<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>) models mean-reverting synoptic temperature anomalies <span class="math notranslate nohighlight">\(X_t\)</span> [K] via
+the Ito stochastic differential equation</p>
+<div class="math notranslate nohighlight">
+\[
+\mathrm{d}X_t = -\alpha X_t\,\mathrm{d}t_{\mathrm{days}} + \sigma\,\mathrm{d}W_{t_{\mathrm{days}}},
+\qquad
+\alpha &gt; 0,\quad \sigma \ge 0,
+\]</div>
+<p>discretized over <span class="math notranslate nohighlight">\(\Delta t_{\mathrm{days}}\)</span> by
+<code class="docutils literal notranslate"><span class="pre">relic.stochastic.sde_solver.EulerMaruyamaSolver</span></code>:</p>
+<div class="math notranslate nohighlight">
+\[
+\Delta X_n = -\alpha X_n\,\Delta t_{\mathrm{days}} + \sigma\sqrt{\Delta t_{\mathrm{days}}}\,\xi_n,
+\qquad
+\xi_n \sim \mathcal{N}(0, 1).
+\]</div>
+<p><code class="docutils literal notranslate"><span class="pre">stochastic_air_temperature_anomaly</span></code> is updated via
+<code class="docutils literal notranslate"><span class="pre">UpdateItem(ACCUMULATE,</span> <span class="pre">per_timestep=True)</span></code>, while step drift, diffusion scale,
+and Wiener increments are emitted as <code class="docutils literal notranslate"><span class="pre">REPLACE</span></code> diagnostics.</p>
+</section>
+<section id="marked-poisson-storm-rainfall-generator">
+<h3>Marked Poisson storm rainfall generator<a class="headerlink" href="#marked-poisson-storm-rainfall-generator" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">relic.scientific.atmosphere.stochastic_rainfall.MarkedPoissonRainfallFunctor</span></code>
+(<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>) generates intermittent storm arrivals of constant hazard rate
+<span class="math notranslate nohighlight">\(\lambda &gt; 0\)</span> [day<span class="math notranslate nohighlight">\(^{-1}\)</span>] and independent exponential storm depths of mean
+<span class="math notranslate nohighlight">\(\alpha &gt; 0\)</span> [mm] (Rodriguez-Iturbe et al., 1999). Exact inter-arrival sampling
+over <span class="math notranslate nohighlight">\(\Delta t_{\mathrm{days}}\)</span> is performed by
+<code class="docutils literal notranslate"><span class="pre">relic.stochastic.gillespie.GillespieSSA</span></code> subject to a fail-closed per-cell
+arrival cap <span class="math notranslate nohighlight">\(K_{\max} = \lceil \mu + 12\sqrt{\mu} + 64 \rceil\)</span> (<span class="math notranslate nohighlight">\(\mu = \lambda \Delta t_{\mathrm{days}}\)</span>).
+For <span class="math notranslate nohighlight">\(k = \Delta N_n\)</span> arrivals with unit exponential variates <span class="math notranslate nohighlight">\(E_i \sim \operatorname{Exp}(1)\)</span>
+(reparameterized as <span class="math notranslate nohighlight">\(z_i = \alpha E_i\)</span> so pathwise <span class="math notranslate nohighlight">\(\partial \Delta H_n / \partial \alpha\)</span>
+preserves PyTorch autograd), the cumulative event count and rainfall depth
+increments are</p>
+<div class="math notranslate nohighlight">
+\[
+\Delta N_n = k,
+\qquad
+\Delta H_n = \alpha \sum_{i=1}^{k} E_i,
+\]</div>
+<p>with predictable Doob-Meyer compensators</p>
+<div class="math notranslate nohighlight">
+\[
+\widetilde{A}_{N,n} = \lambda\,\Delta t_{\mathrm{days}},
+\qquad
+\widetilde{A}_{H,n} = \lambda\,\alpha\,\Delta t_{\mathrm{days}},
+\]</div>
+<p>emitted in <code class="docutils literal notranslate"><span class="pre">diagnostics.stochastic_rainfall.compensator_count</span></code> and
+<code class="docutils literal notranslate"><span class="pre">diagnostics.stochastic_rainfall.compensator_depth</span></code> so martingale innovation
+residuals can be audited directly.</p>
+</section>
+</section>
+<section id="atmospheric-observation-operators">
+<h2>Atmospheric observation operators<a class="headerlink" href="#atmospheric-observation-operators" title="Link to this heading"></a></h2>
+<p>Read-only atmospheric observation Functors live in <code class="docutils literal notranslate"><span class="pre">relic.coupling.observation</span></code>
+outside the 90 certified <code class="docutils literal notranslate"><span class="pre">relic.scientific.*</span></code> process classes. All five inherit
+<code class="docutils literal notranslate"><span class="pre">ScaleCouplingFunctor</span></code> at <code class="docutils literal notranslate"><span class="pre">ExecutionPhase.POSTPROCESSING</span></code> and emit
+<code class="docutils literal notranslate"><span class="pre">VariableKind.DIAGNOSTIC</span></code> outputs with <code class="docutils literal notranslate"><span class="pre">StateWriteMode.DERIVED</span></code> (<span class="math notranslate nohighlight">\(\Delta \mathbf{S} = 0\)</span>):</p>
+<ol class="arabic">
+<li><p><strong>Steady-state HCHO column yield (<code class="docutils literal notranslate"><span class="pre">HchoSteadyStateColumnOperator</span></code>)</strong>:
+<code class="docutils literal notranslate"><span class="pre">relic.coupling.observation.hcho_steady_state_column.HchoSteadyStateColumnOperator</span></code>
+maps surface isoprene molar emission <span class="math notranslate nohighlight">\(E\)</span> [mol m<span class="math notranslate nohighlight">\(^{-2}\)</span> s<span class="math notranslate nohighlight">\(^{-1}\)</span>] (with
+stoichiometric carbon factor <span class="math notranslate nohighlight">\(n_C = 5\)</span>) and tropospheric <span class="math notranslate nohighlight">\(\mathrm{NO}_2\)</span>
+vertical column <span class="math notranslate nohighlight">\(\Omega_{\mathrm{NO}_2}\)</span> [molecule cm<span class="math notranslate nohighlight">\(^{-2}\)</span>] to steady-state
+formaldehyde vertical column density <span class="math notranslate nohighlight">\(\Omega_{\mathrm{HCHO}}\)</span> (Palmer et al.,
+2003; Marais et al., 2012):</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\Omega_{\mathrm{HCHO}} = S\!\left(\Omega_{\mathrm{NO}_2}\right) n_C E_{\mathrm{molec}} + B, \qquad S\!\left(\Omega_{\mathrm{NO}_2}\right) = \begin{cases} m\,\Omega_{\mathrm{NO}_2} + c, &amp; \Omega_{\mathrm{NO}_2} \le \Omega_t,\\ S_{\mathrm{high}}, &amp; \Omega_{\mathrm{NO}_2} &gt; \Omega_t, \end{cases}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(E_{\mathrm{molec}}\)</span> converts mol m<span class="math notranslate nohighlight">\(^{-2}\)</span> s<span class="math notranslate nohighlight">\(^{-1}\)</span> to molecule cm<span class="math notranslate nohighlight">\(^{-2}\)</span> s<span class="math notranslate nohighlight">\(^{-1}\)</span>
+via <code class="docutils literal notranslate"><span class="pre">avogadro</span></code>, <span class="math notranslate nohighlight">\(\Omega_t = 1.0 \times 10^{15}\)</span> molecule cm<span class="math notranslate nohighlight">\(^{-2}\)</span>, and <span class="math notranslate nohighlight">\(B\)</span>
+is background column density. Inputs below the empirical calibration bound
+<span class="math notranslate nohighlight">\(\Omega_{\mathrm{low}} = 2.0 \times 10^{14}\)</span> molecule cm<span class="math notranslate nohighlight">\(^{-2}\)</span> are evaluated
+unclipped along the linear branch while flagging <code class="docutils literal notranslate"><span class="pre">no2_below_calibrated_range</span> <span class="pre">=</span> <span class="pre">True</span></code>.</p>
+</li>
+<li><p><strong>Satellite averaging-kernel column projection (<code class="docutils literal notranslate"><span class="pre">SatelliteColumnKernelOperator</span></code>)</strong>:
+<code class="docutils literal notranslate"><span class="pre">relic.coupling.observation.satellite_column_kernel.SatelliteColumnKernelOperator</span></code>
+constructs hybrid-sigma pressure centers <span class="math notranslate nohighlight">\(p_k = a_k + b_k p_s\)</span> and arithmetic
+or logarithmic interior layer edges (<span class="math notranslate nohighlight">\(p_{e,k} = \frac{1}{2}(p_{k-1}+p_k)\)</span> or
+<span class="math notranslate nohighlight">\(\sqrt{p_{k-1}p_k}\)</span>), computes hydrostatic dry-air and tracer partial columns</p>
+<div class="math notranslate nohighlight">
+\[n_k = \frac{p_{e,k} - p_{e,k+1}}{g\,M_{\mathrm{air}}}, \qquad x_{\mathrm{pc},k} = \chi_k\,n_k,\]</div>
+<p>conservatively remaps model partial columns onto retrieval pressure layers via
+1D pressure-interval overlap (<code class="docutils literal notranslate"><span class="pre">remap_partial_columns</span></code>, recording any
+out-of-range mass in <code class="docutils literal notranslate"><span class="pre">unmapped_column</span></code>), and applies the retrieval averaging
+kernel <span class="math notranslate nohighlight">\(A_l\)</span> across the target vertical domain <span class="math notranslate nohighlight">\(T\)</span> (Rodgers, 2000; Eskes and
+Boersma, 2003):</p>
+<div class="math notranslate nohighlight">
+\[N_{v,\mathrm{model}} = \sum_{l \in T} A_l\,x_{\mathrm{pc},l}^{\mathrm{retr}}.\]</div>
+</li>
+<li><p><strong>Tower footprint, profile, and post-observation quality operators</strong>:
+<code class="docutils literal notranslate"><span class="pre">relic.coupling.observation.tower_flux.TowerFluxSupportOperator</span></code> projects
+gridded surface fluxes onto normalized eddy-covariance footprint weights;
+<code class="docutils literal notranslate"><span class="pre">relic.coupling.observation.tower_concentration.TowerConcentrationProfileOperator</span></code>
+interpolates vertical mixing-ratio profiles to tower intake heights; and
+<code class="docutils literal notranslate"><span class="pre">relic.coupling.observation.quality.PostObservationQualityOperator</span></code> evaluates
+retrieval validity masks and support-coverage flags without altering model
+prognostic state.</p></li>
+</ol>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Atkinson, R. et al. (2006). Evaluated kinetic and photochemical data for atmospheric chemistry: Volume II – gas phase reactions of organic species. <em>Atmospheric Chemistry and Physics</em>, 6, 3625-4055. doi:10.5194/acp-6-3625-2006.</p></li>
+<li><p>Brutsaert, W. (1975). On a derivable formula for long-wave radiation from clear skies. <em>Water Resources Research</em>, 11, 742-744. doi:10.1029/WR011i005p00742.</p></li>
+<li><p>Businger, J. A., Wyngaard, J. C., Izumi, Y., and Bradley, E. F. (1971). Flux-profile relationships in the atmospheric surface layer. <em>Journal of the Atmospheric Sciences</em>, 28, 181-189.</p></li>
+<li><p>Dyer, A. J. (1974). A review of flux-profile relationships. <em>Boundary-Layer Meteorology</em>, 7, 363-372.</p></li>
+<li><p>Eskes, H. J. and Boersma, K. F. (2003). Averaging kernels for DOAS total-column satellite retrievals. <em>Atmospheric Chemistry and Physics</em>, 3, 1285-1291. doi:10.5194/acp-3-1285-2003.</p></li>
+<li><p>Grmela, M. and Ottinger, H. C. (1997). Dynamics and thermodynamics of complex fluids. I. Development of a general formalism. <em>Physical Review E</em>, 56, 6620-6632.</p></li>
+<li><p>Holtslag, A. A. M. and Boville, B. A. (1993). Local versus nonlocal boundary-layer diffusion in a global climate model. <em>Journal of Climate</em>, 6, 1825-1842.</p></li>
+<li><p>Leighton, P. A. (1961). <em>Photochemistry of Air Pollution</em>. Academic Press.</p></li>
+<li><p>Marais, E. A. et al. (2012). Isoprene emissions in Africa inferred from OMI observations of formaldehyde columns. <em>Atmospheric Chemistry and Physics</em>, 12, 6219-6235. doi:10.5194/acp-12-6219-2012.</p></li>
+<li><p>Mielke, A. (2011). Formulation of thermoelastic dissipative material behavior using GENERIC. <em>Continuum Mechanics and Thermodynamics</em>, 23, 233-256.</p></li>
+<li><p>Monin, A. S. and Obukhov, A. M. (1954). Basic laws of turbulent mixing in the surface layer of the atmosphere. <em>Trudy Geofizicheskogo Instituta AN SSSR</em>, 24(151), 163-187.</p></li>
+<li><p>Palmer, P. I. et al. (2003). Mapping isoprene emissions over North America using formaldehyde column observations from space. <em>Journal of Geophysical Research</em>, 108(D6), 4180. doi:10.1029/2002JD002153.</p></li>
+<li><p>Rodgers, C. D. (2000). <em>Inverse Methods for Atmospheric Sounding: Theory and Practice</em>. World Scientific.</p></li>
+<li><p>Rodriguez-Iturbe, I., Porporato, A., Ridolfi, L., Isham, V., and Cox, D. R. (1999). Probabilistic modelling of water balance at a point: the role of climate, soil and vegetation. <em>Proceedings of the Royal Society of London A</em>, 455, 3789-3805.</p></li>
+<li><p>Troen, I. B. and Mahrt, L. (1986). A simple model of the atmospheric boundary layer; sensitivity to surface evaporation. <em>Boundary-Layer Meteorology</em>, 37, 129-148.</p></li>
+<li><p>Warneck, P. and Williams, J. (2012). <em>The Atmospheric Chemist’s Companion: Numerical Data for Use in the Atmospheric Sciences</em>. Springer. doi:10.1007/978-94-007-2275-0.</p></li>
+<li><p>Wesely, M. L. (1989). Parameterization of surface resistances to gaseous dry deposition in regional-scale numerical models. <em>Atmospheric Environment</em>, 23, 1293-1304.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="numerics.html" class="btn btn-neutral float-left" title="Numerical Integration, Splitting, Stability, Scale Coupling, and Hybrid Events" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="biosphere.html" class="btn btn-neutral float-right" title="Biosphere Theory" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

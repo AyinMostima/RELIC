@@ -1,0 +1,835 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Numerical Integration, Splitting, Stability, Scale Coupling, and Hybrid Events &mdash; RELIC 1.0.0 Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=mono5" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=a12e3537"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../_static/language_switch.js?v=mono5"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Atmosphere Theory" href="atmosphere.html" />
+    <link rel="prev" title="DEC, IPHS, GENERIC, Ports, and Reaction Structure" href="dec_iphs_generic.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            RELIC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">RELIC Guide</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../architecture.html">System Architecture</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#scope-and-architectural-contract">Scope and architectural contract</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#architecture-capability-map">Architecture capability map</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#package-ownership-and-seven-layer-map">Package ownership and seven-layer map</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#four-scientific-abstractions">Four scientific abstractions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#functor-lifecycle-and-metadata">Functor lifecycle and metadata</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#variable-roles-and-state-ownership">Variable roles and state ownership</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#parameters-constants-units-and-time">Parameters, constants, units, and time</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#simulator-execution-rates-and-device-policy">Simulator, execution rates, and device policy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#structural-scientific-layer">Structural scientific layer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#end-to-end-assembly-and-execution">End-to-end assembly and execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#connection-and-conservation-rules">Connection and conservation rules</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Scientific Theory and Governing Equations</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="foundations.html">Mathematical Foundations, State, Units, and Conservation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="foundations.html#architectural-contract-and-notation">Architectural contract and notation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="foundations.html#four-scientific-abstractions-and-functor-lifecycle">Four scientific abstractions and Functor lifecycle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="foundations.html#spatial-quantity-basis-and-temporal-overlap-laws">Spatial quantity basis and temporal overlap laws</a></li>
+<li class="toctree-l3"><a class="reference internal" href="foundations.html#universal-conservation-and-balance-laws">Universal conservation and balance laws</a></li>
+<li class="toctree-l3"><a class="reference internal" href="foundations.html#transactional-statemanager-governance-i1-i7">Transactional StateManager governance (<code class="docutils literal notranslate"><span class="pre">I1</span></code>–<code class="docutils literal notranslate"><span class="pre">I7</span></code>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="foundations.html#centralized-parametermanager-and-physical-constant-ssot">Centralized ParameterManager and physical-constant SSOT</a></li>
+<li class="toctree-l3"><a class="reference internal" href="foundations.html#piecewise-smooth-discrete-adjoint-differentiation-and-device-policy">Piecewise-smooth discrete adjoint differentiation and device policy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="foundations.html#bounded-mathematical-contracts-and-runtime-boundary-i-vs-n">Bounded mathematical contracts and runtime boundary (<code class="docutils literal notranslate"><span class="pre">[I]</span></code> vs <code class="docutils literal notranslate"><span class="pre">[N]</span></code>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="foundations.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dec_iphs_generic.html">DEC, IPHS, GENERIC, Ports, and Reaction Structure</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dec_iphs_generic.html#structural-governance-lifecycle">Structural governance lifecycle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dec_iphs_generic.html#discrete-exterior-calculus-relic-computation-operators-dec">Discrete exterior calculus (<code class="docutils literal notranslate"><span class="pre">relic.computation.operators.dec</span></code>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dec_iphs_generic.html#irreversible-port-hamiltonian-and-generic-lowering">Irreversible port-Hamiltonian and GENERIC lowering</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dec_iphs_generic.html#equivalence-certificates-and-live-repository-inventory">Equivalence certificates and live repository inventory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dec_iphs_generic.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Numerical Integration, Splitting, Stability, Scale Coupling, and Hybrid Events</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#method-of-lines-formulation-and-solver-registry">Method-of-lines formulation and solver registry</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#deterministic-time-stepping-linear-and-nonlinear-solvers">Deterministic time-stepping, linear, and nonlinear solvers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#multi-rate-execution-operator-splitting-and-step-control">Multi-rate execution, operator splitting, and step control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#transport-stability-and-nonlinear-richards-closure">Transport stability and nonlinear Richards closure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#conservative-spatial-remapping-and-internal-cross-domain-couplers">Conservative spatial remapping and internal cross-domain couplers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#transverse-hybrid-events-and-saltation-matrix-sensitivities">Transverse hybrid events and saltation-matrix sensitivities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#stochastic-memory-ale-dae-and-topology-transition-families">Stochastic, memory, ALE, DAE, and topology-transition families</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="atmosphere.html">Atmosphere Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="atmosphere.html#scope-process-inventory-and-certificate-map">Scope, process inventory, and certificate map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="atmosphere.html#solar-thermal-and-canopy-radiation">Solar, thermal, and canopy radiation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="atmosphere.html#surface-layer-turbulence-and-boundary-layer-tracer-transport">Surface-layer turbulence and boundary-layer tracer transport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="atmosphere.html#gas-phase-chemistry-open-tropospheric-kinetics-and-closed-level-5-generic-point">Gas-phase chemistry: open tropospheric kinetics and closed Level-5 GENERIC point</a></li>
+<li class="toctree-l3"><a class="reference internal" href="atmosphere.html#stochastic-atmospheric-forcing-and-replay-contracts">Stochastic atmospheric forcing and replay contracts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="atmosphere.html#atmospheric-observation-operators">Atmospheric observation operators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="atmosphere.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="biosphere.html">Biosphere Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="biosphere.html#scope-process-inventory-and-certificate-map">Scope, process inventory, and certificate map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="biosphere.html#photosynthesis-and-stomatal-conductance">Photosynthesis and stomatal conductance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="biosphere.html#autotrophic-respiration-allocation-and-structural-growth">Autotrophic respiration, allocation, and structural growth</a></li>
+<li class="toctree-l3"><a class="reference internal" href="biosphere.html#phenology-and-abiotic-stress-closures">Phenology and abiotic stress closures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="biosphere.html#biogenic-volatile-organic-compound-bvoc-synthesis-and-emission">Biogenic volatile organic compound (BVOC) synthesis and emission</a></li>
+<li class="toctree-l3"><a class="reference internal" href="biosphere.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hydrosphere.html">Hydrosphere Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hydrosphere.html#scope-process-inventory-and-certificate-map">Scope, process inventory, and certificate map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydrosphere.html#evapotranspiration-closures">Evapotranspiration closures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydrosphere.html#snowpack-mass-energy-balance-and-snow-albedo">Snowpack mass-energy balance and snow albedo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydrosphere.html#soil-water-retention-bucket-storage-and-richards-vadose-flow">Soil-water retention, bucket storage, and Richards vadose flow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydrosphere.html#surface-runoff-and-hybrid-event-driven-hortonian-ponding">Surface runoff and hybrid event-driven Hortonian ponding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydrosphere.html#subsurface-stormflow-vadose-aquifer-exchange-and-groundwater">Subsurface stormflow, vadose-aquifer exchange, and groundwater</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydrosphere.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pedosphere.html">Pedosphere Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pedosphere.html#scope-process-inventory-and-certificate-map">Scope, process inventory, and certificate map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pedosphere.html#soil-organic-carbon-turnover-and-cross-sphere-interface-maps">Soil organic carbon turnover and cross-sphere interface maps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pedosphere.html#soil-nitrogen-root-p-uptake-and-c-n-stoichiometry-boundaries">Soil nitrogen, root P uptake, and C:N stoichiometry boundaries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pedosphere.html#wetland-methane-request-and-coupler-architecture">Wetland methane request-and-coupler architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pedosphere.html#porous-media-water-gas-solute-dae-ale-and-memory-transport">Porous-media water, gas, solute, DAE, ALE, and memory transport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pedosphere.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="anthroposphere.html">Anthroposphere Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="anthroposphere.html#scope-process-inventory-and-fail-closed-boundary-status">Scope, process inventory, and fail-closed boundary status</a></li>
+<li class="toctree-l3"><a class="reference internal" href="anthroposphere.html#fail-closed-level-0-boundaries-vs-implemented-emission-operators">Fail-closed Level-0 boundaries vs implemented emission operators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="anthroposphere.html#continuous-time-markov-land-use-transitions-and-parameter-projection">Continuous-time Markov land-use transitions and parameter projection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="anthroposphere.html#management-coordination-and-agricultural-water-nutrient-ports">Management coordination and agricultural water-nutrient ports</a></li>
+<li class="toctree-l3"><a class="reference internal" href="anthroposphere.html#managed-biomass-removal-livestock-grazing-fire-and-tillage">Managed biomass removal, livestock grazing, fire, and tillage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="anthroposphere.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="isotopes_transport.html">Stable Isotopes and General Transport Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="isotopes_transport.html#scope-component-inventory-and-certificate-map">Scope, component inventory, and certificate map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="isotopes_transport.html#stable-isotope-ratios-exact-binary-fractionation-and-fail-closed-ledger-status">Stable-isotope ratios, exact binary fractionation, and fail-closed ledger status</a></li>
+<li class="toctree-l3"><a class="reference internal" href="isotopes_transport.html#general-conservative-transport-functors">General conservative transport Functors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="isotopes_transport.html#references">References</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../science/index.html">Core Scientific Class Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../science/anthroposphere.html">Anthroposphere Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#atmosphere-coupling">atmosphere_coupling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#sector-allocation">sector_allocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#species-mapping">species_mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#anthroposphere-interface-mapping">anthroposphere_interface_mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#emission-inventory">emission_inventory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#land-use-parameter-mapping">land_use_parameter_mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#land-use-transitions">land_use_transitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#management-coordinator">management_coordinator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#fertilization-management">fertilization_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#fire-management">fire_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#grazing-management">grazing_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#harvest-management">harvest_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#irrigationmanagement">IrrigationManagement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#tillagemanagement">TillageManagement</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/atmosphere.html">Atmosphere Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#chemistryfunctor">ChemistryFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#class-atmosphere-chemistry-chemistry-functor-closed-constant-volume">ChemistryFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#environmentalforcingfunctor">EnvironmentalForcingFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#radiationenergyconservationvalidator">RadiationEnergyConservationValidator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#radiationfield">RadiationField</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#radiationfunctor">RadiationFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#markedpoissonrainfallfunctor">MarkedPoissonRainfallFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#ornsteinuhlenbecktemperaturefunctor">OrnsteinUhlenbeckTemperatureFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#atmosphericadvectiondiffusionfunctor">AtmosphericAdvectionDiffusionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#drydepositionaggregator">DryDepositionAggregator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#eddydiffusionblmfunctor">EddyDiffusionBLMFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#turbulencefunctor">TurbulenceFunctor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/biosphere.html">Biosphere Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#meganmodel">MEGANModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#isoprenesynthesis">IsopreneSynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#monoterpenesynthesis">MonoterpeneSynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#sesquiterpenestressmodel">SesquiterpeneStressModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#sesquiterpenesynthesis">SesquiterpeneSynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#biomassallocation">BiomassAllocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#phenologygrowth">PhenologyGrowth</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#structuralgrowth">StructuralGrowth</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#cropphenology">CropPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#gddphenology">GDDPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#gsiphenology">GSIPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#staticphenology">StaticPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#phenologyfunctor">PhenologyFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#farquharphotosynthesis">FarquharPhotosynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#medlynstomatalconductance">MedlynStomatalConductance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#autotrophicrespiration">AutotrophicRespiration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#growthrespiration">GrowthRespiration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#maintenancerespiration">MaintenanceRespiration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#nutrientstress">NutrientStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#ozonestress">OzoneStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#thermalstress">ThermalStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#waterstress">WaterStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#simplecanopyphotosynthesis">SimpleCanopyPhotosynthesis</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/hydrosphere.html">Hydrosphere Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#penman-monteith-et">penman_monteith_et</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#priestley-taylor-et">priestley_taylor_et</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#groundwater-dynamics">groundwater_dynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#subsurface-runoff">subsurface_runoff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#hortonianpondingeventfunctor">HortonianPondingEventFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#surfacepondingfunctor">SurfacePondingFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#surface-runoff">surface_runoff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#snow-albedo">snow_albedo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#snow-pack">snow_pack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#bucket-soil-moisture">bucket_soil_moisture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#soilwaterretention">SoilWaterRetention</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#richards-soil-moisture">richards_soil_moisture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#capillary-rise-transport">capillary_rise_transport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#vertical-percolation-transport">vertical_percolation_transport</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/pedosphere.html">Pedosphere Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#carbonpoolsfunctor">CarbonPoolsFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#poolsmatrix">PoolsMatrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#firstorderdecomposition">FirstOrderDecomposition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#microbialenzymedecomposition">MicrobialEnzymeDecomposition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#litterfallinterfacemapper">LitterfallInterfaceMapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#pedosphereinterfacemapper">PedosphereInterfaceMapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methanebudgetcoupler">MethaneBudgetCoupler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methaneoxidationfunctor">MethaneOxidationFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methaneproductionfunctor">MethaneProductionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methanescalecouplingfunctor">MethaneScaleCouplingFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methanetransportfunctor">MethaneTransportFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#denitrification-process">denitrification_process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#mineralizationprocess">MineralizationProcess</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#nitrification-process">nitrification_process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#nitrogenleachingprocess">NitrogenLeachingProcess</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#nitrogencycling">NitrogenCycling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#rootnutrientuptake">RootNutrientUptake</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#stoichiometryconstraint">StoichiometryConstraint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#equilibriumsorptionfunctor">EquilibriumSorptionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#gasdiffusion1d">GasDiffusion1D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#movingdomaindiffusionfunctor">MovingDomainDiffusionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#soil-water-transport">soil_water_transport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#soluteadvectiondiffusion1d">SoluteAdvectionDiffusion1D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#tworegionmasstransferfunctor">TwoRegionMassTransferFunctor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/isotopes.html">Stable-Isotope Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/isotopes.html#isotopeheartbeatfunctor">IsotopeHeartbeatFunctor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/transport.html">General Transport Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#advection-diffusion">advection_diffusion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#linear-advection">linear_advection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#fickian-diffusion">fickian_diffusion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#class-transport-diffusion-fickian-diffusion-strict-runtime-point">fickian_diffusion</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/index.html#complete-coverage-matrix">Complete coverage matrix</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">RELIC Workflows</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#learning-tracks">Learning tracks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#how-to-use-a-tutorial">How to use a tutorial</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/installation_and_imports.html">Installation and Imports</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/configuration_and_parameters.html">Configuration and Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/state_functors_and_simulation.html">State, Functors, and Simulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/graph_validation_and_execution.html">Graph Validation and Execution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/persistence_outputs_and_data_io.html">Persistence, Outputs, and Data I/O</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/coupling_workflows.html">Coupling Workflows</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/calibration_sensitivity_and_uq.html">Calibration, Sensitivity Analysis, and Uncertainty Quantification</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/devices_and_distributed.html">Devices and Distributed Execution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/cli_and_extensions.html">CLI and Extensions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestration.html">Graph Orchestration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#canonical-owners">Canonical owners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#graphir">GraphIR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#portspec-and-the-contract-boundary">PortSpec and the contract boundary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#validation">Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#adapters">Adapters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#compilation-and-execution">Compilation and execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#strict-iphs-dec-boundary">Strict IPHS/DEC boundary</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../operations.html">Operations Quick Start</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#select-a-workflow">Select a workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#environment-preflight">Environment preflight</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#first-successful-run">First successful run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#benchmark-style-acceptance-checklist">Benchmark-style acceptance checklist</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#minimal-runtime-sequence">Minimal runtime sequence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#troubleshooting-order">Troubleshooting order</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#immediate-stop-conditions">Immediate stop conditions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../extension_contracts.html">Extension Contracts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#reuse-first-decision">Reuse-first decision</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#adding-a-scientific-functor">Adding a scientific Functor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#parameter-extension">Parameter extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#variable-contract-extension">Variable contract extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#graph-and-adapter-extension">Graph and adapter extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#external-extension-paths">External extension paths</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#scientific-structure-claims">Scientific structure claims</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#explicit-unavailable-scientific-boundaries">Explicit unavailable scientific boundaries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#anti-redundancy-boundary">Anti-redundancy boundary</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">Core API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/index.html#coverage-contract">Coverage contract</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/core_runtime.html">Core Runtime API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/parameters_contracts.html">Parameters and Parameter Contracts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/orchestration_validation.html">Orchestration, Contracts, and Validation API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/scientific_structure_extensions.html">Scientific Structure and Extension APIs</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">RELIC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Scientific Theory and Governing Equations</a></li>
+      <li class="breadcrumb-item active">Numerical Integration, Splitting, Stability, Scale Coupling, and Hybrid Events</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="numerical-integration-splitting-stability-scale-coupling-and-hybrid-events">
+<h1>Numerical Integration, Splitting, Stability, Scale Coupling, and Hybrid Events<a class="headerlink" href="#numerical-integration-splitting-stability-scale-coupling-and-hybrid-events" title="Link to this heading"></a></h1>
+<section id="method-of-lines-formulation-and-solver-registry">
+<h2>Method-of-lines formulation and solver registry<a class="headerlink" href="#method-of-lines-formulation-and-solver-registry" title="Link to this heading"></a></h2>
+<p>Spatial discretization and operator assembly reduce deterministic RELIC
+processes to semi-discrete ordinary or differential-algebraic systems
+(<em>Methods of Ecological Analysis</em>, Chapters 25, 26, and 28):</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\mathrm{d}x}{\mathrm{d}t}
+= f(t, x; \boldsymbol{\theta})
+= f_J(t, x) + f_M(t, x) + f_G(t, x) + f_N(t, x),
+\qquad
+x(t_0) = x_0,
+\]</div>
+<p>partitioning reversible (<span class="math notranslate nohighlight">\(f_J\)</span>), dissipative (<span class="math notranslate nohighlight">\(f_M\)</span>), boundary-port (<span class="math notranslate nohighlight">\(f_G\)</span>), and
+reaction (<span class="math notranslate nohighlight">\(f_N\)</span>) tendencies. <code class="docutils literal notranslate"><span class="pre">relic.computation.solvers</span></code> is the single solver
+owner (<code class="docutils literal notranslate"><span class="pre">SolverBase</span></code>, <code class="docutils literal notranslate"><span class="pre">SolverRegistry</span></code>, <code class="docutils literal notranslate"><span class="pre">SolverFactory</span></code>); scientific Functors
+never instantiate private solver registries.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Solver family</p></th>
+<th class="head"><p>Live RELIC symbols (<code class="docutils literal notranslate"><span class="pre">relic.computation.solvers</span></code>)</p></th>
+<th class="head"><p>Status</p></th>
+<th class="head"><p>Order and stability contract</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Explicit Runge-Kutta</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">RK4Solver</span></code> (<code class="docutils literal notranslate"><span class="pre">temporal.py</span></code>)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Classical 4-stage order-4 explicit stepper on fixed time grids; conditionally stable</p></td>
+</tr>
+<tr class="row-odd"><td><p>Damped fixed-point implicit Euler</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">BackwardEulerSolver</span></code> (<code class="docutils literal notranslate"><span class="pre">temporal.py</span></code>)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Order-1 implicit Euler solved by damped Picard iteration (<span class="math notranslate nohighlight">\(\omega \in (0, 1]\)</span>, contraction limit <span class="math notranslate nohighlight">\(\Delta t\,L_f &lt; 1\)</span> at <span class="math notranslate nohighlight">\(\omega = 1\)</span>)</p></td>
+</tr>
+<tr class="row-even"><td><p>Symmetric midpoint &amp; <span class="math notranslate nohighlight">\(\vartheta\)</span>-trapezoidal</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ImplicitMidpointSolver</span></code>, <code class="docutils literal notranslate"><span class="pre">CrankNicolsonSolver</span></code> (<code class="docutils literal notranslate"><span class="pre">temporal.py</span></code>), <code class="docutils literal notranslate"><span class="pre">transactional_implicit_midpoint_step</span></code> (<code class="docutils literal notranslate"><span class="pre">geometric.py</span></code>)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Order-2 symmetric midpoint and <span class="math notranslate nohighlight">\(\vartheta\)</span>-method (<span class="math notranslate nohighlight">\(\vartheta = 0.5\)</span> default) solved by fixed-point iteration (<span class="math notranslate nohighlight">\(\frac{1}{2}\Delta t\,L_f &lt; 1\)</span> or <span class="math notranslate nohighlight">\(\vartheta\Delta t\,L_f &lt; 1\)</span>)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Implicit-Explicit (IMEX) Euler</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IMEXEulerSolver</span></code> (<code class="docutils literal notranslate"><span class="pre">temporal.py</span></code>)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Order-1 explicit non-stiff + damped fixed-point implicit stiff step (<span class="math notranslate nohighlight">\(\Delta t\,L_{f_{\mathrm{imp}}} &lt; 1\)</span> at <span class="math notranslate nohighlight">\(\omega = 1\)</span>)</p></td>
+</tr>
+<tr class="row-even"><td><p>Tridiagonal direct linear solver</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ThomasAlgorithmSolver</span></code>, <code class="docutils literal notranslate"><span class="pre">solve_tridiagonal_thomas</span></code>, <code class="docutils literal notranslate"><span class="pre">solve_tridiagonal_batch</span></code> (<code class="docutils literal notranslate"><span class="pre">linear.py</span></code>)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(O(n)\)</span> non-pivoting LU elimination with mandatory <span class="math notranslate nohighlight">\(\lvert p_i \rvert \le \epsilon_{\mathrm{mach}} s_i\)</span> fail-fast guard and optional Varah condition estimate</p></td>
+</tr>
+<tr class="row-odd"><td><p>Bracketed scalar root solver</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">BracketedBisectionSolver</span></code> (<code class="docutils literal notranslate"><span class="pre">nonlinear.py</span></code>)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Guaranteed interval-halving root finder <span class="math notranslate nohighlight">\(g(z^\ast) = 0\)</span> with implicit-function autograd backward rule</p></td>
+</tr>
+<tr class="row-even"><td><p>Multistep Backward Differentiation Formula (BDF), linearly implicit Rosenbrock-W, high-order IMEX Additive Runge-Kutta (IMEX-ARK), and Jacobian-free Newton-Krylov</p></td>
+<td><p>Reference solver formulations (<em>Methods of Ecological Analysis</em>, Chapters 25–26)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[N]</span></code></p></td>
+<td><p>Analytical stiff-ODE/PDE reference families; not registered in <code class="docutils literal notranslate"><span class="pre">relic.computation.solvers</span></code> (stiff layered PDEs use domain-specific <code class="docutils literal notranslate"><span class="pre">ThomasAlgorithmSolver</span></code> linearizations)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="deterministic-time-stepping-linear-and-nonlinear-solvers">
+<h2>Deterministic time-stepping, linear, and nonlinear solvers<a class="headerlink" href="#deterministic-time-stepping-linear-and-nonlinear-solvers" title="Link to this heading"></a></h2>
+<section id="implemented-one-step-temporal-integrators-i">
+<h3>Implemented one-step temporal integrators (<code class="docutils literal notranslate"><span class="pre">[I]</span></code>)<a class="headerlink" href="#implemented-one-step-temporal-integrators-i" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">RK4Solver</span></code> advances smooth non-stiff systems on fixed <code class="docutils literal notranslate"><span class="pre">float64</span></code> time grids via
+four stage evaluations:</p>
+<div class="math notranslate nohighlight">
+\[
+k_1 = f(t_n, x_n), \quad
+k_2 = f\!\left(t_n + \tfrac{1}{2}\Delta t,\; x_n + \tfrac{1}{2}\Delta t\,k_1\right), \quad
+k_3 = f\!\left(t_n + \tfrac{1}{2}\Delta t,\; x_n + \tfrac{1}{2}\Delta t\,k_2\right), \quad
+k_4 = f(t_n + \Delta t,\; x_n + \Delta t\,k_3),
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+x_{n+1} = x_n + \frac{\Delta t}{6}\left(k_1 + 2k_2 + 2k_3 + k_4\right).
+\]</div>
+<p><code class="docutils literal notranslate"><span class="pre">BackwardEulerSolver</span></code>, <code class="docutils literal notranslate"><span class="pre">ImplicitMidpointSolver</span></code>, <code class="docutils literal notranslate"><span class="pre">CrankNicolsonSolver</span></code> (weight
+<span class="math notranslate nohighlight">\(\vartheta = 0.5\)</span> default), and <code class="docutils literal notranslate"><span class="pre">IMEXEulerSolver</span></code> (<span class="math notranslate nohighlight">\(f = f_{\mathrm{exp}} + f_{\mathrm{imp}}\)</span>)
+discretize:</p>
+<div class="math notranslate nohighlight">
+\[
+x_{n+1} = x_n + \Delta t\,f(t_{n+1}, x_{n+1}) \;\; (\text{Backward Euler}),
+\qquad
+x_{n+1} = x_n + \Delta t\,f\!\left(t_n + \tfrac{1}{2}\Delta t,\; \tfrac{1}{2}(x_n + x_{n+1})\right) \;\; (\text{Implicit Midpoint}),
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+x_{n+1} = x_n + \Delta t\left[(1 - \vartheta)f(t_n, x_n) + \vartheta f(t_{n+1}, x_{n+1})\right] \;\; (\text{Crank-Nicolson } \vartheta),
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+x_{n+1} = x_n + \Delta t\,f_{\mathrm{exp}}(t_n, x_n) + \Delta t\,f_{\mathrm{imp}}(t_{n+1}, x_{n+1}) \;\; (\text{IMEX Euler}).
+\]</div>
+<p>All four implicit solvers iterate fixed-point updates (damped Picard
+<span class="math notranslate nohighlight">\(x^{(k+1)} = \omega G(x^{(k)}) + (1 - \omega)x^{(k)}\)</span> with default
+<code class="docutils literal notranslate"><span class="pre">damping_factor</span></code> <span class="math notranslate nohighlight">\(\omega = 1.0\)</span> and <code class="docutils literal notranslate"><span class="pre">max_iterations</span> <span class="pre">=</span> <span class="pre">50</span></code> in Backward Euler and
+IMEX Euler; undamped fixed-point in Implicit Midpoint and Crank-Nicolson)
+without internal Newton-Raphson Jacobians. Consequently, A-stability of the
+underlying quadrature does not lift the Picard contraction restriction
+(<span class="math notranslate nohighlight">\(\Delta t\,L_f &lt; 1\)</span>, <span class="math notranslate nohighlight">\(\frac{1}{2}\Delta t\,L_f &lt; 1\)</span>, or
+<span class="math notranslate nohighlight">\(\vartheta\Delta t\,L_f &lt; 1\)</span>). Finite non-convergent iterates return
+<code class="docutils literal notranslate"><span class="pre">SolverStatus.MAX_ITERATIONS</span></code> from <code class="docutils literal notranslate"><span class="pre">solve()</span></code> and raise <code class="docutils literal notranslate"><span class="pre">SolverStepError</span></code> in
+<code class="docutils literal notranslate"><span class="pre">step()</span></code> / <code class="docutils literal notranslate"><span class="pre">forward()</span></code>; non-finite iterates raise <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> immediately.
+Standalone solvers perform fixed-grid stepping with no internal adaptive step
+resizing.</p>
+<p>For discrete-gradient structure preservation on energy <span class="math notranslate nohighlight">\(E\)</span> and entropy <span class="math notranslate nohighlight">\(S\)</span> with
+<span class="math notranslate nohighlight">\(\overline{\nabla}F(x_n, x_{n+1})^{\mathsf{T}}(x_{n+1} - x_n) = F(x_{n+1}) - F(x_n)\)</span>,
+skew <span class="math notranslate nohighlight">\(J_h^{\mathsf{T}} = -J_h\)</span> preserves energy
+<span class="math notranslate nohighlight">\(E(x_{n+1}) - E(x_n) = \Delta t\,\overline{\nabla}E^{\mathsf{T}} J_h \overline{\nabla}E = 0\)</span>,
+and <span class="math notranslate nohighlight">\(M_h \succeq 0\)</span> guarantees discrete entropy production
+<span class="math notranslate nohighlight">\(S(x_{n+1}) - S(x_n) = \Delta t\,\overline{\nabla}S^{\mathsf{T}} M_h \overline{\nabla}S \ge 0\)</span>
+when functional, discrete gradient, and accepted step are explicitly bound.</p>
+</section>
+<section id="reference-stiff-solver-families-n">
+<h3>Reference stiff solver families (<code class="docutils literal notranslate"><span class="pre">[N]</span></code>)<a class="headerlink" href="#reference-stiff-solver-families-n" title="Link to this heading"></a></h3>
+<p><em>Methods of Ecological Analysis</em> (Chapters 25–26) derives four stiff
+Jacobian-based time-integration families as analytical benchmarks (<code class="docutils literal notranslate"><span class="pre">[N]</span></code> in
+<code class="docutils literal notranslate"><span class="pre">relic.computation.solvers</span></code>):</p>
+<ol class="arabic simple">
+<li><p><strong>Variable-order BDF (<span class="math notranslate nohighlight">\(k = 1, \dots, 5\)</span>)</strong>: <span class="math notranslate nohighlight">\(\sum_{j=0}^k \alpha_j x_{n+1-j} = \Delta t\,\beta_0 f(t_{n+1}, x_{n+1})\)</span>, <span class="math notranslate nohighlight">\(A(\alpha)\)</span>-stable for stiff reaction-DAE kinetics;</p></li>
+<li><p><strong>Linearly implicit Rosenbrock-W</strong>: <span class="math notranslate nohighlight">\((I - \gamma \Delta t J_n) k_i = f(\dots) + \Delta t J_n \sum_{j &lt; i} \gamma_{ij} k_j\)</span> (<span class="math notranslate nohighlight">\(J_n \approx \partial f / \partial x\)</span>), avoiding nonlinear Newton loops via one linear solve per stage;</p></li>
+<li><p><strong>High-order IMEX-ARK</strong>: paired explicit/diagonally-implicit Butcher tableaux <span class="math notranslate nohighlight">\((\tilde{A}, \tilde{b}, \tilde{c})\)</span> and <span class="math notranslate nohighlight">\((A, b, c)\)</span> treating advection/reactions explicitly and stiff vertical diffusion implicitly beyond order 1; and</p></li>
+<li><p><strong>Jacobian-free Newton-Krylov (JFNK)</strong>: inner GMRES/BiCGSTAB solves approximating directional derivatives <span class="math notranslate nohighlight">\(J(x)v \approx [f(x + \varepsilon v) - f(x)]/\varepsilon\)</span> for large coupled nonlinear residuals.</p></li>
+</ol>
+</section>
+<section id="tridiagonal-linear-and-bracketed-nonlinear-solvers-i">
+<h3>Tridiagonal linear and bracketed nonlinear solvers (<code class="docutils literal notranslate"><span class="pre">[I]</span></code>)<a class="headerlink" href="#tridiagonal-linear-and-bracketed-nonlinear-solvers-i" title="Link to this heading"></a></h3>
+<p>1D vertical diffusion and linearized Richards discretizations assemble
+tridiagonal systems <span class="math notranslate nohighlight">\(A x = d\)</span> with lower, main, and upper diagonals
+<span class="math notranslate nohighlight">\((a_i, b_i, c_i)\)</span>. <code class="docutils literal notranslate"><span class="pre">ThomasAlgorithmSolver</span></code> and <code class="docutils literal notranslate"><span class="pre">solve_tridiagonal_thomas</span></code>
+(<code class="docutils literal notranslate"><span class="pre">relic.computation.solvers.linear</span></code>) execute forward elimination and back
+substitution:</p>
+<div class="math notranslate nohighlight">
+\[
+p_i = b_i - a_i c_{i-1}' \;\; (p_0 = b_0),
+\qquad
+c_i' = \frac{c_i}{p_i},
+\qquad
+d_i' = \frac{d_i - a_i d_{i-1}'}{p_i},
+\qquad
+x_n = d_n', \quad x_i = d_i' - c_i' x_{i+1}.
+\]</div>
+<p>Any non-finite pivot or near-zero pivot satisfying
+<span class="math notranslate nohighlight">\(\lvert p_i \rvert \le \epsilon_{\mathrm{mach}} s_i\)</span> (where <span class="math notranslate nohighlight">\(s_i\)</span> is row <span class="math notranslate nohighlight">\(i\)</span>’s
+<span class="math notranslate nohighlight">\(\ell_\infty\)</span> norm) raises <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> without pivot regularization. Enabling
+<code class="docutils literal notranslate"><span class="pre">check_stability</span></code> (<code class="docutils literal notranslate"><span class="pre">computation.solvers.thomas.check_stability</span></code>) records the
+Varah (1975) condition-number bound in <code class="docutils literal notranslate"><span class="pre">SolverResult</span></code> metadata.</p>
+<p><code class="docutils literal notranslate"><span class="pre">BracketedBisectionSolver</span></code> (<code class="docutils literal notranslate"><span class="pre">relic.computation.solvers.nonlinear</span></code>) solves scalar
+algebraic constraints <span class="math notranslate nohighlight">\(g(z^\ast; \boldsymbol{\theta}) = 0\)</span> on sign-change
+brackets <span class="math notranslate nohighlight">\([a, b]\)</span> (<span class="math notranslate nohighlight">\(g(a)g(b) \le 0\)</span>) and propagates exact implicit-function
+sensitivities through <code class="docutils literal notranslate"><span class="pre">_ImplicitRootGradient</span></code>:</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\partial z^\ast}{\partial \boldsymbol{\theta}}
+= -\left(\frac{\partial g(z^\ast, \boldsymbol{\theta})}{\partial z}\right)^{-1}
+\frac{\partial g(z^\ast, \boldsymbol{\theta})}{\partial \boldsymbol{\theta}}.
+\]</div>
+</section>
+</section>
+<section id="multi-rate-execution-operator-splitting-and-step-control">
+<h2>Multi-rate execution, operator splitting, and step control<a class="headerlink" href="#multi-rate-execution-operator-splitting-and-step-control" title="Link to this heading"></a></h2>
+<section id="palindromic-strang-splitting-and-subflowaccuracy">
+<h3>Palindromic Strang splitting and <code class="docutils literal notranslate"><span class="pre">SubFlowAccuracy</span></code><a class="headerlink" href="#palindromic-strang-splitting-and-subflowaccuracy" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">RELICSimulator</span></code> partitions registered Functors into <code class="docutils literal notranslate"><span class="pre">fast</span></code>, <code class="docutils literal notranslate"><span class="pre">medium</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">slow</span></code> groups (<code class="docutils literal notranslate"><span class="pre">relic.core.simulator.execution_group</span></code>,
+<code class="docutils literal notranslate"><span class="pre">relic.core.simulator.execution_loop</span></code>). For <span class="math notranslate nohighlight">\(n \ge 2\)</span> ordered fast-group
+processes <span class="math notranslate nohighlight">\(F_1, \dots, F_n\)</span>, <code class="docutils literal notranslate"><span class="pre">lie</span></code> mode executes <span class="math notranslate nohighlight">\(\Phi_n^{\Delta t} \circ \cdots \circ \Phi_1^{\Delta t}\)</span>, whereas <code class="docutils literal notranslate"><span class="pre">strang</span></code> mode executes the palindromic
+<span class="math notranslate nohighlight">\(2n - 1\)</span> composition (<em>Methods of Ecological Analysis</em>, Chapter 26):</p>
+<div class="math notranslate nohighlight">
+\[
+\Phi_{\Delta t}^{\mathrm{Strang}}
+= \Phi_1^{\Delta t / 2} \circ \cdots \circ \Phi_{n-1}^{\Delta t / 2}
+\circ \Phi_n^{\Delta t}
+\circ \Phi_{n-1}^{\Delta t / 2} \circ \cdots \circ \Phi_1^{\Delta t / 2},
+\]</div>
+<p>passing stage start time <span class="math notranslate nohighlight">\(t\)</span> to the leading half-steps and central full step and
+<span class="math notranslate nohighlight">\(t + \Delta t / 2\)</span> to the trailing half-steps. Each Functor declares
+<code class="docutils literal notranslate"><span class="pre">FunctorMetadata.sub_flow_accuracy</span></code> (<code class="docutils literal notranslate"><span class="pre">SubFlowAccuracy</span></code> in
+<code class="docutils literal notranslate"><span class="pre">relic.core.functor.functor_types</span></code>: <code class="docutils literal notranslate"><span class="pre">EXACT</span></code> with <span class="math notranslate nohighlight">\(p_i = \infty\)</span>, <code class="docutils literal notranslate"><span class="pre">ORDER_2</span></code> with
+<span class="math notranslate nohighlight">\(p_i = 2\)</span>, <code class="docutils literal notranslate"><span class="pre">ORDER_1</span></code> with <span class="math notranslate nohighlight">\(p_i = 1\)</span>, or <code class="docutils literal notranslate"><span class="pre">UNDECLARED</span></code>), and
+<code class="docutils literal notranslate"><span class="pre">RELICSimulator.get_splitting_order_report()</span></code> evaluates the guaranteed one-step
+order:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+q = \min\!\left(s,\; \min_{1 \le i \le n} p_i\right),
+\qquad
+s = \begin{cases} 1, &amp; \texttt{lie}, \\ 2, &amp; \texttt{strang}, \end{cases}
+\end{split}\]</div>
+<p>reporting <code class="docutils literal notranslate"><span class="pre">unverified</span></code> whenever any participating process leaves
+<code class="docutils literal notranslate"><span class="pre">SubFlowAccuracy.UNDECLARED</span></code>. Strang composition with first-order explicit Euler
+sub-integrators reduces globally to <span class="math notranslate nohighlight">\(q = 1\)</span>. In Strang mode with <span class="math notranslate nohighlight">\(n \ge 2\)</span>,
+State Contract Model (SCM) flux edges between stateful fast members (including
+stateless relays) are refused at provider publication; <code class="docutils literal notranslate"><span class="pre">IntegrationPlan</span></code>
+(<code class="docutils literal notranslate"><span class="pre">relic.computation.solvers.geometric</span></code>) validates static stage DAGs as
+<code class="docutils literal notranslate"><span class="pre">metadata_only</span></code> (<code class="docutils literal notranslate"><span class="pre">verified=False</span></code>, <code class="docutils literal notranslate"><span class="pre">runtime_ready=False</span></code>), while runtime
+schedule conformance is verified via <code class="docutils literal notranslate"><span class="pre">RELICSimulator.get_composition_plan()</span></code> and
+<code class="docutils literal notranslate"><span class="pre">GraphExecutor.integration_plan_witness</span></code>.</p>
+</section>
+<section id="multi-rate-effective-interval-and-boundary-rate-integrals">
+<h3>Multi-rate effective interval and boundary-rate integrals<a class="headerlink" href="#multi-rate-effective-interval-and-boundary-rate-integrals" title="Link to this heading"></a></h3>
+<p>With base fast step <span class="math notranslate nohighlight">\(\Delta t_f\)</span>, the <code class="docutils literal notranslate"><span class="pre">medium</span></code> group triggers across multiples
+of <code class="docutils literal notranslate"><span class="pre">medium_interval_seconds</span></code>, and the <code class="docutils literal notranslate"><span class="pre">slow</span></code> group triggers across multiples of
+<code class="docutils literal notranslate"><span class="pre">slow_interval_seconds</span></code> (or calendar month boundaries when unset), receiving the
+exact elapsed interval since its prior execution:</p>
+<div class="math notranslate nohighlight">
+\[
+\Delta t_{\mathrm{eff}} = t_{\mathrm{future}} - t_{\mathrm{last}},
+\qquad
+\Delta t_{\mathrm{eff}} &gt; 0.
+\]</div>
+<p>Each group execution (and each Strang sub-execution) commits immediately through
+<code class="docutils literal notranslate"><span class="pre">StateManager</span></code>. Across substeps <span class="math notranslate nohighlight">\(k\)</span> of duration <span class="math notranslate nohighlight">\(h_k\)</span> within call interval
+<span class="math notranslate nohighlight">\(H = \sum_k h_k\)</span>, <code class="docutils literal notranslate"><span class="pre">ACCUMULATE</span></code> amounts sum directly, <code class="docutils literal notranslate"><span class="pre">ACCUMULATE</span></code> rates
+(<code class="docutils literal notranslate"><span class="pre">per_timestep=False</span></code>) form time-weighted averages <span class="math notranslate nohighlight">\(\sum_k (h_k / H) q_k\)</span>, and
+substepped physical boundary-port <code class="docutils literal notranslate"><span class="pre">REPLACE</span></code> rates (<code class="docutils literal notranslate"><span class="pre">allowed_in</span></code> / <code class="docutils literal notranslate"><span class="pre">allowed_out</span></code>)
+commit the exact interval mean <span class="math notranslate nohighlight">\(\sum_k q_k \Delta t_k / \Delta t_{\mathrm{call}}\)</span>.
+Declared <code class="docutils literal notranslate"><span class="pre">multirate_exchanges</span></code> supply either <code class="docutils literal notranslate"><span class="pre">hold</span></code> or piecewise-constant
+running <code class="docutils literal notranslate"><span class="pre">interval_mean</span></code> overlays (<code class="docutils literal notranslate"><span class="pre">exchange_mean__&lt;id&gt;</span></code>) to slower consumers.</p>
+</section>
+<section id="rms-update-magnitude-step-controller">
+<h3>RMS update-magnitude step controller<a class="headerlink" href="#rms-update-magnitude-step-controller" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">RELICSimulator.run(...)</span></code> adapts macro-steps exclusively via the fast-group
+committed root-mean-square (RMS) update metric over the <span class="math notranslate nohighlight">\(m\)</span> distinct state
+variables written by the fast group (<span class="math notranslate nohighlight">\(u_k = x'_k - x_k\)</span>):</p>
+<div class="math notranslate nohighlight">
+\[
+\tau_k = \mathrm{atol} + \mathrm{rtol}\,\lvert x_k \rvert,
+\qquad
+\mathrm{Err}
+= \sqrt{\frac{1}{m}\sum_{k=1}^{m}
+\operatorname{mean}\!\left(\frac{u_k}{\tau_k}\right)^2}.
+\]</div>
+<p>If <span class="math notranslate nohighlight">\(\mathrm{Err} &gt; 1\)</span> and <span class="math notranslate nohighlight">\(\Delta t &gt; \Delta t_{\min}\)</span>, the step rolls back and
+retries once with
+<span class="math notranslate nohighlight">\(\Delta t_{\mathrm{new}} = \max\!\left(\Delta t_{\min},\; \Delta t\max(0.1, 0.9 / \sqrt{\mathrm{Err}})\right)\)</span>;
+accepted steps propose
+<span class="math notranslate nohighlight">\(\Delta t_{\mathrm{next}} = \operatorname{clip}\!\left(\Delta t\min(5, \max(0.1, 0.9 / \sqrt{\mathrm{Err}})),\; \Delta t_{\min},\; \Delta t_{\max}\right)\)</span>
+(doubling when <span class="math notranslate nohighlight">\(\mathrm{Err} = 0\)</span>). This controller bounds relative state jumps
+and is distinct from formal embedded truncation-error or Courant-Friedrichs-Lewy
+(CFL) stability control.</p>
+</section>
+</section>
+<section id="transport-stability-and-nonlinear-richards-closure">
+<h2>Transport stability and nonlinear Richards closure<a class="headerlink" href="#transport-stability-and-nonlinear-richards-closure" title="Link to this heading"></a></h2>
+<p>For 1D/multi-D advection-diffusion
+<span class="math notranslate nohighlight">\(\frac{\partial c}{\partial t} + \nabla\cdot(\mathbf{u}c - D\nabla c) = 0\)</span> on
+isotropic grid spacing <span class="math notranslate nohighlight">\(\Delta x\)</span> in <span class="math notranslate nohighlight">\(d\)</span> spatial dimensions, explicit time
+stepping is constrained by the Courant-Friedrichs-Lewy (CFL) number, explicit
+Fourier diffusion number <span class="math notranslate nohighlight">\(\mu\)</span>, and cell Peclet number <span class="math notranslate nohighlight">\(\mathrm{Pe}\)</span> (<em>Methods
+of Ecological Analysis</em>, Chapter 25):</p>
+<div class="math notranslate nohighlight">
+\[
+\mathrm{CFL} = \frac{\lvert u \rvert\,\Delta t}{\Delta x} \le C_{\max},
+\qquad
+\mu = \frac{D\,\Delta t}{\Delta x^2} \le \frac{1}{2d},
+\qquad
+\mathrm{Pe} = \frac{\lvert u \rvert\,\Delta x}{D}.
+\]</div>
+<p><code class="docutils literal notranslate"><span class="pre">apply_advection</span></code> (<code class="docutils literal notranslate"><span class="pre">relic.scientific.transport</span></code>) enforces
+<span class="math notranslate nohighlight">\(\mathrm{CFL} \le C_{\max}\)</span> against <code class="docutils literal notranslate"><span class="pre">transport.numerical.cfl_advection_max</span></code>
+(default <code class="docutils literal notranslate"><span class="pre">1.0</span></code>, bounds <code class="docutils literal notranslate"><span class="pre">[0.5,</span> <span class="pre">1.0]</span></code>) on explicit <code class="docutils literal notranslate"><span class="pre">&quot;euler&quot;</span></code> steps and raises
+<code class="docutils literal notranslate"><span class="pre">ValueError</span></code> on violation (<code class="docutils literal notranslate"><span class="pre">upwind</span></code> supports all integrators; <code class="docutils literal notranslate"><span class="pre">lax_wendroff</span></code>,
+<code class="docutils literal notranslate"><span class="pre">superbee</span></code>, and <code class="docutils literal notranslate"><span class="pre">van_leer</span></code> require <code class="docutils literal notranslate"><span class="pre">&quot;euler&quot;</span></code>; <code class="docutils literal notranslate"><span class="pre">central</span></code> requires
+<code class="docutils literal notranslate"><span class="pre">&quot;implicit_midpoint&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;crank_nicolson&quot;</span></code>).</p>
+<p>Variably saturated vertical soil-water flow obeys the mixed-form Richards
+equation with van Genuchten (1980) retention and Mualem (1976) hydraulic
+conductivity:</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\partial \theta(h)}{\partial t}
+= \frac{\partial}{\partial z}\!\left[K(h)\left(\frac{\partial h}{\partial z} + 1\right)\right] - S(h),
+\qquad
+S_e = \left[1 + (\alpha \lvert h \rvert)^n\right]^{-m} \;\; \left(m = 1 - \frac{1}{n}\right),
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+\theta(h) = \theta_r + S_e(\theta_s - \theta_r),
+\qquad
+K(S_e) = K_s S_e^\ell\left[1 - \left(1 - S_e^{1/m}\right)^m\right]^2,
+\]</div>
+<p>routing any saturation or residual-moisture clipping
+(<span class="math notranslate nohighlight">\(\theta_r \le \theta \le \theta_s\)</span>) into explicit water-budget ledgers.</p>
+</section>
+<section id="conservative-spatial-remapping-and-internal-cross-domain-couplers">
+<h2>Conservative spatial remapping and internal cross-domain couplers<a class="headerlink" href="#conservative-spatial-remapping-and-internal-cross-domain-couplers" title="Link to this heading"></a></h2>
+<section id="basis-governed-spatial-remapping">
+<h3>Basis-governed spatial remapping<a class="headerlink" href="#basis-governed-spatial-remapping" title="Link to this heading"></a></h3>
+<p>Grid-to-grid (<code class="docutils literal notranslate"><span class="pre">ConservativeRemap</span></code>, <code class="docutils literal notranslate"><span class="pre">ConservativeRegridder</span></code>, <code class="docutils literal notranslate"><span class="pre">BilinearRegridder</span></code>,
+<code class="docutils literal notranslate"><span class="pre">NearestNeighborRegridder</span></code> in <code class="docutils literal notranslate"><span class="pre">relic.coupling.scales.spatial</span></code>) and nested-unit
+hierarchical operators (<code class="docutils literal notranslate"><span class="pre">HierarchicalAggregator</span></code>, <code class="docutils literal notranslate"><span class="pre">ScaleManager</span></code> in
+<code class="docutils literal notranslate"><span class="pre">relic.coupling.scales</span></code>) enforce <code class="docutils literal notranslate"><span class="pre">SpatialQuantityBasis</span></code> (<code class="docutils literal notranslate"><span class="pre">relic.coupling.scales.types</span></code>:
+<code class="docutils literal notranslate"><span class="pre">intensive</span></code>, <code class="docutils literal notranslate"><span class="pre">cell_total</span></code>, <code class="docutils literal notranslate"><span class="pre">area_density</span></code>, <code class="docutils literal notranslate"><span class="pre">categorical</span></code>; see <a class="reference internal" href="foundations.html"><span class="std std-doc">Mathematical Foundations</span></a>).
+Spherical <code class="docutils literal notranslate"><span class="pre">latlon</span></code> cell areas use SSOT <code class="docutils literal notranslate"><span class="pre">earth_radius</span></code> <span class="math notranslate nohighlight">\(R_\oplus\)</span> as
+<span class="math notranslate nohighlight">\(A = R_\oplus^2(\lambda_2 - \lambda_1)(\sin\phi_2 - \sin\phi_1)\)</span>, and
+<code class="docutils literal notranslate"><span class="pre">HierarchicalAggregator</span></code> additionally supports neutral-drag effective roughness
+blending at reference height <span class="math notranslate nohighlight">\(z_r\)</span> (<span class="math notranslate nohighlight">\(0 &lt; z_{0,i} &lt; z_r\)</span>):</p>
+<div class="math notranslate nohighlight">
+\[
+z_{0,j} = z_r \exp\!\left[-\left(\sum_i \frac{f_{ij}}{\ln^2(z_r / z_{0,i})}\right)^{-1/2}\right].
+\]</div>
+</section>
+<section id="internal-cross-domain-coupling-ports-relic-coupling-internal">
+<h3>Internal cross-domain coupling ports (<code class="docutils literal notranslate"><span class="pre">relic.coupling.internal</span></code>)<a class="headerlink" href="#internal-cross-domain-coupling-ports-relic-coupling-internal" title="Link to this heading"></a></h3>
+<p>Three <code class="docutils literal notranslate"><span class="pre">ScaleCouplingFunctor</span></code> ports connect soil, vegetation, and surface-layer
+variables without duplicating domain process laws (<em>Methods of Ecological
+Analysis</em>, Chapters 23–24):</p>
+<ol class="arabic simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">SoilVegetationCoupling</span></code> (<code class="docutils literal notranslate"><span class="pre">relic.coupling.internal.soil_vegetation</span></code>)</strong>:
+Normalizes parametric (<code class="docutils literal notranslate"><span class="pre">exponential</span></code>, <code class="docutils literal notranslate"><span class="pre">linear</span></code>, <code class="docutils literal notranslate"><span class="pre">beta</span></code>) or observed root
+density across layer thicknesses <span class="math notranslate nohighlight">\(\Delta z_i\)</span> (<span class="math notranslate nohighlight">\(\sum_i \beta_i \Delta z_i = 1\)</span>)
+and applies the four-threshold Feddes matric-potential stress factor
+<span class="math notranslate nohighlight">\(\alpha(\psi_i) \in [0, 1]\)</span> (<span class="math notranslate nohighlight">\(\psi_{\mathrm{wilt}} &lt; \psi_{\mathrm{opt,dry}} &lt; \psi_{\mathrm{opt,wet}} &lt; \psi_{\mathrm{anaer}}\)</span>)
+to potential transpiration <span class="math notranslate nohighlight">\(T_p\)</span>:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[
+S_i = \alpha(\psi_i)\,\beta_i\,T_p,
+\qquad
+T_{\mathrm{actual}} = \sum_i S_i\,\Delta z_i \le T_p.
+\]</div>
+<ol class="arabic simple" start="2">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">BiosphereAtmosphereCoupling</span></code> (<code class="docutils literal notranslate"><span class="pre">relic.coupling.internal.biosphere_atmosphere</span></code>)</strong>:
+Maps friction velocity <span class="math notranslate nohighlight">\(u_\ast &gt; 0\)</span>, air temperature <span class="math notranslate nohighlight">\(T &gt; 0\)</span>, and pressure
+<span class="math notranslate nohighlight">\(P &gt; 0\)</span> to bulk-canopy leaf boundary-layer conductance:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[
+g_{b,\mathrm{ms}} = C_v\sqrt{\frac{u_\ast}{d_{\mathrm{leaf}}}},
+\qquad
+g_{b,\mathrm{mol}} = g_{b,\mathrm{ms}}\frac{P}{R T}.
+\]</div>
+<ol class="arabic simple" start="3">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">WaterCarbonCoupling</span></code> (<code class="docutils literal notranslate"><span class="pre">relic.coupling.internal.water_carbon</span></code>)</strong>:
+Combines soil-moisture factor <span class="math notranslate nohighlight">\(f_{\mathrm{soil}}(\theta)\)</span> (<code class="docutils literal notranslate"><span class="pre">logistic</span></code>,
+<code class="docutils literal notranslate"><span class="pre">linear</span></code>, or <code class="docutils literal notranslate"><span class="pre">piecewise</span></code>), hyperbolic vapour-pressure-deficit factor
+<span class="math notranslate nohighlight">\(f_{\mathrm{vpd}} = (1 + D / D_{50})^{-1}\)</span>, and clamped <span class="math notranslate nohighlight">\(Q_{10}\)</span> thermal
+response <span class="math notranslate nohighlight">\(f_T\)</span> into bounded physiological and decomposition modifiers
+(<span class="math notranslate nohighlight">\(f_{\mathrm{gpp}}\)</span>, <span class="math notranslate nohighlight">\(f_{Ra}\)</span>, <span class="math notranslate nohighlight">\(f_{Rh}\)</span>, <span class="math notranslate nohighlight">\(k_{\mathrm{dec}}\)</span>, and
+<span class="math notranslate nohighlight">\(f_{\mathrm{overall}}\)</span>).</p></li>
+</ol>
+</section>
+</section>
+<section id="transverse-hybrid-events-and-saltation-matrix-sensitivities">
+<h2>Transverse hybrid events and saltation-matrix sensitivities<a class="headerlink" href="#transverse-hybrid-events-and-saltation-matrix-sensitivities" title="Link to this heading"></a></h2>
+<p>For one transversal zero crossing of a scalar guard <span class="math notranslate nohighlight">\(g(x, \boldsymbol{\theta}, t) = 0\)</span>
+within an explicit step <span class="math notranslate nohighlight">\([t_0, t_0 + \Delta t]\)</span> (<span class="math notranslate nohighlight">\(g_0 g_1 \le 0\)</span>) followed by a
+smooth reset map <span class="math notranslate nohighlight">\(x^+ = R(x^-, \boldsymbol{\theta}, \tau)\)</span>,
+<code class="docutils literal notranslate"><span class="pre">relic.computation.solvers.hybrid_events</span></code> (<code class="docutils literal notranslate"><span class="pre">locate_guard_crossing</span></code>,
+<code class="docutils literal notranslate"><span class="pre">event_time_sensitivity</span></code>, <code class="docutils literal notranslate"><span class="pre">sensitivity_jump</span></code>, <code class="docutils literal notranslate"><span class="pre">saltation_matrix</span></code>) locates the
+crossing time <span class="math notranslate nohighlight">\(\tau\)</span> by linear interpolation and propagates exact first-order
+state and parameter sensitivities (<em>Methods of Ecological Analysis</em>, Chapter 28):</p>
+<div class="math notranslate nohighlight">
+\[
+\tau = t_0 + \Delta t\,\frac{g_0}{g_0 - g_1},
+\qquad
+\frac{\mathrm{d}\tau}{\mathrm{d}\boldsymbol{\theta}}
+= -\frac{g_x S^- + g_{\boldsymbol{\theta}}}{g_x f^- + g_t},
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+\Xi = R_x + \frac{\left(f^+ - R_x f^- - R_t\right) n^{\mathsf{T}}}{n^{\mathsf{T}} f^- + g_t}
+\quad \left(n = g_x^{\mathsf{T}}\right),
+\qquad
+S^+ = R_x S^- + R_{\boldsymbol{\theta}}
++ \left(R_x f^- + R_t - f^+\right)\frac{\mathrm{d}\tau}{\mathrm{d}\boldsymbol{\theta}},
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(f^-\)</span> and <span class="math notranslate nohighlight">\(f^+\)</span> are pre- and post-event vector fields and <span class="math notranslate nohighlight">\(S^-\)</span>, <span class="math notranslate nohighlight">\(S^+\)</span> are
+pre- and post-event parameter sensitivities. Tangential or grazing trajectories
+satisfying <span class="math notranslate nohighlight">\(\lvert g_0 - g_1 \rvert \le \varepsilon_{\mathrm{trans}}\)</span> or
+<span class="math notranslate nohighlight">\(\lvert n^{\mathsf{T}} f^- + g_t \rvert \le \varepsilon_{\mathrm{trans}}\)</span>
+(<code class="docutils literal notranslate"><span class="pre">computation.solvers.hybrid_events.transversality_tolerance</span></code>, default <code class="docutils literal notranslate"><span class="pre">1e-12</span></code>)
+raise <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> without extrapolation. Production consumer: <code class="docutils literal notranslate"><span class="pre">GDDPhenology</span></code>
+onset diagnostics; simultaneous multi-guard crossings and implicit-solver event
+location remain <code class="docutils literal notranslate"><span class="pre">[N]</span></code>.</p>
+</section>
+<section id="stochastic-memory-ale-dae-and-topology-transition-families">
+<h2>Stochastic, memory, ALE, DAE, and topology-transition families<a class="headerlink" href="#stochastic-memory-ale-dae-and-topology-transition-families" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">relic.stochastic</span></code> provides standalone Ito Stochastic Differential Equation
+(SDE) Euler-Maruyama stepping
+(<span class="math notranslate nohighlight">\(x_{n+1} = x_n + a(x_n, t_n)\Delta t + B(x_n, t_n)\Delta W_n\)</span>,
+<span class="math notranslate nohighlight">\(\Delta W_n \sim \mathcal{N}(0, \Delta t\,I)\)</span>, strong order <span class="math notranslate nohighlight">\(1/2\)</span>), Gillespie
+direct Stochastic Simulation Algorithm (SSA) reaction jumps
+(<span class="math notranslate nohighlight">\(\tau = -\ln u_1 / a_0(x)\)</span>, <span class="math notranslate nohighlight">\(x^+ = x^- + \nu_j\)</span>), and Monte Carlo ensemble
+statistics (<span class="math notranslate nohighlight">\(\bar{x} = \frac{1}{M}\sum_{m=1}^M x^{(m)}\)</span>,
+<span class="math notranslate nohighlight">\(s_x^2 = \frac{1}{M-1}\sum_{m=1}^M (x^{(m)} - \bar{x})^2\)</span>). Conservative
+stochastic forcing acts on flux cochains
+(<span class="math notranslate nohighlight">\(\mathrm{d}x_{\mathrm{noise}} = -D_{d-1,h}\Xi_h\,\mathrm{d}W_t\)</span>) so closed
+elemental ledgers remain invariant.</p>
+<p>Across the certified scientific Functors, six bounded non-standard dynamical
+families are wired into <code class="docutils literal notranslate"><span class="pre">FunctorBase</span></code>, <code class="docutils literal notranslate"><span class="pre">StateManager</span></code>, and checkpoint/restart
+governance (<code class="docutils literal notranslate"><span class="pre">[I]</span></code>):</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Semantic family</p></th>
+<th class="head"><p>Governed production Functor(s)</p></th>
+<th class="head"><p>Mathematical realization and scope boundary</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">continuous_sde</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">OrnsteinUhlenbeckTemperatureFunctor</span></code> (<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>)</p></td>
+<td><p>Euler-Maruyama Ornstein-Uhlenbeck anomaly step with deterministic per-Functor substream checkpoint/restart replay (<code class="docutils literal notranslate"><span class="pre">FunctorSubstreamMixin</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">marked_jump</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">MarkedPoissonRainfallFunctor</span></code> (<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>)</p></td>
+<td><p>Constant-hazard Poisson storm arrivals with exponential depth marks and deterministic substream replay; steps exceeding arrival cap fail closed without truncation</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">memory</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">TwoRegionMassTransferFunctor</span></code> (<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">3</span></code>)</p></td>
+<td><p>Exact exponential integrating-factor realization (<code class="docutils literal notranslate"><span class="pre">SubFlowAccuracy.EXACT</span></code>) of mobile-immobile Volterra memory exchange <span class="math notranslate nohighlight">\(f_{\mathrm{mem}}(t) = -\int_0^t K(t-s)e(s)\,\mathrm{d}s\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ale</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">MovingDomainDiffusionFunctor</span></code> (<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">3</span></code>)</p></td>
+<td><p>1D Arbitrary Lagrangian-Eulerian (ALE) uniform column stretching satisfying the Geometric Conservation Law (GCL) and moving-metric power identity <span class="math notranslate nohighlight">\(e_E^{\mathsf{T}} f_{\mathrm{ALE}} = -\frac{1}{2}x^{\mathsf{T}}\dot{\star}_h x\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">descriptor_dae</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">EquilibriumSorptionFunctor</span></code> (<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>)</p></td>
+<td><p>Total-mass prognostic advance paired with index-1 Freundlich Differential-Algebraic Equation (DAE) scalar root solve via <code class="docutils literal notranslate"><span class="pre">BracketedBisectionSolver</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">topology_change</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">HortonianPondingEventFunctor</span></code> &amp; <code class="docutils literal notranslate"><span class="pre">SurfacePondingFunctor</span></code> (<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>)</p></td>
+<td><p>Guard-triggered ponding topology registration with affine state remap, water-budget closure, and single provider-epoch transition</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Butcher, J. C. (2016). <em>Numerical Methods for Ordinary Differential Equations</em>, 3rd ed. Wiley.</p></li>
+<li><p>Feddes, R. A., Kowalik, P. J., and Zaradny, H. (1978). <em>Simulation of Field Water Use and Crop Yield</em>. Pudoc.</p></li>
+<li><p>Gillespie, D. T. (1977). Exact stochastic simulation of coupled chemical reactions. <em>Journal of Physical Chemistry</em> 81, 2340–2361.</p></li>
+<li><p>Lygeros, J., Johansson, K. H., Simic, S. N., Zhang, J., and Sastry, S. S. (2003). Dynamical properties of hybrid automata. <em>IEEE Transactions on Automatic Control</em> 48, 2–17.</p></li>
+<li><p>Hairer, E., Lubich, C., and Wanner, G. (2006). <em>Geometric Numerical Integration</em>, 2nd ed. Springer.</p></li>
+<li><p>Hairer, E. and Wanner, G. (1996). <em>Solving Ordinary Differential Equations II: Stiff and Differential-Algebraic Problems</em>, 2nd ed. Springer.</p></li>
+<li><p>Hiskens, I. A. and Pai, M. A. (2000). Trajectory sensitivity analysis of hybrid systems. <em>IEEE Transactions on Circuits and Systems I</em> 47, 204–220.</p></li>
+<li><p>Kloeden, P. E. and Platen, E. (1992). <em>Numerical Solution of Stochastic Differential Equations</em>. Springer.</p></li>
+<li><p>LeVeque, R. J. (2002). <em>Finite Volume Methods for Hyperbolic Problems</em>. Cambridge University Press.</p></li>
+<li><p>Mualem, Y. (1976). A new model for predicting the hydraulic conductivity of unsaturated porous media. <em>Water Resources Research</em> 12, 513–522.</p></li>
+<li><p>Press, W. H., Teukolsky, S. A., Vetterling, W. T., and Flannery, B. P. (1992). <em>Numerical Recipes in C</em>, 2nd ed. Cambridge University Press.</p></li>
+<li><p>Strang, G. (1968). On the construction and comparison of difference schemes. <em>SIAM Journal on Numerical Analysis</em> 5, 506–517.</p></li>
+<li><p>van Genuchten, M. T. (1980). A closed-form equation for predicting the hydraulic conductivity of unsaturated soils. <em>Soil Science Society of America Journal</em> 44, 892–898.</p></li>
+<li><p>Varah, J. M. (1975). A lower bound for the smallest singular value of a matrix. <em>Linear Algebra and its Applications</em> 11, 3–5.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="dec_iphs_generic.html" class="btn btn-neutral float-left" title="DEC, IPHS, GENERIC, Ports, and Reaction Structure" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="atmosphere.html" class="btn btn-neutral float-right" title="Atmosphere Theory" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

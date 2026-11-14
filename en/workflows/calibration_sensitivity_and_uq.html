@@ -1,0 +1,994 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calibration, Sensitivity Analysis, and Uncertainty Quantification &mdash; RELIC 1.0.0 Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=mono5" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=a12e3537"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/language_switch.js?v=mono5"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Devices and Distributed Execution" href="devices_and_distributed.html" />
+    <link rel="prev" title="Coupling Workflows" href="coupling_workflows.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            RELIC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">RELIC Guide</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../architecture.html">System Architecture</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#scope-and-architectural-contract">Scope and architectural contract</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#architecture-capability-map">Architecture capability map</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#package-ownership-and-seven-layer-map">Package ownership and seven-layer map</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#four-scientific-abstractions">Four scientific abstractions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#functor-lifecycle-and-metadata">Functor lifecycle and metadata</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#variable-roles-and-state-ownership">Variable roles and state ownership</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#parameters-constants-units-and-time">Parameters, constants, units, and time</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#simulator-execution-rates-and-device-policy">Simulator, execution rates, and device policy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#structural-scientific-layer">Structural scientific layer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#end-to-end-assembly-and-execution">End-to-end assembly and execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#connection-and-conservation-rules">Connection and conservation rules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/index.html">Scientific Theory and Governing Equations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../theory/foundations.html">Mathematical Foundations, State, Units, and Conservation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#architectural-contract-and-notation">Architectural contract and notation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#four-scientific-abstractions-and-functor-lifecycle">Four scientific abstractions and Functor lifecycle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#spatial-quantity-basis-and-temporal-overlap-laws">Spatial quantity basis and temporal overlap laws</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#universal-conservation-and-balance-laws">Universal conservation and balance laws</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#transactional-statemanager-governance-i1-i7">Transactional StateManager governance (<code class="docutils literal notranslate"><span class="pre">I1</span></code>–<code class="docutils literal notranslate"><span class="pre">I7</span></code>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#centralized-parametermanager-and-physical-constant-ssot">Centralized ParameterManager and physical-constant SSOT</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#piecewise-smooth-discrete-adjoint-differentiation-and-device-policy">Piecewise-smooth discrete adjoint differentiation and device policy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#bounded-mathematical-contracts-and-runtime-boundary-i-vs-n">Bounded mathematical contracts and runtime boundary (<code class="docutils literal notranslate"><span class="pre">[I]</span></code> vs <code class="docutils literal notranslate"><span class="pre">[N]</span></code>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/dec_iphs_generic.html">DEC, IPHS, GENERIC, Ports, and Reaction Structure</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/dec_iphs_generic.html#structural-governance-lifecycle">Structural governance lifecycle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/dec_iphs_generic.html#discrete-exterior-calculus-relic-computation-operators-dec">Discrete exterior calculus (<code class="docutils literal notranslate"><span class="pre">relic.computation.operators.dec</span></code>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/dec_iphs_generic.html#irreversible-port-hamiltonian-and-generic-lowering">Irreversible port-Hamiltonian and GENERIC lowering</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/dec_iphs_generic.html#equivalence-certificates-and-live-repository-inventory">Equivalence certificates and live repository inventory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/dec_iphs_generic.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/numerics.html">Numerical Integration, Splitting, Stability, Scale Coupling, and Hybrid Events</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#method-of-lines-formulation-and-solver-registry">Method-of-lines formulation and solver registry</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#deterministic-time-stepping-linear-and-nonlinear-solvers">Deterministic time-stepping, linear, and nonlinear solvers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#multi-rate-execution-operator-splitting-and-step-control">Multi-rate execution, operator splitting, and step control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#transport-stability-and-nonlinear-richards-closure">Transport stability and nonlinear Richards closure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#conservative-spatial-remapping-and-internal-cross-domain-couplers">Conservative spatial remapping and internal cross-domain couplers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#transverse-hybrid-events-and-saltation-matrix-sensitivities">Transverse hybrid events and saltation-matrix sensitivities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#stochastic-memory-ale-dae-and-topology-transition-families">Stochastic, memory, ALE, DAE, and topology-transition families</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/atmosphere.html">Atmosphere Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/atmosphere.html#scope-process-inventory-and-certificate-map">Scope, process inventory, and certificate map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/atmosphere.html#solar-thermal-and-canopy-radiation">Solar, thermal, and canopy radiation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/atmosphere.html#surface-layer-turbulence-and-boundary-layer-tracer-transport">Surface-layer turbulence and boundary-layer tracer transport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/atmosphere.html#gas-phase-chemistry-open-tropospheric-kinetics-and-closed-level-5-generic-point">Gas-phase chemistry: open tropospheric kinetics and closed Level-5 GENERIC point</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/atmosphere.html#stochastic-atmospheric-forcing-and-replay-contracts">Stochastic atmospheric forcing and replay contracts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/atmosphere.html#atmospheric-observation-operators">Atmospheric observation operators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/atmosphere.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/biosphere.html">Biosphere Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/biosphere.html#scope-process-inventory-and-certificate-map">Scope, process inventory, and certificate map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/biosphere.html#photosynthesis-and-stomatal-conductance">Photosynthesis and stomatal conductance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/biosphere.html#autotrophic-respiration-allocation-and-structural-growth">Autotrophic respiration, allocation, and structural growth</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/biosphere.html#phenology-and-abiotic-stress-closures">Phenology and abiotic stress closures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/biosphere.html#biogenic-volatile-organic-compound-bvoc-synthesis-and-emission">Biogenic volatile organic compound (BVOC) synthesis and emission</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/biosphere.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/hydrosphere.html">Hydrosphere Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/hydrosphere.html#scope-process-inventory-and-certificate-map">Scope, process inventory, and certificate map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/hydrosphere.html#evapotranspiration-closures">Evapotranspiration closures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/hydrosphere.html#snowpack-mass-energy-balance-and-snow-albedo">Snowpack mass-energy balance and snow albedo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/hydrosphere.html#soil-water-retention-bucket-storage-and-richards-vadose-flow">Soil-water retention, bucket storage, and Richards vadose flow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/hydrosphere.html#surface-runoff-and-hybrid-event-driven-hortonian-ponding">Surface runoff and hybrid event-driven Hortonian ponding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/hydrosphere.html#subsurface-stormflow-vadose-aquifer-exchange-and-groundwater">Subsurface stormflow, vadose-aquifer exchange, and groundwater</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/hydrosphere.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/pedosphere.html">Pedosphere Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/pedosphere.html#scope-process-inventory-and-certificate-map">Scope, process inventory, and certificate map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/pedosphere.html#soil-organic-carbon-turnover-and-cross-sphere-interface-maps">Soil organic carbon turnover and cross-sphere interface maps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/pedosphere.html#soil-nitrogen-root-p-uptake-and-c-n-stoichiometry-boundaries">Soil nitrogen, root P uptake, and C:N stoichiometry boundaries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/pedosphere.html#wetland-methane-request-and-coupler-architecture">Wetland methane request-and-coupler architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/pedosphere.html#porous-media-water-gas-solute-dae-ale-and-memory-transport">Porous-media water, gas, solute, DAE, ALE, and memory transport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/pedosphere.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/anthroposphere.html">Anthroposphere Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/anthroposphere.html#scope-process-inventory-and-fail-closed-boundary-status">Scope, process inventory, and fail-closed boundary status</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/anthroposphere.html#fail-closed-level-0-boundaries-vs-implemented-emission-operators">Fail-closed Level-0 boundaries vs implemented emission operators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/anthroposphere.html#continuous-time-markov-land-use-transitions-and-parameter-projection">Continuous-time Markov land-use transitions and parameter projection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/anthroposphere.html#management-coordination-and-agricultural-water-nutrient-ports">Management coordination and agricultural water-nutrient ports</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/anthroposphere.html#managed-biomass-removal-livestock-grazing-fire-and-tillage">Managed biomass removal, livestock grazing, fire, and tillage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/anthroposphere.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/isotopes_transport.html">Stable Isotopes and General Transport Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/isotopes_transport.html#scope-component-inventory-and-certificate-map">Scope, component inventory, and certificate map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/isotopes_transport.html#stable-isotope-ratios-exact-binary-fractionation-and-fail-closed-ledger-status">Stable-isotope ratios, exact binary fractionation, and fail-closed ledger status</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/isotopes_transport.html#general-conservative-transport-functors">General conservative transport Functors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/isotopes_transport.html#references">References</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../science/index.html">Core Scientific Class Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../science/anthroposphere.html">Anthroposphere Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#atmosphere-coupling">atmosphere_coupling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#sector-allocation">sector_allocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#species-mapping">species_mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#anthroposphere-interface-mapping">anthroposphere_interface_mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#emission-inventory">emission_inventory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#land-use-parameter-mapping">land_use_parameter_mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#land-use-transitions">land_use_transitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#management-coordinator">management_coordinator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#fertilization-management">fertilization_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#fire-management">fire_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#grazing-management">grazing_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#harvest-management">harvest_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#irrigationmanagement">IrrigationManagement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#tillagemanagement">TillageManagement</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/atmosphere.html">Atmosphere Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#chemistryfunctor">ChemistryFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#class-atmosphere-chemistry-chemistry-functor-closed-constant-volume">ChemistryFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#environmentalforcingfunctor">EnvironmentalForcingFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#radiationenergyconservationvalidator">RadiationEnergyConservationValidator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#radiationfield">RadiationField</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#radiationfunctor">RadiationFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#markedpoissonrainfallfunctor">MarkedPoissonRainfallFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#ornsteinuhlenbecktemperaturefunctor">OrnsteinUhlenbeckTemperatureFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#atmosphericadvectiondiffusionfunctor">AtmosphericAdvectionDiffusionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#drydepositionaggregator">DryDepositionAggregator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#eddydiffusionblmfunctor">EddyDiffusionBLMFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#turbulencefunctor">TurbulenceFunctor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/biosphere.html">Biosphere Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#meganmodel">MEGANModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#isoprenesynthesis">IsopreneSynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#monoterpenesynthesis">MonoterpeneSynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#sesquiterpenestressmodel">SesquiterpeneStressModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#sesquiterpenesynthesis">SesquiterpeneSynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#biomassallocation">BiomassAllocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#phenologygrowth">PhenologyGrowth</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#structuralgrowth">StructuralGrowth</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#cropphenology">CropPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#gddphenology">GDDPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#gsiphenology">GSIPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#staticphenology">StaticPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#phenologyfunctor">PhenologyFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#farquharphotosynthesis">FarquharPhotosynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#medlynstomatalconductance">MedlynStomatalConductance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#autotrophicrespiration">AutotrophicRespiration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#growthrespiration">GrowthRespiration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#maintenancerespiration">MaintenanceRespiration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#nutrientstress">NutrientStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#ozonestress">OzoneStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#thermalstress">ThermalStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#waterstress">WaterStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#simplecanopyphotosynthesis">SimpleCanopyPhotosynthesis</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/hydrosphere.html">Hydrosphere Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#penman-monteith-et">penman_monteith_et</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#priestley-taylor-et">priestley_taylor_et</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#groundwater-dynamics">groundwater_dynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#subsurface-runoff">subsurface_runoff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#hortonianpondingeventfunctor">HortonianPondingEventFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#surfacepondingfunctor">SurfacePondingFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#surface-runoff">surface_runoff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#snow-albedo">snow_albedo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#snow-pack">snow_pack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#bucket-soil-moisture">bucket_soil_moisture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#soilwaterretention">SoilWaterRetention</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#richards-soil-moisture">richards_soil_moisture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#capillary-rise-transport">capillary_rise_transport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#vertical-percolation-transport">vertical_percolation_transport</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/pedosphere.html">Pedosphere Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#carbonpoolsfunctor">CarbonPoolsFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#poolsmatrix">PoolsMatrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#firstorderdecomposition">FirstOrderDecomposition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#microbialenzymedecomposition">MicrobialEnzymeDecomposition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#litterfallinterfacemapper">LitterfallInterfaceMapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#pedosphereinterfacemapper">PedosphereInterfaceMapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methanebudgetcoupler">MethaneBudgetCoupler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methaneoxidationfunctor">MethaneOxidationFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methaneproductionfunctor">MethaneProductionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methanescalecouplingfunctor">MethaneScaleCouplingFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methanetransportfunctor">MethaneTransportFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#denitrification-process">denitrification_process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#mineralizationprocess">MineralizationProcess</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#nitrification-process">nitrification_process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#nitrogenleachingprocess">NitrogenLeachingProcess</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#nitrogencycling">NitrogenCycling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#rootnutrientuptake">RootNutrientUptake</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#stoichiometryconstraint">StoichiometryConstraint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#equilibriumsorptionfunctor">EquilibriumSorptionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#gasdiffusion1d">GasDiffusion1D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#movingdomaindiffusionfunctor">MovingDomainDiffusionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#soil-water-transport">soil_water_transport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#soluteadvectiondiffusion1d">SoluteAdvectionDiffusion1D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#tworegionmasstransferfunctor">TwoRegionMassTransferFunctor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/isotopes.html">Stable-Isotope Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/isotopes.html#isotopeheartbeatfunctor">IsotopeHeartbeatFunctor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/transport.html">General Transport Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#advection-diffusion">advection_diffusion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#linear-advection">linear_advection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#fickian-diffusion">fickian_diffusion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#class-transport-diffusion-fickian-diffusion-strict-runtime-point">fickian_diffusion</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/index.html#complete-coverage-matrix">Complete coverage matrix</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">RELIC Workflows</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#learning-tracks">Learning tracks</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#how-to-use-a-tutorial">How to use a tutorial</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="installation_and_imports.html">Installation and Imports</a></li>
+<li class="toctree-l3"><a class="reference internal" href="configuration_and_parameters.html">Configuration and Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="state_functors_and_simulation.html">State, Functors, and Simulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="graph_validation_and_execution.html">Graph Validation and Execution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="persistence_outputs_and_data_io.html">Persistence, Outputs, and Data I/O</a></li>
+<li class="toctree-l3"><a class="reference internal" href="coupling_workflows.html">Coupling Workflows</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Calibration, Sensitivity Analysis, and Uncertainty Quantification</a></li>
+<li class="toctree-l3"><a class="reference internal" href="devices_and_distributed.html">Devices and Distributed Execution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_and_extensions.html">CLI and Extensions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestration.html">Graph Orchestration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#canonical-owners">Canonical owners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#graphir">GraphIR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#portspec-and-the-contract-boundary">PortSpec and the contract boundary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#validation">Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#adapters">Adapters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#compilation-and-execution">Compilation and execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#strict-iphs-dec-boundary">Strict IPHS/DEC boundary</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../operations.html">Operations Quick Start</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#select-a-workflow">Select a workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#environment-preflight">Environment preflight</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#first-successful-run">First successful run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#benchmark-style-acceptance-checklist">Benchmark-style acceptance checklist</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#minimal-runtime-sequence">Minimal runtime sequence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#troubleshooting-order">Troubleshooting order</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#immediate-stop-conditions">Immediate stop conditions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../extension_contracts.html">Extension Contracts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#reuse-first-decision">Reuse-first decision</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#adding-a-scientific-functor">Adding a scientific Functor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#parameter-extension">Parameter extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#variable-contract-extension">Variable contract extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#graph-and-adapter-extension">Graph and adapter extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#external-extension-paths">External extension paths</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#scientific-structure-claims">Scientific structure claims</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#explicit-unavailable-scientific-boundaries">Explicit unavailable scientific boundaries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#anti-redundancy-boundary">Anti-redundancy boundary</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">Core API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/index.html#coverage-contract">Coverage contract</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/core_runtime.html">Core Runtime API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/parameters_contracts.html">Parameters and Parameter Contracts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/orchestration_validation.html">Orchestration, Contracts, and Validation API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/scientific_structure_extensions.html">Scientific Structure and Extension APIs</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">RELIC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">RELIC Workflows</a></li>
+      <li class="breadcrumb-item active">Calibration, Sensitivity Analysis, and Uncertainty Quantification</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="calibration-sensitivity-analysis-and-uncertainty-quantification">
+<h1>Calibration, Sensitivity Analysis, and Uncertainty Quantification<a class="headerlink" href="#calibration-sensitivity-analysis-and-uncertainty-quantification" title="Link to this heading"></a></h1>
+<p>RELIC exposes parameter calibration, global sensitivity analysis backed by
+Sensitivity Analysis Library in Python (SALib), Uncertainty Quantification (UQ),
+and data assimilation components as Python APIs over the canonical parameter
+system. Every
+model callback receives a parameter mapping; the callback is responsible for
+running the intended RELIC model and returning the documented output shape.</p>
+<section id="availability">
+<h2>Availability<a class="headerlink" href="#availability" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">relic.optimization</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_available_optimizers</span>
+
+<span class="n">status</span> <span class="o">=</span> <span class="n">get_available_optimizers</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">status</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The returned mapping reports import availability for calibration,
+assimilation, sensitivity, and uncertainty families. Import availability does
+not guarantee that a model callback, observation mapping, parameter range, or
+optional numerical backend is valid.</p>
+</section>
+<section id="parameter-calibration">
+<h2>Parameter calibration<a class="headerlink" href="#parameter-calibration" title="Link to this heading"></a></h2>
+<p>Learnable parameters are owned by ParameterManager. Obtain their live
+<code class="docutils literal notranslate"><span class="pre">nn.Parameter</span></code> objects through <code class="docutils literal notranslate"><span class="pre">manager.get_trainable_parameters()</span></code> for the
+manager calibration path. A Functor holds its own manager’s binding by
+reference, so module <code class="docutils literal notranslate"><span class="pre">parameters()</span></code> and <code class="docutils literal notranslate"><span class="pre">state_dict()</span></code> omit it.
+<code class="docutils literal notranslate"><span class="pre">parameter_sensitivity(parameter_name,</span> <span class="pre">state,</span> <span class="pre">*,</span> <span class="pre">time,</span> <span class="pre">dt,</span> <span class="pre">...)</span></code> uses
+functional substitution of module members and raises <code class="docutils literal notranslate"><span class="pre">TypeError</span></code> for a held
+manager binding. Re-registering an unchanged shape and dtype updates its
+value in place, preserving references held by Functors and the optimizer.</p>
+<section id="parameterbounds">
+<h3><code class="docutils literal notranslate"><span class="pre">ParameterBounds</span></code><a class="headerlink" href="#parameterbounds" title="Link to this heading"></a></h3>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>ParameterBounds(
+    lower: float,
+    upper: float,
+    scale: str,
+    initial: Optional[float] = None,
+)
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">lower</span></code> must be less than <code class="docutils literal notranslate"><span class="pre">upper</span></code>. An explicit <code class="docutils literal notranslate"><span class="pre">initial</span></code> value must lie inside
+the interval. <code class="docutils literal notranslate"><span class="pre">scale</span></code> is required and is <code class="docutils literal notranslate"><span class="pre">linear</span></code> or <code class="docutils literal notranslate"><span class="pre">log</span></code>; any other value
+raises <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>.</p>
+</section>
+<section id="calibrationconfig">
+<h3><code class="docutils literal notranslate"><span class="pre">CalibrationConfig</span></code><a class="headerlink" href="#calibrationconfig" title="Link to this heading"></a></h3>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>CalibrationConfig(
+    method: CalibrationMethod,
+    target_parameters: list[str],
+    parameter_bounds: dict[str, ParameterBounds],
+    max_iterations: int = ...,
+    tolerance: float = ...,
+    population_size: Optional[int] = None,
+    random_seed: Optional[int] = None,
+    parallel: bool = False,
+    n_workers: Optional[int] = None,
+    method_kwargs: dict[str, Any] = {},
+    cross_validation_folds: Optional[int] = None,
+    save_progress: bool = True,
+    progress_file: Optional[pathlib.Path] = None,
+    verbose: bool = True,
+)
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">method</span></code></p></td>
+<td><p>Optimization algorithm.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">target_parameters</span></code></p></td>
+<td><p>Fully qualified parameter keys to calibrate.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">parameter_bounds</span></code></p></td>
+<td><p>Bounds keyed by every target parameter.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">max_iterations</span></code></p></td>
+<td><p>Maximum optimizer iterations or generations; when not stated, <code class="docutils literal notranslate"><span class="pre">optimization.calibration.max_iterations</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">tolerance</span></code></p></td>
+<td><p>Convergence tolerance; when not stated, <code class="docutils literal notranslate"><span class="pre">optimization.calibration.objective_tolerance</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">population_size</span></code></p></td>
+<td><p>Population size for population-based methods.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">random_seed</span></code></p></td>
+<td><p>Reproducibility seed for NumPy and PyTorch sampling.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">parallel</span></code>, <code class="docutils literal notranslate"><span class="pre">n_workers</span></code></p></td>
+<td><p>Parallel-evaluation request and worker limit.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">method_kwargs</span></code></p></td>
+<td><p>Algorithm-specific options.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">cross_validation_folds</span></code></p></td>
+<td><p>Optional fold count.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">save_progress</span></code>, <code class="docutils literal notranslate"><span class="pre">progress_file</span></code></p></td>
+<td><p>Progress persistence controls.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">verbose</span></code></p></td>
+<td><p>Optimizer logging control.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Available <code class="docutils literal notranslate"><span class="pre">CalibrationMethod</span></code> values are differential evolution, genetic
+algorithm, simulated annealing, particle swarm, Bayesian optimization,
+gradient descent, Adam, and Limited-memory Broyden-Fletcher-Goldfarb-Shanno (L-BFGS).</p>
+<p>The enum is a shared method identity, not one eight-algorithm execution facade.
+<code class="docutils literal notranslate"><span class="pre">ParameterCalibrator</span></code> owns only the five derivative-free methods: differential
+evolution, genetic algorithm, simulated annealing, particle swarm, and Bayesian
+optimization. <code class="docutils literal notranslate"><span class="pre">GradientCalibrator</span></code> separately owns gradient descent, Adam, and
+L-BFGS. Passing a gradient method to <code class="docutils literal notranslate"><span class="pre">ParameterCalibrator.calibrate(...)</span></code>
+raises before logging, hooks, RNG, ParameterManager mutation, objective
+evaluation, dispatch, or progress effects.</p>
+</section>
+<section id="parametercalibrator-derivative-free-owner">
+<h3><code class="docutils literal notranslate"><span class="pre">ParameterCalibrator</span></code> (derivative-free owner)<a class="headerlink" href="#parametercalibrator-derivative-free-owner" title="Link to this heading"></a></h3>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>ParameterCalibrator(
+    parameter_manager: Optional[UnifiedParameterManager] = None,
+    hooks: Optional[CalibrationHooks] = None,
+)
+</pre></div>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>calibrator.calibrate(
+    config: CalibrationConfig,
+    objective_function: ObjectiveFunction,
+    observations: torch.Tensor,
+    initial_parameters: Optional[dict[str, float]] = None,
+) -&gt; CalibrationResult
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">ObjectiveFunction.__call__(parameters,</span> <span class="pre">observations)</span></code> returns a scalar value
+to minimize. The built-in objective classes include Mean Squared Error (<code class="docutils literal notranslate"><span class="pre">MSEObjective</span></code>),
+Root Mean Squared Error (<code class="docutils literal notranslate"><span class="pre">RMSEObjective</span></code>), and <code class="docutils literal notranslate"><span class="pre">NashSutcliffeObjective</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">relic.parameters.calibration</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">CalibrationConfig</span><span class="p">,</span>
+    <span class="n">CalibrationMethod</span><span class="p">,</span>
+    <span class="n">MSEObjective</span><span class="p">,</span>
+    <span class="n">ParameterBounds</span><span class="p">,</span>
+    <span class="n">ParameterCalibrator</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">model_runner</span><span class="p">(</span><span class="n">parameters</span><span class="p">):</span>
+    <span class="n">rate</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;model.rate&quot;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">rate</span><span class="p">,</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">rate</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">CalibrationConfig</span><span class="p">(</span>
+    <span class="n">method</span><span class="o">=</span><span class="n">CalibrationMethod</span><span class="o">.</span><span class="n">DIFFERENTIAL_EVOLUTION</span><span class="p">,</span>
+    <span class="n">target_parameters</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;model.rate&quot;</span><span class="p">],</span>
+    <span class="n">parameter_bounds</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;model.rate&quot;</span><span class="p">:</span> <span class="n">ParameterBounds</span><span class="p">(</span>
+            <span class="n">lower</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+            <span class="n">upper</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+            <span class="n">scale</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span>
+            <span class="n">initial</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="p">},</span>
+    <span class="n">max_iterations</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+    <span class="n">random_seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
+    <span class="n">parallel</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">save_progress</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">objective</span> <span class="o">=</span> <span class="n">MSEObjective</span><span class="p">(</span><span class="n">model_runner</span><span class="p">,</span> <span class="n">variable_names</span><span class="o">=</span><span class="p">[])</span>
+<span class="n">observations</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+<span class="n">calibrator</span> <span class="o">=</span> <span class="n">ParameterCalibrator</span><span class="p">()</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">calibrator</span><span class="o">.</span><span class="n">calibrate</span><span class="p">(</span>
+    <span class="n">config</span><span class="p">,</span>
+    <span class="n">objective</span><span class="p">,</span>
+    <span class="n">observations</span><span class="p">,</span>
+    <span class="n">initial_parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;model.rate&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">},</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">success</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">optimized_parameters</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The target key must be valid for the active parameter manager and the callback
+must return values compatible with the observation tensor. A model failure or
+a missing output variable in the built-in scalar objectives raises; there is
+no infinite penalty value. A failed calibration triggers the
+<code class="docutils literal notranslate"><span class="pre">CALIBRATION_ERROR</span></code> hook event and re-raises.</p>
+</section>
+<section id="gradientcalibrator-gradient-owner">
+<h3><code class="docutils literal notranslate"><span class="pre">GradientCalibrator</span></code> (gradient owner)<a class="headerlink" href="#gradientcalibrator-gradient-owner" title="Link to this heading"></a></h3>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>GradientCalibrationConfig(
+    method: CalibrationMethod,
+    learning_rate: float = ...,
+    max_iterations: int = ...,
+    tolerance: float = ...,
+    beta1: float = ...,
+    beta2: float = ...,
+    epsilon: float = ...,
+    weight_decay: float = ...,
+    max_eval: Optional[int] = None,
+    history_size: int = ...,
+    line_search_fn: Optional[str] = None,
+    patience: int = ...,
+    min_delta: float = ...,
+    verbose: bool = True,
+    save_progress: bool = True,
+    progress_file: Optional[pathlib.Path] = None,
+)
+</pre></div>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>GradientCalibrator(
+    parameter_manager: UnifiedParameterManager,
+    config: Optional[GradientCalibrationConfig] = None,
+    hooks: Optional[CalibrationHooks] = None,
+)
+
+gradient_calibrator.calibrate(
+    objective_function,
+    observations,
+    target_parameters: Optional[list[str]] = None,
+    parameter_bounds: Optional[dict[str, tuple[float, float]]] = None,
+) -&gt; CalibrationResult
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">method</span></code> is required. Every numeric setting that is not stated (shown as
+<code class="docutils literal notranslate"><span class="pre">...</span></code>) is read from <code class="docutils literal notranslate"><span class="pre">optimization.calibration.*</span></code> in the parameter database;
+the Adam settings there are the Algorithm 1 values of Kingma and Ba (2015).
+<code class="docutils literal notranslate"><span class="pre">GradientCalibrator</span></code> requires both the caller’s ParameterManager and a
+<code class="docutils literal notranslate"><span class="pre">config</span></code>; a missing one raises <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>, so implicit process-global
+calibration state and a default optimizer are both rejected. The objective must
+return one finite differentiable scalar and every requested target must produce
+a finite gradient. Candidate values remain isolated from canonical manager
+state until one accepted point is committed as an atomic manager batch.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">relic.parameters</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_global_manager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">relic.parameters.calibration</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">CalibrationMethod</span><span class="p">,</span>
+    <span class="n">GradientCalibrationConfig</span><span class="p">,</span>
+    <span class="n">GradientCalibrator</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">manager</span> <span class="o">=</span> <span class="n">get_global_manager</span><span class="p">()</span>
+<span class="n">snapshot</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">snapshot</span><span class="p">()</span>
+<span class="n">target_key</span> <span class="o">=</span> <span class="s2">&quot;stochastic.weather.temperature.reversion_rate&quot;</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">grad_config</span> <span class="o">=</span> <span class="n">GradientCalibrationConfig</span><span class="p">(</span>
+        <span class="n">method</span><span class="o">=</span><span class="n">CalibrationMethod</span><span class="o">.</span><span class="n">ADAM</span><span class="p">,</span>
+        <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
+        <span class="n">max_iterations</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span>
+        <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">save_progress</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">grad_calibrator</span> <span class="o">=</span> <span class="n">GradientCalibrator</span><span class="p">(</span><span class="n">manager</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">grad_config</span><span class="p">)</span>
+    <span class="n">observations</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">differentiable_objective</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">obs</span><span class="p">):</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="n">target_key</span><span class="p">]</span>
+        <span class="n">prediction</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">alpha</span><span class="p">,</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">alpha</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">prediction</span> <span class="o">-</span> <span class="n">obs</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">grad_result</span> <span class="o">=</span> <span class="n">grad_calibrator</span><span class="o">.</span><span class="n">calibrate</span><span class="p">(</span>
+        <span class="n">differentiable_objective</span><span class="p">,</span>
+        <span class="n">observations</span><span class="p">,</span>
+        <span class="n">target_parameters</span><span class="o">=</span><span class="p">[</span><span class="n">target_key</span><span class="p">],</span>
+        <span class="n">parameter_bounds</span><span class="o">=</span><span class="p">{</span><span class="n">target_key</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)},</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">grad_result</span><span class="o">.</span><span class="n">optimized_parameters</span><span class="p">[</span><span class="n">target_key</span><span class="p">],</span> <span class="mi">2</span><span class="p">))</span>
+<span class="k">finally</span><span class="p">:</span>
+    <span class="n">manager</span><span class="o">.</span><span class="n">restore</span><span class="p">(</span><span class="n">snapshot</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="calibrationresult">
+<h3><code class="docutils literal notranslate"><span class="pre">CalibrationResult</span></code><a class="headerlink" href="#calibrationresult" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Result group</p></th>
+<th class="head"><p>Fields</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Identity</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">method</span></code>, <code class="docutils literal notranslate"><span class="pre">target_parameters</span></code>, <code class="docutils literal notranslate"><span class="pre">parameter_bounds</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Parameters</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">initial_parameters</span></code>, <code class="docutils literal notranslate"><span class="pre">optimized_parameters</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Objective</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">objective_value</span></code>, <code class="docutils literal notranslate"><span class="pre">initial_objective_value</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Convergence</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">convergence_history</span></code>, <code class="docutils literal notranslate"><span class="pre">iteration_count</span></code>, <code class="docutils literal notranslate"><span class="pre">elapsed_time</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Status</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">success</span></code>, <code class="docutils literal notranslate"><span class="pre">status</span></code>, <code class="docutils literal notranslate"><span class="pre">termination_reason</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Analysis</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">metrics</span></code>, <code class="docutils literal notranslate"><span class="pre">parameter_uncertainties</span></code>, <code class="docutils literal notranslate"><span class="pre">sensitivity_analysis</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Evidence</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">model_outputs</span></code>, <code class="docutils literal notranslate"><span class="pre">observations</span></code>, <code class="docutils literal notranslate"><span class="pre">calibrator_config</span></code>, <code class="docutils literal notranslate"><span class="pre">random_seed</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p>Check <code class="docutils literal notranslate"><span class="pre">success</span></code>, <code class="docutils literal notranslate"><span class="pre">status</span></code>, and <code class="docutils literal notranslate"><span class="pre">termination_reason</span></code> before using optimized
+parameters. A returned result is not equivalent to convergence or scientific
+acceptance.</p>
+</section>
+</section>
+<section id="global-sensitivity-analysis">
+<h2>Global sensitivity analysis<a class="headerlink" href="#global-sensitivity-analysis" title="Link to this heading"></a></h2>
+<section id="parameterrange">
+<h3><code class="docutils literal notranslate"><span class="pre">ParameterRange</span></code><a class="headerlink" href="#parameterrange" title="Link to this heading"></a></h3>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>ParameterRange(
+    name: str,
+    lower_bound: float,
+    upper_bound: float,
+    mean: Optional[float] = None,
+    std: Optional[float] = None,
+    integer_valued: bool = False,
+    log_scale: bool = False,
+    units: str = &quot;&quot;,
+    description: str = &quot;&quot;,
+    *,
+    distribution: str,
+)
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">distribution</span></code> is keyword-only and required: <code class="docutils literal notranslate"><span class="pre">uniform</span></code>, <code class="docutils literal notranslate"><span class="pre">normal</span></code>,
+<code class="docutils literal notranslate"><span class="pre">lognormal</span></code>, or <code class="docutils literal notranslate"><span class="pre">triangular</span></code>. Bounds must be ordered. <code class="docutils literal notranslate"><span class="pre">normal</span></code> and
+<code class="docutils literal notranslate"><span class="pre">lognormal</span></code> need an explicit <code class="docutils literal notranslate"><span class="pre">mean</span></code> and a finite positive <code class="docutils literal notranslate"><span class="pre">std</span></code> (for
+<code class="docutils literal notranslate"><span class="pre">lognormal</span></code>, <code class="docutils literal notranslate"><span class="pre">mean</span></code> is the positive median), and <code class="docutils literal notranslate"><span class="pre">triangular</span></code> needs its mode
+as <code class="docutils literal notranslate"><span class="pre">mean</span></code> inside the bounds; nothing is derived from the bounds.
+<code class="docutils literal notranslate"><span class="pre">sample(n_samples,</span> <span class="pre">random_state=None)</span></code> draws from a local generator, clips
+normal and lognormal draws to the bounds, and applies integer or log scaling
+when requested. Declared <code class="docutils literal notranslate"><span class="pre">units</span></code> must equal the units of the <code class="docutils literal notranslate"><span class="pre">ParameterSpec</span></code>
+of the parameter key of the same name; units declared for a name that is not
+a parameter key raise <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> when an analyzer validates the ranges.
+Morris and Sobol analysis accept only uniform ranges without log scaling or
+integer values; any other declaration raises <code class="docutils literal notranslate"><span class="pre">NotImplementedError</span></code>.</p>
+</section>
+<section id="callback-contract">
+<h3>Callback contract<a class="headerlink" href="#callback-contract" title="Link to this heading"></a></h3>
+<p>Both analyzers use:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>analyze(
+    model_runner: Callable[
+        [dict[str, float]],
+        dict[str, float],
+    ],
+    parameter_ranges: dict[str, ParameterRange],
+    baseline_parameters: Optional[dict[str, float]] = None,
+) -&gt; SensitivityResult
+</pre></div>
+</div>
+<p>The runner accepts one parameter mapping and returns scalar outputs by name.
+<code class="docutils literal notranslate"><span class="pre">baseline_parameters</span></code> supplies fixed parameters and is merged with each
+sampled mapping.</p>
+</section>
+<section id="morrisanalyzer">
+<h3><code class="docutils literal notranslate"><span class="pre">MorrisAnalyzer</span></code><a class="headerlink" href="#morrisanalyzer" title="Link to this heading"></a></h3>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>MorrisAnalyzer(
+    parameter_manager: UnifiedParameterManager,
+    config: Optional[MorrisConfig] = None,
+)
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">config</span></code> is required: an analyzer built without it raises <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>.
+<code class="docutils literal notranslate"><span class="pre">MorrisConfig</span></code> takes <code class="docutils literal notranslate"><span class="pre">aggregation_method</span></code> as a required keyword (<code class="docutils literal notranslate"><span class="pre">mean</span></code>,
+<code class="docutils literal notranslate"><span class="pre">sum</span></code>, <code class="docutils literal notranslate"><span class="pre">max</span></code>, <code class="docutils literal notranslate"><span class="pre">std</span></code>, or <code class="docutils literal notranslate"><span class="pre">final</span></code>); its numeric fields <code class="docutils literal notranslate"><span class="pre">n_trajectories</span></code>,
+<code class="docutils literal notranslate"><span class="pre">n_levels</span></code>, and <code class="docutils literal notranslate"><span class="pre">grid_jump</span></code>, when left unset, read
+<code class="docutils literal notranslate"><span class="pre">optimization.sensitivity.morris.*</span></code>. The constructor requires a positive
+trajectory count and grid jump, at least two levels, and
+2 x <code class="docutils literal notranslate"><span class="pre">grid_jump</span></code> &lt;= <code class="docutils literal notranslate"><span class="pre">n_levels</span></code>.</p>
+<p>Use Morris screening to rank many parameters with fewer evaluations. The
+result contains elementary-effect statistics, output-wise sensitivity
+indices, execution counts, timing, and convergence metadata.</p>
+</section>
+<section id="sobolanalyzer">
+<h3><code class="docutils literal notranslate"><span class="pre">SobolAnalyzer</span></code><a class="headerlink" href="#sobolanalyzer" title="Link to this heading"></a></h3>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>SobolAnalyzer(
+    parameter_manager: UnifiedParameterManager,
+    config: Optional[SobolConfig] = None,
+)
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">config</span></code> is required here as well (<code class="docutils literal notranslate"><span class="pre">TypeError</span></code> without it). <code class="docutils literal notranslate"><span class="pre">SobolConfig</span></code>
+takes <code class="docutils literal notranslate"><span class="pre">aggregation_method</span></code> and <code class="docutils literal notranslate"><span class="pre">estimator</span></code> as required keywords; only the
+<code class="docutils literal notranslate"><span class="pre">saltelli</span></code> estimator is implemented (<code class="docutils literal notranslate"><span class="pre">janon</span></code>, <code class="docutils literal notranslate"><span class="pre">glen</span></code>, and <code class="docutils literal notranslate"><span class="pre">owen</span></code> raise
+<code class="docutils literal notranslate"><span class="pre">NotImplementedError</span></code>). Its other fields are <code class="docutils literal notranslate"><span class="pre">n_samples</span></code>, <code class="docutils literal notranslate"><span class="pre">skip_values</span></code>,
+<code class="docutils literal notranslate"><span class="pre">scramble</span></code>, <code class="docutils literal notranslate"><span class="pre">calc_second_order</span></code>, <code class="docutils literal notranslate"><span class="pre">convergence_check</span></code>, <code class="docutils literal notranslate"><span class="pre">convergence_samples</span></code>,
+and <code class="docutils literal notranslate"><span class="pre">batch_size</span></code>; <code class="docutils literal notranslate"><span class="pre">n_samples</span></code> and <code class="docutils literal notranslate"><span class="pre">skip_values</span></code>, when left unset, read
+<code class="docutils literal notranslate"><span class="pre">optimization.sensitivity.sobol.*</span></code>. Sample and batch counts must be positive.</p>
+<p>Use Sobol analysis for first-order and total-order variance decomposition;
+second-order indices are not implemented (<code class="docutils literal notranslate"><span class="pre">calc_second_order=True</span></code> raises
+<code class="docutils literal notranslate"><span class="pre">NotImplementedError</span></code>). An empty parameter-range mapping raises <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>;
+analysis failures are wrapped in <code class="docutils literal notranslate"><span class="pre">RuntimeError</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">relic.optimization.sensitivity</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">MorrisAnalyzer</span><span class="p">,</span>
+    <span class="n">MorrisConfig</span><span class="p">,</span>
+    <span class="n">ParameterRange</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">relic.parameters</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_global_manager</span>
+
+<span class="n">ranges</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;rate&quot;</span><span class="p">:</span> <span class="n">ParameterRange</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;rate&quot;</span><span class="p">,</span>
+        <span class="n">lower_bound</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+        <span class="n">upper_bound</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+        <span class="n">distribution</span><span class="o">=</span><span class="s2">&quot;uniform&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">runner</span><span class="p">(</span><span class="n">parameters</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;response&quot;</span><span class="p">:</span> <span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;rate&quot;</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">}</span>
+
+
+<span class="n">analyzer</span> <span class="o">=</span> <span class="n">MorrisAnalyzer</span><span class="p">(</span>
+    <span class="n">get_global_manager</span><span class="p">(),</span>
+    <span class="n">MorrisConfig</span><span class="p">(</span><span class="n">n_trajectories</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">n_levels</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">random_seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">aggregation_method</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">sensitivity</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">runner</span><span class="p">,</span> <span class="n">ranges</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">sensitivity</span><span class="o">.</span><span class="n">method</span><span class="p">,</span> <span class="n">sensitivity</span><span class="o">.</span><span class="n">n_model_evaluations</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="uncertainty-quantification">
+<h2>Uncertainty quantification<a class="headerlink" href="#uncertainty-quantification" title="Link to this heading"></a></h2>
+<section id="uncertainparameter">
+<h3><code class="docutils literal notranslate"><span class="pre">UncertainParameter</span></code><a class="headerlink" href="#uncertainparameter" title="Link to this heading"></a></h3>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>UncertainParameter(
+    name: str,
+    distribution: DistributionType,
+    mean: Optional[float] = None,
+    std: Optional[float] = None,
+    lower_bound: float = -inf,
+    upper_bound: float = inf,
+    alpha: Optional[float] = None,
+    beta: Optional[float] = None,
+    mode: Optional[float] = None,
+    integer_valued: bool = False,
+    log_transform: bool = False,
+    units: str = &quot;&quot;,
+    description: str = &quot;&quot;,
+)
+</pre></div>
+</div>
+<p>Supported distributions are uniform, normal, lognormal, beta, gamma, and
+triangular. Bounds must be ordered. <code class="docutils literal notranslate"><span class="pre">NORMAL</span></code> and <code class="docutils literal notranslate"><span class="pre">LOGNORMAL</span></code> parameters
+must give <code class="docutils literal notranslate"><span class="pre">mean</span></code> and <code class="docutils literal notranslate"><span class="pre">std</span></code>; a <code class="docutils literal notranslate"><span class="pre">UNIFORM</span></code> parameter without them takes the
+moments of its bounds, and a triangular parameter needs an explicit <code class="docutils literal notranslate"><span class="pre">mode</span></code>.
+<code class="docutils literal notranslate"><span class="pre">alpha</span></code>, <code class="docutils literal notranslate"><span class="pre">beta</span></code>, and <code class="docutils literal notranslate"><span class="pre">mode</span></code> configure distribution-specific shape. <code class="docutils literal notranslate"><span class="pre">sample()</span></code>
+applies physical bounds and requested integer or log transforms.</p>
+</section>
+<section id="ensembleuq-and-bootstrapuq">
+<h3><code class="docutils literal notranslate"><span class="pre">EnsembleUQ</span></code> and <code class="docutils literal notranslate"><span class="pre">BootstrapUQ</span></code><a class="headerlink" href="#ensembleuq-and-bootstrapuq" title="Link to this heading"></a></h3>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>EnsembleUQ(
+    parameter_manager: UnifiedParameterManager,
+    config: Optional[EnsembleConfig] = None,
+)
+
+BootstrapUQ(
+    parameter_manager: UnifiedParameterManager,
+    config: Optional[BootstrapConfig] = None,
+)
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">config</span></code> is required: either class built without it raises <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>.
+<code class="docutils literal notranslate"><span class="pre">EnsembleConfig</span></code> needs <code class="docutils literal notranslate"><span class="pre">sampling_strategy</span></code> (<code class="docutils literal notranslate"><span class="pre">random</span></code>, Latin Hypercube Sampling <code class="docutils literal notranslate"><span class="pre">lhs</span></code>, or <code class="docutils literal notranslate"><span class="pre">sobol</span></code>) and
+<code class="docutils literal notranslate"><span class="pre">BootstrapConfig</span></code> needs <code class="docutils literal notranslate"><span class="pre">bootstrap_type</span></code> (<code class="docutils literal notranslate"><span class="pre">parametric</span></code> or <code class="docutils literal notranslate"><span class="pre">residual</span></code>) and
+<code class="docutils literal notranslate"><span class="pre">ci_method</span></code> (<code class="docutils literal notranslate"><span class="pre">percentile</span></code> or <code class="docutils literal notranslate"><span class="pre">bca</span></code>), each as a keyword.</p>
+<p>Both expose:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>quantify(
+    model_runner: Callable[
+        [dict[str, float]],
+        dict[str, float],
+    ],
+    uncertain_parameters: dict[str, UncertainParameter],
+    baseline_parameters: Optional[dict[str, float]] = None,
+    observations: Optional[dict[str, numpy.ndarray]] = None,
+) -&gt; UQResult
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">EnsembleUQ</span></code> propagates sampled parameter distributions through the callback.
+Its configuration controls ensemble size, sampling, parallel evaluation,
+localization, adaptive sampling, chunking, and outlier handling.
+<code class="docutils literal notranslate"><span class="pre">BootstrapUQ</span></code> supports parametric and residual resampling; residual bootstrap
+uses <code class="docutils literal notranslate"><span class="pre">observations</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">UQResult</span></code> reports output means, standard deviations, variances, percentiles,
+confidence intervals, optional samples, skewness, kurtosis, correlations,
+sample and evaluation counts, timing, convergence, effective sample sizes,
+and Monte Carlo error.</p>
+<p>By default, failed samples and missing outputs are not accepted. Change
+<code class="docutils literal notranslate"><span class="pre">allow_failed_samples</span></code> or <code class="docutils literal notranslate"><span class="pre">allow_missing_outputs</span></code> only when the resulting
+sentinel values are explicitly handled downstream.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">relic.optimization.uncertainty</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DistributionType</span><span class="p">,</span>
+    <span class="n">EnsembleConfig</span><span class="p">,</span>
+    <span class="n">EnsembleUQ</span><span class="p">,</span>
+    <span class="n">UncertainParameter</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">relic.parameters</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_global_manager</span>
+
+<span class="n">uq</span> <span class="o">=</span> <span class="n">EnsembleUQ</span><span class="p">(</span>
+    <span class="n">get_global_manager</span><span class="p">(),</span>
+    <span class="n">EnsembleConfig</span><span class="p">(</span>
+        <span class="n">ensemble_size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span>
+        <span class="n">sampling_strategy</span><span class="o">=</span><span class="s2">&quot;lhs&quot;</span><span class="p">,</span>
+        <span class="n">random_seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
+        <span class="n">parallel_evaluation</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+<span class="n">uq_result</span> <span class="o">=</span> <span class="n">uq</span><span class="o">.</span><span class="n">quantify</span><span class="p">(</span>
+    <span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;flux&quot;</span><span class="p">:</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="s2">&quot;alpha&quot;</span><span class="p">]},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;alpha&quot;</span><span class="p">:</span> <span class="n">UncertainParameter</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;alpha&quot;</span><span class="p">,</span>
+            <span class="n">distribution</span><span class="o">=</span><span class="n">DistributionType</span><span class="o">.</span><span class="n">UNIFORM</span><span class="p">,</span>
+            <span class="n">lower_bound</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+            <span class="n">upper_bound</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="p">},</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">uq_result</span><span class="o">.</span><span class="n">output_mean</span><span class="p">[</span><span class="s2">&quot;flux&quot;</span><span class="p">],</span> <span class="mi">2</span><span class="p">),</span> <span class="n">uq_result</span><span class="o">.</span><span class="n">n_model_evaluations</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="data-assimilation">
+<h2>Data assimilation<a class="headerlink" href="#data-assimilation" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">relic.optimization.assimilation</span></code> provides component-level state estimation
+algorithms sharing the <code class="docutils literal notranslate"><span class="pre">Assimilator</span></code>, <code class="docutils literal notranslate"><span class="pre">ObservationSet</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">ObservationOperator</span></code> abstractions:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Class</p></th>
+<th class="head"><p>Configuration</p></th>
+<th class="head"><p>Status and scope</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">EnsembleKalmanFilter</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">EnKFConfig</span></code></p></td>
+<td><p>Ensemble Kalman Filter (EnKF) single-step stochastic state update with optional localization and inflation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ThreeDVar</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">VariationalConfig(method=AssimilationMethod.VARIATIONAL_3D)</span></code></p></td>
+<td><p>Three-Dimensional Variational (3D-Var) single-time variational state analysis.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">FourDVar</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">VariationalConfig(method=AssimilationMethod.VARIATIONAL_4D)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[N]</span></code> Four-Dimensional Variational (4D-Var) framework shell (<code class="docutils literal notranslate"><span class="pre">relic\optimization\assimilation\variational.py</span></code>); defines the class skeleton without an implemented adjoint model, multi-time window gradient integration, or production runtime binding.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="identifiability">
+<h2>Identifiability<a class="headerlink" href="#identifiability" title="Link to this heading"></a></h2>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>compute_identifiability(
+    jacobian: dict[str, dict[str, Tensor]] | Tensor | numpy.ndarray,
+    tol: float = 1e-6,
+) -&gt; dict[str, Any]
+</pre></div>
+</div>
+<p>The function computes the singular values, rank, nullity, condition number,
+and unidentifiable directions of the observation Jacobian.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">relic.optimization.identifiability</span><span class="w"> </span><span class="kn">import</span> <span class="n">compute_identifiability</span>
+
+<span class="n">jacobian</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+    <span class="p">],</span>
+    <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">compute_identifiability</span><span class="p">(</span><span class="n">jacobian</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;rank&quot;</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;nullity&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Expected output:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>1 1
+</pre></div>
+</div>
+</section>
+<section id="cli-boundary">
+<h2>CLI boundary<a class="headerlink" href="#cli-boundary" title="Link to this heading"></a></h2>
+<p>Use the Python APIs on this page for bounded component-level calibration,
+sensitivity analysis, and UQ. The public optimization CLI and HTTP routes are
+explicitly <code class="docutils literal notranslate"><span class="pre">[N]</span> <span class="pre">runtime_unbound</span></code>: they reject before executing an objective,
+constructing an optimizer workflow, or mutating parameters because no sealed
+GraphIR/ExecutionPlan/GraphExecutor and simulator lifecycle is bound. Their
+command and schema presence must not be treated as an end-to-end model
+workflow.</p>
+</section>
+<section id="related-documentation">
+<h2>Related documentation<a class="headerlink" href="#related-documentation" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="../architecture.html"><span class="std std-doc">Architecture</span></a></p></li>
+<li><p><a class="reference internal" href="configuration_and_parameters.html"><span class="std std-doc">Configuration and Parameters</span></a></p></li>
+<li><p><a class="reference internal" href="state_functors_and_simulation.html"><span class="std std-doc">State, Functors, and Simulation</span></a></p></li>
+<li><p><a class="reference internal" href="../api/parameters_contracts.html"><span class="std std-doc">Parameter Contracts API</span></a></p></li>
+<li><p><a class="reference internal" href="../science/index.html"><span class="std std-doc">Science index</span></a></p></li>
+<li><p><a class="reference internal" href="../theory/index.html"><span class="std std-doc">Theory index</span></a></p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="coupling_workflows.html" class="btn btn-neutral float-left" title="Coupling Workflows" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="devices_and_distributed.html" class="btn btn-neutral float-right" title="Devices and Distributed Execution" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

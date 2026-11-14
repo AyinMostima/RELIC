@@ -1,0 +1,587 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Graph 编排 &mdash; RELIC 1.0.0 Documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=mono5" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=86952a2f"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/translations.js?v=beaddf03"></script>
+      <script src="_static/language_switch.js?v=mono5"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="search" title="搜索" href="search.html" />
+    <link rel="next" title="操作快速入门" href="operations.html" />
+    <link rel="prev" title="CLI 与扩展" href="workflows/cli_and_extensions.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            RELIC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">RELIC 指南</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">系统架构</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#scope-and-architectural-contract">范围与架构契约</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#architecture-capability-map">架构能力图</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#package-ownership-and-seven-layer-map">软件包职责归属与七层架构映射</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#four-scientific-abstractions">四类科学抽象</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#functor-lifecycle-and-metadata">Functor lifecycle 与 metadata</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#variable-roles-and-state-ownership">变量角色与状态归属</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#parameters-constants-units-and-time">参数、常量、单位与时间</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#simulator-execution-rates-and-device-policy">Simulator、执行频率与 device policy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#structural-scientific-layer">结构化科学层</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#end-to-end-assembly-and-execution">端到端装配与执行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#connection-and-conservation-rules">连接与守恒规则</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="theory/index.html">科学理论与控制方程</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="theory/foundations.html">数学基础、状态、单位与守恒</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="theory/foundations.html#architectural-contract-and-notation">架构契约与符号约定</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/foundations.html#four-scientific-abstractions-and-functor-lifecycle">四类科学抽象与 Functor 生命周期</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/foundations.html#spatial-quantity-basis-and-temporal-overlap-laws">空间物理量基准与时间重叠守恒律</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/foundations.html#universal-conservation-and-balance-laws">普适守恒与平衡定律</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/foundations.html#transactional-statemanager-governance-i1-i7">事务型 StateManager 状态治理（<code class="docutils literal notranslate"><span class="pre">I1</span></code>--<code class="docutils literal notranslate"><span class="pre">I7</span></code>）</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/foundations.html#centralized-parametermanager-and-physical-constant-ssot">集中式 ParameterManager 与物理常数单点事实源</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/foundations.html#piecewise-smooth-discrete-adjoint-differentiation-and-device-policy">分段光滑离散伴随微分与设备策略</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/foundations.html#bounded-mathematical-contracts-and-runtime-boundary-i-vs-n">有界数学契约与运行时边界（<code class="docutils literal notranslate"><span class="pre">[I]</span></code> 与 <code class="docutils literal notranslate"><span class="pre">[N]</span></code>）</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/foundations.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="theory/dec_iphs_generic.html">DEC、IPHS、GENERIC、端口与反应结构</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="theory/dec_iphs_generic.html#structural-governance-lifecycle">结构治理生命周期</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/dec_iphs_generic.html#discrete-exterior-calculus-relic-computation-operators-dec">离散外微分（<code class="docutils literal notranslate"><span class="pre">relic.computation.operators.dec</span></code>）</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/dec_iphs_generic.html#irreversible-port-hamiltonian-and-generic-lowering">不可逆端口哈密顿与 GENERIC 降阶</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/dec_iphs_generic.html#equivalence-certificates-and-live-repository-inventory">等价性证书与现行代码库清单</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/dec_iphs_generic.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="theory/numerics.html">数值积分、算子分裂、稳定性、尺度耦合与混杂事件</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="theory/numerics.html#method-of-lines-formulation-and-solver-registry">线方法表述与求解器注册表</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/numerics.html#deterministic-time-stepping-linear-and-nonlinear-solvers">确定性时间步进、线性与非线性求解器</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/numerics.html#multi-rate-execution-operator-splitting-and-step-control">多速率执行、算子分裂与步长控制</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/numerics.html#transport-stability-and-nonlinear-richards-closure">输运稳定性与非线性 Richards 闭合</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/numerics.html#conservative-spatial-remapping-and-internal-cross-domain-couplers">空间守恒重映射与内部跨域耦合器</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/numerics.html#transverse-hybrid-events-and-saltation-matrix-sensitivities">横截混杂事件与跃变矩阵灵敏度</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/numerics.html#stochastic-memory-ale-dae-and-topology-transition-families">随机、记忆、任意拉格朗日-欧拉（Arbitrary Lagrangian-Eulerian, ALE）、DAE 与拓扑跃迁族</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/numerics.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="theory/atmosphere.html">大气圈过程理论</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="theory/atmosphere.html#scope-process-inventory-and-certificate-map">范围、过程清单与证书映射</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/atmosphere.html#solar-thermal-and-canopy-radiation">太阳短波、热长波与冠层辐射</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/atmosphere.html#surface-layer-turbulence-and-boundary-layer-tracer-transport">近地层湍流与边界层示踪物输运</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/atmosphere.html#gas-phase-chemistry-open-tropospheric-kinetics-and-closed-level-5-generic-point">气相化学：开放对流层动力学与封闭 Level-5 GENERIC 运行点</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/atmosphere.html#stochastic-atmospheric-forcing-and-replay-contracts">随机大气强迫与重放契约</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/atmosphere.html#atmospheric-observation-operators">大气观测算子</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/atmosphere.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="theory/biosphere.html">生物圈过程理论</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="theory/biosphere.html#scope-process-inventory-and-certificate-map">范围、过程清单与证书映射</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/biosphere.html#photosynthesis-and-stomatal-conductance">光合作用与气孔导度</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/biosphere.html#autotrophic-respiration-allocation-and-structural-growth">自养呼吸、分配与结构生长</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/biosphere.html#phenology-and-abiotic-stress-closures">物候与非生物胁迫闭合</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/biosphere.html#biogenic-volatile-organic-compound-bvoc-synthesis-and-emission">生物源挥发性有机化合物（BVOC）合成与排放</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/biosphere.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="theory/hydrosphere.html">水圈过程理论</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="theory/hydrosphere.html#scope-process-inventory-and-certificate-map">范围、过程清单与证书映射</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/hydrosphere.html#evapotranspiration-closures">蒸散发闭合格式</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/hydrosphere.html#snowpack-mass-energy-balance-and-snow-albedo">积雪质量-能量平衡与积雪反照率</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/hydrosphere.html#soil-water-retention-bucket-storage-and-richards-vadose-flow">土壤持水特征、单桶蓄水与 Richards 包气带渗流</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/hydrosphere.html#surface-runoff-and-hybrid-event-driven-hortonian-ponding">地表径流与混杂事件驱动的霍顿积水</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/hydrosphere.html#subsurface-stormflow-vadose-aquifer-exchange-and-groundwater">壤中暴雨流、包气带-含水层交换与地下水</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/hydrosphere.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="theory/pedosphere.html">土壤圈过程理论</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="theory/pedosphere.html#scope-process-inventory-and-certificate-map">范围、过程清单与证书映射</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/pedosphere.html#soil-organic-carbon-turnover-and-cross-sphere-interface-maps">土壤有机碳周转与跨圈层界面映射</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/pedosphere.html#soil-nitrogen-root-p-uptake-and-c-n-stoichiometry-boundaries">土壤氮循环、根系磷吸收与碳氮化学计量边界</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/pedosphere.html#wetland-methane-request-and-coupler-architecture">湿地甲烷请求-耦合器架构</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/pedosphere.html#porous-media-water-gas-solute-dae-ale-and-memory-transport">多孔介质水分、气体、溶质、DAE、ALE 与记忆核输运</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/pedosphere.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="theory/anthroposphere.html">人类圈理论</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="theory/anthroposphere.html#scope-process-inventory-and-fail-closed-boundary-status">范围、过程清单与故障封闭边界状态</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/anthroposphere.html#fail-closed-level-0-boundaries-vs-implemented-emission-operators">故障封闭 Level-0 边界与已实现排放算子</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/anthroposphere.html#continuous-time-markov-land-use-transitions-and-parameter-projection">连续时间马尔可夫土地利用转移与参数投影</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/anthroposphere.html#management-coordination-and-agricultural-water-nutrient-ports">管理协调与农业水肥端口</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/anthroposphere.html#managed-biomass-removal-livestock-grazing-fire-and-tillage">受管生物量移除、家畜放牧、火扰动与耕作</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/anthroposphere.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="theory/isotopes_transport.html">稳定同位素与一般输运理论</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="theory/isotopes_transport.html#scope-component-inventory-and-certificate-map">范围、组件清单与证书映射</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/isotopes_transport.html#stable-isotope-ratios-exact-binary-fractionation-and-fail-closed-ledger-status">稳定同位素比值、精确二元分馏与故障封闭账本状态</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/isotopes_transport.html#general-conservative-transport-functors">一般守恒输运 Functor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="theory/isotopes_transport.html#references">参考文献</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="science/index.html">核心科学类参考</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="science/anthroposphere.html">人类圈科学类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="science/anthroposphere.html#atmosphere-coupling">atmosphere_coupling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/anthroposphere.html#sector-allocation">sector_allocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/anthroposphere.html#species-mapping">species_mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/anthroposphere.html#anthroposphere-interface-mapping">anthroposphere_interface_mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/anthroposphere.html#emission-inventory">emission_inventory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/anthroposphere.html#land-use-parameter-mapping">land_use_parameter_mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/anthroposphere.html#land-use-transitions">land_use_transitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/anthroposphere.html#management-coordinator">management_coordinator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/anthroposphere.html#fertilization-management">fertilization_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/anthroposphere.html#fire-management">fire_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/anthroposphere.html#grazing-management">grazing_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/anthroposphere.html#harvest-management">harvest_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/anthroposphere.html#irrigationmanagement">IrrigationManagement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/anthroposphere.html#tillagemanagement">TillageManagement</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="science/atmosphere.html">大气科学类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="science/atmosphere.html#chemistryfunctor">ChemistryFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/atmosphere.html#class-atmosphere-chemistry-chemistry-functor-closed-constant-volume">ChemistryFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/atmosphere.html#environmentalforcingfunctor">EnvironmentalForcingFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/atmosphere.html#radiationenergyconservationvalidator">RadiationEnergyConservationValidator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/atmosphere.html#radiationfield">RadiationField</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/atmosphere.html#radiationfunctor">RadiationFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/atmosphere.html#markedpoissonrainfallfunctor">MarkedPoissonRainfallFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/atmosphere.html#ornsteinuhlenbecktemperaturefunctor">OrnsteinUhlenbeckTemperatureFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/atmosphere.html#atmosphericadvectiondiffusionfunctor">AtmosphericAdvectionDiffusionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/atmosphere.html#drydepositionaggregator">DryDepositionAggregator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/atmosphere.html#eddydiffusionblmfunctor">EddyDiffusionBLMFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/atmosphere.html#turbulencefunctor">TurbulenceFunctor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="science/biosphere.html">生物圈科学类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="science/biosphere.html#meganmodel">MEGANModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/biosphere.html#isoprenesynthesis">IsopreneSynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/biosphere.html#monoterpenesynthesis">MonoterpeneSynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/biosphere.html#sesquiterpenestressmodel">SesquiterpeneStressModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/biosphere.html#sesquiterpenesynthesis">SesquiterpeneSynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/biosphere.html#biomassallocation">BiomassAllocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/biosphere.html#phenologygrowth">PhenologyGrowth</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/biosphere.html#structuralgrowth">StructuralGrowth</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/biosphere.html#cropphenology">CropPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/biosphere.html#gddphenology">GDDPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/biosphere.html#gsiphenology">GSIPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/biosphere.html#staticphenology">StaticPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/biosphere.html#phenologyfunctor">PhenologyFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/biosphere.html#farquharphotosynthesis">FarquharPhotosynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/biosphere.html#medlynstomatalconductance">MedlynStomatalConductance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/biosphere.html#autotrophicrespiration">AutotrophicRespiration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/biosphere.html#growthrespiration">GrowthRespiration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/biosphere.html#maintenancerespiration">MaintenanceRespiration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/biosphere.html#nutrientstress">NutrientStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/biosphere.html#ozonestress">OzoneStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/biosphere.html#thermalstress">ThermalStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/biosphere.html#waterstress">WaterStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/biosphere.html#simplecanopyphotosynthesis">SimpleCanopyPhotosynthesis</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="science/hydrosphere.html">水圈科学类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="science/hydrosphere.html#penman-monteith-et">penman_monteith_et</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/hydrosphere.html#priestley-taylor-et">priestley_taylor_et</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/hydrosphere.html#groundwater-dynamics">groundwater_dynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/hydrosphere.html#subsurface-runoff">subsurface_runoff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/hydrosphere.html#hortonianpondingeventfunctor">HortonianPondingEventFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/hydrosphere.html#surfacepondingfunctor">SurfacePondingFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/hydrosphere.html#surface-runoff">surface_runoff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/hydrosphere.html#snow-albedo">snow_albedo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/hydrosphere.html#snow-pack">snow_pack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/hydrosphere.html#bucket-soil-moisture">bucket_soil_moisture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/hydrosphere.html#soilwaterretention">SoilWaterRetention</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/hydrosphere.html#richards-soil-moisture">richards_soil_moisture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/hydrosphere.html#capillary-rise-transport">capillary_rise_transport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/hydrosphere.html#vertical-percolation-transport">vertical_percolation_transport</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="science/pedosphere.html">土壤圈科学类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="science/pedosphere.html#carbonpoolsfunctor">CarbonPoolsFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/pedosphere.html#poolsmatrix">PoolsMatrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/pedosphere.html#firstorderdecomposition">FirstOrderDecomposition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/pedosphere.html#microbialenzymedecomposition">MicrobialEnzymeDecomposition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/pedosphere.html#litterfallinterfacemapper">LitterfallInterfaceMapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/pedosphere.html#pedosphereinterfacemapper">PedosphereInterfaceMapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/pedosphere.html#methanebudgetcoupler">MethaneBudgetCoupler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/pedosphere.html#methaneoxidationfunctor">MethaneOxidationFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/pedosphere.html#methaneproductionfunctor">MethaneProductionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/pedosphere.html#methanescalecouplingfunctor">MethaneScaleCouplingFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/pedosphere.html#methanetransportfunctor">MethaneTransportFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/pedosphere.html#denitrification-process">denitrification_process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/pedosphere.html#mineralizationprocess">MineralizationProcess</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/pedosphere.html#nitrification-process">nitrification_process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/pedosphere.html#nitrogenleachingprocess">NitrogenLeachingProcess</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/pedosphere.html#nitrogencycling">NitrogenCycling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/pedosphere.html#rootnutrientuptake">RootNutrientUptake</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/pedosphere.html#stoichiometryconstraint">StoichiometryConstraint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/pedosphere.html#equilibriumsorptionfunctor">EquilibriumSorptionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/pedosphere.html#gasdiffusion1d">GasDiffusion1D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/pedosphere.html#movingdomaindiffusionfunctor">MovingDomainDiffusionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/pedosphere.html#soil-water-transport">soil_water_transport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/pedosphere.html#soluteadvectiondiffusion1d">SoluteAdvectionDiffusion1D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/pedosphere.html#tworegionmasstransferfunctor">TwoRegionMassTransferFunctor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="science/isotopes.html">稳定同位素科学类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="science/isotopes.html#isotopeheartbeatfunctor">IsotopeHeartbeatFunctor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="science/transport.html">通用 Transport 科学类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="science/transport.html#advection-diffusion">advection_diffusion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/transport.html#linear-advection">linear_advection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/transport.html#fickian-diffusion">fickian_diffusion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="science/transport.html#class-transport-diffusion-fickian-diffusion-strict-runtime-point">fickian_diffusion</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="science/index.html#complete-coverage-matrix">完整覆盖矩阵</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="workflows/index.html">RELIC 工作流</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="workflows/index.html#learning-tracks">学习路线</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/index.html#how-to-use-a-tutorial">如何使用教程</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="workflows/installation_and_imports.html">安装与导入</a></li>
+<li class="toctree-l3"><a class="reference internal" href="workflows/configuration_and_parameters.html">配置与参数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="workflows/state_functors_and_simulation.html">状态、Functors 与模拟</a></li>
+<li class="toctree-l3"><a class="reference internal" href="workflows/graph_validation_and_execution.html">Graph 验证与执行</a></li>
+<li class="toctree-l3"><a class="reference internal" href="workflows/persistence_outputs_and_data_io.html">持久化、输出与 Data I/O</a></li>
+<li class="toctree-l3"><a class="reference internal" href="workflows/coupling_workflows.html">耦合工作流</a></li>
+<li class="toctree-l3"><a class="reference internal" href="workflows/calibration_sensitivity_and_uq.html">校准、敏感性分析和不确定性量化</a></li>
+<li class="toctree-l3"><a class="reference internal" href="workflows/devices_and_distributed.html">设备与分布式执行</a></li>
+<li class="toctree-l3"><a class="reference internal" href="workflows/cli_and_extensions.html">CLI 与扩展</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Graph 编排</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#canonical-owners">canonical owners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#graphir">GraphIR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#portspec-and-the-contract-boundary">PortSpec 与契约边界</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#validation">验证</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#adapters">Adapter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#compilation-and-execution">编译与执行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#strict-iphs-dec-boundary">Strict IPHS/DEC 边界</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="operations.html">操作快速入门</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="operations.html#select-a-workflow">选择 workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="operations.html#environment-preflight">环境预检</a></li>
+<li class="toctree-l2"><a class="reference internal" href="operations.html#first-successful-run">首次成功运行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="operations.html#benchmark-style-acceptance-checklist">Benchmark 式验收清单</a></li>
+<li class="toctree-l2"><a class="reference internal" href="operations.html#minimal-runtime-sequence">最小 runtime 流程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="operations.html#troubleshooting-order">故障排查顺序</a></li>
+<li class="toctree-l2"><a class="reference internal" href="operations.html#immediate-stop-conditions">必须立即停止的条件</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="extension_contracts.html">扩展契约</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="extension_contracts.html#reuse-first-decision">复用优先决策</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extension_contracts.html#adding-a-scientific-functor">添加科学 Functor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extension_contracts.html#parameter-extension">参数扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extension_contracts.html#variable-contract-extension">Variable contract 扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extension_contracts.html#graph-and-adapter-extension">Graph 与 adapter 扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extension_contracts.html#external-extension-paths">外部扩展路径</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extension_contracts.html#scientific-structure-claims">科学结构声明</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extension_contracts.html#explicit-unavailable-scientific-boundaries">显式声明不可用的科学边界</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extension_contracts.html#anti-redundancy-boundary">Anti-redundancy boundary（防冗余边界）</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/index.html">核心 API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/index.html#coverage-contract">覆盖范围契约</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/core_runtime.html">Core Runtime API（核心运行时 API）</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/parameters_contracts.html">参数与参数契约</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/orchestration_validation.html">编排、Contract 与 Validation API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/scientific_structure_extensions.html">科学结构与扩展 API</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">RELIC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Graph 编排</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="graph-orchestration">
+<h1>Graph 编排<a class="headerlink" href="#graph-orchestration" title="Link to this heading"></a></h1>
+<section id="canonical-owners">
+<h2>canonical owners<a class="headerlink" href="#canonical-owners" title="Link to this heading"></a></h2>
+<p>Graph 编排是建立在现有 simulator 之上的一层，而不是第二套 runtime。</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>职责</p></th>
+<th class="head"><p>Canonical owner</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>可序列化图</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">relic\orchestration\graph_ir.py</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>类型化端口</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">relic\orchestration\port_spec.py</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>由参数系统支持的变量元数据</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">relic\orchestration\ssot_catalog.py</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>节点与类解析</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">relic\orchestration\node_registry.py</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>连接与图验证</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">relic\orchestration\validator.py</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Adapter registry</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">relic\orchestration\adapters.py</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>编译与 run bundle 序列化</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">relic\orchestration\compiler.py</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>执行计划运行</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">relic\orchestration\executor.py</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>命令行校验与编译</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">relic\orchestration\__main__.py</span></code> (<code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">relic.orchestration</span></code>)</p></td>
+</tr>
+</tbody>
+</table>
+<p><code class="docutils literal notranslate"><span class="pre">RELICModelCompiler</span></code> 是封装 <code class="docutils literal notranslate"><span class="pre">compile_graph(...)</span></code> 的外观类（facade）。新增编排功能应直接扩展这些规范所有者，不得另建平行的编译器、注册表、端口模式或断言服务。</p>
+</section>
+<section id="graphir">
+<h2>GraphIR<a class="headerlink" href="#graphir" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">GraphIR</span></code> 包含：</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>字段</p></th>
+<th class="head"><p>契约</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">schema_version</span></code></p></td>
+<td><p>序列化图 schema 的版本</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">nodes</span></code></p></td>
+<td><p>从节点 ID 到 <code class="docutils literal notranslate"><span class="pre">NodeSpec</span></code> 的映射</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">links</span></code></p></td>
+<td><p>显式 <code class="docutils literal notranslate"><span class="pre">LinkSpec</span></code> 连接</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">metadata</span></code></p></td>
+<td><p>图级元数据</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">assertion</span></code></p></td>
+<td><p>可选的结构断言容器</p></td>
+</tr>
+</tbody>
+</table>
+<p>每个 <code class="docutils literal notranslate"><span class="pre">NodeSpec</span></code> 都声明 <code class="docutils literal notranslate"><span class="pre">class_type</span></code>、<code class="docutils literal notranslate"><span class="pre">inputs</span></code>、<code class="docutils literal notranslate"><span class="pre">outputs</span></code> 和 <code class="docutils literal notranslate"><span class="pre">config</span></code>。为保证可审计性，优先使用显式 link。顶层 link 列表为空时，<code class="docutils literal notranslate"><span class="pre">GraphIR.from_dict(...)</span></code> 可以根据受支持的节点输入绑定推断 link。</p>
+<p>executor 当前识别 <code class="docutils literal notranslate"><span class="pre">{&quot;link&quot;:</span> <span class="pre">[&quot;node_id&quot;,</span> <span class="pre">&quot;port_name&quot;]}</span></code> 形式的 dependency binding。Compiler constant folding 可以生成 <code class="docutils literal notranslate"><span class="pre">{&quot;value&quot;:</span> <span class="pre">...}</span></code>。Parameter key 保留在 Functor configuration 和规范 <code class="docutils literal notranslate"><span class="pre">UnifiedParameterManager</span></code> 路径中；GraphIR 不提供通用的 <code class="docutils literal notranslate"><span class="pre">parameter_key</span></code> input resolver。</p>
+</section>
+<section id="portspec-and-the-contract-boundary">
+<h2>PortSpec 与契约边界<a class="headerlink" href="#portspec-and-the-contract-boundary" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">PortSpec</span></code> 承载变量标识、数据类型、单位、语义、更新行为、方向、支撑域元数据（<code class="docutils literal notranslate"><span class="pre">PORT_SUPPORT_FIELDS</span></code>），以及可选的离散外微分（Discrete Exterior Calculus, DEC）与互连端口哈密顿系统（Interconnected Port-Hamiltonian System, IPHS）结构字段。<code class="docutils literal notranslate"><span class="pre">SSOTCatalog</span></code> 基于 <code class="docutils literal notranslate"><span class="pre">UnifiedParameterManager</span></code> 支撑的定义提供集中式变量标识与单位。<code class="docutils literal notranslate"><span class="pre">ContractRegistry</span></code> 随后由状态管理器（<code class="docutils literal notranslate"><span class="pre">StateManager</span></code>）应用；GraphIR 校验阶段不通过查询它来替代 <code class="docutils literal notranslate"><span class="pre">PortSpec</span></code>。</p>
+<p><img alt="RELIC port passport 与 contract 边界" src="_images/relic_port_passport_and_contracts.png" /></p>
+<p>图中展示的适配器链为概念示意。开启 <code class="docutils literal notranslate"><span class="pre">auto_adapt=True</span></code> 时，仅当三重守卫同时成立（无上下文依赖的单位换算、非单位字段通过严格 <code class="docutils literal notranslate"><span class="pre">can_connect(...)</span></code> 兼容性检查，以及两端显式声明属于 <code class="docutils literal notranslate"><span class="pre">{&quot;fast&quot;,</span> <span class="pre">&quot;medium&quot;,</span> <span class="pre">&quot;slow&quot;}</span></code> 中的同一 <code class="docutils literal notranslate"><span class="pre">execution_group</span></code>），编译器才会将边下沉为可执行的 <code class="docutils literal notranslate"><span class="pre">unit_cast</span></code> 适配器节点；其余所有转换均须显式编写为图节点。</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>端口关注点</p></th>
+<th class="head"><p>代表性字段</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>标识</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">name</span></code>, <code class="docutils literal notranslate"><span class="pre">standard_name</span></code>, <code class="docutils literal notranslate"><span class="pre">cf_standard_name</span></code>, <code class="docutils literal notranslate"><span class="pre">quantity</span></code>, <code class="docutils literal notranslate"><span class="pre">element</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Data</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">units</span></code>, <code class="docutils literal notranslate"><span class="pre">datatype</span></code>, <code class="docutils literal notranslate"><span class="pre">required</span></code>, <code class="docutils literal notranslate"><span class="pre">context_requirements</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Update</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">semantics</span></code>, <code class="docutils literal notranslate"><span class="pre">update_mode</span></code>, <code class="docutils literal notranslate"><span class="pre">write_mode</span></code>, <code class="docutils literal notranslate"><span class="pre">direction</span></code>, <code class="docutils literal notranslate"><span class="pre">per_timestep</span></code>, <code class="docutils literal notranslate"><span class="pre">conservative</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>支撑域（<code class="docutils literal notranslate"><span class="pre">PORT_SUPPORT_FIELDS</span></code>）</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">shape</span></code>, <code class="docutils literal notranslate"><span class="pre">spatial_kind</span></code>, <code class="docutils literal notranslate"><span class="pre">area_basis</span></code>, <code class="docutils literal notranslate"><span class="pre">temporal_basis</span></code>, <code class="docutils literal notranslate"><span class="pre">vertical_basis</span></code>, <code class="docutils literal notranslate"><span class="pre">declared_support_fields</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>结构（DEC/IPHS）</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">form_degree</span></code>, <code class="docutils literal notranslate"><span class="pre">primality</span></code>, <code class="docutils literal notranslate"><span class="pre">extensivity</span></code>, <code class="docutils literal notranslate"><span class="pre">complex_id</span></code>, <code class="docutils literal notranslate"><span class="pre">physical_domain</span></code>, <code class="docutils literal notranslate"><span class="pre">orientation_convention</span></code>, <code class="docutils literal notranslate"><span class="pre">boundary_role</span></code>, <code class="docutils literal notranslate"><span class="pre">port_kind</span></code>, <code class="docutils literal notranslate"><span class="pre">power_conjugate</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p><code class="docutils literal notranslate"><span class="pre">can_connect(...)</span></code> 检查全部五个 <code class="docutils literal notranslate"><span class="pre">PORT_SUPPORT_FIELDS</span></code>（<code class="docutils literal notranslate"><span class="pre">shape</span></code>、<code class="docutils literal notranslate"><span class="pre">spatial_kind</span></code>、<code class="docutils literal notranslate"><span class="pre">area_basis</span></code>、<code class="docutils literal notranslate"><span class="pre">temporal_basis</span></code> 与 <code class="docutils literal notranslate"><span class="pre">vertical_basis</span></code>）。仅单端声明支撑域字段时报告 <code class="docutils literal notranslate"><span class="pre">missing_port_support_metadata</span></code>，双端声明不一致时报告 <code class="docutils literal notranslate"><span class="pre">&lt;field&gt;_mismatch</span></code>，此时必须显式插入支撑域变换适配器节点。</p>
+</section>
+<section id="validation">
+<h2>验证<a class="headerlink" href="#validation" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">can_connect(...)</span></code> 和 <code class="docutils literal notranslate"><span class="pre">validate_graph(...)</span></code> 检查：</p>
+<ol class="arabic simple">
+<li><p>节点和端口是否存在；</p></li>
+<li><p>datatype 与已声明 identity 的兼容性；</p></li>
+<li><p>unit 是否相同或可转换，以及所需的转换 context；</p></li>
+<li><p>direction、semantics、update mode 和 write mode；</p></li>
+<li><p>必需的绑定、重复 output、互斥 output 和 cycle；以及</p></li>
+<li><p>与角色相匹配的结构断言。</p></li>
+</ol>
+<p>非 strict validation 可能把某些不完整声明表示为 warning。Validation 绝不会虚构缺失的 units、owners、scientific closures、ports 或 runtime nodes。</p>
+<p>单个结构断言项使用 <code class="docutils literal notranslate"><span class="pre">phi</span></code>、<code class="docutils literal notranslate"><span class="pre">op</span></code>、<code class="docutils literal notranslate"><span class="pre">scope</span></code>、可选的 <code class="docutils literal notranslate"><span class="pre">context</span></code> 和可选的 <code class="docutils literal notranslate"><span class="pre">audit_key</span></code>。多个断言项可以放在 <code class="docutils literal notranslate"><span class="pre">assertions</span></code>、<code class="docutils literal notranslate"><span class="pre">items</span></code> 或 <code class="docutils literal notranslate"><span class="pre">checks</span></code> 下。validator 也可以读取受支持的 graph metadata fallback。结构断言复用共享的 validation rules 和 issue model。</p>
+</section>
+<section id="adapters">
+<h2>Adapter<a class="headerlink" href="#adapters" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">AdapterRegistry</span></code> 在七个选择器键上注册了六个具体适配器类：</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>选择器键</p></th>
+<th class="head"><p>适配器类</p></th>
+<th class="head"><p>用途</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">unit_cast</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">UnitCastAdapter</span></code></p></td>
+<td><p>委托给规范 <code class="docutils literal notranslate"><span class="pre">UnitConverter</span></code> 执行单位换算</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">temporal_resample</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">TemporalResampleAdapter</span></code></p></td>
+<td><p>滑动窗口或当前步（<code class="docutils literal notranslate"><span class="pre">interval_mean</span></code> / <code class="docutils literal notranslate"><span class="pre">interval_integral</span></code>）时间归约</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">semantic_adapter</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">SemanticAdapter</span></code></p></td>
+<td><p>按运行时步长 <code class="docutils literal notranslate"><span class="pre">dt</span></code> 将通量缩放为状态增量</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">flux_to_increment</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">SemanticAdapter</span></code></p></td>
+<td><p>绑定到同一 <code class="docutils literal notranslate"><span class="pre">SemanticAdapter</span></code> 实例的别名键</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">area_basis_transform</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">AreaBasisTransformAdapter</span></code></p></td>
+<td><p>依据已声明的叶面积指数在叶面积基准与地表面积基准之间换算</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">surface_flux_to_volume_source</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">SurfaceFluxToVolumeSourceAdapter</span></code></p></td>
+<td><p>利用 <code class="docutils literal notranslate"><span class="pre">cell_area</span></code>、<code class="docutils literal notranslate"><span class="pre">layer_volumes</span></code> 及由 <code class="docutils literal notranslate"><span class="pre">get_physical_constant(...)</span></code> 解析的摩尔质量常数键，将表面摩尔通量（<code class="docutils literal notranslate"><span class="pre">mol</span> <span class="pre">m-2</span> <span class="pre">s-1</span></code>）转换为体积质量源（<code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">m-3</span> <span class="pre">s-1</span></code>）</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">support_aggregation</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">SupportAggregationAdapter</span></code></p></td>
+<td><p>受单点事实源（Single Source of Truth, SSOT）<code class="docutils literal notranslate"><span class="pre">spatial_basis</span></code> 与 <code class="docutils literal notranslate"><span class="pre">coupling.scales.defaults.conservation_tolerance</span></code> 约束的守恒支撑域归约</p></td>
+</tr>
+</tbody>
+</table>
+<p><code class="docutils literal notranslate"><span class="pre">ExecutableAdapterFunctor</span></code> 将任意已注册适配器封装为受治理的 <code class="docutils literal notranslate"><span class="pre">ScaleCouplingFunctor</span></code>，<code class="docutils literal notranslate"><span class="pre">AdapterRegistry.register_executable_node(...)</span></code> 则在 <code class="docutils literal notranslate"><span class="pre">NodeRegistry</span></code> 中绑定其权威源端口、目标端口与上下文 <code class="docutils literal notranslate"><span class="pre">PortSpec</span></code> 契约。</p>
+<p>开启 <code class="docutils literal notranslate"><span class="pre">auto_adapt=True</span></code> 时，<code class="docutils literal notranslate"><span class="pre">compile_graph(...)</span></code> 会在编译报告中记录每项 <code class="docutils literal notranslate"><span class="pre">AdapterInsertion</span></code>，且仅在以下三项守卫全部满足时将边下沉为可执行的 <code class="docutils literal notranslate"><span class="pre">unit_cast</span></code> 节点：</p>
+<ol class="arabic simple">
+<li><p>端口差异属于无上下文依赖的 <code class="docutils literal notranslate"><span class="pre">unit_cast</span></code>，可通过规范 <code class="docutils literal notranslate"><span class="pre">UnitConverter</span></code> 在无需未声明上下文的条件下直接换算；</p></li>
+<li><p>除单位外的全部端口属性（标识、语义、DEC 结构与支撑域字段）均通过严格 <code class="docutils literal notranslate"><span class="pre">can_connect(...)</span></code> 检查；以及</p></li>
+<li><p>相连的两个节点均显式声明属于 <code class="docutils literal notranslate"><span class="pre">{&quot;fast&quot;,</span> <span class="pre">&quot;medium&quot;,</span> <span class="pre">&quot;slow&quot;}</span></code> 中的同一 <code class="docutils literal notranslate"><span class="pre">execution_group</span></code>。</p></li>
+</ol>
+<p>完成节点下沉后，编译器会对变换后的图重新执行完整校验。其余任何适配器需求（<code class="docutils literal notranslate"><span class="pre">temporal_resample</span></code>、<code class="docutils literal notranslate"><span class="pre">semantic_adapter</span></code>、<code class="docutils literal notranslate"><span class="pre">flux_to_increment</span></code>、<code class="docutils literal notranslate"><span class="pre">area_basis_transform</span></code>、<code class="docutils literal notranslate"><span class="pre">surface_flux_to_volume_source</span></code>、<code class="docutils literal notranslate"><span class="pre">support_aggregation</span></code>、上下文相关转换或跨速率组连接）若未显式编写为图节点，均会被拒绝。在 <code class="docutils literal notranslate"><span class="pre">strict=True</span></code> 且 <code class="docutils literal notranslate"><span class="pre">auto_adapt=False</span></code>（默认禁用自动适配）时，任何需要适配器的连接均会被拒绝。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">relic.orchestration.adapters</span><span class="w"> </span><span class="kn">import</span> <span class="n">AdapterRegistry</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">relic.orchestration.port_spec</span><span class="w"> </span><span class="kn">import</span> <span class="n">PORT_SUPPORT_FIELDS</span>
+
+<span class="n">registry</span> <span class="o">=</span> <span class="n">AdapterRegistry</span><span class="p">()</span>
+<span class="n">keys</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">&quot;unit_cast&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;temporal_resample&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;semantic_adapter&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;flux_to_increment&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;area_basis_transform&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;surface_flux_to_volume_source&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;support_aggregation&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">registry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">registry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;semantic_adapter&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="n">registry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;flux_to_increment&quot;</span><span class="p">)</span>
+<span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">PORT_SUPPORT_FIELDS</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5</span>
+</pre></div>
+</div>
+</section>
+<section id="compilation-and-execution">
+<h2>编译与执行<a class="headerlink" href="#compilation-and-execution" title="Link to this heading"></a></h2>
+<p>规范流程如下：</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>GraphIR
+  -&gt; validate_graph(...)
+  -&gt; compile_graph(...)
+  -&gt; ExecutionPlan and CompileReport
+  -&gt; GraphExecutor
+  -&gt; RELICSimulator
+  -&gt; StateManager.apply_updates(...)
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">compile_graph(...)</span></code> 始终执行验证；单独的验证调用只是可选的预检。对于同一个规范化图，编译器会生成确定性的拓扑顺序，并列时按节点标识符决定先后。这一顺序即注册顺序。运行时，模拟器将每个 Functor 放入其速率组，根据已声明的依赖对每个组排序（以注册顺序打破并列），按 fast、medium、slow 的顺序运行各组，并依次逐个执行组内的 Functor。严格编译还会在不执行任何步的情况下，对每个节点进行一次导入、构造和注册。它不能证明某一步会成功、仅在运行时加载的依赖已经安装，或科学过程有效。未以 <code class="docutils literal notranslate"><span class="pre">strict=True</span></code> 编译的计划不能由 <code class="docutils literal notranslate"><span class="pre">GraphExecutor</span></code> 执行。</p>
+<p><code class="docutils literal notranslate"><span class="pre">GraphExecutor</span></code> 支持 <code class="docutils literal notranslate"><span class="pre">PUSH</span></code> 与 <code class="docutils literal notranslate"><span class="pre">DIRTY</span></code> 两种执行策略；两者均复用 <code class="docutils literal notranslate"><span class="pre">RELICSimulator</span></code>，属于调度策略而非独立运行时。当前 <code class="docutils literal notranslate"><span class="pre">GraphIR</span></code> 已绑定两个已认证的 Level 2（<code class="docutils literal notranslate"><span class="pre">[I]</span></code>）随机 Functor（<code class="docutils literal notranslate"><span class="pre">OrnsteinUhlenbeckTemperatureFunctor</span></code> 与 <code class="docutils literal notranslate"><span class="pre">MarkedPoissonRainfallFunctor</span></code>），支持确定性的单 Functor 子流检查点保存与重启重放。命令行图校验与编译可通过 <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">relic.orchestration</span></code>（<code class="docutils literal notranslate"><span class="pre">validate</span></code> 与 <code class="docutils literal notranslate"><span class="pre">compile</span></code>）以及 <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">relic.interfaces.cli.main</span></code> 的 <code class="docutils literal notranslate"><span class="pre">orchestration</span></code>（别名 <code class="docutils literal notranslate"><span class="pre">graph</span></code>）子命令调用。公开优化执行路径仍处于 <code class="docutils literal notranslate"><span class="pre">[N]</span></code>（<code class="docutils literal notranslate"><span class="pre">runtime_unbound</span></code>），<code class="docutils literal notranslate"><span class="pre">relic.optimization.assimilation</span></code> 中的 <code class="docutils literal notranslate"><span class="pre">FourDVar</span></code> 仍是未实现的 <code class="docutils literal notranslate"><span class="pre">[N]</span></code> 框架外壳，不含伴随模型。</p>
+</section>
+<section id="strict-iphs-dec-boundary">
+<h2>Strict IPHS/DEC 边界<a class="headerlink" href="#strict-iphs-dec-boundary" title="Link to this heading"></a></h2>
+<p>Strict graph 只声明其角色所需的结构操作。Typed cochains、Hodge properties、port matching、reaction structure、entropy steps、overflow routing、state domains 和 equivalence certificates 均通过现有 validators 检查。</p>
+<p>compiler 只能根据已声明的信息组装结构，不得从 empirical code 推断缺失的 Hamiltonian、effort、reaction affinity、conservation matrix、shared-state equivalence 或 effort-flow units。</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="workflows/cli_and_extensions.html" class="btn btn-neutral float-left" title="CLI 与扩展" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="operations.html" class="btn btn-neutral float-right" title="操作快速入门" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

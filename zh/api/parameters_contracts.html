@@ -1,0 +1,1411 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>参数与参数契约 &mdash; RELIC 1.0.0 Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=mono5" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=86952a2f"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/translations.js?v=beaddf03"></script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../_static/language_switch.js?v=mono5"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="编排、Contract 与 Validation API" href="orchestration_validation.html" />
+    <link rel="prev" title="Core Runtime API（核心运行时 API）" href="core_runtime.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            RELIC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">RELIC 指南</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../architecture.html">系统架构</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#scope-and-architectural-contract">范围与架构契约</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#architecture-capability-map">架构能力图</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#package-ownership-and-seven-layer-map">软件包职责归属与七层架构映射</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#four-scientific-abstractions">四类科学抽象</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#functor-lifecycle-and-metadata">Functor lifecycle 与 metadata</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#variable-roles-and-state-ownership">变量角色与状态归属</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#parameters-constants-units-and-time">参数、常量、单位与时间</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#simulator-execution-rates-and-device-policy">Simulator、执行频率与 device policy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#structural-scientific-layer">结构化科学层</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#end-to-end-assembly-and-execution">端到端装配与执行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#connection-and-conservation-rules">连接与守恒规则</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/index.html">科学理论与控制方程</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../theory/foundations.html">数学基础、状态、单位与守恒</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#architectural-contract-and-notation">架构契约与符号约定</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#four-scientific-abstractions-and-functor-lifecycle">四类科学抽象与 Functor 生命周期</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#spatial-quantity-basis-and-temporal-overlap-laws">空间物理量基准与时间重叠守恒律</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#universal-conservation-and-balance-laws">普适守恒与平衡定律</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#transactional-statemanager-governance-i1-i7">事务型 StateManager 状态治理（<code class="docutils literal notranslate"><span class="pre">I1</span></code>--<code class="docutils literal notranslate"><span class="pre">I7</span></code>）</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#centralized-parametermanager-and-physical-constant-ssot">集中式 ParameterManager 与物理常数单点事实源</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#piecewise-smooth-discrete-adjoint-differentiation-and-device-policy">分段光滑离散伴随微分与设备策略</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#bounded-mathematical-contracts-and-runtime-boundary-i-vs-n">有界数学契约与运行时边界（<code class="docutils literal notranslate"><span class="pre">[I]</span></code> 与 <code class="docutils literal notranslate"><span class="pre">[N]</span></code>）</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/dec_iphs_generic.html">DEC、IPHS、GENERIC、端口与反应结构</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/dec_iphs_generic.html#structural-governance-lifecycle">结构治理生命周期</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/dec_iphs_generic.html#discrete-exterior-calculus-relic-computation-operators-dec">离散外微分（<code class="docutils literal notranslate"><span class="pre">relic.computation.operators.dec</span></code>）</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/dec_iphs_generic.html#irreversible-port-hamiltonian-and-generic-lowering">不可逆端口哈密顿与 GENERIC 降阶</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/dec_iphs_generic.html#equivalence-certificates-and-live-repository-inventory">等价性证书与现行代码库清单</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/dec_iphs_generic.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/numerics.html">数值积分、算子分裂、稳定性、尺度耦合与混杂事件</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#method-of-lines-formulation-and-solver-registry">线方法表述与求解器注册表</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#deterministic-time-stepping-linear-and-nonlinear-solvers">确定性时间步进、线性与非线性求解器</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#multi-rate-execution-operator-splitting-and-step-control">多速率执行、算子分裂与步长控制</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#transport-stability-and-nonlinear-richards-closure">输运稳定性与非线性 Richards 闭合</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#conservative-spatial-remapping-and-internal-cross-domain-couplers">空间守恒重映射与内部跨域耦合器</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#transverse-hybrid-events-and-saltation-matrix-sensitivities">横截混杂事件与跃变矩阵灵敏度</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#stochastic-memory-ale-dae-and-topology-transition-families">随机、记忆、任意拉格朗日-欧拉（Arbitrary Lagrangian-Eulerian, ALE）、DAE 与拓扑跃迁族</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/atmosphere.html">大气圈过程理论</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/atmosphere.html#scope-process-inventory-and-certificate-map">范围、过程清单与证书映射</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/atmosphere.html#solar-thermal-and-canopy-radiation">太阳短波、热长波与冠层辐射</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/atmosphere.html#surface-layer-turbulence-and-boundary-layer-tracer-transport">近地层湍流与边界层示踪物输运</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/atmosphere.html#gas-phase-chemistry-open-tropospheric-kinetics-and-closed-level-5-generic-point">气相化学：开放对流层动力学与封闭 Level-5 GENERIC 运行点</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/atmosphere.html#stochastic-atmospheric-forcing-and-replay-contracts">随机大气强迫与重放契约</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/atmosphere.html#atmospheric-observation-operators">大气观测算子</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/atmosphere.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/biosphere.html">生物圈过程理论</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/biosphere.html#scope-process-inventory-and-certificate-map">范围、过程清单与证书映射</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/biosphere.html#photosynthesis-and-stomatal-conductance">光合作用与气孔导度</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/biosphere.html#autotrophic-respiration-allocation-and-structural-growth">自养呼吸、分配与结构生长</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/biosphere.html#phenology-and-abiotic-stress-closures">物候与非生物胁迫闭合</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/biosphere.html#biogenic-volatile-organic-compound-bvoc-synthesis-and-emission">生物源挥发性有机化合物（BVOC）合成与排放</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/biosphere.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/hydrosphere.html">水圈过程理论</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/hydrosphere.html#scope-process-inventory-and-certificate-map">范围、过程清单与证书映射</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/hydrosphere.html#evapotranspiration-closures">蒸散发闭合格式</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/hydrosphere.html#snowpack-mass-energy-balance-and-snow-albedo">积雪质量-能量平衡与积雪反照率</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/hydrosphere.html#soil-water-retention-bucket-storage-and-richards-vadose-flow">土壤持水特征、单桶蓄水与 Richards 包气带渗流</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/hydrosphere.html#surface-runoff-and-hybrid-event-driven-hortonian-ponding">地表径流与混杂事件驱动的霍顿积水</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/hydrosphere.html#subsurface-stormflow-vadose-aquifer-exchange-and-groundwater">壤中暴雨流、包气带-含水层交换与地下水</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/hydrosphere.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/pedosphere.html">土壤圈过程理论</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/pedosphere.html#scope-process-inventory-and-certificate-map">范围、过程清单与证书映射</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/pedosphere.html#soil-organic-carbon-turnover-and-cross-sphere-interface-maps">土壤有机碳周转与跨圈层界面映射</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/pedosphere.html#soil-nitrogen-root-p-uptake-and-c-n-stoichiometry-boundaries">土壤氮循环、根系磷吸收与碳氮化学计量边界</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/pedosphere.html#wetland-methane-request-and-coupler-architecture">湿地甲烷请求-耦合器架构</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/pedosphere.html#porous-media-water-gas-solute-dae-ale-and-memory-transport">多孔介质水分、气体、溶质、DAE、ALE 与记忆核输运</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/pedosphere.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/anthroposphere.html">人类圈理论</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/anthroposphere.html#scope-process-inventory-and-fail-closed-boundary-status">范围、过程清单与故障封闭边界状态</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/anthroposphere.html#fail-closed-level-0-boundaries-vs-implemented-emission-operators">故障封闭 Level-0 边界与已实现排放算子</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/anthroposphere.html#continuous-time-markov-land-use-transitions-and-parameter-projection">连续时间马尔可夫土地利用转移与参数投影</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/anthroposphere.html#management-coordination-and-agricultural-water-nutrient-ports">管理协调与农业水肥端口</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/anthroposphere.html#managed-biomass-removal-livestock-grazing-fire-and-tillage">受管生物量移除、家畜放牧、火扰动与耕作</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/anthroposphere.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/isotopes_transport.html">稳定同位素与一般输运理论</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/isotopes_transport.html#scope-component-inventory-and-certificate-map">范围、组件清单与证书映射</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/isotopes_transport.html#stable-isotope-ratios-exact-binary-fractionation-and-fail-closed-ledger-status">稳定同位素比值、精确二元分馏与故障封闭账本状态</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/isotopes_transport.html#general-conservative-transport-functors">一般守恒输运 Functor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/isotopes_transport.html#references">参考文献</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../science/index.html">核心科学类参考</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../science/anthroposphere.html">人类圈科学类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#atmosphere-coupling">atmosphere_coupling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#sector-allocation">sector_allocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#species-mapping">species_mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#anthroposphere-interface-mapping">anthroposphere_interface_mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#emission-inventory">emission_inventory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#land-use-parameter-mapping">land_use_parameter_mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#land-use-transitions">land_use_transitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#management-coordinator">management_coordinator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#fertilization-management">fertilization_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#fire-management">fire_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#grazing-management">grazing_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#harvest-management">harvest_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#irrigationmanagement">IrrigationManagement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#tillagemanagement">TillageManagement</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/atmosphere.html">大气科学类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#chemistryfunctor">ChemistryFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#class-atmosphere-chemistry-chemistry-functor-closed-constant-volume">ChemistryFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#environmentalforcingfunctor">EnvironmentalForcingFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#radiationenergyconservationvalidator">RadiationEnergyConservationValidator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#radiationfield">RadiationField</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#radiationfunctor">RadiationFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#markedpoissonrainfallfunctor">MarkedPoissonRainfallFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#ornsteinuhlenbecktemperaturefunctor">OrnsteinUhlenbeckTemperatureFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#atmosphericadvectiondiffusionfunctor">AtmosphericAdvectionDiffusionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#drydepositionaggregator">DryDepositionAggregator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#eddydiffusionblmfunctor">EddyDiffusionBLMFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#turbulencefunctor">TurbulenceFunctor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/biosphere.html">生物圈科学类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#meganmodel">MEGANModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#isoprenesynthesis">IsopreneSynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#monoterpenesynthesis">MonoterpeneSynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#sesquiterpenestressmodel">SesquiterpeneStressModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#sesquiterpenesynthesis">SesquiterpeneSynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#biomassallocation">BiomassAllocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#phenologygrowth">PhenologyGrowth</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#structuralgrowth">StructuralGrowth</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#cropphenology">CropPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#gddphenology">GDDPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#gsiphenology">GSIPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#staticphenology">StaticPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#phenologyfunctor">PhenologyFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#farquharphotosynthesis">FarquharPhotosynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#medlynstomatalconductance">MedlynStomatalConductance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#autotrophicrespiration">AutotrophicRespiration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#growthrespiration">GrowthRespiration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#maintenancerespiration">MaintenanceRespiration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#nutrientstress">NutrientStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#ozonestress">OzoneStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#thermalstress">ThermalStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#waterstress">WaterStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#simplecanopyphotosynthesis">SimpleCanopyPhotosynthesis</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/hydrosphere.html">水圈科学类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#penman-monteith-et">penman_monteith_et</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#priestley-taylor-et">priestley_taylor_et</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#groundwater-dynamics">groundwater_dynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#subsurface-runoff">subsurface_runoff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#hortonianpondingeventfunctor">HortonianPondingEventFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#surfacepondingfunctor">SurfacePondingFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#surface-runoff">surface_runoff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#snow-albedo">snow_albedo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#snow-pack">snow_pack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#bucket-soil-moisture">bucket_soil_moisture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#soilwaterretention">SoilWaterRetention</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#richards-soil-moisture">richards_soil_moisture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#capillary-rise-transport">capillary_rise_transport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#vertical-percolation-transport">vertical_percolation_transport</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/pedosphere.html">土壤圈科学类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#carbonpoolsfunctor">CarbonPoolsFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#poolsmatrix">PoolsMatrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#firstorderdecomposition">FirstOrderDecomposition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#microbialenzymedecomposition">MicrobialEnzymeDecomposition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#litterfallinterfacemapper">LitterfallInterfaceMapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#pedosphereinterfacemapper">PedosphereInterfaceMapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methanebudgetcoupler">MethaneBudgetCoupler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methaneoxidationfunctor">MethaneOxidationFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methaneproductionfunctor">MethaneProductionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methanescalecouplingfunctor">MethaneScaleCouplingFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methanetransportfunctor">MethaneTransportFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#denitrification-process">denitrification_process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#mineralizationprocess">MineralizationProcess</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#nitrification-process">nitrification_process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#nitrogenleachingprocess">NitrogenLeachingProcess</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#nitrogencycling">NitrogenCycling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#rootnutrientuptake">RootNutrientUptake</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#stoichiometryconstraint">StoichiometryConstraint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#equilibriumsorptionfunctor">EquilibriumSorptionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#gasdiffusion1d">GasDiffusion1D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#movingdomaindiffusionfunctor">MovingDomainDiffusionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#soil-water-transport">soil_water_transport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#soluteadvectiondiffusion1d">SoluteAdvectionDiffusion1D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#tworegionmasstransferfunctor">TwoRegionMassTransferFunctor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/isotopes.html">稳定同位素科学类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/isotopes.html#isotopeheartbeatfunctor">IsotopeHeartbeatFunctor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/transport.html">通用 Transport 科学类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#advection-diffusion">advection_diffusion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#linear-advection">linear_advection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#fickian-diffusion">fickian_diffusion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#class-transport-diffusion-fickian-diffusion-strict-runtime-point">fickian_diffusion</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/index.html#complete-coverage-matrix">完整覆盖矩阵</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">RELIC 工作流</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#learning-tracks">学习路线</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#how-to-use-a-tutorial">如何使用教程</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/installation_and_imports.html">安装与导入</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/configuration_and_parameters.html">配置与参数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/state_functors_and_simulation.html">状态、Functors 与模拟</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/graph_validation_and_execution.html">Graph 验证与执行</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/persistence_outputs_and_data_io.html">持久化、输出与 Data I/O</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/coupling_workflows.html">耦合工作流</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/calibration_sensitivity_and_uq.html">校准、敏感性分析和不确定性量化</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/devices_and_distributed.html">设备与分布式执行</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/cli_and_extensions.html">CLI 与扩展</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestration.html">Graph 编排</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#canonical-owners">canonical owners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#graphir">GraphIR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#portspec-and-the-contract-boundary">PortSpec 与契约边界</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#validation">验证</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#adapters">Adapter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#compilation-and-execution">编译与执行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#strict-iphs-dec-boundary">Strict IPHS/DEC 边界</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../operations.html">操作快速入门</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#select-a-workflow">选择 workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#environment-preflight">环境预检</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#first-successful-run">首次成功运行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#benchmark-style-acceptance-checklist">Benchmark 式验收清单</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#minimal-runtime-sequence">最小 runtime 流程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#troubleshooting-order">故障排查顺序</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#immediate-stop-conditions">必须立即停止的条件</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../extension_contracts.html">扩展契约</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#reuse-first-decision">复用优先决策</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#adding-a-scientific-functor">添加科学 Functor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#parameter-extension">参数扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#variable-contract-extension">Variable contract 扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#graph-and-adapter-extension">Graph 与 adapter 扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#external-extension-paths">外部扩展路径</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#scientific-structure-claims">科学结构声明</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#explicit-unavailable-scientific-boundaries">显式声明不可用的科学边界</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#anti-redundancy-boundary">Anti-redundancy boundary（防冗余边界）</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">核心 API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#coverage-contract">覆盖范围契约</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="core_runtime.html">Core Runtime API（核心运行时 API）</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">参数与参数契约</a></li>
+<li class="toctree-l3"><a class="reference internal" href="orchestration_validation.html">编排、Contract 与 Validation API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="scientific_structure_extensions.html">科学结构与扩展 API</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">RELIC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">核心 API Reference</a></li>
+      <li class="breadcrumb-item active">参数与参数契约</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="parameters-and-parameter-contracts">
+<span id="api-parameters-contracts"></span><h1>参数与参数契约<a class="headerlink" href="#parameters-and-parameter-contracts" title="Link to this heading"></a></h1>
+<p>本页记录 RELIC 使用的 canonical parameter-management API。<code class="docutils literal notranslate"><span class="pre">UnifiedParameterManager</span></code> 是唯一的具体 parameter manager，负责参数查找、验证、持久化、单位转换、可训练参数、缓存和 snapshot。<code class="docutils literal notranslate"><span class="pre">ParameterSpec</span></code> 是单个参数的 canonical metadata contract。</p>
+<div class="admonition important">
+<p class="admonition-title">重要</p>
+<p>不存在名为 <code class="docutils literal notranslate"><span class="pre">ParameterManager</span></code> 的可导入类。架构说明中的这一名称表示参数管理职责。Python 代码通过 <code class="docutils literal notranslate"><span class="pre">get_global_manager()</span></code> 获取进程级的 <code class="docutils literal notranslate"><span class="pre">UnifiedParameterManager</span></code>。直接构造 <code class="docutils literal notranslate"><span class="pre">UnifiedParameterManager(...)</span></code> 会创建独立管理器，使用时必须显式注入。</p>
+<p>科学 <code class="docutils literal notranslate"><span class="pre">FunctorBase</span></code> 子类不得直接调用 global manager。它们只能通过 <code class="docutils literal notranslate"><span class="pre">self.get_parameter_value(&quot;key&quot;,</span> <span class="pre">required=...)</span></code> 获取值。非 Functor 基础设施使用 <code class="docutils literal notranslate"><span class="pre">get_global_manager().get(...)</span></code>。</p>
+</div>
+<section id="stable-imports">
+<h2>稳定导入<a class="headerlink" href="#stable-imports" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">relic.parameters</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BoundsPolicy</span><span class="p">,</span>
+    <span class="n">ParameterDatabase</span><span class="p">,</span>
+    <span class="n">ParameterDefinition</span><span class="p">,</span>
+    <span class="n">ParameterSchema</span><span class="p">,</span>
+    <span class="n">ParameterSnapshot</span><span class="p">,</span>
+    <span class="n">ParameterSpec</span><span class="p">,</span>
+    <span class="n">ParameterStorage</span><span class="p">,</span>
+    <span class="n">ParameterValidator</span><span class="p">,</span>
+    <span class="n">UnifiedParameterManager</span><span class="p">,</span>
+    <span class="n">UnitValidationMode</span><span class="p">,</span>
+    <span class="n">get_global_manager</span><span class="p">,</span>
+    <span class="n">list_parameters</span><span class="p">,</span>
+    <span class="n">reset_global_manager</span><span class="p">,</span>
+    <span class="n">set_value</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">relic.parameters.types</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ParameterValidationContext</span><span class="p">,</span>
+    <span class="n">ParameterValidationLevel</span><span class="p">,</span>
+    <span class="n">ParameterValidationResult</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>以下直接模块路径是 canonical runtime integration path，但其 package root 不会重新导出这些路径：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">relic.coupling.scales.physical_constraint_manager</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ConstraintSpec</span><span class="p">,</span>
+    <span class="n">ConstraintType</span><span class="p">,</span>
+    <span class="n">PhysicalConstraintManager</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">relic.validation.conservation_guardian</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BudgetCheckResult</span><span class="p">,</span>
+    <span class="n">ConservationGuardian</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">relic.parameters</span></code> 中的 <code class="docutils literal notranslate"><span class="pre">ValidationLevel</span></code>、<code class="docutils literal notranslate"><span class="pre">ValidationContext</span></code>，以及 <code class="docutils literal notranslate"><span class="pre">relic.parameters.types</span></code> 中的 <code class="docutils literal notranslate"><span class="pre">ValidationResult</span></code>，都是带领域前缀的参数类型的兼容别名。新文档和代码应使用上方带领域前缀的名称，避免与 <code class="docutils literal notranslate"><span class="pre">relic.validation.framework</span></code> 混淆。</p>
+</section>
+<section id="ownership-model">
+<h2>所有权模型<a class="headerlink" href="#ownership-model" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>组件</p></th>
+<th class="head"><p>Canonical owner</p></th>
+<th class="head"><p>公开职责</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Manager（管理器）</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">UnifiedParameterManager</span></code></p></td>
+<td><p>解析、验证、修改、缓存、持久化并公开参数</p></td>
+</tr>
+<tr class="row-odd"><td><p>规范</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ParameterSpec</span></code></p></td>
+<td><p>将一个值与单位、bounds、provenance 和优化 metadata 一并存储</p></td>
+</tr>
+<tr class="row-even"><td><p>数据库</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ParameterDatabase</span></code></p></td>
+<td><p>读写 native 和 calibrated parameter tier</p></td>
+</tr>
+<tr class="row-odd"><td><p>Runtime storage（运行时存储）</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ParameterStorage</span></code></p></td>
+<td><p>提供线程安全的值存储、namespace 索引和 snapshot</p></td>
+</tr>
+<tr class="row-even"><td><p>验证</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ParameterValidator</span></code></p></td>
+<td><p>应用类型、bounds、单位、关系和科学验证规则</p></td>
+</tr>
+<tr class="row-odd"><td><p>Snapshot 值</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ParameterSnapshot</span></code></p></td>
+<td><p>保存参数值的不可变副本</p></td>
+</tr>
+<tr class="row-even"><td><p>序列化 envelope</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ParameterSchema</span></code></p></td>
+<td><p>验证 parameter interchange mapping 并进行版本管理</p></td>
+</tr>
+<tr class="row-odd"><td><p>Decorator metadata（装饰器元数据）</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ParameterDefinition</span></code></p></td>
+<td><p>承载兼容 decorator API 的 metadata</p></td>
+</tr>
+<tr class="row-even"><td><p>物理约束</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">PhysicalConstraintManager</span></code></p></td>
+<td><p>在 state 和 scale 集成过程中应用 manager-owned 约束</p></td>
+</tr>
+<tr class="row-odd"><td><p>Domain budgets（领域预算）</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ConservationGuardian</span></code></p></td>
+<td><p>生成非阻塞的 domain conservation diagnostics</p></td>
+</tr>
+</tbody>
+</table>
+<p>这些组件共同构成一个参数系统。应用不得创建第二套参数 registry、cache、schema 或 lookup facade。</p>
+</section>
+<section id="unifiedparametermanager">
+<h2><code class="docutils literal notranslate"><span class="pre">UnifiedParameterManager</span></code><a class="headerlink" href="#unifiedparametermanager" title="Link to this heading"></a></h2>
+<p>实现：<code class="docutils literal notranslate"><span class="pre">relic.parameters.manager.UnifiedParameterManager</span></code></p>
+<p>稳定导入：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">relic.parameters</span><span class="w"> </span><span class="kn">import</span> <span class="n">UnifiedParameterManager</span>
+</pre></div>
+</div>
+<section id="constructor">
+<h3>构造函数<a class="headerlink" href="#constructor" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">UnifiedParameterManager</span><span class="p">(</span>
+    <span class="n">database_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ManagerMetadata</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">preload_all</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">warmup_cache</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>参数</p></th>
+<th class="head"><p>类型与默认值</p></th>
+<th class="head"><p>用途</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">database_path</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Optional[Path]</span> <span class="pre">=</span> <span class="pre">None</span></code></p></td>
+<td><p>参数数据库根目录。<code class="docutils literal notranslate"><span class="pre">None</span></code> 选择 <code class="docutils literal notranslate"><span class="pre">relic\parameters\database</span></code>。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">metadata</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Optional[ManagerMetadata]</span> <span class="pre">=</span> <span class="pre">None</span></code></p></td>
+<td><p>BaseManager identity 和 lifecycle metadata。省略时，manager 会创建 canonical metadata。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">preload_all</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></code></p></td>
+<td><p>在构造阶段加载完整参数数据库，不依赖命名空间延迟加载；后续调用 <code class="docutils literal notranslate"><span class="pre">initialize()</span></code> 不再执行加载。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">warmup_cache</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></code></p></td>
+<td><p>预加载后预热值缓存。当 <code class="docutils literal notranslate"><span class="pre">preload_all</span></code> 为 false 时，该项不会单独生效。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">cache_enabled</span></code></p></td>
+<td><p>通过 <code class="docutils literal notranslate"><span class="pre">kwargs</span></code> 提供的 keyword-only 参数，默认值为 <code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+<td><p>启用参数值缓存和单位转换缓存。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">cache_max_size</span></code></p></td>
+<td><p>通过 <code class="docutils literal notranslate"><span class="pre">kwargs</span></code> 提供的 keyword-only 参数，默认值为 <code class="docutils literal notranslate"><span class="pre">1000</span></code></p></td>
+<td><p>参数值缓存条目的最大数量。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">cache_ttl</span></code></p></td>
+<td><p>通过 <code class="docutils literal notranslate"><span class="pre">kwargs</span></code> 提供的 keyword-only 参数，默认值为 <code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>可选的 cache time-to-live。</p></td>
+</tr>
+</tbody>
+</table>
+<p>每次构造都会创建新的独立管理器；该类没有单例钩子。进程级管理器只能通过 <code class="docutils literal notranslate"><span class="pre">get_global_manager()</span></code> 获取，普通应用代码应使用它。需要独立所有者的代码应自行构造并显式注入，例如通过 Functor 的 <code class="docutils literal notranslate"><span class="pre">parameter_manager</span></code> 参数。注入的管理器必须公开 <code class="docutils literal notranslate"><span class="pre">database</span></code>，即其 <code class="docutils literal notranslate"><span class="pre">ParameterDatabase</span></code>：<code class="docutils literal notranslate"><span class="pre">FunctorBase.get_parameter_value()</span></code> 和外部耦合适配器中的点分名称解析会调用 <code class="docutils literal notranslate"><span class="pre">relic.parameters.namespaces.is_declared_namespace(namespace,</span> <span class="pre">manager)</span></code>，后者查询 <code class="docutils literal notranslate"><span class="pre">manager.database.declares_namespace(...)</span></code>。独立管理器绝不重写进程级变量名映射器。</p>
+<p>在默认随包数据库（<code class="docutils literal notranslate"><span class="pre">relic\parameters\database</span></code>）下，<code class="docutils literal notranslate"><span class="pre">138</span></code> 个 YAML 文件共定义 <code class="docutils literal notranslate"><span class="pre">4,751</span></code> 个叶条目（<code class="docutils literal notranslate"><span class="pre">134</span></code> 个原生 <code class="docutils literal notranslate"><span class="pre">relic</span></code> 层文件含 <code class="docutils literal notranslate"><span class="pre">4,642</span></code> 个条目，<code class="docutils literal notranslate"><span class="pre">4</span></code> 个 <code class="docutils literal notranslate"><span class="pre">calibrated</span></code> 层文件含 <code class="docutils literal notranslate"><span class="pre">109</span></code> 个条目），按层级优先级解析后得到 <code class="docutils literal notranslate"><span class="pre">4,643</span></code> 个有效运行时参数（其中 <code class="docutils literal notranslate"><span class="pre">810</span></code> 个设置 <code class="docutils literal notranslate"><span class="pre">requires_grad=True</span></code> 的可学习参数）。参数解析受两套独立的优先级规则治理：在 <code class="docutils literal notranslate"><span class="pre">ParameterDatabase</span></code> 内部，后加载层按 <code class="docutils literal notranslate"><span class="pre">relic</span></code>、已启用的 <code class="docutils literal notranslate"><span class="pre">calibrated</span></code> 作用域（<code class="docutils literal notranslate"><span class="pre">global</span></code>、<code class="docutils literal notranslate"><span class="pre">regional</span></code>、<code class="docutils literal notranslate"><span class="pre">site_specific</span></code>）以及 <code class="docutils literal notranslate"><span class="pre">add_source(...)</span></code> 路径的顺序覆盖先前层；在 Functor 内部，<code class="docutils literal notranslate"><span class="pre">FunctorBase.get_parameter_value(...,</span> <span class="pre">source_order=(&quot;manager&quot;,</span> <span class="pre">&quot;config&quot;))</span></code> 默认先查询 <code class="docutils literal notranslate"><span class="pre">&quot;manager&quot;</span></code>（<code class="docutils literal notranslate"><span class="pre">UnifiedParameterManager</span></code>），再查询 <code class="docutils literal notranslate"><span class="pre">&quot;config&quot;</span></code>（Functor 局部覆盖项）。</p>
+</section>
+<section id="get">
+<h3><code class="docutils literal notranslate"><span class="pre">get()</span></code><a class="headerlink" href="#get" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">manager</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+    <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">default</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">namespace</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">units</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">expected_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">type</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">bounds</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParameterValue</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>参数</p></th>
+<th class="head"><p>用途</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">key</span></code></p></td>
+<td><p>Canonical 或可规范化的 dot-notation parameter key。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">default</span></code></p></td>
+<td><p>无法解析参数且 <code class="docutils literal notranslate"><span class="pre">required</span></code> 为 false 时返回的值。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">namespace</span></code></p></td>
+<td><p>在 key normalization 前应用的可选 namespace prefix。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">units</span></code></p></td>
+<td><p>请求的输出单位。单位兼容时会转换已存储的值。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">expected_type</span></code></p></td>
+<td><p>要求解析出的值匹配指定 Python 类型。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">required</span></code></p></td>
+<td><p>参数缺失时抛出 <code class="docutils literal notranslate"><span class="pre">KeyError</span></code>；设为 <code class="docutils literal notranslate"><span class="pre">False</span></code> 时返回 <code class="docutils literal notranslate"><span class="pre">default</span></code>。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bounds</span></code></p></td>
+<td><p>读取标量值时使用的可选 lower 和 upper bounds。</p></td>
+</tr>
+</tbody>
+</table>
+<p>返回解析后的参数值（不含元数据）。请求命名空间前缀（非叶键、未传入 <code class="docutils literal notranslate"><span class="pre">default</span></code> 且 <code class="docutils literal notranslate"><span class="pre">required=False</span></code>）时，返回管理器当前持有或数据库在 <code class="docutils literal notranslate"><span class="pre">&lt;namespace&gt;.</span></code> 下定义的全部键存储值所组成的嵌套映射，其成员集合与 <code class="docutils literal notranslate"><span class="pre">get_namespace_parameters</span></code> 一致。该映射在每次读取时新建并归调用方所有。读取操作不设校验开关：所请求的单位换算始终接受检查，传入其他任何关键字参数均抛出 <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>。每次成功读取（包括直接存储路径）均会记入供重启契约读取的访问历史。</p>
+<p>可能抛出：</p>
+<ul class="simple">
+<li><p>当 <code class="docutils literal notranslate"><span class="pre">required=True</span></code> 且无法解析 key 时抛出 <code class="docutils literal notranslate"><span class="pre">KeyError</span></code>。</p></li>
+<li><p>当 <code class="docutils literal notranslate"><span class="pre">expected_type</span></code> 与解析出的值不兼容时抛出 <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>。</p></li>
+<li><p>无法完成请求的转换或验证时抛出单位转换或验证异常。</p></li>
+</ul>
+<p>对于 Python 标量或单元素 Tensor，<code class="docutils literal notranslate"><span class="pre">bounds</span></code> 会 clamp 返回值，并在发生 clamp 时发出 <code class="docutils literal notranslate"><span class="pre">UserWarning</span></code>。它不会 clamp 多元素 Tensor。</p>
+</section>
+<section id="get-parameter">
+<h3><code class="docutils literal notranslate"><span class="pre">get_parameter()</span></code><a class="headerlink" href="#get-parameter" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">manager</span><span class="o">.</span><span class="n">get_parameter</span><span class="p">(</span>
+    <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">namespace</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ParameterSpec</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>返回完整 <code class="docutils literal notranslate"><span class="pre">ParameterSpec</span></code> 或 <code class="docutils literal notranslate"><span class="pre">None</span></code>。该方法用于查看元数据，包括单位、边界、参考文献、来源和 <code class="docutils literal notranslate"><span class="pre">requires_grad</span></code>。管理器尚未持有的键从数据库读取；数据库延迟加载已声明命名空间拥有该键的参数文件（见 <code class="docutils literal notranslate"><span class="pre">ParameterDatabase</span></code>），随后将可学习值注册到管理器的 PyTorch 参数集合。</p>
+</section>
+<section id="mutation-and-persistence">
+<h3>修改与持久化<a class="headerlink" href="#mutation-and-persistence" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">manager</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span>
+    <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">value</span><span class="p">:</span> <span class="n">ParameterValue</span><span class="p">,</span>
+    <span class="n">units</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">validate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">notify</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</pre></div>
+</div>
+<p>更新数值，可选地执行验证，使相关缓存失效，并通知已注册观察者。<code class="docutils literal notranslate"><span class="pre">key</span></code> 必须指定已注册参数（已加载或存在于数据库）：未知键会抛出 <code class="docutils literal notranslate"><span class="pre">KeyError</span></code> 且不改变任何内容，因此拼错的键不会成为新参数。新参数须先通过 <code class="docutils literal notranslate"><span class="pre">register_parameter(...)</span></code> 注册。验证失败抛出 <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>。越界行为由 <code class="docutils literal notranslate"><span class="pre">BoundsPolicy</span></code> 和管理器的验证配置控制；<code class="docutils literal notranslate"><span class="pre">RELIC_BOUNDS_POLICY</span></code> 或 <code class="docutils literal notranslate"><span class="pre">RELIC_UNIT_VALIDATION_MODE</span></code> 环境变量值无效时，创建管理器会抛出 <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>。<code class="docutils literal notranslate"><span class="pre">units</span></code> 指定 <code class="docutils literal notranslate"><span class="pre">value</span></code> 的单位：数值转换为规范声明的单位，不会替换该单位；无量纲别名 <code class="docutils literal notranslate"><span class="pre">&quot;1&quot;</span></code> 和 <code class="docutils literal notranslate"><span class="pre">&quot;dimensionless&quot;</span></code> 无须转换，单位所有者无法转换的单位对会抛出 <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>，不执行写入。<code class="docutils literal notranslate"><span class="pre">set_batch(updates,</span> <span class="pre">validate=True,</span> <span class="pre">notify=True)</span></code> 提交整个批次（失败时恢复所有所有者），再通知每个发生变化的键；所有键的回调失败随后合并为一个 <code class="docutils literal notranslate"><span class="pre">ExceptionGroup</span></code> 抛出，已提交的修改保留。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">manager</span><span class="o">.</span><span class="n">set_parameter</span><span class="p">(</span>
+    <span class="n">spec</span><span class="p">:</span> <span class="n">ParameterSpec</span><span class="p">,</span>
+    <span class="n">tier</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</pre></div>
+</div>
+<p>将单份完整规范持久化至数据库层，并同步设置该参数的规范、存储值与实时绑定；不向管理器加载任何其他规范。形状与 dtype 相同的既有绑定保留其 <code class="docutils literal notranslate"><span class="pre">nn.Parameter</span></code> 对象、梯度标志与所在设备，并原地写入新值；不再可学习的规范则移除其绑定。无张量表示的可学习规范会在执行任何写入前抛出 <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>。<code class="docutils literal notranslate"><span class="pre">spec</span></code> 必须是 <code class="docutils literal notranslate"><span class="pre">ParameterSpec</span></code> 实例，否则抛出 <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>。加载整个数据库（如 <code class="docutils literal notranslate"><span class="pre">preload_all</span></code> 或切换至新 <code class="docutils literal notranslate"><span class="pre">database_path</span></code>）时，按同一规则为每份规范赋予存储值并为每份可学习规范建立绑定。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">manager</span><span class="o">.</span><span class="n">register_parameter</span><span class="p">(</span><span class="n">spec</span><span class="p">:</span> <span class="n">ParameterSpec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</pre></div>
+</div>
+<p>在现有管理器和存储层注册规范。这是数据库和扩展加载使用的底层注册操作，不创建第二个参数所有者。<code class="docutils literal notranslate"><span class="pre">register_parameter</span></code> 和 <code class="docutils literal notranslate"><span class="pre">set_parameter(spec,</span> <span class="pre">tier)</span></code> 使用同一 <code class="docutils literal notranslate"><span class="pre">bind_learnable_value</span></code> 规则，数据库重新注册也不例外：形状与 dtype 相同时保留实时绑定对象、梯度标志和设备，并原地复制数值；形状或 dtype 改变则创建新绑定，不可学习规范不具有绑定。<code class="docutils literal notranslate"><span class="pre">set_parameter</span></code> 要求显式指定目标 <code class="docutils literal notranslate"><span class="pre">tier</span></code>。</p>
+</section>
+<section id="discovery-and-namespace-access">
+<h3>发现与 namespace 访问<a class="headerlink" href="#discovery-and-namespace-access" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">manager</span><span class="o">.</span><span class="n">list</span><span class="p">(</span>
+    <span class="n">namespace</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">pattern</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">category</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ParameterCategory</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>返回匹配的 canonical key。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">manager</span><span class="o">.</span><span class="n">get_namespace_parameters</span><span class="p">(</span>
+    <span class="n">namespace</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">include_subnamespaces</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">return_specs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">ParameterValue</span><span class="p">,</span> <span class="n">ParameterSpec</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p>默认返回值；当 <code class="docutils literal notranslate"><span class="pre">return_specs=True</span></code> 时返回完整 specification。</p>
+</section>
+<section id="validation-optimization-and-snapshots">
+<h3>验证、优化与 snapshot<a class="headerlink" href="#validation-optimization-and-snapshots" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">manager</span><span class="o">.</span><span class="n">validate_parameters</span><span class="p">(</span>
+    <span class="n">keys</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p>返回零条或多条含有 <code class="docutils literal notranslate"><span class="pre">parameter</span></code> 和 <code class="docutils literal notranslate"><span class="pre">error</span></code> key 的记录。常规验证失败会表示在返回列表中。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">manager</span><span class="o">.</span><span class="n">get_trainable_parameters</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">]</span>
+<span class="n">manager</span><span class="o">.</span><span class="n">freeze</span><span class="p">(</span><span class="n">keys</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+<span class="n">manager</span><span class="o">.</span><span class="n">unfreeze</span><span class="p">(</span><span class="n">keys</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+<span class="n">manager</span><span class="o">.</span><span class="n">to</span><span class="p">(</span>
+    <span class="n">device</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">],</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">dtype</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UnifiedParameterManager</span>
+</pre></div>
+</div>
+<p>这些方法公开并迁移 manager-owned PyTorch parameters。科学 Functor 的 device assignment 仍由 simulator device policy 所有；此 API 不授权科学模块自行选择 device。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">manager</span><span class="o">.</span><span class="n">snapshot</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+<span class="n">manager</span><span class="o">.</span><span class="n">restore</span><span class="p">(</span><span class="n">snapshot</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+<span class="n">manager</span><span class="o">.</span><span class="n">create_snapshot</span><span class="p">(</span><span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParameterSnapshot</span>
+<span class="n">manager</span><span class="o">.</span><span class="n">restore_snapshot</span><span class="p">(</span><span class="n">snapshot</span><span class="p">:</span> <span class="n">ParameterSnapshot</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+<span class="n">manager</span><span class="o">.</span><span class="n">get_diff</span><span class="p">(</span><span class="n">snapshot</span><span class="p">:</span> <span class="n">ParameterSnapshot</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span>
+<span class="n">manager</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">other_snapshot</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>管理器快照分别原样保存各参数状态所有者的内容：<code class="docutils literal notranslate"><span class="pre">parameters</span></code> 保存序列化规范及声明值（保留类型和 dtype），<code class="docutils literal notranslate"><span class="pre">storage_snapshot</span></code> 保存存储层自身的存储值快照（尚未存储值的规范仍不具有存储值），<code class="docutils literal notranslate"><span class="pre">nn_values</span></code> 保存每个实时可学习 <code class="docutils literal notranslate"><span class="pre">nn.Parameter</span></code> 值的副本（优化器可能已使其偏离声明值），<code class="docutils literal notranslate"><span class="pre">nn_requires_grad</span></code> 保存其梯度标志，并同时记录设备、验证设置和单位问题。<code class="docutils literal notranslate"><span class="pre">restore()</span></code> 在改变任何内容之前验证整个快照：要求有 <code class="docutils literal notranslate"><span class="pre">parameters</span></code> 映射，存储值与规范一致，梯度标志仅对应可学习规范，且每个标志都有一个形状和 dtype 与规范一致的实时值；否则抛出 <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>。随后恢复存储值、规范、实时值和设置；实时值可跨设备复制到原有绑定而不替换对象，快照之后创建的绑定会移除。恢复后，每个值及其类型和 dtype、每份规范均与快照时一致。</p>
+<p><code class="docutils literal notranslate"><span class="pre">create_snapshot()</span></code> 精确捕获每个参数的值（已存储的值；未存储时为声明值），并将实时可学习值保存于 <code class="docutils literal notranslate"><span class="pre">metadata[&quot;nn_values&quot;]</span></code>；<code class="docutils literal notranslate"><span class="pre">restore_snapshot()</span></code> 将这些值原样写回仍存在的参数，不验证、裁剪或转换，同时将实时值复制到相应绑定。快照之后注册的参数保留。<code class="docutils literal notranslate"><span class="pre">get_diff()</span></code>、<code class="docutils literal notranslate"><span class="pre">diff()</span></code> 和实验差异比较都使用解析后的值：实时可学习值优先于存储值或声明值，也就是 <code class="docutils literal notranslate"><span class="pre">manager.get(...)</span></code> 返回的值。</p>
+</section>
+</section>
+<section id="global-manager-functions">
+<h2>Global manager 函数<a class="headerlink" href="#global-manager-functions" title="Link to this heading"></a></h2>
+<section id="get-global-manager">
+<h3><code class="docutils literal notranslate"><span class="pre">get_global_manager()</span></code><a class="headerlink" href="#get-global-manager" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">get_global_manager</span><span class="p">(</span>
+    <span class="n">preload_all</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">warmup_cache</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UnifiedParameterManager</span>
+</pre></div>
+</div>
+<p>返回进程级规范参数管理器。首次调用在可重入锁下创建该实例，调用 <code class="docutils literal notranslate"><span class="pre">initialize()</span></code>，并据此刷新进程级变量名映射器；任一步失败时都会重置全局管理器并抛出异常。后续调用返回同一对象；若此前未预加载，后续带 <code class="docutils literal notranslate"><span class="pre">preload_all=True</span></code> 的调用会补执行预加载。此类延迟预加载仅采纳管理器尚未持有的键所对应的数据库规范；已持有的键（无论按需加载、显式注册或经由 <code class="docutils literal notranslate"><span class="pre">set_value</span></code> 写入）保留其既有规范、存储值与实时绑定。<code class="docutils literal notranslate"><span class="pre">initialize()</span></code> 本身不加载数据：以 <code class="docutils literal notranslate"><span class="pre">preload_all=True</span></code> 构造的管理器在构造函数返回时即持有完整数据库，且在 <code class="docutils literal notranslate"><span class="pre">initialize()</span></code> 之前写入的值或迁移的可学习绑定均予以保留。切换数据库（通过传入新 <code class="docutils literal notranslate"><span class="pre">database_path</span></code> 调用 <code class="docutils literal notranslate"><span class="pre">configure</span></code>）时，会按管理器的单位校验模式对新数据库的全部规范执行单位检查（仅检查模式记录问题，严格模式在采纳任何内容前直接抛出异常），随后用新数据库内容替换已持有的规范、存储值与绑定值，并整体清空查询缓存与单位换算缓存（中途加载失败时同样清空），确保旧数据库的任何缓存查询均不跨切换残留。切换失败时保留原有的 <code class="docutils literal notranslate"><span class="pre">database_path</span></code> 与数据库实例，使其继续与当前持有的规范一致。</p>
+</section>
+<section id="reset-global-manager">
+<h3><code class="docutils literal notranslate"><span class="pre">reset_global_manager()</span></code><a class="headerlink" href="#reset-global-manager" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">reset_global_manager</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</pre></div>
+</div>
+<p>清除进程范围的 manager instance。这是 lifecycle 和 isolation 操作，不是常规科学 workflow 操作。</p>
+</section>
+<section id="convenience-accessors">
+<h3>便捷 accessor<a class="headerlink" href="#convenience-accessors" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">get</span><span class="p">(</span>
+    <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">default</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">namespace</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">units</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">expected_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">type</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParameterValue</span>
+
+<span class="n">set_value</span><span class="p">(</span>
+    <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">value</span><span class="p">:</span> <span class="n">ParameterValue</span><span class="p">,</span>
+    <span class="n">units</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">validate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">notify</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+
+<span class="n">list_parameters</span><span class="p">(</span>
+    <span class="n">namespace</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">pattern</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">category</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ParameterCategory</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+
+<span class="n">get_namespace_parameters</span><span class="p">(</span>
+    <span class="n">namespace</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">include_subnamespaces</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">return_specs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">ParameterValue</span><span class="p">,</span> <span class="n">ParameterSpec</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p>这些函数委派给 <code class="docutils literal notranslate"><span class="pre">get_global_manager()</span></code> 返回的进程级管理器，是便捷入口，不是替代管理器。<code class="docutils literal notranslate"><span class="pre">relic.parameters</span></code> 导出 <code class="docutils literal notranslate"><span class="pre">get</span></code>、<code class="docutils literal notranslate"><span class="pre">set_value</span></code> 和 <code class="docutils literal notranslate"><span class="pre">list_parameters</span></code>；<code class="docutils literal notranslate"><span class="pre">get_namespace_parameters</span></code> 从 <code class="docutils literal notranslate"><span class="pre">relic.parameters.manager</span></code> 导入。</p>
+</section>
+</section>
+<section id="parameterspec">
+<h2><code class="docutils literal notranslate"><span class="pre">ParameterSpec</span></code><a class="headerlink" href="#parameterspec" title="Link to this heading"></a></h2>
+<p>实现：<code class="docutils literal notranslate"><span class="pre">relic.parameters.spec.ParameterSpec</span></code></p>
+<p>稳定导入：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">relic.parameters</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParameterSpec</span>
+</pre></div>
+</div>
+<section id="id1">
+<h3>构造函数<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ParameterSpec</span><span class="p">(</span>
+    <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">value</span><span class="p">:</span> <span class="n">ParameterValue</span><span class="p">,</span>
+    <span class="n">units</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">bounds</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
+    <span class="n">category</span><span class="p">:</span> <span class="n">ParameterCategory</span><span class="p">,</span>
+    <span class="n">default</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ParameterValue</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">references</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
+    <span class="n">tags</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(),</span>
+    <span class="n">dimension</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">provenance</span><span class="p">:</span> <span class="n">MetadataDict</span> <span class="o">=</span> <span class="p">{},</span>
+    <span class="n">requires_grad</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">allowed_values</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>所示空集合由 dataclass 工厂创建，实例之间不共享可变默认值。<code class="docutils literal notranslate"><span class="pre">units</span></code>、<code class="docutils literal notranslate"><span class="pre">dtype</span></code>、<code class="docutils literal notranslate"><span class="pre">bounds</span></code> 和 <code class="docutils literal notranslate"><span class="pre">category</span></code> 没有默认值：数值型 <code class="docutils literal notranslate"><span class="pre">dtype</span></code> 声明 <code class="docutils literal notranslate"><span class="pre">(lower,</span> <span class="pre">upper)</span></code> 区间，无界一侧写为 <code class="docutils literal notranslate"><span class="pre">-inf</span></code> 或 <code class="docutils literal notranslate"><span class="pre">inf</span></code>（<code class="docutils literal notranslate"><span class="pre">bounds=(-inf,</span> <span class="pre">inf)</span></code> 表示显式无界）；<code class="docutils literal notranslate"><span class="pre">bounds=None</span></code> 表示不适用区间，仅非数值型 <code class="docutils literal notranslate"><span class="pre">dtype</span></code>（文本、布尔开关、枚举、列表或映射）可以使用。<code class="docutils literal notranslate"><span class="pre">relic.parameters.spec.parameter_bounds_error(bounds,</span> <span class="pre">dtype)</span></code> 是唯一规则：违反时 <code class="docutils literal notranslate"><span class="pre">ParameterSpec</span></code> 抛出 <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>，<code class="docutils literal notranslate"><span class="pre">has_complete_parameter_metadata</span></code>、结构参数审计和参数 YAML 模式也读取同一规则。</p>
+<p><code class="docutils literal notranslate"><span class="pre">list</span></code> 或 <code class="docutils literal notranslate"><span class="pre">tuple</span></code> 类型的 dtype 可按分量逐一声明 <code class="docutils literal notranslate"><span class="pre">[minimum,</span> <span class="pre">maximum]</span></code> 数值区间对以替代单一标量区间，例如二分量参数可声明 <code class="docutils literal notranslate"><span class="pre">[[223.15,</span> <span class="pre">273.15],</span> <span class="pre">[323.15,</span> <span class="pre">373.15]]</span></code>。<code class="docutils literal notranslate"><span class="pre">relic.parameters.spec.componentwise_bounds_errors(value,</span> <span class="pre">pairs)</span></code> 是此类声明的唯一校验规则：参数值必须是与区间对等长的列表或元组，每个分量均为有限实数且落在对应闭区间内。越界时 <code class="docutils literal notranslate"><span class="pre">validate_value()</span></code> 返回违规列表，启用校验的 <code class="docutils literal notranslate"><span class="pre">set_value(...)</span></code> 与 <code class="docutils literal notranslate"><span class="pre">FunctorBase.get_parameter_value(...)</span></code> 均抛出 <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>，不对任何分量执行截断。列表类型参数上的扁平 <code class="docutils literal notranslate"><span class="pre">(lower,</span> <span class="pre">upper)</span></code> 区间不逐分量套用。</p>
+<p>数值参数的边界端点、值和默认值都必须以数值声明。<code class="docutils literal notranslate"><span class="pre">parameter_bounds_error</span></code> 拒绝文本形式的数值端点，<code class="docutils literal notranslate"><span class="pre">ParameterSpec</span></code> 拒绝文本形式的数值或默认值；<code class="docutils literal notranslate"><span class="pre">from_dict</span></code> 均不执行转换。按 PyYAML 的 YAML 1.1 规则，应写 <code class="docutils literal notranslate"><span class="pre">1.0e+7</span></code> 或 <code class="docutils literal notranslate"><span class="pre">1.0e-6</span></code>；<code class="docutils literal notranslate"><span class="pre">1.0e7</span></code> 和 <code class="docutils literal notranslate"><span class="pre">1e-6</span></code> 会被解析为字符串并被拒绝。</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>字段</p></th>
+<th class="head"><p>用途</p></th>
+<th class="head"><p>验证与失败行为</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">key</span></code></p></td>
+<td><p>唯一的 dot-notation identifier。</p></td>
+<td><p>空 key 或格式错误的 key 会抛出 <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">value</span></code></p></td>
+<td><p>当前标量、配置值或 Tensor。</p></td>
+<td><p>由 <code class="docutils literal notranslate"><span class="pre">validate_value()</span></code> 检查。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">default</span></code></p></td>
+<td><p>可选的声明默认值。</p></td>
+<td><p>存储在对象上，并由 <code class="docutils literal notranslate"><span class="pre">to_dict()</span></code> 序列化。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">units</span></code></p></td>
+<td><p>物理单位，通常兼容 CF/UDUNITS。</p></td>
+<td><p>单位验证由 manager 和 validator 执行。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">dtype</span></code></p></td>
+<td><p>声明的 numeric 或 configuration type。</p></td>
+<td><p>控制 Tensor 转换和 numeric normalization。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bounds</span></code></p></td>
+<td><p>物理下限和上限；数值型 <code class="docutils literal notranslate"><span class="pre">dtype</span></code> 的开放端写为 <code class="docutils literal notranslate"><span class="pre">-inf</span></code> 或 <code class="docutils literal notranslate"><span class="pre">inf</span></code>，<code class="docutils literal notranslate"><span class="pre">None</span></code>（不适用区间）仅对非数值型 <code class="docutils literal notranslate"><span class="pre">dtype</span></code> 有效。</p></td>
+<td><p>必填。数值型 <code class="docutils literal notranslate"><span class="pre">dtype</span></code> 使用 <code class="docutils literal notranslate"><span class="pre">None</span></code> 或 <code class="docutils literal notranslate"><span class="pre">None</span></code> 端点、形状无效或下界大于上界时，抛出 <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">category</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ParameterCategory</span></code> classification（分类）。</p></td>
+<td><p>必填。字符串会规范化；不支持的类型抛出 <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">description</span></code></p></td>
+<td><p>科学含义和使用情境。</p></td>
+<td><p>自由文本。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">references</span></code></p></td>
+<td><p>文献、标准或数据集引用。</p></td>
+<td><p>以字符串列表形式存储。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">tags</span></code></p></td>
+<td><p>搜索和 workflow 标签。</p></td>
+<td><p>列表会规范化为 set。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">dimension</span></code></p></td>
+<td><p>Physical-dimension 描述。</p></td>
+<td><p>用于单位检查和科学检查。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">provenance</span></code></p></td>
+<td><p>来源、schema、版本和 calibration metadata。</p></td>
+<td><p>空 mapping 会替换为基础的 user-defined provenance。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">requires_grad</span></code></p></td>
+<td><p>启用 trainable PyTorch representation。</p></td>
+<td><p>非 floating gradient value 会在可行时转换，否则被拒绝。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">allowed_values</span></code></p></td>
+<td><p>Categorical parameter 的枚举值。</p></td>
+<td><p>声明范围以外的值由 <code class="docutils literal notranslate"><span class="pre">validate_value()</span></code> 报告。</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="validate-value">
+<h3><code class="docutils literal notranslate"><span class="pre">validate_value()</span></code><a class="headerlink" href="#validate-value" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">spec</span><span class="o">.</span><span class="n">validate_value</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">ParameterValue</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>对常规无效值返回校验消息而不抛出异常。检查项包括类别成员归属、有限数值、标量上下界、非负生物速率与浓度，以及物理有效的绝对温度。</p>
+</section>
+<section id="tensor-conversion">
+<h3>Tensor 转换<a class="headerlink" href="#tensor-conversion" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">spec</span><span class="o">.</span><span class="n">to_tensor</span><span class="p">(</span>
+    <span class="n">device</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span>
+
+<span class="n">spec</span><span class="o">.</span><span class="n">from_tensor</span><span class="p">(</span><span class="n">tensor</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">to_tensor()</span></code> 将声明的 boolean、integer 和 floating dtype 映射到 PyTorch。String 和 categorical value 会抛出 <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>。非 floating Tensor 无法保留 gradient；转换失败时抛出 <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>。</p>
+<p><code class="docutils literal notranslate"><span class="pre">from_tensor()</span></code> 只接受 scalar Tensor。非 Tensor 抛出 <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>；非 scalar Tensor 抛出 <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>。</p>
+</section>
+<section id="mapping-and-serialization-interface">
+<h3>Mapping 与序列化接口<a class="headerlink" href="#mapping-and-serialization-interface" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">ParameterSpec</span></code> 实现 <code class="docutils literal notranslate"><span class="pre">Mapping[str,</span> <span class="pre">Any]</span></code>，并提供：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">spec</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+<span class="n">spec</span><span class="o">.</span><span class="n">model_dump</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+<span class="n">ParameterSpec</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ParameterSpec</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">from_dict()</span></code> 要求提供 <code class="docutils literal notranslate"><span class="pre">value</span></code>，会规范化 category、dtype、tags、bounds 和 categorical value，并将选定的附加 metadata 移入 provenance。</p>
+<p><code class="docutils literal notranslate"><span class="pre">to_dict()</span></code> 和 <code class="docutils literal notranslate"><span class="pre">model_dump()</span></code> 还输出 <code class="docutils literal notranslate"><span class="pre">default</span></code>，使用与 <code class="docutils literal notranslate"><span class="pre">value</span></code> 相同的张量传输格式；<code class="docutils literal notranslate"><span class="pre">allowed_values</span></code> 则输出为列表或 <code class="docutils literal notranslate"><span class="pre">None</span></code>。<code class="docutils literal notranslate"><span class="pre">from_dict()</span></code> 解码张量编码的 <code class="docutils literal notranslate"><span class="pre">default</span></code>，并将 <code class="docutils literal notranslate"><span class="pre">allowed_values</span></code> 规范化为列表或 <code class="docutils literal notranslate"><span class="pre">None</span></code>，使两个字段都能往返恢复。</p>
+</section>
+</section>
+<section id="parameterschema">
+<h2><code class="docutils literal notranslate"><span class="pre">ParameterSchema</span></code><a class="headerlink" href="#parameterschema" title="Link to this heading"></a></h2>
+<p>实现：<code class="docutils literal notranslate"><span class="pre">relic.parameters.serialization.ParameterSchema</span></code></p>
+<p>稳定公开导入：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">relic.parameters</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParameterSchema</span>
+</pre></div>
+</div>
+<p>状态：稳定的 serialization helper。它拥有 parameter interchange envelope，但不拥有参数查找、per-entry metadata 或数据库持久化。该类没有构造参数，用作其版本和 static method 的 namespace。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">relic.parameters</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParameterSchema</span>
+
+<span class="k">assert</span> <span class="n">ParameterSchema</span><span class="o">.</span><span class="n">VERSION</span> <span class="o">==</span> <span class="s2">&quot;1.0.0&quot;</span>
+</pre></div>
+</div>
+<p>Canonical envelope 含有 <code class="docutils literal notranslate"><span class="pre">parameters</span></code> mapping。每个成员都是至少包含 <code class="docutils literal notranslate"><span class="pre">value</span></code> 的 mapping，还可带有 <code class="docutils literal notranslate"><span class="pre">version</span></code>、<code class="docutils literal notranslate"><span class="pre">timestamp</span></code> 和 <code class="docutils literal notranslate"><span class="pre">metadata</span></code>。</p>
+<section id="validate-schema">
+<h3><code class="docutils literal notranslate"><span class="pre">validate_schema()</span></code><a class="headerlink" href="#validate-schema" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ParameterSchema</span><span class="o">.</span><span class="n">validate_schema</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+</pre></div>
+</div>
+<p>仅在以下条件满足时返回 <code class="docutils literal notranslate"><span class="pre">True</span></code>：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">data</span></code> 包含 <code class="docutils literal notranslate"><span class="pre">parameters</span></code>；</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">parameters</span></code> 是 mapping；</p></li>
+<li><p>每个参数条目都是包含 <code class="docutils literal notranslate"><span class="pre">value</span></code> 的 mapping。</p></li>
+</ul>
+<p>对于不完整的 canonical mapping，返回 <code class="docutils literal notranslate"><span class="pre">False</span></code>。当前方法是轻量级结构检查；它不会验证所有 <code class="docutils literal notranslate"><span class="pre">ParameterSpec</span></code> field、单位、bounds 或 provenance。声明的 mapping contract 以外的输入可能抛出普通 Python type error。</p>
+</section>
+<section id="migrate-schema">
+<h3><code class="docutils literal notranslate"><span class="pre">migrate_schema()</span></code><a class="headerlink" href="#migrate-schema" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ParameterSchema</span><span class="o">.</span><span class="n">migrate_schema</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+    <span class="n">from_version</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>返回 canonical mapping 的 shallow copy；缺少 <code class="docutils literal notranslate"><span class="pre">version</span></code> 时添加 <code class="docutils literal notranslate"><span class="pre">ParameterSchema.VERSION</span></code>。</p>
+<p>当 <code class="docutils literal notranslate"><span class="pre">data</span></code> 不是 mapping、<code class="docutils literal notranslate"><span class="pre">parameters</span></code> 不是 mapping，或缺少 canonical <code class="docutils literal notranslate"><span class="pre">parameters</span></code> field 时抛出 <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>。</p>
+<p>当前实现限制：</p>
+<ul class="simple">
+<li><p>扁平旧版参数映射直接拒绝，不执行迁移。</p></li>
+<li><p>Signature 接受 <code class="docutils literal notranslate"><span class="pre">from_version</span></code>，但当前不会据此选择 version-specific migration path。</p></li>
+<li><p>不得将 <code class="docutils literal notranslate"><span class="pre">ParameterSchema</span></code> 视为第二套 <code class="docutils literal notranslate"><span class="pre">ParameterSpec</span></code> schema 或 validation registry。</p></li>
+</ul>
+</section>
+</section>
+<section id="parameterdefinition">
+<h2><code class="docutils literal notranslate"><span class="pre">ParameterDefinition</span></code><a class="headerlink" href="#parameterdefinition" title="Link to this heading"></a></h2>
+<p>实现：<code class="docutils literal notranslate"><span class="pre">relic.parameters.decorators.ParameterDefinition</span></code></p>
+<p>稳定公开导入：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">relic.parameters</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParameterDefinition</span>
+</pre></div>
+</div>
+<p>状态：parameter decorator API 导出的兼容和便捷 metadata。它不是 canonical runtime parameter object，也不得替代 <code class="docutils literal notranslate"><span class="pre">ParameterSpec</span></code>。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ParameterDefinition</span><span class="p">(</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">default</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="n">units</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">bounds</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span>
+    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">requires_grad</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">validate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">register</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>字段</p></th>
+<th class="head"><p>用途</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">name</span></code></p></td>
+<td><p>附加到 decorated property 的参数名称。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">default</span></code></p></td>
+<td><p>Decorator 使用的本地 fallback。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">units</span></code></p></td>
+<td><p>声明的物理单位（必填；不存在通用单位）。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bounds</span></code></p></td>
+<td><p>传给装饰器管理访问的下限和上限（必填；<code class="docutils literal notranslate"><span class="pre">(-inf,</span> <span class="pre">inf)</span></code> 声明无界参数）。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">description</span></code></p></td>
+<td><p>便于阅读的含义。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">requires_grad</span></code></p></td>
+<td><p>使用 decorator registration 时，请求 trainable value。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">validate</span></code></p></td>
+<td><p>请求 decorator-time validation。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">register</span></code></p></td>
+<td><p>请求注册缺失的 decorated parameter。</p></td>
+</tr>
+</tbody>
+</table>
+<p>该 dataclass 没有 validation method 或 <code class="docutils literal notranslate"><span class="pre">__post_init__</span></code>。无效的名称、bounds、单位或 default 不会在构造时被拒绝，只会在 owning decorator 或 manager 使用它们时失败。</p>
+<p>装饰器 <code class="docutils literal notranslate"><span class="pre">managed_parameters</span></code>、<code class="docutils literal notranslate"><span class="pre">parameter</span></code>、<code class="docutils literal notranslate"><span class="pre">validated_parameter</span></code> 和 <code class="docutils literal notranslate"><span class="pre">learnable_parameter</span></code> 附加或使用这些元数据。<code class="docutils literal notranslate"><span class="pre">managed_parameters</span></code> 仅注册声明了完整 <code class="docutils literal notranslate"><span class="pre">&lt;name&gt;_spec</span></code> 映射的属性 <code class="docutils literal notranslate"><span class="pre">&lt;name&gt;</span></code>（包含 <code class="docutils literal notranslate"><span class="pre">units</span></code>、<code class="docutils literal notranslate"><span class="pre">bounds</span></code>、<code class="docutils literal notranslate"><span class="pre">dtype</span></code> 和 <code class="docutils literal notranslate"><span class="pre">description</span></code>）；规范不完整时抛出 <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>，没有规范的属性不是受管理参数。这些装饰器仍然导出，但生产科学 Functor 必须使用由 YAML 支持的 <code class="docutils literal notranslate"><span class="pre">ParameterSpec</span></code> 条目和 <code class="docutils literal notranslate"><span class="pre">self.get_parameter_value(...)</span></code>。装饰后的属性不是替代参数所有者，也不是获准硬编码科学默认值的方式。</p>
+</section>
+<section id="manager-owned-support-classes">
+<h2>Manager-owned support classes（由 Manager 管理的支持类）<a class="headerlink" href="#manager-owned-support-classes" title="Link to this heading"></a></h2>
+<section id="parameterdatabase">
+<h3><code class="docutils literal notranslate"><span class="pre">ParameterDatabase</span></code><a class="headerlink" href="#parameterdatabase" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ParameterDatabase</span><span class="p">(</span>
+    <span class="n">base_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">validator</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ParameterValidator</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>数据库拥有两个 precedence tier：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">relic</span></code>：native framework parameter（框架原生参数）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">calibrated</span></code>：calibration 和 optimized value。</p></li>
+</ul>
+<p>构造时在 <code class="docutils literal notranslate"><span class="pre">base_path</span></code> 下创建 <code class="docutils literal notranslate"><span class="pre">relic</span></code> 和 <code class="docutils literal notranslate"><span class="pre">calibrated</span></code> 层级目录，并初始化空参数缓存和逐文件头部缓存；不建立文件索引。每次读取都遵循唯一加载计划：</p>
+<ol class="arabic simple">
+<li><p>原生 <code class="docutils literal notranslate"><span class="pre">relic</span></code> 文件（基础层）；</p></li>
+<li><p>依次加载已启用的校准范围 <code class="docutils literal notranslate"><span class="pre">global</span></code>、<code class="docutils literal notranslate"><span class="pre">regional</span></code> 和 <code class="docutils literal notranslate"><span class="pre">site_specific</span></code>（由 <code class="docutils literal notranslate"><span class="pre">RELIC_CALIBRATED_SCALES</span></code> 选择范围；仅设置 <code class="docutils literal notranslate"><span class="pre">RELIC_INCLUDE_CALIBRATED_SNAPSHOTS=1</span></code> 时顶层校准快照文件才参与，<code class="docutils literal notranslate"><span class="pre">RELIC_SKIP_CALIBRATED=1</span></code> 则排除校准层）；</p></li>
+<li><p>通过 <code class="docutils literal notranslate"><span class="pre">add_source()</span></code> 添加的数据源。</p></li>
+</ol>
+<p>后加载的条目优先。同一键在两个基础层文件中定义时，会抛出 <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> 并指出两个文件。YAML 文件的命名空间由顶层 <code class="docutils literal notranslate"><span class="pre">namespace:</span></code> 头部行声明，从原始字节读取，并按修改时间和大小缓存；文件名和目录名不参与判断。JSON 文件和缺少该头部的 YAML 文件仅在完整加载时读取。主要方法包括：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">database</span><span class="o">.</span><span class="n">load_all</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ParameterSpec</span><span class="p">]</span>
+<span class="n">database</span><span class="o">.</span><span class="n">load_all_with_priority</span><span class="p">(</span>
+    <span class="n">source_priority</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ParameterSpec</span><span class="p">]</span>
+<span class="n">database</span><span class="o">.</span><span class="n">get_parameter</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ParameterSpec</span><span class="p">]</span>
+<span class="n">database</span><span class="o">.</span><span class="n">set_parameter</span><span class="p">(</span>
+    <span class="n">spec</span><span class="p">:</span> <span class="n">ParameterSpec</span><span class="p">,</span>
+    <span class="n">tier</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;calibrated&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+<span class="n">database</span><span class="o">.</span><span class="n">add_source</span><span class="p">(</span><span class="n">source_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+<span class="n">database</span><span class="o">.</span><span class="n">load_namespace</span><span class="p">(</span><span class="n">namespace</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+<span class="n">database</span><span class="o">.</span><span class="n">declares_namespace</span><span class="p">(</span><span class="n">namespace</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+<span class="n">database</span><span class="o">.</span><span class="n">declared_namespaces</span><span class="p">(</span>
+    <span class="n">directory</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">get_parameter(key)</span></code> 直接返回已缓存规范。未缓存时，按完整加载的优先顺序读取已声明命名空间是该键点分前缀的文件，以及所有相关命名空间（祖先或后代）的文件。若仍未定义该键，则执行 <code class="docutils literal notranslate"><span class="pre">load_all()</span></code>；设置 <code class="docutils literal notranslate"><span class="pre">fail_on_validation_errors</span></code> 时改为抛出 <code class="docutils literal notranslate"><span class="pre">KeyError</span></code>。该标志取自 <code class="docutils literal notranslate"><span class="pre">RELIC_FAIL_ON_PARAMETER_VALIDATION</span></code>（<code class="docutils literal notranslate"><span class="pre">1</span></code>、<code class="docutils literal notranslate"><span class="pre">true</span></code> 或 <code class="docutils literal notranslate"><span class="pre">yes</span></code>）；该变量未设置时，则由为真的 <code class="docutils literal notranslate"><span class="pre">CI</span></code> 变量或取 <code class="docutils literal notranslate"><span class="pre">ci</span></code>、<code class="docutils literal notranslate"><span class="pre">prod</span></code>、<code class="docutils literal notranslate"><span class="pre">production</span></code> 的 <code class="docutils literal notranslate"><span class="pre">RELIC_ENV</span></code> 决定。</p>
+<p><code class="docutils literal notranslate"><span class="pre">load_namespace(namespace)</span></code> 以相同方式读取相关命名空间的文件；<code class="docutils literal notranslate"><span class="pre">declares_namespace(namespace)</span></code> 报告参与加载的文件是否声明该命名空间、其祖先或后代；<code class="docutils literal notranslate"><span class="pre">declared_namespaces()</span></code> 按加载顺序列出已声明命名空间。<code class="docutils literal notranslate"><span class="pre">load_all_with_priority(source_priority)</span></code> 仅接受 <code class="docutils literal notranslate"><span class="pre">relic</span></code> 和 <code class="docutils literal notranslate"><span class="pre">calibrated</span></code>，最高优先级在前，只读取加载计划中的这些层而不读取附加数据源；其他名称会引发 <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>，且缓存保持不变。<code class="docutils literal notranslate"><span class="pre">add_source()</span></code> 对不存在的路径抛出 <code class="docutils literal notranslate"><span class="pre">FileNotFoundError</span></code>。</p>
+<p>应用代码通常通过 <code class="docutils literal notranslate"><span class="pre">UnifiedParameterManager.database</span></code> 访问此对象。只有明确拥有某个 database root 的受控基础设施才适合直接构造它。</p>
+</section>
+<section id="parameterstorage">
+<h3><code class="docutils literal notranslate"><span class="pre">ParameterStorage</span></code><a class="headerlink" href="#parameterstorage" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ParameterStorage</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ParameterStorage</span>
+</pre></div>
+</div>
+<p>提供线程安全的 in-memory CRUD、namespace 索引、访问统计和 immutable snapshot。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">storage</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ParameterValue</span><span class="p">]</span>
+<span class="n">storage</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+<span class="n">storage</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+<span class="n">storage</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
+<span class="n">storage</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">namespace</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+<span class="n">storage</span><span class="o">.</span><span class="n">get_all</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ParameterValue</span><span class="p">]</span>
+<span class="n">storage</span><span class="o">.</span><span class="n">snapshot</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParameterSnapshot</span>
+<span class="n">storage</span><span class="o">.</span><span class="n">restore</span><span class="p">(</span><span class="n">snapshot</span><span class="p">:</span> <span class="n">ParameterSnapshot</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+<span class="n">storage</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">snapshot1</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">snapshot2</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">storage.list(namespace=...)</span></code> 对每个命名空间都按同一规则返回 <code class="docutils literal notranslate"><span class="pre">&quot;&lt;namespace&gt;.&quot;</span></code> 下的全部键（直接子项和更深后代）；绝不返回同级前缀的键，例如命名空间 <code class="docutils literal notranslate"><span class="pre">a.b</span></code> 不会返回 <code class="docutils literal notranslate"><span class="pre">a.bc.x</span></code>。</p>
+<p><code class="docutils literal notranslate"><span class="pre">UnifiedParameterManager.delete(key)</span></code> 移除规范、存储值和已注册的 <code class="docutils literal notranslate"><span class="pre">nn.Parameter</span></code>，随后整体清空查询缓存和单位转换缓存，因此已删除键及其命名空间或单位变体不会残留缓存查询结果。<code class="docutils literal notranslate"><span class="pre">storage.snapshot()</span></code> 捕获存储值，或在不改变实时存储的前提下捕获显式给出的 <code class="docutils literal notranslate"><span class="pre">parameters</span></code> 值，并保留每个值的类型和 dtype；<code class="docutils literal notranslate"><span class="pre">metadata</span></code> 与快照一起记录。<code class="docutils literal notranslate"><span class="pre">storage.restore(snapshot)</span></code> 替换存储值，然后通知管理器。管理器要求每个恢复值都有已加载或数据库提供的规范；没有任何规范的值会引发 <code class="docutils literal notranslate"><span class="pre">KeyError</span></code>，绝不虚构规范。管理器使规范值和实时绑定与恢复值一致，并移除快照中不存在参数的规范和绑定。恢复回调抛出异常时，错误会传播，存储层恢复到恢复操作前持有的值。<code class="docutils literal notranslate"><span class="pre">manager.restore(snapshot)</span></code> 则直接写入存储值，并自行精确设置快照中的规范。</p>
+<p>这是 manager 的 value layer，不是 <code class="docutils literal notranslate"><span class="pre">UnifiedParameterManager</span></code> 的公开替代品。</p>
+</section>
+<section id="parametersnapshot">
+<h3><code class="docutils literal notranslate"><span class="pre">ParameterSnapshot</span></code><a class="headerlink" href="#parametersnapshot" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ParameterSnapshot</span><span class="p">(</span>
+    <span class="n">timestamp</span><span class="p">:</span> <span class="n">datetime</span><span class="p">,</span>
+    <span class="n">_parameters</span><span class="p">:</span> <span class="n">ParameterDict</span><span class="p">,</span>
+    <span class="n">metadata</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
+    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>该冻结 dataclass 对值和元数据进行深复制。<code class="docutils literal notranslate"><span class="pre">parameters</span></code> 属性返回只读 <code class="docutils literal notranslate"><span class="pre">MappingProxyType</span></code>。管理器快照在 <code class="docutils literal notranslate"><span class="pre">metadata[&quot;nn_values&quot;]</span></code> 下记录实时可学习值。</p>
+</section>
+<section id="parametervalidator">
+<h3><code class="docutils literal notranslate"><span class="pre">ParameterValidator</span></code><a class="headerlink" href="#parametervalidator" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ParameterValidator</span><span class="p">(</span>
+    <span class="n">level</span><span class="p">:</span> <span class="n">ParameterValidationLevel</span> <span class="o">=</span> <span class="n">ParameterValidationLevel</span><span class="o">.</span><span class="n">STANDARD</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">validator</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span>
+    <span class="n">specs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ParameterSpec</span><span class="p">],</span>
+    <span class="n">level</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ParameterValidationLevel</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ParameterValidationContext</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+
+<span class="n">validator</span><span class="o">.</span><span class="n">validate_value</span><span class="p">(</span>
+    <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">value</span><span class="p">:</span> <span class="n">ParameterValue</span><span class="p">,</span>
+    <span class="n">spec</span><span class="p">:</span> <span class="n">ParameterSpec</span><span class="p">,</span>
+    <span class="n">level</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ParameterValidationLevel</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ParameterValidationContext</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ParameterValidationResult</span>
+</pre></div>
+</div>
+<p>验证级别：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">NONE</span></code>：不验证。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BASIC</span></code>：类型和范围检查。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">STANDARD</span></code>：标准科学检查和关系检查。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">STRICT</span></code>：使用 strict context 的完整检查。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">CUSTOM</span></code>：caller-defined policy（调用方定义的策略）。</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">ParameterValidationResult</span></code> 包含 <code class="docutils literal notranslate"><span class="pre">is_valid</span></code>、<code class="docutils literal notranslate"><span class="pre">errors</span></code>、<code class="docutils literal notranslate"><span class="pre">warnings</span></code>、<code class="docutils literal notranslate"><span class="pre">level</span></code> 和 machine-readable <code class="docutils literal notranslate"><span class="pre">error_types</span></code>。<code class="docutils literal notranslate"><span class="pre">ParameterValidationContext</span></code> 包含相关参数值、environmental context、<code class="docutils literal notranslate"><span class="pre">strict_mode</span></code> 和 <code class="docutils literal notranslate"><span class="pre">warnings_as_errors</span></code>。</p>
+</section>
+<section id="parametervalidationresult">
+<h3><code class="docutils literal notranslate"><span class="pre">ParameterValidationResult</span></code><a class="headerlink" href="#parametervalidationresult" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ParameterValidationResult</span><span class="p">(</span>
+    <span class="n">is_valid</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">errors</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
+    <span class="n">warnings</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
+    <span class="n">error_types</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>该结果对象直接报告校验状态而无需抛出异常。<code class="docutils literal notranslate"><span class="pre">aggregate(results)</span></code> 汇总多个结果中的错误、警告、错误类别与联合有效性。</p>
+</section>
+<section id="parametervalidationcontext">
+<h3><code class="docutils literal notranslate"><span class="pre">ParameterValidationContext</span></code><a class="headerlink" href="#parametervalidationcontext" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ParameterValidationContext</span><span class="p">(</span>
+    <span class="n">all_parameters</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ParameterValue</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
+    <span class="n">environment</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
+    <span class="n">strict_mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">warnings_as_errors</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>该 context 向 cross-parameter validator 和 scientific validator 提供相关值及环境信息。Strict validation 会启用 <code class="docutils literal notranslate"><span class="pre">strict_mode</span></code>，并将 warning 作为 error。</p>
+</section>
+<section id="boundspolicy-and-unitvalidationmode">
+<h3><code class="docutils literal notranslate"><span class="pre">BoundsPolicy</span></code> 与 <code class="docutils literal notranslate"><span class="pre">UnitValidationMode</span></code><a class="headerlink" href="#boundspolicy-and-unitvalidationmode" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">BoundsPolicy</span></code> 选择 <code class="docutils literal notranslate"><span class="pre">WARN_AND_CLAMP</span></code> 或 <code class="docutils literal notranslate"><span class="pre">ERROR</span></code>。<code class="docutils literal notranslate"><span class="pre">UnitValidationMode</span></code> 选择 <code class="docutils literal notranslate"><span class="pre">OFF</span></code>、<code class="docutils literal notranslate"><span class="pre">CHECK_ONLY</span></code> 或 <code class="docutils literal notranslate"><span class="pre">STRICT</span></code>。</p>
+</section>
+</section>
+<section id="physical-constraint-integration">
+<h2>物理约束集成<a class="headerlink" href="#physical-constraint-integration" title="Link to this heading"></a></h2>
+<section id="stability-and-ownership">
+<h3>稳定性与所有权<a class="headerlink" href="#stability-and-ownership" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">PhysicalConstraintManager</span></code>、<code class="docutils literal notranslate"><span class="pre">ConstraintSpec</span></code> 和 <code class="docutils literal notranslate"><span class="pre">ConstraintType</span></code> 定义在：</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>relic\coupling\scales\physical_constraint_manager.py
+</pre></div>
+</div>
+<p>它们不会由 <code class="docutils literal notranslate"><span class="pre">relic.coupling.scales</span></code> 或 <code class="docutils literal notranslate"><span class="pre">relic.coupling</span></code> 导出。其直接模块路径是 canonical infrastructure integration path，而不是一般的 package-root public API。</p>
+<p>每个 <code class="docutils literal notranslate"><span class="pre">StateManager</span></code> 拥有自己的 physical-constraint manager。它优先使用显式的 <code class="docutils literal notranslate"><span class="pre">physical_constraint_manager=</span></code> 构造函数注入；否则，其只读 <code class="docutils literal notranslate"><span class="pre">physical_constraint_manager</span></code> property 会为该 StateManager 延迟构造、初始化、验证并缓存一个实例：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">relic.core.state</span><span class="w"> </span><span class="kn">import</span> <span class="n">StateManager</span>
+
+<span class="n">state_manager</span> <span class="o">=</span> <span class="n">StateManager</span><span class="p">(</span><span class="n">autoload_contract_registry</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">constraint_manager</span> <span class="o">=</span> <span class="n">state_manager</span><span class="o">.</span><span class="n">physical_constraint_manager</span>
+<span class="k">assert</span> <span class="n">constraint_manager</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+</pre></div>
+</div>
+<p>不存在 module 全局的 physical-constraint getter 或 setter。科学 Functor 通过现有 contract 提出其状态更新，不会创建相互竞争的 constraint owner。需要显式构造的基础设施使用同一个 class 及其正常生命周期。</p>
+</section>
+<section id="constraintspec">
+<h3><code class="docutils literal notranslate"><span class="pre">ConstraintSpec</span></code><a class="headerlink" href="#constraintspec" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ConstraintSpec</span><span class="p">(</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="n">ConstraintType</span><span class="p">,</span>
+    <span class="n">min_value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">max_value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">smoothness</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>字段</p></th>
+<th class="head"><p>用途</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">name</span></code></p></td>
+<td><p>用于过滤和 diagnostics 的 constraint identity。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">type</span></code></p></td>
+<td><p>从 <code class="docutils literal notranslate"><span class="pre">ConstraintType</span></code> 选择的 constraint operation。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">min_value</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">BOUNDED</span></code> 的可选 lower bound。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">max_value</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">BOUNDED</span></code> 的可选 upper bound。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">smoothness</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">SMOOTH</span></code> 使用的可选 smoothing scale。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">strict</span></code></p></td>
+<td><p>Specification 携带的 declared strictness flag。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">metadata</span></code></p></td>
+<td><p>可选的 provenance 和 variable context。</p></td>
+</tr>
+</tbody>
+</table>
+<p><code class="docutils literal notranslate"><span class="pre">ConstraintType</span></code> 定义 <code class="docutils literal notranslate"><span class="pre">NON_NEGATIVE</span></code>、<code class="docutils literal notranslate"><span class="pre">BOUNDED</span></code>、<code class="docutils literal notranslate"><span class="pre">MONOTONIC</span></code>、<code class="docutils literal notranslate"><span class="pre">CONVEX</span></code>、<code class="docutils literal notranslate"><span class="pre">SMOOTH</span></code> 和 <code class="docutils literal notranslate"><span class="pre">CONSERVE_SHAPE</span></code>。</p>
+<p><code class="docutils literal notranslate"><span class="pre">ConstraintSpec</span></code> 在构造时解析 <code class="docutils literal notranslate"><span class="pre">type</span></code>，接受 <code class="docutils literal notranslate"><span class="pre">ConstraintType</span></code> 或对应的值字符串；其他值引发 <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>，并列出类型。管理器在验证阶段报告未提供上下限或满足 <code class="docutils literal notranslate"><span class="pre">min_value</span> <span class="pre">&gt;=</span> <span class="pre">max_value</span></code> 的有界规范。<code class="docutils literal notranslate"><span class="pre">add_constraint</span></code> 仅接受类型已知的 <code class="docutils literal notranslate"><span class="pre">ConstraintSpec</span></code>；添加约束后再改变类型，会在应用约束时引发 <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>，不跳过任何约束。</p>
+</section>
+<section id="physicalconstraintmanager">
+<h3><code class="docutils literal notranslate"><span class="pre">PhysicalConstraintManager</span></code><a class="headerlink" href="#physicalconstraintmanager" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">PhysicalConstraintManager</span><span class="p">(</span>
+    <span class="n">constraints</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">ConstraintSpec</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">method</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">preserve_gradients</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">device</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">parameter_manager</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>参数</p></th>
+<th class="head"><p>用途</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">constraints</span></code></p></td>
+<td><p>初始约束规范（<code class="docutils literal notranslate"><span class="pre">ConstraintSpec</span></code> 条目；其他条目引发 <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>）。<code class="docutils literal notranslate"><span class="pre">initialize()</span></code> 复制这些条目，因此之后添加的约束不会在 <code class="docutils literal notranslate"><span class="pre">reset()</span></code> 和下一次 <code class="docutils literal notranslate"><span class="pre">initialize()</span></code> 后保留。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">method</span></code></p></td>
+<td><p>应用策略，取 <code class="docutils literal notranslate"><span class="pre">coupling.scales.defaults.physical_constraint_method</span></code> 的 <code class="docutils literal notranslate"><span class="pre">allowed_values</span></code> 之一（<code class="docutils literal notranslate"><span class="pre">clip</span></code>、<code class="docutils literal notranslate"><span class="pre">scale</span></code>、<code class="docutils literal notranslate"><span class="pre">redistribute</span></code>、<code class="docutils literal notranslate"><span class="pre">project</span></code>）；构造或 <code class="docutils literal notranslate"><span class="pre">configure</span></code> 时传入其他值会引发 <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> 并列出允许值（被拒绝的调用不改变任何内容）。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">preserve_gradients</span></code></p></td>
+<td><p>克隆数据时保留自动微分计算图连接，不分离张量。采用 <code class="docutils literal notranslate"><span class="pre">clip</span></code> 方法时，被裁剪元素经由 <code class="docutils literal notranslate"><span class="pre">torch.clamp</span></code> 获得的梯度仍为零。取值为 <code class="docutils literal notranslate"><span class="pre">True</span></code> 或 <code class="docutils literal notranslate"><span class="pre">False</span></code>（传入其他值抛出 <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>）；设为 <code class="docutils literal notranslate"><span class="pre">None</span></code> 时读取参数配置。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">device</span></code></p></td>
+<td><p>Manager operation 和 adaptive parameter 使用的 device。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">parameter_manager</span></code></p></td>
+<td><p>初始化所使用的显式参数 owner；仅当其缺失时才解析 canonical 全局参数 owner。</p></td>
+</tr>
+</tbody>
+</table>
+<p>直接构造会创建未初始化的 <code class="docutils literal notranslate"><span class="pre">BaseManager</span></code>/<code class="docutils literal notranslate"><span class="pre">nn.Module</span></code>。基础设施调用 <code class="docutils literal notranslate"><span class="pre">initialize()</span></code> 和 <code class="docutils literal notranslate"><span class="pre">validate()</span></code>。正常的状态更新通过 <code class="docutils literal notranslate"><span class="pre">state_manager.physical_constraint_manager</span></code> 获取已初始化并缓存的 owner。</p>
+<p>省略显式设置时，初始化通过权威参数管理器，从 <code class="docutils literal notranslate"><span class="pre">coupling.scales.defaults</span></code> 解析 <code class="docutils literal notranslate"><span class="pre">physical_constraint_method</span></code>、<code class="docutils literal notranslate"><span class="pre">preserve_gradients</span></code> 和 <code class="docutils literal notranslate"><span class="pre">constraint_device</span></code>。缺少必需参数值时传播查询错误，<code class="docutils literal notranslate"><span class="pre">physical_constraint_method</span></code> 超出其 <code class="docutils literal notranslate"><span class="pre">allowed_values</span></code> 时抛出 <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> 并列出允许值；<code class="docutils literal notranslate"><span class="pre">initialize()</span></code> 与处理其他初始化失败相同，将该失败报告为 <code class="docutils literal notranslate"><span class="pre">ManagerInitializationError</span></code>，保留原错误作为原因，并将管理器置于 <code class="docutils literal notranslate"><span class="pre">ERROR</span></code> 状态。约束操作绝不将未知方法当作 <code class="docutils literal notranslate"><span class="pre">clip</span></code>，而是抛出 <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>。如果既没有管理器，也未提供全部显式设置，初始化会抛出 <code class="docutils literal notranslate"><span class="pre">RuntimeError</span></code>，并按同样方式报告。</p>
+<p>显式注入的 <code class="docutils literal notranslate"><span class="pre">parameter_manager</span></code> 控制初始化及后续参数查找。仅当其缺失时，<code class="docutils literal notranslate"><span class="pre">_do_initialize()</span></code> 才获取 canonical 的 <code class="docutils literal notranslate"><span class="pre">get_global_manager()</span></code>。</p>
+</section>
+<section id="constraint-operations">
+<h3>约束操作<a class="headerlink" href="#constraint-operations" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">manager</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span>
+    <span class="n">constraint</span><span class="p">:</span> <span class="n">ConstraintSpec</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+
+<span class="n">manager</span><span class="o">.</span><span class="n">apply_constraints</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">constraint_names</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">return_mask</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">bounds</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
+        <span class="n">Tuple</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span>
+    <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">variable_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">scale</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]]</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>参数</p></th>
+<th class="head"><p>用途</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">data</span></code></p></td>
+<td><p>要约束的 Tensor。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">constraint_names</span></code></p></td>
+<td><p>已注册 constraint name 的可选子集。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">return_mask</span></code></p></td>
+<td><p>随 constrained Tensor 返回 boolean violation mask。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bounds</span></code></p></td>
+<td><p>用于创建临时 bounded constraint 的 runtime lower 和 upper limit。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">variable_name</span></code></p></td>
+<td><p>用于目录边界查询和诊断的变量标识。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">scale</span></code></p></td>
+<td><p>Bounds lookup 期间使用的可选 scale namespace。</p></td>
+</tr>
+</tbody>
+</table>
+<p>未提供 <code class="docutils literal notranslate"><span class="pre">bounds</span></code> 但提供 <code class="docutils literal notranslate"><span class="pre">variable_name</span></code> 时，边界取自该变量尺度目录条目的 <code class="docutils literal notranslate"><span class="pre">bounds</span></code> 字段（先 <code class="docutils literal notranslate"><span class="pre">coupling.scales.&lt;scale&gt;.variables</span></code>，再 <code class="docutils literal notranslate"><span class="pre">coupling.scales.defaults.variables</span></code>，匹配规则与其他目录查询相同）；没有目录声明该变量，或条目缺少 <code class="docutils literal notranslate"><span class="pre">bounds</span></code> 字段时，抛出 <code class="docutils literal notranslate"><span class="pre">KeyError</span></code>；<code class="docutils literal notranslate"><span class="pre">bounds:</span> <span class="pre">null</span></code> 表示无边界。不查询其他命名空间、<code class="docutils literal notranslate"><span class="pre">&lt;name&gt;_bounds</span></code> 键或裁剪键。<code class="docutils literal notranslate"><span class="pre">ScaleManager</span></code> 外观传入解析后变量元数据中的边界（优先调用元数据，其次目录条目）；声明无边界时不请求查询。它记录违反项，但不创建第二个状态或守恒所有者。管理器初始化前调用该方法可能因运行时属性尚不可用而失败。张量形状和算子错误由 PyTorch 传播。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">manager</span><span class="o">.</span><span class="n">get_violation_report</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+<span class="n">manager</span><span class="o">.</span><span class="n">reset_tracking</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</pre></div>
+</div>
+<p>报告包含 violation 总数、检查次数、violation rate，以及最近最多十条历史记录。</p>
+<p><code class="docutils literal notranslate"><span class="pre">configure</span></code> 仅接受 <code class="docutils literal notranslate"><span class="pre">method</span></code>、<code class="docutils literal notranslate"><span class="pre">preserve_gradients</span></code>、<code class="docutils literal notranslate"><span class="pre">device</span></code> 和 <code class="docutils literal notranslate"><span class="pre">constraints</span></code>：未知键、无效方法、既非 <code class="docutils literal notranslate"><span class="pre">True</span></code> 也非 <code class="docutils literal notranslate"><span class="pre">False</span></code> 的 <code class="docutils literal notranslate"><span class="pre">preserve_gradients</span></code>、不是 torch 设备的 <code class="docutils literal notranslate"><span class="pre">device</span></code>，或并非 <code class="docutils literal notranslate"><span class="pre">ConstraintSpec</span></code> 字段映射列表的 <code class="docutils literal notranslate"><span class="pre">constraints</span></code>（须包含 <code class="docutils literal notranslate"><span class="pre">name</span></code> 和 <code class="docutils literal notranslate"><span class="pre">type</span></code>、类型已知且无其他字段），都会在改变任何内容之前引发 <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>。管理器的 <code class="docutils literal notranslate"><span class="pre">validate()</span></code> 通过 BaseManager 验证结果报告无效方法、不可用 CUDA 设备以及格式错误的有界约束。</p>
+</section>
+</section>
+<section id="conservation-guardian">
+<h2>Conservation guardian（守恒守护器）<a class="headerlink" href="#conservation-guardian" title="Link to this heading"></a></h2>
+<section id="id2">
+<h3>稳定性与所有权<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">ConservationGuardian</span></code> 是架构中命名的 canonical 第四层 domain budget checker，但不会从 <code class="docutils literal notranslate"><span class="pre">relic.validation</span></code> 重新导出。仅 validation infrastructure 应使用直接模块路径：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">relic.validation.conservation_guardian</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BudgetCheckResult</span><span class="p">,</span>
+    <span class="n">ConservationGuardian</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">StateManager</span></code> 拥有 commit-time state ledger，并通过其 conservation integration 调用 guardian。<code class="docutils literal notranslate"><span class="pre">ConservationGuardian</span></code> 是非阻塞 diagnostic checker；它不是另一个 StateManager、ledger、generic validation result 或 scientific process。</p>
+</section>
+<section id="budgetcheckresult">
+<h3><code class="docutils literal notranslate"><span class="pre">BudgetCheckResult</span></code><a class="headerlink" href="#budgetcheckresult" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">BudgetCheckResult</span><span class="p">(</span>
+    <span class="n">domain</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">members</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">sum_flux_in</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">sum_flux_out</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">delta_storage</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">residual</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">passed</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">tolerance_used</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">invariant_drift</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>字段</p></th>
+<th class="head"><p>用途</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">domain</span></code></p></td>
+<td><p>Conservation-domain 名称。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">members</span></code></p></td>
+<td><p>从 contract registry 获取的 state variable。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sum_flux_in</span></code></p></td>
+<td><p>聚合后的 incoming flux。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sum_flux_out</span></code></p></td>
+<td><p>聚合后的 outgoing flux。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">delta_storage</span></code></p></td>
+<td><p>观测到的 storage change。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">residual</span></code></p></td>
+<td><p>观测 storage change 与预期 storage change 之间的 absolute difference。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">passed</span></code></p></td>
+<td><p>Residual 是否在 tolerance 内。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">tolerance_used</span></code></p></td>
+<td><p>计算得到的 absolute-plus-relative threshold。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">invariant_drift</span></code></p></td>
+<td><p>可选的独立计算 Noether invariant drift。</p></td>
+</tr>
+</tbody>
+</table>
+<p>该 dataclass 不执行 constructor-time validation。它是 guardian-owned domain result，不得与 <code class="docutils literal notranslate"><span class="pre">relic.validation.framework.ValidationResultModel</span></code> 混淆。</p>
+</section>
+<section id="conservationguardian">
+<h3><code class="docutils literal notranslate"><span class="pre">ConservationGuardian</span></code><a class="headerlink" href="#conservationguardian" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ConservationGuardian</span><span class="p">(</span>
+    <span class="n">contract_registry</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="n">default_atol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0e-10</span><span class="p">,</span>
+    <span class="n">default_rtol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0e-8</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>参数</p></th>
+<th class="head"><p>用途</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">contract_registry</span></code></p></td>
+<td><p>提供 <code class="docutils literal notranslate"><span class="pre">get_domain_members(domain)</span></code> 的现有 registry。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">default_atol</span></code></p></td>
+<td><p>默认 absolute residual tolerance。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">default_rtol</span></code></p></td>
+<td><p>默认 relative residual tolerance。</p></td>
+</tr>
+</tbody>
+</table>
+<p>构造函数将 tolerance 转换为 <code class="docutils literal notranslate"><span class="pre">float</span></code>；不兼容的值会抛出 <code class="docutils literal notranslate"><span class="pre">TypeError</span></code> 或 <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>。当前不强制 tolerance 为非负或有限值。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">guardian</span><span class="o">.</span><span class="n">check_domain</span><span class="p">(</span>
+    <span class="n">domain</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">flux_in</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]],</span>
+    <span class="n">flux_out</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]],</span>
+    <span class="n">storage_before</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]],</span>
+    <span class="n">storage_after</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]],</span>
+    <span class="n">dt</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">tolerance</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BudgetCheckResult</span>
+</pre></div>
+</div>
+<p>Domain balance 为：</p>
+<div class="math notranslate nohighlight">
+\[
+\Delta S_{\mathrm{expected}}
+= \left(\sum F_{\mathrm{in}} - \sum F_{\mathrm{out}}\right) \Delta t.
+\]</div>
+<p>Threshold 为：</p>
+<div class="math notranslate nohighlight">
+\[
+\tau
+= \mathrm{atol}
++ \mathrm{rtol}
+  \lvert\Delta S_{\mathrm{expected}}\rvert.
+\]</div>
+<p>Budget 失败时会记录 error 并返回 <code class="docutils literal notranslate"><span class="pre">passed=False</span></code>；不会仅因 budget 失败而抛出异常。Registry、转换或 Tensor failure 仍可能传播。<code class="docutils literal notranslate"><span class="pre">check_domain()</span></code> 不填充 <code class="docutils literal notranslate"><span class="pre">invariant_drift</span></code>；该 diagnostic 会单独计算。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">guardian</span><span class="o">.</span><span class="n">compute_invariant_drift</span><span class="p">(</span>
+    <span class="n">incidence_row</span><span class="p">:</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">flux_vector</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span>
+        <span class="nb">str</span><span class="p">,</span>
+        <span class="n">Union</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+    <span class="p">],</span>
+    <span class="n">dt</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span>
+</pre></div>
+</div>
+<p>对于空 coefficient row 或空 flux vector，返回零。否则 coefficient 数量必须等于 flux entry 数量；不匹配时抛出 <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>。</p>
+<p>Scientific module 不得在其 <code class="docutils literal notranslate"><span class="pre">forward()</span></code> method 中重复实现这些 tolerance 和 budget loop。Local check 仍由 <code class="docutils literal notranslate"><span class="pre">FunctorBase</span></code> 所有，commit-time ledger 由 <code class="docutils literal notranslate"><span class="pre">StateManager</span></code> 所有，domain diagnostic 由 <code class="docutils literal notranslate"><span class="pre">ConservationGuardian</span></code> 所有。</p>
+</section>
+</section>
+<section id="physical-constants-and-anti-redundancy-rules">
+<h2>物理常数与 anti-redundancy 规则<a class="headerlink" href="#physical-constants-and-anti-redundancy-rules" title="Link to this heading"></a></h2>
+<p>物理常数只有一个 database owner：</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>relic\parameters\database\relic\physical\constants.yaml
+</pre></div>
+</div>
+<p>Non-Functor infrastructure 通过以下入口读取它们：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">relic.utils.physical_constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_physical_constant</span>
+
+<span class="n">kappa</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">get_physical_constant</span><span class="p">(</span><span class="s2">&quot;von_karman_constant&quot;</span><span class="p">))</span>
+<span class="k">assert</span> <span class="mf">0.39</span> <span class="o">&lt;</span> <span class="n">kappa</span> <span class="o">&lt;</span> <span class="mf">0.42</span>
+</pre></div>
+</div>
+<p>不要在 Python 或 domain parameter file 中重复定义 physical constant。不要添加另一个 manager、parameter accessor、cache、database facade 或 compatibility wrapper。特别是，已移除的 access chain（例如 <code class="docutils literal notranslate"><span class="pre">get_parameter_by_path()</span></code>、<code class="docutils literal notranslate"><span class="pre">_require_parameter()</span></code>、<code class="docutils literal notranslate"><span class="pre">require_parameter_value()</span></code> 和 <code class="docutils literal notranslate"><span class="pre">ParameterAccessorMixin</span></code>）不属于 public architecture。</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="core_runtime.html" class="btn btn-neutral float-left" title="Core Runtime API（核心运行时 API）" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="orchestration_validation.html" class="btn btn-neutral float-right" title="编排、Contract 与 Validation API" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

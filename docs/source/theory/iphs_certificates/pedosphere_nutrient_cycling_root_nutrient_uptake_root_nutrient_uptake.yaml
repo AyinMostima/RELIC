@@ -1,0 +1,248 @@
+certificate_version: '1.0'
+process_id: relic.scientific.pedosphere.nutrient_cycling.root_nutrient_uptake.RootNutrientUptake
+module_name: RootNutrientUptake
+canonical_role: reaction
+iphs_level: 2
+iphs_level_evidence:
+  classification: IPHS-wrapped reaction process certificate
+  compatible_basis: Reaction process is expressed through two locally conserved stoichiometric ledgers
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: N_h r_h reaction-network state advance
+  level_2_limit: The canonical runtime wrapper is declared, but no executable typed-cochain or IPHS structural contribution is bound; strict level 4 or 5 evidence is not claimed.
+theory_document: docs\source\theory\root_nutrient_uptake.md
+theory_document_status: updated
+legacy_formula: U = Vmax * C/(Km + C) * f_T * f_W * W_root
+literature_formula: U = Vmax * C/(Km + C) * f_T * f_W * W_root
+iphs_formula: x_dot = N_h r_h with ParameterManager-backed process rates r_h and declared stoichiometric/output map N_h
+legacy_expression: U = Vmax * C/(Km + C) * f_T * f_W * W_root
+iphs_expression: x_dot = N_h r_h with ParameterManager-backed process rates r_h and declared stoichiometric/output map N_h
+input_variables:
+- no3_nitrogen
+- nh4_nitrogen
+- available_phosphorus
+- soil_water_content
+- soil_temperature
+- soil_depth
+- plant_n_storage
+- plant_p_storage
+- root_density
+- plant_n_demand
+- plant_p_demand
+- field_capacity
+- wilting_point
+output_variables:
+- no3_nitrogen
+- nh4_nitrogen
+- available_phosphorus
+- plant_n_storage
+- plant_p_storage
+- nitrogen_uptake_rate
+- phosphorus_uptake_rate
+- no3_uptake_by_layer
+- nh4_uptake_by_layer
+- po4_uptake_by_layer
+parameter_keys:
+- pedosphere.nutrient_cycling.vmax_n
+- pedosphere.nutrient_cycling.vmax_p
+- pedosphere.nutrient_cycling.km_n
+- pedosphere.nutrient_cycling.km_p
+- pedosphere.nutrient_cycling.max_storage_n
+- pedosphere.nutrient_cycling.max_storage_p
+- pedosphere.nutrient_cycling.root_decay_coeff
+- pedosphere.nutrient_cycling.q10_value
+- pedosphere.nutrient_cycling.reference_temperature
+- pedosphere.nutrient_cycling.demand_regulation_enabled
+- pedosphere.nutrient_cycling.water_stress_enabled
+- pedosphere.numerical.temperature_clamp_min
+- pedosphere.numerical.temperature_clamp_max
+- validation.conservation.strict_conservation
+composition_ports:
+- phase8_runtime_port
+references:
+- 'Barber, S.A. (1995). Soil Nutrient Bioavailability: A Mechanistic Approach'
+- Tinker, P.B. & Nye, P.H. (2000). Solute Movement in the Rhizosphere
+- Chapin, F.S. et al. (1993). Evolution of suites of traits
+- Griffiths, M. & York, L.M. (2020). Targeting Root Ion Uptake Kinetics to Increase Plant Productivity and Nutrient Use Efficiency
+- von Bloh, W. et al. (2018). Implementing the nitrogen cycle into LPJmL 5.0
+- NIST Chemistry WebBook SRD 69; CIAAW Standard Atomic Weights
+- 'Theory doc: docs/source/theory/root_nutrient_uptake.md'
+baseline_tests:
+- test\pedosphere\nutrient_cycling\test_root_nutrient_uptake.py
+- test\unit\pedosphere\test_root_nutrient_uptake.py
+- test\audit\phase8_scientific_inventory.test.py
+validation_tests:
+- test\pedosphere\nutrient_cycling\test_root_nutrient_uptake.py
+- test\unit\pedosphere\test_root_nutrient_uptake.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  no3_nitrogen: no3_nitrogen mapped to canonical Phase 8 cochain basis
+  nh4_nitrogen: nh4_nitrogen mapped to canonical Phase 8 cochain basis
+  available_phosphorus: available_phosphorus mapped to canonical Phase 8 cochain basis
+  soil_water_content: soil_water_content mapped to canonical Phase 8 cochain basis
+  soil_temperature: soil_temperature mapped to canonical Phase 8 cochain basis
+  soil_depth: soil_depth mapped to canonical Phase 8 cochain basis
+  plant_n_storage: plant_n_storage mapped to canonical Phase 8 cochain basis
+  plant_p_storage: plant_p_storage mapped to canonical Phase 8 cochain basis
+  root_density: root_density mapped to the normalized layer root-weight basis
+  plant_n_demand: plant_n_demand mapped to the N uptake-rate limiter
+  plant_p_demand: plant_p_demand mapped to the P uptake-rate limiter
+  field_capacity: field_capacity mapped to the water-response upper threshold
+  wilting_point: wilting_point mapped to the water-response lower threshold
+parameter_map:
+  pedosphere.nutrient_cycling.vmax_n: Maximum N uptake rate [mol m-2 s-1]
+  pedosphere.nutrient_cycling.vmax_p: Maximum P uptake rate [mol m-2 s-1]
+  pedosphere.nutrient_cycling.km_n: Michaelis constant for N [mol m-3]
+  pedosphere.nutrient_cycling.km_p: Michaelis constant for P [mol m-3]
+  pedosphere.nutrient_cycling.max_storage_n: Maximum plant N storage [mol m-2]
+  pedosphere.nutrient_cycling.max_storage_p: Maximum plant P storage [mol m-2]
+  pedosphere.nutrient_cycling.root_decay_coeff: Root distribution decay [m-1]
+  pedosphere.nutrient_cycling.q10_value: Temperature Q10 coefficient [dimensionless]
+  pedosphere.nutrient_cycling.reference_temperature: Q10 reference temperature [K]
+  pedosphere.nutrient_cycling.demand_regulation_enabled: Switch of the plant-demand limit on nutrient uptake [dimensionless]
+  pedosphere.nutrient_cycling.water_stress_enabled: Switch of the water-stress effect on nutrient uptake [dimensionless]
+  pedosphere.numerical.temperature_clamp_min: Lower bound of the soil temperature in the uptake response [K]
+  pedosphere.numerical.temperature_clamp_max: Upper bound of the soil temperature in the uptake response [K]
+  validation.conservation.strict_conservation: Switch that makes a conservation violation raise [dimensionless]
+operator_map:
+  N_h: three signed transfer columns map nitrate and ammonium to plant N and soil P to plant P
+  r_h: ParameterManager-backed process-rate vector evaluated by the production forward path
+unit_map:
+  no3_nitrogen: g N m-2
+  nh4_nitrogen: g N m-2
+  available_phosphorus: g P m-2
+  plant_n_storage: mol N m-2
+  plant_p_storage: g P m-2
+  nitrogen_uptake_rate: mol N m-2 s-1
+  phosphorus_uptake_rate: g P m-2 s-1
+  no3_uptake_by_layer: mol N m-2 s-1
+  nh4_uptake_by_layer: mol N m-2 s-1
+  po4_uptake_by_layer: g P m-2 s-1
+input_output_map:
+  available_phosphorus: canonical per-step StateManager increment
+  nh4_nitrogen: canonical per-step StateManager increment
+  no3_nitrogen: canonical per-step StateManager increment
+  plant_n_storage: canonical per-step StateManager increment
+  plant_p_storage: canonical per-step StateManager increment in g P m-2
+  nitrogen_uptake_rate: same interface variable preserved between legacy and IPHS runtime contracts
+  phosphorus_uptake_rate: same interface variable preserved between legacy and IPHS runtime contracts
+  no3_uptake_by_layer: canonical layer-resolved uptake diagnostic
+  nh4_uptake_by_layer: canonical layer-resolved uptake diagnostic
+  po4_uptake_by_layer: canonical layer-resolved uptake diagnostic
+interface_map:
+  forward_signature: forward(self, state, time, dt)
+  bridge_class: BiologicalProcessFunctor
+  abstraction_contract: BiologicalProcess
+  state_write_mode: existing RELIC simulator and StateManager update path
+  legacy_inputs:
+  - no3_nitrogen
+  - nh4_nitrogen
+  - available_phosphorus
+  - soil_water_content
+  - soil_temperature
+  - soil_depth
+  - plant_n_storage
+  - plant_p_storage
+  - root_density
+  - plant_n_demand
+  - plant_p_demand
+  - field_capacity
+  - wilting_point
+  iphs_inputs:
+  - no3_nitrogen
+  - nh4_nitrogen
+  - available_phosphorus
+  - soil_water_content
+  - soil_temperature
+  - soil_depth
+  - plant_n_storage
+  - plant_p_storage
+  - root_density
+  - plant_n_demand
+  - plant_p_demand
+  - field_capacity
+  - wilting_point
+  legacy_outputs:
+  - no3_nitrogen
+  - nh4_nitrogen
+  - available_phosphorus
+  - plant_n_storage
+  - plant_p_storage
+  - nitrogen_uptake_rate
+  - phosphorus_uptake_rate
+  - no3_uptake_by_layer
+  - nh4_uptake_by_layer
+  - po4_uptake_by_layer
+  iphs_outputs:
+  - no3_nitrogen
+  - nh4_nitrogen
+  - available_phosphorus
+  - plant_n_storage
+  - plant_p_storage
+  - nitrogen_uptake_rate
+  - phosphorus_uptake_rate
+  - no3_uptake_by_layer
+  - nh4_uptake_by_layer
+  - po4_uptake_by_layer
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: Existing ParameterManager-backed calculations define canonical IPHS operator coefficients, rates, ports, or observations.
+  no_legacy_mode: No selectable legacy runtime branch is exposed for Phase 8 completion.
+state_advancement_map:
+  potential_basis: declared RELIC state, port, or observation cochain basis
+  effort_variable: ParameterManager-backed thermodynamic effort, driver, or diagnostic input used by the module
+  state_advancer: x_dot = N_h r_h with explicit stoichiometric_N and rates evaluated by advance_reaction_network
+  runtime_usage: RootNutrientUptake.forward calls advance_reaction_network with declared stoichiometric_N and rates before emitting canonical outputs.
+  explicit_stoichiometric_usage: RootNutrientUptake.forward materializes nitrate, ammonium, and phosphate transfer columns and validates equivalent-mole N plus mass-basis P ledgers before lowering x_dot=N_h r_h through advance_reaction_network.
+  layered_donor_increments: donor pools declared with a layer axis receive per-layer increments Delta_pool(z) = -M U(z) dt whose layer sum equals the areal N_h r_h dt transfer; plant_n_storage and plant_p_storage receive the areal increment, so StateManager shapes match the declared pool shapes
+parameter_management_map:
+  pedosphere.nutrient_cycling.vmax_n:
+    source: ParameterManager YAML
+  pedosphere.nutrient_cycling.vmax_p:
+    source: ParameterManager YAML
+  pedosphere.nutrient_cycling.km_n:
+    source: ParameterManager YAML
+  pedosphere.nutrient_cycling.km_p:
+    source: ParameterManager YAML
+  pedosphere.nutrient_cycling.max_storage_n:
+    source: ParameterManager YAML
+  pedosphere.nutrient_cycling.max_storage_p:
+    source: ParameterManager YAML
+  pedosphere.nutrient_cycling.root_decay_coeff:
+    source: ParameterManager YAML
+  pedosphere.nutrient_cycling.q10_value:
+    source: ParameterManager YAML
+  pedosphere.nutrient_cycling.reference_temperature:
+    source: ParameterManager YAML
+  pedosphere.nutrient_cycling.demand_regulation_enabled:
+    source: ParameterManager YAML
+  pedosphere.nutrient_cycling.water_stress_enabled:
+    source: ParameterManager YAML
+  pedosphere.numerical.temperature_clamp_min:
+    source: ParameterManager YAML
+  pedosphere.numerical.temperature_clamp_max:
+    source: ParameterManager YAML
+  validation.conservation.strict_conservation:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares interfaces, execution phase, and conservation semantics
+  state_contract: existing simulator state update path is preserved
+  validation_rule: phase8 scientific inventory and equivalence certificate checks
+dependency_interconnection_map:
+  dependencies: declared through existing metadata or no external dependency
+  direct_functor_calls: none declared by certificate
+overflow_routing_map:
+  diagnostic_residuals: no nutrient-transfer residual is discarded; N and P uptake are pool- and capacity-bounded before state advancement
+  discarded_residuals: pool and storage-capacity limiting leaves unconsumed nutrient in the soil pools and unmet demand untransferred; every executed transfer has matched soil-pool and plant-storage updates with strict conservation
+conservation_map:
+  conserved_quantities: nitrogen|phosphorus
+  balance_expression: (sum_z Delta no3_nitrogen(z) + sum_z Delta nh4_nitrogen(z)) / M_N + Delta plant_n_storage = 0 in mol N m-2; sum_z Delta available_phosphorus(z) + Delta plant_p_storage = 0 in g P m-2 (the layer sums reduce to the pool increments for scalar pools)
+physical_constant_ssot:
+  nitrogen_molar_mass: get_physical_constant("relic.physical.constants.molecular_weights.nitrogen")
+  phosphorus_molar_mass: get_physical_constant("relic.physical.constants.molecular_weights.phosphorus")
+  q10_interval: get_physical_constant("relic.physical.constants.temperature.q10_interval")
+entropy_audit:
+  operator_sign: rates, mobilities, or diagnostic maps are non-negative or checked by existing validation hooks where physically required
+  sigma_expression: canonical entropy production is non-negative for dissipative subexpressions
+equivalence_type: thermodynamic_embedding

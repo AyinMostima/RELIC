@@ -1,0 +1,38 @@
+variable: ch4_soil_storage
+title: "Soil Methane Carbon Storage"
+kind: state
+dimension:
+  udunits: "g C m-2"
+  cf_standard_name: null
+owner: "pedosphere_methane_budget"
+aliases: []
+incrementable: true
+accumulates: carbon.total
+numerics:
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments:
+    - name: "pedosphere_methane_budget"
+      module: "relic.scientific.pedosphere.methane.budget_coupler"
+      provides:
+        - "ch4_soil_storage"
+      unit: "g C m-2"
+  tendencies: []
+flux_contract:
+  allowed_in:
+    - "pedosphere_methane_budget"
+  allowed_out:
+    - "pedosphere_methane_budget"
+  budget_check:
+    guardian: "pedosphere_methane_budget"
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/pedosphere/methane/budget_coupler.py"
+  runtime_role: "conservative_soil_methane_carbon_state_increment"
+  runtime_writer: "pedosphere_methane_budget"
+  local_budget_residual: "diagnostics.methane_budget.mass_balance_residual"

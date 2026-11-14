@@ -1,0 +1,65 @@
+certificate_version: '1.0'
+process_id: relic.scientific.anthroposphere.inventory.EmissionInventory
+module_name: emission_inventory
+canonical_role: scale_coupling
+iphs_level: 0
+iphs_level_evidence: {}
+theory_document: docs\source\theory\anthropogenic_emissions.md
+theory_document_status: updated
+legacy_formula: Historical code distributed global HTAPv3.2 and EDGAR annual totals over whichever runtime grid was supplied.
+literature_formula: Global annual inventories require an explicit source-grid to target-domain partition before a local surface rate can be computed.
+iphs_formula: No IPHS formulation is claimed while the inventory domain binding is unavailable.
+legacy_expression: The rejected path implicitly set every target-domain fraction to one after normalizing a local proxy.
+iphs_expression: '[N] runtime_domain_unbound; no executable scientific expression is exposed.'
+input_variables: []
+output_variables: []
+parameter_keys: []
+parameter_free: true
+composition_ports: []
+references:
+- Guizzardi, D. et al. (2025). HTAPv3.2 emission mosaic. DOI:10.5194/essd-17-5915-2025.
+- Crippa, M. et al. (2024). Spatial distribution of EDGAR v8.0 emissions. DOI:10.5194/essd-16-2811-2024.
+- CF Conventions, calendar and cell-area contracts.
+baseline_tests:
+- test\anthroposphere\inventory_phase8.test.py
+validation_tests:
+- test\anthroposphere\inventory_phase8.test.py
+state_map:
+  runtime_status: '[N] runtime_domain_unbound; no scientific state or diagnostic ledger is owned.'
+operator_map:
+  runtime_status: no executable inventory operator is registered
+unit_map:
+  runtime_status: non-quantity
+input_output_map:
+  runtime_status: construction and unsafe forward both reject before input access or output creation
+interface_map:
+  bridge_class: ScaleCouplingFunctor
+  abstraction_contract: ScaleCoupling
+  constructor: rejects before FunctorBase, ParameterManager, calendar, proxy, or ledger effects
+  forward: independently rejects unsafe constructor bypass before state access
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  operational_claim: false
+  replacement_entrypoint: none_runtime_domain_unbound
+  preserved_numerics: none
+  no_legacy_mode: the rejected global-to-local numerical path is absent
+state_advancement_map:
+  potential_basis: not_applicable_runtime_domain_unbound
+  effort_variable: not_applicable_runtime_domain_unbound
+  state_advancer: none_runtime_domain_unbound
+  runtime_usage: no UpdateItem or state mutation is produced
+parameter_management_map: {}
+composition_management_map:
+  lifecycle: the canonical class identity remains importable but is not constructible as an executable node
+dependency_interconnection_map:
+  graph_status: no executable writer exists for the six planned anthropogenic surface flux variables
+  downstream_status: graphs requiring those variables must reject the missing writer
+overflow_routing_map:
+  invalid_request: every runtime request is rejected with the stable runtime_domain_unbound reason
+  zero_fallback: no zero field, cache, or previous value is substituted
+conservation_map:
+  status: no mass-conservation claim is made because no scientifically bound source rate is computed
+entropy_audit:
+  status: no thermodynamic or structural claim is made for the unavailable runtime
+equivalence_type: diagnostic

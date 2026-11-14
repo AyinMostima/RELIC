@@ -1,0 +1,35 @@
+variable: radiation_field
+title: "Canonical Atmospheric Radiation Field"
+kind: state
+dimension:
+  udunits: "W m-2"
+  cf_standard_name: null
+owner: "radiation_field"
+aliases: []
+incrementable: false
+accumulates: null
+numerics:
+  # The projection bounds have one source: the ParameterManager keys
+  # atmosphere.radiation.field_bounds.generic_min_radiation and
+  # generic_max_radiation, applied by the single writer radiation_field
+  # (REPLACE clamp, energy audit and Hodge metric); no bound is repeated here.
+  lower_bound: null
+  upper_bound: null
+  atol: 1.0e-6
+  rtol: 1.0e-6
+writers:
+  increments: []
+  tendencies: []
+flux_contract:
+  allowed_in:
+  - radiation_field
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-6
+      rtol: 1.0e-6
+provenance:
+  source_file: "relic/scientific/atmosphere/radiation.py"
+  runtime_role: "bounded_radiation_field_full_state"
+  runtime_writer: "radiation_field"

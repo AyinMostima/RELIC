@@ -1,0 +1,53 @@
+variable: northward_wind
+title: "Northward Near-Surface (10 m) Wind"
+description: "Northward component v of the near-surface wind at the height 10 m above the surface (CF northward_wind with the scalar height coordinate 10 m): WRF V10 and CMIP6 vas. Signed, positive northward. This variable holds the CF identity northward_wind. It is not wind_v: wind_v is the northward wind component on the tracer-transport grid of AtmosphericAdvectionDiffusionFunctor (the advecting wind of its levels), a different vertical support. Supplied as forcing by external adapters; no RELIC Functor reads it."
+kind: forcing
+dimension:
+  udunits: "m s-1"
+  cf_standard_name: "northward_wind"
+support:
+  spatial_kind: grid_cell
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: height_level
+  shape:
+    dimensions: [cell]
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "CF Standard Name Table v94: northward_wind (canonical units m s-1)"
+  - "CMIP6 data request, variable vas: northward near-surface wind at height 10 m"
+# Sign convention: positive northward, negative southward; no bound on either side.
+numerics:
+  lower_bound: null
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "CMIP6Adapter"
+      module: "relic.coupling.external.climate_models.cmip6_adapter"
+      provides: ["northward_wind"]
+      unit: "m s-1"
+    - name: "WRFAdapter"
+      module: "relic.coupling.external.atmospheric_models.wrf_adapter"
+      provides: ["northward_wind"]
+      unit: "m s-1"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "external_forcing_adapter"
+  runtime_role: "external_ten_metre_northward_wind_forcing"
+  runtime_writer: null
+  adapter_writers:
+    - "CMIP6Adapter"
+    - "WRFAdapter"

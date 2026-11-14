@@ -1,0 +1,892 @@
+﻿schema_version: 2.0.0
+tier: relic
+namespace: pedosphere.physical
+description: Physical constants, soil properties, and environmental parameters for pedosphere module
+metadata:
+  created_by: RELIC Parameter System
+  last_modified: '2025-10-06T00:00:00Z'
+  schema_url: https://github.com/relic/parameter-schema/v2.0.0
+  notes: Comprehensive physical parameter database for pedosphere processes including fundamental constants, soil properties,
+    temperature/moisture/pH responses, gas diffusion, and chemical equilibrium
+  version: 1.0.0
+parameters:
+  pedosphere.physical.reference_temperature:
+    value: 293.15
+    units: K
+    dtype: float32
+    bounds:
+    - 273.15
+    - 323.15
+    category: reference_constant
+    description: Reference temperature for process normalization (default 293.15 K)
+    references:
+    - Standard laboratory conditions
+    - ISO 291:2008 plastics standard atmospheres for conditioning and testing
+    tags:
+    - constant
+    - reference_condition
+    - laboratory
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: ISO laboratory standards
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.physical.water_kinematic_viscosity:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: m2 s-1
+    dtype: float32
+    bounds:
+    - 1.0e-06
+    - 1.0e-06
+    category: reference_constant
+    description: Kinematic viscosity of water at 20 Celsius, used in flow calculations
+    references:
+    - CRC Handbook of Chemistry and Physics
+    - Kestin et al. (1978) doi:10.1063/1.555581
+    tags:
+    - constant
+    - water
+    - viscosity
+    dimension: diffusivity
+    requires_grad: false
+    provenance:
+      source: CRC Handbook
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.physical.gas_diffusivity_temperature_exponent:
+    value: 1.75
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.5
+    - 2.0
+    category: physical_parameter
+    description: Temperature exponent n in D0(T)=D0(T0)*(T/T0)^n used for soil gas diffusivity scaling.
+    references:
+    - Millington & Quirk (1961) Trans. Faraday Soc. 57:1200-1207
+    - Davidson et al. (2012) Global Change Biology 18:371-384
+    tags:
+    - gas_diffusion
+    - temperature_response
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: pedosphere_diffusion_audit
+      schema_version: 2.0.0
+      created_by: Pedosphere Hardcoded Cleanup
+      last_modified: '2025-11-09T00:00:00Z'
+  pedosphere.physical.penman_coefficient:
+    value: 0.66
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 0.8
+    category: physical_parameter
+    description: Empirical coefficient used in the Penman gas diffusivity formulation (Deff = D0 * coeff * 胃_a).
+    references:
+    - Penman, H.L. (1940) J. Agric. Sci. 30:437-462
+    - Moldrup et al. (2000) Soil Sci. Soc. Am. J. 64:94-100
+    tags:
+    - gas_diffusion
+    - penman
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: pedosphere_diffusion_audit
+      schema_version: 2.0.0
+      created_by: Pedosphere Hardcoded Cleanup
+      last_modified: '2025-11-09T00:00:00Z'
+  pedosphere.physical.millington_quirk_exponent_numerator:
+    value: 3.333333
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 3.0
+    - 3.5
+    category: physical_parameter
+    description: Numerator exponent (10/3) controlling tortuosity in the Millington-Quirk gas diffusivity model.
+    references:
+    - Millington & Quirk (1961) Trans. Faraday Soc. 57:1200-1207
+    - Moldrup et al. (2000) Soil Sci. Soc. Am. J. 64:94-100
+    tags:
+    - gas_diffusion
+    - tortuosity
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: pedosphere_diffusion_audit
+      schema_version: 2.0.0
+      created_by: Pedosphere Hardcoded Cleanup
+      last_modified: '2025-11-09T00:00:00Z'
+  pedosphere.physical.millington_quirk_exponent_denominator:
+    value: 2.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.5
+    - 2.5
+    category: physical_parameter
+    description: Denominator exponent applied to total porosity in the Millington-Quirk tortuosity expression.
+    references:
+    - Millington & Quirk (1961) Trans. Faraday Soc. 57:1200-1207
+    - Penman (1940) J. Agric. Sci. 30:437-462
+    tags:
+    - gas_diffusion
+    - tortuosity
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: pedosphere_diffusion_audit
+      schema_version: 2.0.0
+      created_by: Pedosphere Hardcoded Cleanup
+      last_modified: '2025-11-09T00:00:00Z'
+  pedosphere.physical.co2_diffusivity_air_stp:
+    value: 1.47e-05
+    units: m2 s-1
+    dtype: float32
+    bounds:
+    - 1.45e-05
+    - 1.5e-05
+    category: gas_property
+    description: Molecular diffusivity of CO2 in free air at standard temperature and pressure
+    references:
+    - Massman (1998) doi:10.1016/S0168-1923(98)00105-0
+    - Marrero & Mason (1972) doi:10.1063/1.3253094
+    tags:
+    - constant
+    - diffusion
+    - CO2
+    - STP
+    requires_grad: false
+    provenance: &id001
+      source: migration_autofill
+      schema_version: 2.0.0
+      created_by: parameter_audit_2026-02
+      last_modified: '2026-02-09T21:54:27Z'
+    dimension: diffusivity
+  pedosphere.physical.n2o_diffusivity_air_stp:
+    value: 1.32e-05
+    units: m2 s-1
+    dtype: float32
+    bounds:
+    - 1.1e-05
+    - 1.5e-05
+    category: physical_parameter
+    description: Molecular diffusion coefficient of N2O in air at standard temperature and pressure.
+    references:
+    - Massman (1998) Agricultural and Forest Meteorology 90:57-75
+    - Li et al. (1992) Journal of Geophysical Research 97:9759-9776
+    tags:
+    - gas_diffusion
+    - diffusivity
+    dimension: diffusivity
+    requires_grad: false
+    provenance:
+      source: pedosphere_diffusion_audit
+      schema_version: 2.0.0
+      created_by: Pedosphere Hardcoded Cleanup
+      last_modified: '2025-11-09T00:00:00Z'
+  pedosphere.physical.atmospheric_co2_concentration:
+    value: 0.21434846649719208
+    units: g C m-3
+    dtype: float32
+    bounds:
+    - 0.18755490818504308
+    - 0.2411420248093411
+    category: environmental_driver
+    description: Elemental carbon mass concentration equivalent to 400 ppm CO2 at standard pressure and temperature.
+    references:
+    - NOAA ESRL Global Monitoring Laboratory (2024)
+    - WMO Greenhouse Gas Bulletin (2024)
+    - CODATA 2018 ideal gas constant
+    tags:
+    - boundary_condition
+    - gas_diffusion
+    dimension: mass_concentration
+    requires_grad: false
+    provenance:
+      source: atmospheric_monitoring_records
+      schema_version: 2.0.0
+      created_by: Pedosphere Hardcoded Cleanup
+      last_modified: '2026-07-16T00:00:00Z'
+  pedosphere.physical.atmospheric_n2o_concentration:
+    value: 0.0004199481034035439
+    units: g N m-3
+    dtype: float32
+    bounds:
+    - 0.00039995057467004185
+    - 0.00043744594104535824
+    category: environmental_driver
+    description: Elemental nitrogen mass concentration equivalent to 0.336 ppm N2O at standard pressure and temperature.
+    references:
+    - NOAA ESRL Global Monitoring Laboratory (2024)
+    - IPCC AR6 WGI Chapter 5
+    - CODATA 2018 ideal gas constant
+    tags:
+    - boundary_condition
+    - gas_diffusion
+    dimension: mass_concentration
+    requires_grad: false
+    provenance:
+      source: atmospheric_monitoring_records
+      schema_version: 2.0.0
+      created_by: Pedosphere Hardcoded Cleanup
+      last_modified: '2026-07-16T00:00:00Z'
+  pedosphere.physical.total_porosity_estimate:
+    value: 0.45
+    default: 0.45
+    units: m3 m-3
+    dtype: float32
+    bounds:
+    - 0.3
+    - 0.6
+    category: reference_constant
+    description: Representative total soil porosity for loamy forest soils used when layer-specific porosity is unavailable.
+    references:
+    - Cosby et al. (1984) Water Resources Research 20(6):682-690
+    - Rawls et al. (1982) Transactions of the ASAE 25(5):1316-1320
+    tags:
+    - soil_porosity
+    - default_value
+    dimension: volume_fraction
+    requires_grad: false
+    provenance:
+      source: Pedosphere parameter audit 2025-11-17
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-11-17T00:00:00Z'
+  pedosphere.physical.porosity_mineral_soil:
+    value: 0.45
+    default: 0.45
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.2
+    - 0.7
+    category: soil_property
+    description: Typical total porosity for mineral soils
+    references:
+    - Brady & Weil (2008) The Nature and Properties of Soils
+    - Rawls et al. (1982) doi:10.13031/2013.33720
+    tags:
+    - soil
+    - porosity
+    - mineral
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Soil physics literature
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.physical.porosity_organic_soil:
+    value: 0.85
+    default: 0.85
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.6
+    - 0.95
+    category: soil_property
+    description: Typical total porosity for organic soils and peat
+    references:
+    - Brady & Weil (2008) The Nature and Properties of Soils
+    - Clymo (1983) doi:10.1007/978-94-009-4885-8_13
+    tags:
+    - soil
+    - porosity
+    - organic
+    - peat
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Soil physics literature
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.physical.field_capacity_loam:
+    value: 0.25
+    default: 0.25
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.15
+    - 0.35
+    category: soil_property
+    description: Field capacity for loam soils at -33 kPa matric potential
+    references:
+    - Saxton & Rawls (2006) doi:10.2136/sssaj2005.0117
+    - Twarakavi et al. (2009) doi:10.1016/j.geoderma.2009.07.011
+    tags:
+    - soil
+    - water_retention
+    - loam
+    - field_capacity
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Soil water retention curves
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.physical.wilting_point_loam:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.05
+    - 0.2
+    category: soil_property
+    description: Permanent wilting point for loam soils at -1500 kPa matric potential
+    references:
+    - Saxton & Rawls (2006) doi:10.2136/sssaj2005.0117
+    - Twarakavi et al. (2009) doi:10.1016/j.geoderma.2009.07.011
+    tags:
+    - soil
+    - water_retention
+    - loam
+    - wilting_point
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Soil water retention curves
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.physical.clay_fraction_loam:
+    value: 0.25
+    default: 0.25
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.05
+    - 0.6
+    category: soil_property
+    description: Typical clay fraction for loam textured soils (less than 2 micrometers)
+    references:
+    - USDA soil texture classification
+    - Soil Survey Staff (1999) Soil Taxonomy
+    tags:
+    - soil
+    - texture
+    - clay
+    - loam
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: USDA soil classification
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.physical.sand_fraction_loam:
+    value: 0.4
+    default: 0.4
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 0.85
+    category: soil_property
+    description: Typical sand fraction for loam textured soils (50 micrometers to 2 mm)
+    references:
+    - USDA soil texture classification
+    - Soil Survey Staff (1999) Soil Taxonomy
+    tags:
+    - soil
+    - texture
+    - sand
+    - loam
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: USDA soil classification
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.physical.silt_fraction_loam:
+    value: 0.35
+    default: 0.35
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.05
+    - 0.8
+    category: soil_property
+    description: Typical silt fraction for loam textured soils (2 to 50 micrometers)
+    references:
+    - USDA soil texture classification
+    - Soil Survey Staff (1999) Soil Taxonomy
+    tags:
+    - soil
+    - texture
+    - silt
+    - loam
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: USDA soil classification
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.physical.q10_decomposition:
+    value: 2.0
+    default: 2.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.5
+    - 3.0
+    category: environmental_response
+    description: Temperature sensitivity coefficient for soil organic matter decomposition, doubling rate per 10K increase; also the temperature factor of the tillage CO2 pulse (oxidation of the exposed organic matter)
+    references:
+    - Lloyd & Taylor (1994) doi:10.2307/2389824
+    - Kirschbaum (1995) doi:10.1016/0038-0717(94)00242-S
+    - Davidson & Janssens (2006) doi:10.1038/nature04514
+    tags:
+    - learnable
+    - temperature_response
+    - decomposition
+    - Q10
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: Soil respiration literature
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.physical.q10_nitrification:
+    value: 2.0
+    default: 2.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.8
+    - 2.5
+    category: environmental_response
+    description: Temperature sensitivity coefficient for nitrification process
+    references:
+    - Stark & Firestone (1995) doi:10.1016/0038-0717(94)00192-6
+    - Avrahami & Conrad (2003) doi:10.1128/AEM.69.3.1593-1600.2003
+    tags:
+    - learnable
+    - temperature_response
+    - nitrification
+    - Q10
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: Nitrogen cycling literature
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.physical.q10_denitrification:
+    value: 2.2
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 2.0
+    - 2.8
+    category: environmental_response
+    description: Temperature sensitivity coefficient for denitrification process
+    references:
+    - Tiedje (1988) Biology of Anaerobic Microorganisms
+    - Stanford et al. (1975) doi:10.2136/sssaj1975.03615995003900050024x
+    tags:
+    - learnable
+    - temperature_response
+    - denitrification
+    - Q10
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: Denitrification literature
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.physical.q10_soil_respiration:
+    value: 2.4
+    default: 2.4
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.8
+    - 3.2
+    category: environmental_response
+    description: Temperature sensitivity coefficient for total soil respiration
+    references:
+    - Raich & Schlesinger (1992) doi:10.1111/j.1600-0889.1992.tb00084.x
+    - Bond-Lamberty & Thomson (2010) doi:10.1038/nature09534
+    tags:
+    - learnable
+    - temperature_response
+    - respiration
+    - Q10
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: Global soil respiration database
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.physical.activation_energy_decomposition:
+    value: 65000.0
+    default: 65000.0
+    units: J mol-1
+    dtype: float32
+    bounds:
+    - 50000.0
+    - 80000.0
+    category: environmental_response
+    description: Arrhenius activation energy for soil organic matter decomposition
+    references:
+    - Lloyd & Taylor (1994) doi:10.1111/j.1365-3040.1994.tb02021.x
+    - Davidson & Janssens (2006) doi:10.1038/nature04514
+    tags:
+    - learnable
+    - temperature_response
+    - decomposition
+    - Arrhenius
+    dimension: energy_per_amount
+    requires_grad: true
+    provenance:
+      source: Soil respiration modeling
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.physical.temperature_minimum_biological:
+    value: 233.15
+    units: K
+    dtype: float32
+    bounds:
+    - 233.15
+    - 273.15
+    category: environmental_response
+    description: Minimum temperature for biological activity in soils (-40 Celsius)
+    references:
+    - Panikov et al. (2006) doi:10.1016/j.soilbio.2005.07.011
+    - Mikan et al. (2002) doi:10.1016/S0038-0717(02)00084-7
+    tags:
+    - constraint
+    - temperature_limit
+    - extreme_condition
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: Extreme soil ecology
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.physical.temperature_maximum_biological:
+    value: 333.15
+    units: K
+    dtype: float32
+    bounds:
+    - 313.15
+    - 343.15
+    category: environmental_response
+    description: Maximum temperature for biological activity in soils (60 Celsius)
+    references:
+    - Pietikainen et al. (2005) doi:10.1016/j.soilbio.2004.11.005
+    - Allison & Treseder (2008) doi:10.1016/j.soilbio.2007.12.020
+    tags:
+    - constraint
+    - temperature_limit
+    - extreme_condition
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: High temperature soil ecology
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.physical.temperature_optimum_mesophile:
+    value: 298.15
+    default: 298.15
+    units: K
+    dtype: float32
+    bounds:
+    - 288.15
+    - 308.15
+    category: environmental_response
+    description: Optimal temperature for mesophilic microbial processes (25 Celsius)
+    references:
+    - Madigan et al. (2018) Brock Biology of Microorganisms
+    - Sierra (2012) doi:10.5194/bg-9-2459-2012
+    tags:
+    - learnable
+    - temperature_optimum
+    - mesophile
+    dimension: temperature
+    requires_grad: true
+    provenance:
+      source: Microbial ecology
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.physical.moisture_anaerobic_threshold:
+    value: 0.6
+    default: 0.6
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 0.8
+    category: environmental_response
+    description: Soil moisture threshold for onset of anaerobic conditions and denitrification
+    references:
+    - Sexstone et al. (1985) doi:10.2136/sssaj1985.03615995004900020019x
+    - Linn & Doran (1984) doi:10.2136/sssaj1984.03615995004800060013x
+    tags:
+    - learnable
+    - moisture_threshold
+    - anaerobic
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: Anaerobic process literature
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.physical.moisture_drought_threshold:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.05
+    - 0.15
+    category: environmental_response
+    description: Soil moisture threshold for drought stress and reduced biological activity
+    references:
+    - Stark & Firestone (1995) doi:10.1016/0038-0717(94)00192-6
+    - Orchard & Cook (1983) doi:10.1016/0038-0717(83)90010-X
+    tags:
+    - learnable
+    - moisture_threshold
+    - drought
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: Drought ecology literature
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.physical.moisture_response_power:
+    value: 1.0
+    default: 1.0
+    units: m3 m-3
+    dtype: float32
+    bounds:
+    - 0.5
+    - 2.0
+    category: environmental_response
+    description: Power exponent for moisture response function in decomposition models
+    references:
+    - Parton et al. (1987) doi:10.1016/0038-0717(87)90046-5
+    - Del Grosso et al. (2005) doi:10.1016/j.agrformet.2004.08.011
+    tags:
+    - learnable
+    - moisture_response
+    - CENTURY
+    dimension: volume_fraction
+    requires_grad: true
+    provenance:
+      source: CENTURY model documentation
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.physical.wfps_denitrification_threshold:
+    value: 0.6
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 0.8
+    category: environmental_response
+    description: 'Water-filled pore space WFPS_thr above which the denitrification anaerobic factor rises, f_anoxic = max(clip((WFPS - WFPS_thr)/w, 0, 1), f_min) with w = pedosphere.denitrification.anaerobic_transition_width and f_min = pedosphere.denitrification.minimum_anaerobic_factor. Linn and Doran (1984) found aerobic microbial activity maximal at 60 percent WFPS and declining above it through reduced aeration; DAYCENT (Del Grosso et al. 2000) drives denitrification with WFPS. Bounds: nitrification is the main N2O source up to 60 percent and denitrification produced all N2O at 70 percent WFPS (Bateman and Baggs 2005); 0.8 keeps the ramp inside the unit interval.'
+    references:
+    - 'Linn, D.M. and Doran, J.W. (1984) Effect of water-filled pore space on carbon dioxide and nitrous oxide production in tilled and nontilled soils, Soil Sci. Soc. Am. J. 48, 1267-1272, doi:10.2136/sssaj1984.03615995004800060013x'
+    - 'Del Grosso, S.J., Parton, W.J., Mosier, A.R., Ojima, D.S., Kulmala, A.E. and Phongpan, S. (2000) General model for N2O and N2 gas emissions from soils due to dentrification, Global Biogeochem. Cycles 14, 1045-1060, doi:10.1029/1999GB001225'
+    - 'Bateman, E.J. and Baggs, E.M. (2005) Contributions of nitrification and denitrification to N2O emissions from soils at different water-filled pore space, Biol. Fertil. Soils 41, 379-388, doi:10.1007/s00374-005-0858-3'
+    tags:
+    - WFPS
+    - denitrification
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-27T00:00:00Z'
+      notes: 'MA-21 follow-up F2: the one threshold of the denitrification anaerobic factor (replaces pedosphere.denitrification.anaerobic_threshold, 0.6 m3 m-3 on the volumetric-moisture basis, whose transition width was already on the WFPS basis). The former reference was [NEEDS_CITATION]. The linear ramp is a RELIC convention; the DAYCENT arctangent WFPS function of Del Grosso et al. (2000) is not implemented.'
+    dimension: dimensionless
+  pedosphere.physical.wfps_nitrification_optimum:
+    value: 0.6
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.35
+    - 0.7
+    category: environmental_response
+    description: 'Water-filled pore space WFPS_opt at which aerobic microbial activity, and with it nitrification, peaks; above it oxygen limits nitrification, f_O2 = max((1 - WFPS)/(1 - WFPS_opt), pedosphere.nitrification.minimum_oxygen_factor), and below it f_O2 = 1. Linn and Doran (1984) found the maximum at 60 percent WFPS with a decline above it through reduced aeration. The bounds are the Bateman and Baggs (2005) range: nitrification is the main N2O source at 35-60 percent WFPS and denitrification produced all N2O at 70 percent.'
+    references:
+    - 'Linn, D.M. and Doran, J.W. (1984) Effect of water-filled pore space on carbon dioxide and nitrous oxide production in tilled and nontilled soils, Soil Sci. Soc. Am. J. 48, 1267-1272, doi:10.2136/sssaj1984.03615995004800060013x'
+    - 'Bateman, E.J. and Baggs, E.M. (2005) Contributions of nitrification and denitrification to N2O emissions from soils at different water-filled pore space, Biol. Fertil. Soils 41, 379-388, doi:10.1007/s00374-005-0858-3'
+    tags:
+    - learnable
+    - WFPS
+    - nitrification
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-27T00:00:00Z'
+      notes: 'Round 53.1: the single WFPS threshold of the nitrification oxygen limitation (value 0.3 -> 0.6). The former references Stark and Firestone (1995) doi:10.1016/0038-0717(94)00192-6 and Davidson et al. (2000) doi:10.1046/j.1365-2486.2000.00327.x did not resolve. The linear decline to zero at saturation is a RELIC convention; the DAYCENT water function of Parton et al. (1996) is not implemented.'
+  pedosphere.physical.ph_optimum_nitrification:
+    value: 7.5
+    default: 7.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 7.0
+    - 8.5
+    category: environmental_response
+    description: Optimal pH for nitrification process by ammonia-oxidizing bacteria
+    references:
+    - Prosser (1989) Advances in Microbial Ecology
+    - Nicol et al. (2008) doi:10.1111/j.1462-2920.2008.01786.x
+    tags:
+    - learnable
+    - pH_response
+    - nitrification
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: Nitrifier physiology literature
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.physical.ph_optimum_denitrification:
+    value: 7.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 6.5
+    - 7.5
+    category: environmental_response
+    description: Optimal pH for denitrification process by facultative anaerobes
+    references:
+    - Knowles (1982) Microbiological Reviews
+    - Simek & Cooper (2002) doi:10.1016/S0038-0717(01)00183-X
+    tags:
+    - learnable
+    - pH_response
+    - denitrification
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: Denitrification literature
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.physical.ph_optimum_decomposition:
+    value: 6.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 6.0
+    - 7.5
+    category: environmental_response
+    description: Optimal pH for organic matter decomposition by heterotrophic microbes
+    references:
+    - Swift et al. (1979) Decomposition in Terrestrial Ecosystems
+    - Rousk et al. (2010) doi:10.1038/ismej.2010.58
+    tags:
+    - learnable
+    - pH_response
+    - decomposition
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: Decomposition ecology
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.physical.ph_minimum_activity:
+    value: 3.5
+    default: 3.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 3.0
+    - 4.5
+    category: environmental_response
+    description: Minimum pH for significant biological activity in soils
+    references:
+    - Rousk et al. (2010) doi:10.1038/ismej.2010.58
+    - Fierer & Jackson (2006) doi:10.1073/pnas.0507535103
+    tags:
+    - constraint
+    - pH_limit
+    - acidic
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Acidic soil ecology
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.physical.ph_maximum_activity:
+    value: 9.5
+    default: 9.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 9.0
+    - 10.0
+    category: environmental_response
+    description: Maximum pH for significant biological activity in soils
+    references:
+    - Rousk et al. (2010) doi:10.1038/ismej.2010.58
+    - Fierer & Jackson (2006) doi:10.1073/pnas.0507535103
+    tags:
+    - constraint
+    - pH_limit
+    - alkaline
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Alkaline soil ecology
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.physical.ph_response_width:
+    value: 2.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 3.0
+    category: environmental_response
+    description: Width parameter for Gaussian pH response function
+    references:
+    - Parton et al. (1996) Global Biogeochemical Cycles
+    - Li et al. (2000) doi:10.1016/S0304-3800(00)00248-9
+    tags:
+    - learnable
+    - pH_response
+    - Gaussian_width
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: DNDC and CENTURY models
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'

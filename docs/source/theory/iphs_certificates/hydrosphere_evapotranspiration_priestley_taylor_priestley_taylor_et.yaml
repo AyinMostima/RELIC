@@ -1,0 +1,260 @@
+certificate_version: '1.0'
+process_id: relic.scientific.hydrosphere.evapotranspiration.priestley_taylor.PriestleyTaylorET
+module_name: priestley_taylor_et
+canonical_role: transport
+iphs_level: 3
+iphs_level_evidence:
+  classification: IPHS-structured transport process certificate
+  compatible_basis: Process declares composition-safe IPHS or DEC structure
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: DEC/IPHS transport operator with conservative flux routing
+  structural_contribution: Cochain, Hodge, flux, and port structures are declared for assembly audit
+  assembly_participation: Certificate participates in Phase 8 inventory and GraphIR structural audit
+  level_3_limit: Typed form, Hodge, port, or related structure is declared, but no runtime-linked IPHSStructureSpec contribution and executable level 4 or 5 certificate binding is present.
+theory_document: docs\source\theory\hydrosphere_priestley_taylor.md
+theory_document_status: updated
+legacy_formula: Priestley-Taylor evapotranspiration computes an energy-limited equilibrium water vapor flux from available energy, psychrometric slope, and alpha.
+literature_formula: ET = alpha * (Delta / (Delta + gamma)) * (Rn - G) / lambda, following Priestley and Taylor (1972).
+iphs_formula: q_eq = star_PT A with A = Rn - G and star_PT = diag(alpha * Delta / ((Delta + gamma) * lambda)) >= 0; latent heat port L_E = lambda q_eq.
+legacy_expression: ET = alpha * (Delta/(Delta+gamma)) * available_energy / lambda, then ET is projected to nonnegative flux.
+iphs_expression: q_eq = star_PT A plus energy port L_E = lambda q_eq; nonnegative projection and energy residuals are routed as diagnostics.
+input_variables:
+- net_radiation
+- air_temperature
+- atmospheric_pressure
+- soil_heat_flux
+- soil_moisture
+- vapor_pressure_deficit
+output_variables:
+- evapotranspiration_flux
+- latent_heat_flux
+- diagnostics.evapotranspiration
+parameter_keys:
+- hydrosphere.soil_moisture.porosity
+- hydrosphere.soil_moisture.residual_water_content
+- hydrosphere.physical.field_capacity_fraction
+- hydrosphere.physical.wilting_point_fraction
+- hydrosphere.physical.vpd_alpha_baseline
+- hydrosphere.physical.vpd_alpha_sensitivity
+- hydrosphere.physical.vpd_alpha_threshold
+- hydrosphere.physical.atmospheric_pressure_min
+- hydrosphere.physical.atmospheric_pressure_max
+- hydrosphere.evapotranspiration.alpha_pt
+- hydrosphere.evapotranspiration.soil_heat_fraction
+- hydrosphere.evapotranspiration.soil_heat_flux_source
+- hydrosphere.evapotranspiration.sub_freezing_phase
+- hydrosphere.evapotranspiration.enable_dynamic_alpha
+- hydrosphere.evapotranspiration.alpha_min
+- hydrosphere.evapotranspiration.alpha_max
+- hydrosphere.evapotranspiration.stress_threshold
+- hydrosphere.evapotranspiration.hodge_reference_atmospheric_pressure
+- hydrosphere.numerical.temperature_bounds
+- hydrosphere.numerical.net_radiation_validation_offset
+- hydrosphere.numerical.evapotranspiration_flux_clamp_min
+- hydrosphere.numerical.minimum_drainage_flux
+- validation.numerical.clamp_min_zero
+- validation.numerical.clamp_max_one
+- hydrosphere.evapotranspiration.hodge_reference_air_temperature
+composition_ports:
+- priestley_taylor_equilibrium_flux
+- priestley_taylor_latent_heat_flux
+references:
+- Priestley, C.H.B. and Taylor, R.J. (1972). On the assessment of surface heat flux and evaporation using large-scale parameters. Monthly Weather Review, 100, 81-92.
+- Penman, H.L. (1948). Natural evaporation from open water, bare soil and grass. Proceedings of the Royal Society A, 193, 120-145.
+- de Bruin, H.A.R. (1983). A model for the Priestley-Taylor parameter alpha. Journal of Climate and Applied Meteorology, 22, 572-578.
+- McNaughton, K.G. and Jarvis, P.G. (1983). Predicting effects of vegetation changes on transpiration and evaporation. Advances in Ecological Research, 13, 1-47.
+- Murray, F.W. (1967). On the computation of saturation vapor pressure. Journal of Applied Meteorology, 6, 203-204.
+baseline_tests:
+- test\unit\hydrosphere\evapotranspiration\test_priestley_taylor_l1.py
+validation_tests:
+- test\unit\hydrosphere\evapotranspiration\test_priestley_taylor_l1.py
+- test\audit\priestley_taylor_alpha_source_contract.test.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  net_radiation: net radiation Rn [W m-2]
+  air_temperature: air temperature T [K]
+  atmospheric_pressure: surface atmospheric pressure P [Pa]
+  soil_heat_flux: signed soil-surface G [W m-2], required only for the explicit state source
+  evapotranspiration_flux: energy-limited water vapor mass flux q_eq [kg m-2 s-1]
+  latent_heat_flux: latent heat flux lambda q_eq [W m-2]
+  diagnostics.evapotranspiration: read-only psychrometric, alpha, energy, and residual diagnostics
+  soil_moisture: volumetric soil water of the dynamic alpha, read only when dynamic_alpha_inputs declares it
+  vapor_pressure_deficit: vapour pressure deficit of the dynamic alpha, read only when dynamic_alpha_inputs declares it
+parameter_map:
+  hydrosphere.soil_moisture.porosity: saturated water content theta_s (soil porosity) of theta_fc = f_fc theta_s [m3 m-3]
+  hydrosphere.soil_moisture.residual_water_content: residual water content theta_r of theta_wp = f_wp theta_r [m3 m-3]
+  hydrosphere.physical.field_capacity_fraction: field capacity fraction [dimensionless]
+  hydrosphere.physical.wilting_point_fraction: wilting point fraction [dimensionless]
+  hydrosphere.physical.vpd_alpha_baseline: VPD alpha baseline [dimensionless]
+  hydrosphere.physical.vpd_alpha_sensitivity: VPD alpha sensitivity [kPa-1]
+  hydrosphere.physical.vpd_alpha_threshold: VPD alpha threshold [kPa]
+  hydrosphere.physical.atmospheric_pressure_min: minimum valid atmospheric pressure [Pa]
+  hydrosphere.physical.atmospheric_pressure_max: maximum valid atmospheric pressure [Pa]
+  hydrosphere.evapotranspiration.alpha_pt: Priestley-Taylor alpha coefficient [dimensionless]
+  hydrosphere.evapotranspiration.soil_heat_fraction: soil heat flux fraction G/Rn [dimensionless]
+  hydrosphere.evapotranspiration.soil_heat_flux_source: explicit fraction or state selection, with no missing-state fallback
+  hydrosphere.evapotranspiration.sub_freezing_phase: phase of saturation vapor pressure and latent heat below 273.15 K, liquid (default) or ice; runtime psychrometric terms only, the static Hodge contract stays the liquid reference-state contract [dimensionless]
+  hydrosphere.evapotranspiration.enable_dynamic_alpha: dynamic alpha switch [dimensionless]
+  hydrosphere.evapotranspiration.alpha_min: minimum alpha [dimensionless]
+  hydrosphere.evapotranspiration.alpha_max: maximum alpha [dimensionless]
+  hydrosphere.evapotranspiration.stress_threshold: soil moisture stress threshold [dimensionless]
+  hydrosphere.evapotranspiration.hodge_reference_atmospheric_pressure: reference atmospheric pressure of the static Hodge contract [Pa]
+  hydrosphere.numerical.temperature_bounds: valid hydrosphere temperature bounds [K]
+  hydrosphere.numerical.net_radiation_validation_offset: net radiation validation offset [W m-2]
+  hydrosphere.numerical.evapotranspiration_flux_clamp_min: nonnegative ET projection lower bound [kg m-2 s-1]
+  hydrosphere.numerical.minimum_drainage_flux: minimum flux threshold for diagnostic ratios [kg m-2 s-1]
+  validation.numerical.clamp_min_zero: shared zero lower bound for residual projections
+  validation.numerical.clamp_max_one: shared unit-interval upper bound for the VPD alpha response
+  hydrosphere.evapotranspiration.hodge_reference_air_temperature: reference air temperature of the static Hodge contract [K]
+operator_map:
+  star_PT: build_hodge_contract and build_hodge_terms HodgeStarSpec for energy-limited ET mobility
+  psychrometrics: Tetens saturation vapor pressure, saturation slope, and psychrometric constant; below 273.15 K the ice option evaluates slope and psychrometric constant over ice (Murray 1967 coefficients, latent heat of sublimation)
+  alpha_closure: fixed or dynamic Priestley-Taylor alpha coefficient
+  energy_partition: G = soil_heat_fraction * Rn for the fraction source or G = state soil_heat_flux for the state source; both use A = Rn - G and one ET expression
+  projection: nonnegative ET residual routing
+unit_map:
+  net_radiation: W m-2
+  air_temperature: K
+  atmospheric_pressure: Pa
+  soil_heat_flux: W m-2
+  evapotranspiration_flux: kg m-2 s-1
+  latent_heat_flux: W m-2
+  diagnostics.evapotranspiration.available_energy_residual: W m-2
+  diagnostics.evapotranspiration.negative_et_projection_residual: kg m-2 s-1
+  soil_moisture: m3 m-3
+  vapor_pressure_deficit: Pa
+input_output_map:
+  net_radiation: same radiative driver enters both legacy and IPHS forms
+  air_temperature: same temperature drives saturation vapor pressure slope
+  atmospheric_pressure: same pressure drives psychrometric constant
+  soil_heat_flux: explicit signed observed or coupled soil-surface heat input for the state source, optional and unused for the fraction source
+  evapotranspiration_flux: same equilibrium ET flux is emitted through wrap_update(UpdateMode.REPLACE)
+  latent_heat_flux: same ET flux multiplied by lambda is emitted through wrap_update(UpdateMode.REPLACE)
+interface_map:
+  forward_signature: forward(self, state, time, dt, **kwargs)
+  bridge_class: TransportMechanismFunctor
+  abstraction_contract: TransportMechanism
+  state_write_mode: outputs use wrap_update(UpdateMode.REPLACE) through existing StateManager path
+  legacy_inputs:
+  - net_radiation
+  - air_temperature
+  - atmospheric_pressure
+  - soil_heat_flux
+  - soil_moisture
+  - vapor_pressure_deficit
+  iphs_inputs:
+  - net_radiation
+  - air_temperature
+  - atmospheric_pressure
+  - soil_heat_flux
+  - soil_moisture
+  - vapor_pressure_deficit
+  optional_input_condition: soil_heat_flux is optional only when soil_heat_flux_source=fraction; the governed required-input rule enforces it for state
+  legacy_outputs:
+  - evapotranspiration_flux
+  - latent_heat_flux
+  - diagnostics.evapotranspiration
+  iphs_outputs:
+  - evapotranspiration_flux
+  - latent_heat_flux
+  - diagnostics.evapotranspiration
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: The existing Priestley-Taylor equilibrium ET calculation realizes the canonical IPHS energy-limited transport relation.
+  no_legacy_mode: No runtime flag exposes a separate pre-Phase 8 Priestley-Taylor branch.
+state_advancement_map:
+  potential_basis: available-energy cochain A_h
+  effort_variable: equilibrium vapor effort with Priestley-Taylor mobility star_PT
+  state_advancer: q_eq = star_PT A_h; L_E = lambda q_eq; water_storage_dot = -q_eq
+  runtime_usage: forward applies the canonical energy-limited ET port relation and routes projection and energy residual diagnostics.
+parameter_management_map:
+  hydrosphere.soil_moisture.porosity:
+    source: ParameterManager YAML
+  hydrosphere.soil_moisture.residual_water_content:
+    source: ParameterManager YAML
+  hydrosphere.physical.field_capacity_fraction:
+    source: ParameterManager YAML
+  hydrosphere.physical.wilting_point_fraction:
+    source: ParameterManager YAML
+  hydrosphere.physical.vpd_alpha_baseline:
+    source: ParameterManager YAML
+  hydrosphere.physical.vpd_alpha_sensitivity:
+    source: ParameterManager YAML
+  hydrosphere.physical.vpd_alpha_threshold:
+    source: ParameterManager YAML
+  hydrosphere.physical.atmospheric_pressure_min:
+    source: ParameterManager YAML
+  hydrosphere.physical.atmospheric_pressure_max:
+    source: ParameterManager YAML
+  hydrosphere.evapotranspiration.alpha_pt:
+    source: ParameterManager YAML
+  hydrosphere.evapotranspiration.soil_heat_fraction:
+    source: ParameterManager YAML
+  hydrosphere.evapotranspiration.soil_heat_flux_source:
+    source: ParameterManager YAML or explicit Functor config through the same parameter accessor
+  hydrosphere.evapotranspiration.sub_freezing_phase:
+    source: ParameterManager YAML or explicit Functor config through the same parameter accessor
+  hydrosphere.evapotranspiration.enable_dynamic_alpha:
+    source: ParameterManager YAML
+  hydrosphere.evapotranspiration.alpha_min:
+    source: ParameterManager YAML
+  hydrosphere.evapotranspiration.alpha_max:
+    source: ParameterManager YAML
+  hydrosphere.evapotranspiration.stress_threshold:
+    source: ParameterManager YAML
+  hydrosphere.evapotranspiration.hodge_reference_atmospheric_pressure:
+    source: ParameterManager YAML
+  hydrosphere.numerical.temperature_bounds:
+    source: ParameterManager YAML
+  hydrosphere.numerical.net_radiation_validation_offset:
+    source: ParameterManager YAML
+  hydrosphere.numerical.evapotranspiration_flux_clamp_min:
+    source: ParameterManager YAML
+  hydrosphere.numerical.minimum_drainage_flux:
+    source: ParameterManager YAML
+  validation.numerical.clamp_min_zero:
+    source: ParameterManager YAML
+  validation.numerical.clamp_max_one:
+    source: ParameterManager YAML
+  hydrosphere.evapotranspiration.hodge_reference_air_temperature:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares hydrosphere transport role and soil/energy coupling interfaces
+  structural_protocol: declared_forms, required_parameters, build_hodge_terms, dissipative_structure, ports
+  state_contract: existing TransportMechanismFunctor and StateManager UpdateItem path
+  physical_constant_ssot: thermodynamic and psychrometric constants use get_physical_constant; canonical full keys in HodgeStarSpec are structural bindings, not ordinary parameters
+  unit_conversion_owner: UnitConverter converts vapor_pressure_deficit from Pa to kPa for the dynamic alpha response
+  ports:
+  - priestley_taylor_equilibrium_flux
+  - priestley_taylor_latent_heat_flux
+dependency_interconnection_map:
+  dependencies: no required upstream functor; radiative and atmospheric forcing enter by state keys
+  direct_functor_calls: none; radiation and atmospheric forcing are state ports and no upstream Functor instance is invoked
+  chain_maps:
+  - net_radiation enters available_energy through existing state graph
+  - evapotranspiration_flux and latent_heat_flux leave through existing state graph
+overflow_routing_map:
+  nonnegative_et_projection: negative raw ET is routed to negative_et_projection_residual
+  available_energy_closure: Rn - G - available_energy is emitted as available_energy_residual
+  discarded_residuals: negative ET projection and available-energy closure are explicit negative_et_projection_residual and available_energy_residual outputs
+conservation_map:
+  conserved_quantity: paired water-energy port conversion; no complete local water or surface-energy closure is claimed
+  balance_expression: q_eq = ET and L_E = lambda q_eq, with lambda the latent heat of each cell's phase (vaporization; sublimation below 273.15 K under the ice option)
+  local_check: process-specific hook returns the maximum dimensionless relative residual between emitted L_E and lambda q_eq using the same per-cell lambda as forward; the generic mixed-unit output sum is not used
+  port_balance: equilibrium ET and latent heat ports carry the same outgoing evaporative transfer in different units
+  open_system_route: matter and energy leave through the declared Priestley-Taylor equilibrium and latent-heat ports
+entropy_audit:
+  dissipative_operator: star_PT and M_h are symmetric positive semidefinite for positive alpha, Delta/(Delta+gamma), and lambda
+  sigma_expression: sigma = A.T star_PT A / T >= 0
+  validation_hook: build_hodge_contract(strict=True), dissipative_structure eigenvalue checks, and the paired-port L_E = lambda q_eq conversion hook
+equivalence_type: port_equivalent
+physical_constant_ssot:
+  latent_heat_vaporization: 'get_physical_constant("latent_heat_vaporization")'
+  air_specific_heat_cp: 'get_physical_constant("air_specific_heat_cp")'
+  molecular_weight_ratio: 'get_physical_constant("water_molecular_weight") / get_physical_constant("air_molecular_weight")'
+  tetens_and_temperature_constants: get_physical_constant with canonical relic.physical.constants full keys
+  ice_option_constants: 'read only when sub_freezing_phase is ice: psychrometrics.tetens_ice_coefficient_a, psychrometrics.tetens_ice_coefficient_b, water.latent_heat_vaporization_intercept and water.latent_heat_fusion (L_s is their sum of the last two)'
+  hodge_structural_binding: canonical physical-constant full keys are retained only as material-source provenance in HodgeStarSpec.parameter_keys
+  vpd_unit_conversion: UnitConverter.convert(vapor_pressure_deficit, Pa, kPa)

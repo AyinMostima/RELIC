@@ -1,0 +1,78 @@
+schema_version: 2.0.0
+tier: relic
+namespace: transport.advection_diffusion
+description: Numerical parameters for coupled advection-diffusion transport schemes
+metadata:
+  created_by: RELIC Parameter System
+  last_modified: '2026-01-07T14:20:26Z'
+  schema_url: https://github.com/relic/parameter-schema/v2.0.0
+  version: 1.0.0
+functor_metadata:
+  spatial_scale: grid_cell
+  variable_kind: state
+  input_variables:
+    - tracer_concentration
+    - source_term
+    - velocity_field
+    - tracer_concentration_boundary_state
+  output_variables:
+    - tracer_concentration
+    - tracer_concentration_advection_diffusion_boundary_flux
+    - diagnostics.cfl_number
+    - diagnostics.diffusion_stability
+    - diagnostics.peclet_number
+    - diagnostics.conservation_error
+  conservation_laws:
+    - mass
+  references:
+    - Hundsdorfer and Verwer (2003)
+    - LeVeque (2007)
+    - Strang (1968)
+parameters:
+  transport.advection_diffusion.grid_spacing:
+    value: 1.0
+    default: 1.0
+    units: m
+    dtype: float32
+    bounds:
+    - 1.0e-06
+    - 1000.0
+    category: discretization_parameter
+    description: Default grid spacing for coupled advection-diffusion simulations
+    references:
+    - Spatial discretization requirement for finite-volume schemes
+    tags:
+    - advection
+    - diffusion
+    - grid_spacing
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.advection_diffusion.splitting_method:
+    value: symmetric
+    default: symmetric
+    units: dimensionless
+    dtype: string
+    allowed_values:
+    - sequential
+    - symmetric
+    - combined
+    bounds: null
+    category: numerical_scheme
+    description: Operator splitting method used to couple advection and diffusion
+    references:
+    - 'Strang (1968) SIAM Journal on Numerical Analysis 5(3): 506-517'
+    tags:
+    - operator_splitting
+    - time_integration
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'

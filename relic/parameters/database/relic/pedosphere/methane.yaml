@@ -1,0 +1,831 @@
+﻿schema_version: 2.0.0
+tier: relic
+namespace: pedosphere.methane
+description: Wetland methane process parameters (iMAPLE laws with RELIC calibrated branches)
+metadata:
+  created_by: RELIC Methane Integration
+  last_modified: '2026-06-01T00:00:00Z'
+  schema_url: https://github.com/relic/parameter-schema/v2.0.0
+  notes: Parameters support methane production, oxidation, transport, conservation, and scale gating with consistent SI units.
+  version: 1.0.0
+parameters:
+  pedosphere.methane.production.release_ratio:
+    value: 0.2
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 0.5
+    category: biological_parameter
+    description: Ratio of methane to carbon dioxide released during heterotrophic respiration
+    references:
+    - Wania et al. (2010) doi:10.5194/gmd-3-565-2010
+    - Zhu et al. (2014) doi:10.5194/gmd-7-981-2014
+    - Yue et al. (2024) doi:10.5194/gmd-17-4621-2024
+    - iMAPLE v1 source, LSM/src/model/iMAPLE/ch4flux_wetland.f (Yue et al. 2024 code release, doi:10.6084/m9.figshare.23593578.v1), module ch4flux_com parameter r
+    tags:
+    - methanogenesis
+    - learnable
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-27T00:00:00Z'
+      literature_check: 'Yue et al. (2024) Eq. 34 (P = Rh r f_Ts f_pH f_wetland) names r
+        after Wania et al. (2010) without printing a value (checked in the GMD article);
+        the iMAPLE v1 code released with the paper sets r = 0.2 (ch4flux_wetland.f,
+        comment: range 0.1 to 0.4), so the value of the published model is used.
+        Consistency: Wania et al. (2010) fit CH4/CO2 as an adjustable parameter
+        (sensitivity range 0.1-0.4, Table 4; all-site fit 0.1 and site fits 0.1-0.3,
+        Table 7); Zhu et al. (2014) calibrate r over 0.1-0.7 (mean 0.23, Table 3).'
+  pedosphere.methane.production.q10:
+    value: 3.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 2.0
+    - 5.0
+    category: biological_parameter
+    description: 'Q10 of methane production at the base temperature T_base, r_b of Q10(Ts) = clip(r_b Q_b^((Ts - T_base)/10), Q10_min, Q10_max) (Yue et al. 2024 Eq. 39); the base Q10 3.0 of Zhu et al. (2014).'
+    references:
+    - 'Zhu et al. (2014) doi:10.5194/gmd-7-981-2014'
+    - 'Zhang et al. (2002) doi:10.1029/2001GB001838'
+    - 'Yue et al. (2024) doi:10.5194/gmd-17-4621-2024'
+    tags:
+    - temperature_response
+    - learnable
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-27T00:00:00Z'
+      literature_check: 'Zhu et al. (2014) Eqs. 3-5 use a base Q10 of 3.0 after Zhang et al. (2002) (site calibration 1.6-4.5, mean 2.48, Table 3). Yue et al. (2024) Eq. 39 writes Q10 = r_b * Q_b^((Ts - T_base)/10) with r_b = 3.0, Q_b = 1.33 and T_base = 25 C, so this key is r_b, the Q10 at T_base (MA-21 item 50.1: Eq. 39 is implemented). The former Zhang et al. (2002) DOI 10.1046/j.1354-1013.2002.00484.x belonged to an unrelated article. Reuse of the shared f_T in the calibrated branch is a RELIC convention.'
+  pedosphere.methane.production.q10_temperature_sensitivity:
+    value: 1.33
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - .inf
+    category: temperature_response
+    description: 'Q_b of Yue et al. (2024) Eq. 39, the factor by which the methane production Q10 rises per 10 K above T_base. Q_b >= 1 keeps Q10 non-decreasing with temperature; no upper limit is fixed (inf).'
+    references:
+    - 'Yue et al. (2024) doi:10.5194/gmd-17-4621-2024'
+    - 'Paudel et al. (2016) doi:10.1088/1748-9326/11/3/034020'
+    - 'iMAPLE v1 source, LSM/src/model/iMAPLE/ch4flux_wetland.f (Yue et al. 2024 code release, doi:10.6084/m9.figshare.23593578.v1), function Q10fn_pro and subroutine CH4prod'
+    tags:
+    - temperature_response
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-27T00:00:00Z'
+      literature_check: 'Yue et al. (2024) Eq. 39: Q_b = 1.33 for production (after Zhu et al. 2014 and Paudel et al. 2016; the value equals the CLM4.5 q10ch4). The released iMAPLE code uses Q10pro_par = 1.33 (its header comment swaps the production and oxidation Q10 ranges).'
+  pedosphere.methane.production.q10_base_temperature:
+    value: 298.15
+    units: K
+    dtype: float32
+    bounds:
+    - 0.0
+    - .inf
+    category: temperature_response
+    description: 'T_base of Yue et al. (2024) Eq. 39, the soil temperature at which the methane production Q10 equals r_b (25 C). An absolute temperature in K cannot be negative; the lower bound is 0 K.'
+    references:
+    - 'Yue et al. (2024) doi:10.5194/gmd-17-4621-2024'
+    - 'iMAPLE v1 source, LSM/src/model/iMAPLE/ch4flux_wetland.f (Yue et al. 2024 code release, doi:10.6084/m9.figshare.23593578.v1), function Q10fn_pro and subroutine CH4prod'
+    tags:
+    - temperature_response
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-27T00:00:00Z'
+      literature_check: 'Yue et al. (2024) state T_base = 25 C for production, and the released iMAPLE code uses Tbase_pro = 25.0; the code comment names the CLM4.5 value 22 C (q10ch4base = 295 K), which neither the paper nor the code applies. The oxidation T_base of Eq. 39 (12 C) is not used: RELIC oxidation follows Riley et al. (2011) Eq. 7 (round 51.2).'
+  pedosphere.methane.production.q10_min:
+    value: 1.7
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - .inf
+    category: temperature_response
+    description: 'Lower clip Q10_min of the temperature-dependent methane production Q10; it must exceed 1 (ln(Q10) > 0 in the Zhu et al. 2014 exponent), which the functor checks at construction.'
+    references:
+    - 'Zhu et al. (2014) doi:10.5194/gmd-7-981-2014'
+    - 'Dunfield et al. (1993) Soil Biol. Biochem. 25, 321-326, doi:10.1016/0038-0717(93)90130-4 (production Q10 5.3-16)'
+    - 'Valentine et al. (1994) J. Geophys. Res. 99(D1), 1563-1571, doi:10.1029/93JD00391'
+    - 'iMAPLE v1 source, LSM/src/model/iMAPLE/ch4flux_wetland.f (Yue et al. 2024 code release, doi:10.6084/m9.figshare.23593578.v1), function Q10fn_pro and subroutine CH4prod'
+    tags:
+    - temperature_response
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-27T00:00:00Z'
+      literature_check: 'Zhu et al. (2014) Sect. 2.3 and Table 2: observed methane production Q10 values range from 1.7 to 16 (Dunfield et al. 1993; Valentine et al. 1994). The released iMAPLE code clips Q10fn_pro to [1.7, 16.0] in CH4prod; Yue et al. (2024) do not print the clip. With r_b = 3.0, Q_b = 1.33 and T_base = 25 C the lower clip binds below 5.1 C and keeps f_T increasing on [0, 25] C.'
+  pedosphere.methane.production.q10_max:
+    value: 16.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - .inf
+    category: temperature_response
+    description: 'Upper clip Q10_max of the temperature-dependent methane production Q10 (must exceed q10_min, checked at construction).'
+    references:
+    - 'Zhu et al. (2014) doi:10.5194/gmd-7-981-2014'
+    - 'Dunfield et al. (1993) Soil Biol. Biochem. 25, 321-326, doi:10.1016/0038-0717(93)90130-4 (production Q10 5.3-16)'
+    - 'Valentine et al. (1994) J. Geophys. Res. 99(D1), 1563-1571, doi:10.1029/93JD00391'
+    - 'iMAPLE v1 source, LSM/src/model/iMAPLE/ch4flux_wetland.f (Yue et al. 2024 code release, doi:10.6084/m9.figshare.23593578.v1), function Q10fn_pro and subroutine CH4prod'
+    tags:
+    - temperature_response
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-27T00:00:00Z'
+      literature_check: 'Zhu et al. (2014) Sect. 2.3 and Table 2: observed methane production Q10 values range from 1.7 to 16 (Dunfield et al. 1993; Valentine et al. 1994); the released iMAPLE code clips Q10fn_pro at 16.0. With the default parameters Q10 reaches 5.31 at 45 C, so the upper clip does not bind.'
+  pedosphere.methane.production.temperature_min:
+    value: 273.15
+    units: K
+    dtype: float32
+    bounds:
+    - 263.15
+    - 283.15
+    category: biological_parameter
+    description: Minimum soil temperature for active methanogenesis
+    references:
+    - Zhu et al. (2014) doi:10.5194/gmd-7-981-2014
+    tags:
+    - temperature_response
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-30T00:00:00Z'
+  pedosphere.methane.production.temperature_optimum:
+    value: 298.15
+    units: K
+    dtype: float32
+    bounds:
+    - 293.15
+    - 313.15
+    category: biological_parameter
+    description: Optimal soil temperature for methane production
+    references:
+    - Zhu et al. (2014) doi:10.5194/gmd-7-981-2014
+    tags:
+    - temperature_response
+    - learnable
+    dimension: temperature
+    requires_grad: true
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-30T00:00:00Z'
+  pedosphere.methane.production.temperature_max:
+    value: 318.15
+    units: K
+    dtype: float32
+    bounds:
+    - 313.15
+    - 328.15
+    category: biological_parameter
+    description: Upper soil temperature threshold for methane production
+    references:
+    - Zhu et al. (2014) doi:10.5194/gmd-7-981-2014
+    tags:
+    - temperature_response
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-30T00:00:00Z'
+  pedosphere.methane.production.ph_optimum:
+    value: 7.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 6.0
+    - 8.0
+    category: biological_parameter
+    description: Optimal soil pH for methanogenesis
+    references:
+    - Zhu et al. (2014) doi:10.5194/gmd-7-981-2014
+    tags:
+    - pH_response
+    - learnable
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-30T00:00:00Z'
+  pedosphere.methane.production.ph_lower_limit:
+    value: 4.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 4.0
+    - 4.0
+    category: biological_parameter
+    description: Lower soil pH limit for methanogenesis
+    references:
+    - Zhu et al. (2014) doi:10.5194/gmd-7-981-2014, Eq. 6
+    tags:
+    - pH_response
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-07-18T00:00:00Z'
+  pedosphere.methane.production.ph_upper_limit:
+    value: 9.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 9.0
+    - 9.0
+    category: biological_parameter
+    description: Upper soil pH limit for methanogenesis
+    references:
+    - Zhu et al. (2014) doi:10.5194/gmd-7-981-2014, Eq. 6
+    tags:
+    - pH_response
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-07-18T00:00:00Z'
+  pedosphere.methane.production.calibrated.eh_full_activity:
+    value: -200.0
+    units: mV
+    dtype: float32
+    bounds:
+    - -200.0
+    - -200.0
+    category: environmental_response
+    description: Redox potential at and below which the calibrated methane production redox factor is 1
+    references:
+    - Zhu et al. (2014) doi:10.5194/gmd-7-981-2014
+    - Zhang et al. (2002) doi:10.1029/2001GB001838
+    tags:
+    - calibrated_branch
+    - redox
+    dimension: electric_potential
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-26T00:00:00Z'
+      literature_check: 'Zhu et al. (2014) Sect. 2.2.1, generalized from Zhang et al.
+        (2002) after Fiedler and Sommer (2000) and Segers (1998): the methanogenesis redox
+        factor is 1 below -200 mV, diminishes linearly from 1 to 0 between -200 and -100 mV,
+        and is 0 above -100 mV.'
+  pedosphere.methane.production.calibrated.eh_zero_activity:
+    value: -100.0
+    units: mV
+    dtype: float32
+    bounds:
+    - -100.0
+    - -100.0
+    category: environmental_response
+    description: Redox potential at and above which the calibrated methane production redox factor is 0
+    references:
+    - Zhu et al. (2014) doi:10.5194/gmd-7-981-2014
+    - Zhang et al. (2002) doi:10.1029/2001GB001838
+    tags:
+    - calibrated_branch
+    - redox
+    dimension: electric_potential
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-26T00:00:00Z'
+      literature_check: 'Zhu et al. (2014) Sect. 2.2.1, generalized from Zhang et al.
+        (2002) after Fiedler and Sommer (2000) and Segers (1998): the methanogenesis redox
+        factor is 1 below -200 mV, diminishes linearly from 1 to 0 between -200 and -100 mV,
+        and is 0 above -100 mV.'
+  pedosphere.methane.oxidation.temperature_base:
+    value: 285.15
+    units: K
+    dtype: float32
+    bounds:
+    - 285.15
+    - 285.15
+    category: temperature_response
+    description: Base temperature of the methane oxidation Q10 factor (12 C)
+    references:
+    - Oleson et al. (2013) CLM4.5 Technical Note NCAR/TN-503+STR
+    - Yue et al. (2024) doi:10.5194/gmd-17-4621-2024
+    tags:
+    - temperature_response
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-26T00:00:00Z'
+      literature_check: 'Oleson et al. (2013) Sect. 19.6: the oxidation Q10 has a base
+        temperature of 12 C (Eq. 19.11); Yue et al. (2024) uses the same T_base = 12 C.'
+  pedosphere.methane.oxidation.q10:
+    value: 1.9
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.5
+    - 3.0
+    category: biological_parameter
+    description: Q10 temperature coefficient for methane oxidation (baseline; the bounds span
+      the Riley et al. (2011) sensitivity values 1.5 to 3)
+    references:
+    - Riley et al. (2011) doi:10.5194/bg-8-1925-2011
+    tags:
+    - temperature_response
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-26T00:00:00Z'
+      literature_check: 'Riley et al. (2011) Sect. 2.7: baseline oxidation Q10 of 1.9 with
+        sensitivity runs at 1.5 and 3; the CLM4.5 Technical Note does not state the value.'
+  pedosphere.methane.oxidation.half_saturation_ch4:
+    value: 0.005
+    units: mol m-3
+    dtype: float32
+    bounds:
+    - 0.0005
+    - 0.05
+    category: biological_parameter
+    description: CH4 half-saturation concentration K_CH4 per water volume for methane oxidation
+      in wetlands (the bounds are the Riley et al. (2011) sensitivity range)
+    references:
+    - Riley et al. (2011) doi:10.5194/bg-8-1925-2011
+    - Oleson et al. (2013) CLM4.5 Technical Note NCAR/TN-503+STR
+    - Walter and Heimann (2000) doi:10.1029/1999GB001204
+    tags:
+    - oxidation
+    - learnable
+    dimension: amount_concentration
+    requires_grad: true
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-26T00:00:00Z'
+      literature_check: 'Riley et al. (2011) Table 1 and Oleson et al. (2013) Table 19.1:
+        K_CH4 = 5e-3 mol m-3 (wetlands), sensitivity range 5e-4 to 5e-2; equal to the 5 umol
+        L-1 of Walter and Heimann (2000) as cited by Yue et al. (2024) and Zhu et al. (2014).'
+  pedosphere.methane.oxidation.maximum_rate:
+    value: 1.25e-05
+    units: mol m-3 s-1
+    dtype: float32
+    bounds:
+    - 1.25e-06
+    - 1.25e-04
+    category: biological_parameter
+    description: Maximum methane oxidation rate R_o,max per soil volume for wetlands (baseline; the bounds are the Riley et al. (2011) sensitivity range)
+    references:
+    - Riley et al. (2011) doi:10.5194/bg-8-1925-2011
+    - Oleson et al. (2013) CLM4.5 Technical Note NCAR/TN-503+STR
+    tags:
+    - oxidation
+    - learnable
+    dimension: amount_volumetric_rate
+    requires_grad: true
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-26T00:00:00Z'
+      literature_check: 'Riley et al. (2011) Table 1 and Oleson et al. (2013) Table 19.1: R_o,max = 1.25e-5 mol m-3 s-1 (wetlands), sensitivity range 1.25e-6 to 1.25e-4.'
+  pedosphere.methane.oxidation.half_saturation_o2:
+    value: 0.02
+    units: mol m-3
+    dtype: float32
+    bounds:
+    - 0.002
+    - 0.2
+    category: biological_parameter
+    description: O2 half-saturation concentration K_O2 per water volume for methane oxidation (the bounds are the Riley et al. (2011) sensitivity range)
+    references:
+    - Riley et al. (2011) doi:10.5194/bg-8-1925-2011
+    - Oleson et al. (2013) CLM4.5 Technical Note NCAR/TN-503+STR
+    tags:
+    - oxidation
+    dimension: amount_concentration
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-26T00:00:00Z'
+      literature_check: 'Riley et al. (2011) Table 1 and Oleson et al. (2013) Table 19.1: K_O2 = 2e-2 mol m-3, sensitivity range 2e-3 to 2e-1.'
+  pedosphere.methane.transport.diffusivity_air:
+    value: 1.8e-05
+    units: m2 s-1
+    dtype: float32
+    bounds:
+    - 1.0e-05
+    - 3.0e-05
+    category: physical_parameter
+    description: Methane molecular diffusivity in air at 25 Celsius
+    references:
+    - Zhuang et al. (2004) doi:10.1029/2004GB002239
+    - Yue et al. (2024) doi:10.5194/gmd-17-4621-2024, Eq. 42
+    - Millington and Quirk (1961) Trans Faraday Soc 57:1200-1207
+    tags:
+    - diffusion
+    - constant
+    dimension: diffusivity
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-30T00:00:00Z'
+  pedosphere.methane.transport.diffusivity_water:
+    value: 2.0e-09
+    units: m2 s-1
+    dtype: float32
+    bounds:
+    - 1.0e-09
+    - 5.0e-09
+    category: physical_parameter
+    description: Methane molecular diffusivity in water
+    references:
+    - Zhuang et al. (2004) doi:10.1029/2004GB002239
+    - Yue et al. (2024) doi:10.5194/gmd-17-4621-2024, Eq. 42
+    tags:
+    - diffusion
+    dimension: diffusivity
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-30T00:00:00Z'
+  pedosphere.methane.transport.tortuosity_factor:
+    value: 0.66
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 0.8
+    category: physical_parameter
+    description: Soil gas tortuosity factor for effective methane diffusion
+    references:
+    - Millington and Quirk (1961) Trans Faraday Soc 57:1200-1207
+    tags:
+    - diffusion
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-30T00:00:00Z'
+  pedosphere.methane.transport.bubble_threshold_concentration:
+    value: 0.5
+    units: mol m-3
+    dtype: float32
+    bounds:
+    - 0.1
+    - 1.0
+    category: physical_parameter
+    description: Calibratable dissolved methane concentration threshold for ebullition release
+    references:
+    - Walter and Heimann (2000) doi:10.1029/1999GB001204
+    - Yue et al. (2024) doi:10.5194/gmd-17-4621-2024
+    - Biogeochemistry (2010) Section 7 soil methane emissions
+    tags:
+    - ebullition
+    - learnable
+    dimension: amount_concentration
+    requires_grad: true
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-30T00:00:00Z'
+  pedosphere.methane.transport.ebullition_timescale:
+    value: 86400.0
+    units: s
+    dtype: float32
+    bounds:
+    - 3600.0
+    - 172800.0
+    category: numerical_parameter
+    description: Calibratable characteristic timescale for ebullition venting of excess methane
+    references:
+    - Walter and Heimann (2000) doi:10.1029/1999GB001204
+    - Yue et al. (2024) doi:10.5194/gmd-17-4621-2024
+    tags:
+    - ebullition
+    - numerical
+    dimension: time
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-30T00:00:00Z'
+  pedosphere.methane.transport.plant_conductivity:
+    value: 1.0e-07
+    units: m2 s-1
+    dtype: float32
+    bounds:
+    - 1.0e-08
+    - 1.0e-06
+    category: biological_parameter
+    description: Plant aerenchyma conductivity for methane transport
+    references:
+    - Zhang et al. (2002) doi:10.1029/2001GB001838
+    - Chanton et al. (1992) doi:10.1029/91GB02969
+    tags:
+    - plant_transport
+    - learnable
+    dimension: diffusivity
+    requires_grad: true
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-30T00:00:00Z'
+  pedosphere.methane.transport.aerenchyma_fraction:
+    value: 0.3
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 0.6
+    category: biological_parameter
+    description: Fraction of root volume with aerenchyma tissue
+    references:
+    - Zhu et al. (2014) doi:10.5194/gmd-7-981-2014
+    tags:
+    - plant_transport
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-30T00:00:00Z'
+  pedosphere.methane.transport.root_oxidation_fraction:
+    value: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.2
+    - 0.9
+    category: biological_parameter
+    description: Fraction of methane oxidized within the root zone along plant pathway
+    references:
+    - Chanton et al. (1992) doi:10.1029/91GB02969
+    - Yue et al. (2024) doi:10.5194/gmd-17-4621-2024
+    tags:
+    - plant_transport
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-30T00:00:00Z'
+  pedosphere.methane.transport.layer_mixing_depth:
+    value: 0.05
+    units: m
+    dtype: float32
+    bounds:
+    - 0.01
+    - 0.2
+    category: physical_parameter
+    description: Calibratable representative mixing depth for methane transport calculations
+    references:
+    - Walter and Heimann (2000) doi:10.1029/1999GB001204
+    - Zhuang et al. (2004) doi:10.1029/2004GB002239
+    tags:
+    - transport
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-30T00:00:00Z'
+  pedosphere.methane.numerical.default_flux_rate:
+    value: 0.0
+    units: g C m-2 s-1
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0e+06
+    category: numerical_parameter
+    description: Default methane flux rate used when state values are missing.
+    references:
+    - Model initialization protocol
+    tags:
+    - default
+    - initialization
+    - flux
+    dimension: mass_flux
+    requires_grad: false
+    provenance:
+      source: model initialization
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-03T00:00:00Z'
+  pedosphere.methane.numerical.default_storage:
+    value: 0.0
+    units: g C m-2
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0e+06
+    category: numerical_parameter
+    description: Default methane soil storage used when state values are missing.
+    references:
+    - Model initialization protocol
+    tags:
+    - default
+    - initialization
+    - storage
+    dimension: mass_areal_density
+    requires_grad: false
+    provenance:
+      source: model initialization
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-03T00:00:00Z'
+  pedosphere.methane.conservation.relative_tolerance:
+    value: 1.0e-08
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-10
+    - 1.0e-06
+    category: numerical_parameter
+    description: Relative tolerance for methane mass balance conservation
+    references:
+    - Yue et al. (2024) doi:10.5194/gmd-17-4621-2024
+    tags:
+    - conservation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-30T00:00:00Z'
+  pedosphere.methane.conservation.absolute_tolerance:
+    value: 1.0e-07
+    units: g C m-2 s-1
+    dtype: float32
+    bounds:
+    - 1.0e-09
+    - 1.0e-05
+    category: numerical_parameter
+    description: Absolute tolerance for methane carbon mass balance in runtime flux units
+    references:
+    - Yue et al. (2024) doi:10.5194/gmd-17-4621-2024
+    tags:
+    - conservation
+    dimension: mass_flux
+    requires_grad: false
+    provenance:
+      source: model
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-30T00:00:00Z'
+  pedosphere.methane.scales.gating.default_weight:
+    value: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: numerical_parameter
+    description: Default gating weight when scale-based methane gating is unavailable
+    references:
+    - Hybrid methane scheme design
+    tags:
+    - moe
+    - default
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-30T00:00:00Z'
+  pedosphere.methane.scales.gating.alpha_wetland:
+    value: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: numerical_parameter
+    description: Weight of wetland fraction in hybrid mode gating
+    references:
+    - Hybrid methane scheme design
+    tags:
+    - moe
+    - learnable
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: model
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-30T00:00:00Z'
+  pedosphere.methane.scales.gating.alpha_wfps:
+    value: 0.3
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: numerical_parameter
+    description: Weight of water-filled pore space in hybrid mode gating
+    references:
+    - Hybrid methane scheme design
+    tags:
+    - moe
+    - learnable
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: model
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-30T00:00:00Z'
+  pedosphere.methane.scales.gating.alpha_data_score:
+    value: 0.2
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: numerical_parameter
+    description: Weight of data availability score in hybrid gating
+    references:
+    - Hybrid methane scheme design
+    tags:
+    - moe
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-30T00:00:00Z'
+  pedosphere.methane.scales.gating.threshold:
+    value: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.3
+    - 0.7
+    category: numerical_parameter
+    description: Threshold for gating between the iMAPLE and calibrated methane branches
+    references:
+    - Hybrid methane scheme design
+    tags:
+    - moe
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-30T00:00:00Z'

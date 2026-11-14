@@ -1,0 +1,62 @@
+variable: wind_speed
+title: "Wind Speed"
+description: "Magnitude |U| of the horizontal wind at the reference height (m s-1), read by atmospheric_turbulence (MOST friction velocity and the surface-layer momentum-port effort) and penman_monteith_et (FAO-56 logarithmic-profile aerodynamic conductance). Non-negative magnitude without direction. No relic Functor writes it: it is supplied as forcing (external adapters map CESM U10, CMIP sfcWind and VIC WIND to wind_speed); CF v94 wind_speed (m s-1)."
+kind: forcing
+dimension:
+  udunits: "m s-1"
+  cf_standard_name: "wind_speed"
+support:
+  spatial_kind: grid_cell
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "CF Standard Name Table v94: wind_speed (canonical units m s-1)"
+  - "Monin, A.S. and Obukhov, A.M. (1954). Basic laws of turbulent mixing in the surface layer of the atmosphere. Tr. Akad. Nauk SSSR Geofiz. Inst. 24(151), 163-187"
+  - "Allen, R.G. et al. (1998). Crop evapotranspiration. FAO Irrigation and Drainage Paper 56"
+numerics:
+  # Sign convention: wind speed is the magnitude |U| >= 0 of the horizontal
+  # wind vector and carries no direction; only the lower bound is physical
+  # (atmospheric_turbulence rejects negative values, turbulence.py:830).
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "CESMAdapter"
+      module: "relic.coupling.external.atmospheric_models.cesm_adapter"
+      provides: ["wind_speed"]
+      unit: "m s-1"
+    - name: "CMIP6Adapter"
+      module: "relic.coupling.external.climate_models.cmip6_adapter"
+      provides: ["wind_speed"]
+      unit: "m s-1"
+    - name: "VICAdapter"
+      module: "relic.coupling.external.hydrological_models.vic_adapter"
+      provides: ["wind_speed"]
+      unit: "m s-1"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/atmosphere/turbulence.py"
+  runtime_role: "external_wind_speed_forcing"
+  runtime_writer: null
+  note: "No RELIC Functor writes wind_speed; it is supplied as forcing (relic/coupling/external/common/schema.py:296,335,360 map U10, sfcWind and WIND [m s-1]). Readers: atmospheric_turbulence input_variables (relic/scientific/atmosphere/turbulence.py:207, non-negative check :830, momentum-port effort in m s-1 :620,639) and penman_monteith_et input_variables (relic/scientific/hydrosphere/evapotranspiration/penman_monteith.py:186, read in m s-1 :728)."
+  adapter_writers:
+    - "CESMAdapter"
+    - "CMIP6Adapter"
+    - "VICAdapter"

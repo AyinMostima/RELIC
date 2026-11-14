@@ -1,0 +1,570 @@
+﻿schema_version: 2.0.0
+tier: relic
+namespace: pedosphere.stoichiometry
+description: Stoichiometric ratios and conversion factors for carbon, nitrogen, and phosphorus cycling in soil organic matter
+  pools
+metadata:
+  created_by: RELIC Refactoring Phase 2
+  last_modified: '2025-10-06T00:00:00Z'
+  references:
+  - DOI:10.1111/j.1365-2486.2007.01386.x (Cleveland & Liptzin 2007 global patterns)
+  - DOI:10.1002/andp.19023130202 (Redfield 1934)
+  - Sterner & Elser (2002) Ecological Stoichiometry
+  - DOI:10.1046/j.1365-2486.2003.00696.x (Katterer et al. 2003)
+  version: 1.0.0
+parameters:
+  pedosphere.stoichiometry.metabolic_litter_cn:
+    value: 15.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 10.0
+    - 25.0
+    category: litter_stoichiometry
+    description: C:N ratio of metabolic litter (low lignin, high quality plant material like leaves and fine roots)
+    references:
+    - DOI:10.2136/sssaj1988.03615995005200030009x
+    tags:
+    - stoichiometry
+    - metabolic_litter
+    - cn_ratio
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: CENTURY model default values
+      schema_version: 2.0.0
+      created_by: literature_derived
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.stoichiometry.structural_litter_cn:
+    value: 40.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 25.0
+    - 60.0
+    category: litter_stoichiometry
+    description: C:N ratio of structural litter (high lignin, low quality woody material)
+    references:
+    - DOI:10.2136/sssaj1988.03615995005200030009x
+    tags:
+    - stoichiometry
+    - structural_litter
+    - cn_ratio
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: CENTURY model default values
+      schema_version: 2.0.0
+      created_by: literature_derived
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.stoichiometry.metabolic_litter_cp:
+    value: 200.0
+    default: 200.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 100.0
+    - 400.0
+    category: litter_stoichiometry
+    description: C:P ratio of metabolic litter
+    references:
+    - DOI:10.1111/j.1365-2486.2007.01386.x
+    tags:
+    - stoichiometry
+    - metabolic_litter
+    - cp_ratio
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Cleveland & Liptzin 2007 global analysis
+      schema_version: 2.0.0
+      created_by: literature_derived
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.stoichiometry.structural_litter_cp:
+    value: 500.0
+    default: 500.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 300.0
+    - 800.0
+    category: litter_stoichiometry
+    description: C:P ratio of structural litter
+    references:
+    - DOI:10.1111/j.1365-2486.2007.01386.x
+    tags:
+    - stoichiometry
+    - structural_litter
+    - cp_ratio
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Cleveland & Liptzin 2007 global analysis
+      schema_version: 2.0.0
+      created_by: literature_derived
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.stoichiometry.fast_som_cn:
+    value: 12.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 8.0
+    - 20.0
+    category: som_stoichiometry
+    description: C:N ratio of fast (active) soil organic matter pool
+    references:
+    - DOI:10.2136/sssaj1988.03615995005200030009x
+    tags:
+    - stoichiometry
+    - fast_som
+    - cn_ratio
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: CENTURY model default values
+      schema_version: 2.0.0
+      created_by: literature_derived
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.stoichiometry.slow_som_cn:
+    value: 20.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 12.0
+    - 30.0
+    category: som_stoichiometry
+    description: C:N ratio of slow (protected) soil organic matter pool - CORRECTED to match CENTURY model standard (Parton
+      et al. 1987)
+    references:
+    - Parton et al. (1987) CENTURY model doi:10.2136/sssaj1987.03615995005100010015x
+    - DOI:10.2136/sssaj1988.03615995005200030009x
+    tags:
+    - stoichiometry
+    - slow_som
+    - cn_ratio
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: CENTURY model parameterization (corrected from 15.0 to 20.0 in Phase 6.4)
+      schema_version: 2.0.0
+      created_by: literature_derived
+      last_modified: '2025-10-07T00:00:00Z'
+    notes: 'Phase 6.4 P0 fix: Changed from 15.0 to 20.0 to align with decomposition.yaml:536 and CENTURY model standard'
+  pedosphere.stoichiometry.passive_som_cn:
+    value: 25.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 15.0
+    - 35.0
+    category: som_stoichiometry
+    description: 'C:N ratio of passive (recalcitrant) soil organic matter pool - CRITICAL FIX: Corrected to CENTURY model
+      standard'
+    references:
+    - Parton et al. (1987) CENTURY model doi:10.2136/sssaj1987.03615995005100010015x
+    - Trumbore (2000) Radiocarbon evidence doi:10.1016/S0921-8181(99)00073-1
+    - DOI:10.2136/sssaj1988.03615995005200030009x
+    tags:
+    - stoichiometry
+    - passive_som
+    - cn_ratio
+    - stable
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: CENTURY model parameterization (corrected from 12.0 to 25.0 in Phase 6.4)
+      schema_version: 2.0.0
+      created_by: literature_derived
+      last_modified: '2025-10-07T00:00:00Z'
+    notes: 'Phase 6.4 P0 CRITICAL fix: Changed from 12.0 to 25.0 (108% error). Previous value would cause massive nitrogen
+      conservation violations in passive SOM decomposition'
+  pedosphere.stoichiometry.fast_som_cp:
+    value: 150.0
+    default: 150.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 100.0
+    - 300.0
+    category: som_stoichiometry
+    description: C:P ratio of fast soil organic matter pool
+    references:
+    - DOI:10.1111/j.1365-2486.2007.01386.x
+    tags:
+    - stoichiometry
+    - fast_som
+    - cp_ratio
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Cleveland & Liptzin 2007
+      schema_version: 2.0.0
+      created_by: literature_derived
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.stoichiometry.slow_som_cp:
+    value: 200.0
+    default: 200.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 120.0
+    - 400.0
+    category: som_stoichiometry
+    description: C:P ratio of slow soil organic matter pool
+    references:
+    - DOI:10.1111/j.1365-2486.2007.01386.x
+    tags:
+    - stoichiometry
+    - slow_som
+    - cp_ratio
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Cleveland & Liptzin 2007
+      schema_version: 2.0.0
+      created_by: literature_derived
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.stoichiometry.passive_som_cp:
+    value: 180.0
+    default: 180.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 100.0
+    - 300.0
+    category: som_stoichiometry
+    description: C:P ratio of passive soil organic matter pool
+    references:
+    - DOI:10.1111/j.1365-2486.2007.01386.x
+    tags:
+    - stoichiometry
+    - passive_som
+    - cp_ratio
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Cleveland & Liptzin 2007
+      schema_version: 2.0.0
+      created_by: literature_derived
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.stoichiometry.microbial_biomass_cn:
+    value: 8.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 6.0
+    - 12.0
+    category: microbial_stoichiometry
+    description: C:N ratio of microbial biomass (relatively constant across ecosystems)
+    references:
+    - DOI:10.1111/j.1365-2486.2007.01386.x
+    tags:
+    - stoichiometry
+    - microbial_biomass
+    - cn_ratio
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Cleveland & Liptzin 2007 global mean
+      schema_version: 2.0.0
+      created_by: literature_derived
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.stoichiometry.microbial_biomass_cp:
+    value: 60.0
+    default: 60.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 40.0
+    - 100.0
+    category: microbial_stoichiometry
+    description: C:P ratio of microbial biomass
+    references:
+    - DOI:10.1111/j.1365-2486.2007.01386.x
+    tags:
+    - stoichiometry
+    - microbial_biomass
+    - cp_ratio
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Cleveland & Liptzin 2007 global mean
+      schema_version: 2.0.0
+      created_by: literature_derived
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.stoichiometry.microbial_biomass_np:
+    value: 7.5
+    default: 7.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 5.0
+    - 12.0
+    category: microbial_stoichiometry
+    description: N:P ratio of microbial biomass (derived from C:N and C:P)
+    references:
+    - DOI:10.1111/j.1365-2486.2007.01386.x
+    tags:
+    - stoichiometry
+    - microbial_biomass
+    - np_ratio
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Calculated from C:N=8 and C:P=60
+      schema_version: 2.0.0
+      created_by: literature_derived
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.stoichiometry.cn_mineralization_threshold:
+    value: 25.0
+    default: 25.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 20.0
+    - 35.0
+    category: threshold
+    description: 'Critical C:N ratio threshold: below this net N mineralization, above this net N immobilization'
+    references:
+    - DOI:10.2136/sssaj1988.03615995005200030009x
+    tags:
+    - stoichiometry
+    - threshold
+    - mineralization
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: CENTURY model parameterization
+      schema_version: 2.0.0
+      created_by: literature_derived
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.stoichiometry.cp_mineralization_threshold:
+    value: 200.0
+    default: 200.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 150.0
+    - 300.0
+    category: threshold
+    description: Critical C:P ratio threshold for phosphorus mineralization vs immobilization
+    references:
+    - DOI:10.1046/j.1365-2486.2003.00696.x
+    tags:
+    - stoichiometry
+    - threshold
+    - phosphorus
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Empirical literature
+      schema_version: 2.0.0
+      created_by: literature_derived
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.stoichiometry.lignin_n_ratio_low:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.05
+    - 0.2
+    category: quality_index
+    description: Low lignin:N ratio threshold for metabolic litter classification
+    references:
+    - DOI:10.2136/sssaj1988.03615995005200030009x
+    tags:
+    - stoichiometry
+    - quality
+    - lignin
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: CENTURY model litter partitioning
+      schema_version: 2.0.0
+      created_by: literature_derived
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.stoichiometry.lignin_n_ratio_high:
+    value: 0.45
+    default: 0.45
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.3
+    - 0.7
+    category: quality_index
+    description: High lignin:N ratio threshold for structural litter classification
+    references:
+    - DOI:10.2136/sssaj1988.03615995005200030009x
+    tags:
+    - stoichiometry
+    - quality
+    - lignin
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: CENTURY model litter partitioning
+      schema_version: 2.0.0
+      created_by: literature_derived
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.stoichiometry.n_to_protein_factor:
+    value: 6.25
+    default: 6.25
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 5.0
+    - 7.0
+    category: conversion_factor
+    description: Conversion factor from nitrogen to protein content (Jones factor)
+    references:
+    - Standard biochemistry conversion
+    tags:
+    - conversion
+    - nitrogen
+    - protein
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Jones factor (standard biochemistry)
+      schema_version: 2.0.0
+      created_by: standard_value
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.stoichiometry.organic_matter_to_carbon:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.45
+    - 0.58
+    category: conversion_factor
+    description: Conversion factor from soil organic matter to organic carbon (mass fraction)
+    references:
+    - Standard soil science conversion
+    tags:
+    - conversion
+    - organic_matter
+    - carbon
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Standard soil science (Waksman factor ~0.5-0.58)
+      schema_version: 2.0.0
+      created_by: standard_value
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.stoichiometry.cellulose_fraction:
+    value: 0.3
+    default: 0.3
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.2
+    - 0.5
+    category: litter_composition
+    description: Typical cellulose fraction in plant litter (mass basis)
+    references:
+    - Plant biomass composition
+    tags:
+    - composition
+    - cellulose
+    - litter
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Typical plant biomass composition
+      schema_version: 2.0.0
+      created_by: literature_derived
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.stoichiometry.lignin_fraction:
+    value: 0.2
+    default: 0.2
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 0.4
+    category: litter_composition
+    description: Typical lignin fraction in plant litter (mass basis)
+    references:
+    - Plant biomass composition
+    tags:
+    - composition
+    - lignin
+    - litter
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Typical plant biomass composition
+      schema_version: 2.0.0
+      created_by: literature_derived
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.stoichiometry.redfield_cn_ratio:
+    value: 6.625
+    default: 6.625
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 6.0
+    - 7.0
+    category: reference_ratio
+    description: Redfield C:N ratio from marine systems (106:16 molar basis, reference for comparison)
+    references:
+    - DOI:10.1002/andp.19023130202
+    tags:
+    - reference
+    - redfield
+    - marine
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Redfield 1934 classical ratio
+      schema_version: 2.0.0
+      created_by: historical_reference
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.stoichiometry.redfield_cp_ratio:
+    value: 106.0
+    default: 106.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 100.0
+    - 120.0
+    category: reference_ratio
+    description: Redfield C:P ratio from marine systems (106:1 molar basis, reference for comparison)
+    references:
+    - DOI:10.1002/andp.19023130202
+    tags:
+    - reference
+    - redfield
+    - marine
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Redfield 1934 classical ratio
+      schema_version: 2.0.0
+      created_by: historical_reference
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.stoichiometry.redfield_np_ratio:
+    value: 16.0
+    default: 16.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 14.0
+    - 18.0
+    category: reference_ratio
+    description: Redfield N:P ratio from marine systems (16:1 molar basis, reference for comparison)
+    references:
+    - DOI:10.1002/andp.19023130202
+    tags:
+    - reference
+    - redfield
+    - marine
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Redfield 1934 classical ratio
+      schema_version: 2.0.0
+      created_by: historical_reference
+      last_modified: '2025-10-06T00:00:00Z'

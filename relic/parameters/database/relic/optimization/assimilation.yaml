@@ -1,0 +1,219 @@
+schema_version: 2.0.0
+tier: relic
+namespace: optimization.assimilation
+description: Numerical settings of the EnKF and 3D-Var assimilators (relic.optimization.assimilation) used when a
+  configuration does not state them
+metadata:
+  version: 1.0.0
+  created_by: relic
+  last_modified: '2026-09-26T00:00:00Z'
+parameters:
+  optimization.assimilation.ensemble_size:
+    value: 50
+    default: 50
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 2
+    - 100000
+    category: numerical_parameter
+    description: Number of ensemble members N of AssimilationConfig when the configuration gives none. The EnKF
+      represents the forecast error covariance by N members (Evensen 2003); the sampling error decreases with N. The
+      value 50 is a RELIC convention value (no literature value is claimed).
+    references:
+    - 'Evensen, G. (2003). The Ensemble Kalman Filter: theoretical formulation and practical implementation. Ocean Dyn.
+      53, 343-367 (method; not the source of the value)'
+    - RELIC convention value (documented as an operational choice)
+    tags:
+    - optimization
+    - assimilation
+    - ensemble
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  optimization.assimilation.enkf.parameter_perturbation_std:
+    value: 0.05
+    default: 0.05
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 10.0
+    category: numerical_parameter
+    description: Relative standard deviation of the initial parameter perturbations of EnsembleKalmanFilter
+      (perturbation = xi * s * |theta|, xi ~ N(0, 1), s this value) when parameter_perturbation is enabled. The value 0.05
+      is a RELIC convention value.
+    references:
+    - Evensen, G. (2003). Ocean Dyn. 53, 343-367 (ensemble initialization; not the source of the value)
+    - RELIC convention value (documented as an operational choice)
+    tags:
+    - optimization
+    - assimilation
+    - enkf
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  optimization.assimilation.enkf.covariance_inflation:
+    value: 1.02
+    default: 1.02
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 1.0e-06
+    - 10.0
+    category: numerical_parameter
+    description: Multiplicative inflation factor lambda of the EnKF analysis anomalies (A_a <- lambda A_a), which
+      counteracts the spread loss of a finite ensemble (multiplicative inflation, Anderson and Anderson 1999). The value
+      1.02 is a RELIC convention value; the appropriate factor depends on the system and the ensemble size.
+    references:
+    - Anderson, J.L. & Anderson, S.L. (1999). A Monte Carlo implementation of the nonlinear filtering problem to produce
+      ensemble assimilations and forecasts. Mon. Wea. Rev. 127, 2741-2758 (method; not the source of the value)
+    - RELIC convention value (documented as an operational choice)
+    tags:
+    - optimization
+    - assimilation
+    - enkf
+    - inflation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  optimization.assimilation.enkf.regularization:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1.0
+    category: numerical_parameter
+    description: Diagonal term r of the EnKF innovation covariance (N - 1)^-1 (HA)(HA)^T + R + r I, in the squared units
+      of the observations; it keeps the matrix solve well posed for a nearly singular R. 0 disables it. The value 1e-6 is
+      a RELIC convention value.
+    references:
+    - Evensen, G. (2003). Ocean Dyn. 53, 343-367 (ensemble-space gain)
+    - RELIC convention value (documented as an operational choice)
+    tags:
+    - optimization
+    - assimilation
+    - enkf
+    - regularization
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  optimization.assimilation.variational.max_iterations:
+    value: 100
+    default: 100
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 1000000
+    category: numerical_parameter
+    description: Maximum number of steepest-descent iterations of the 3D-Var minimizer of J(x). The value 100 is a RELIC
+      convention value.
+    references:
+    - Talagrand, O. & Courtier, P. (1987). Variational assimilation of meteorological observations with the adjoint
+      vorticity equation. I. Q. J. R. Meteorol. Soc. 113, 1311-1328 (cost function; not the source of the value)
+    - RELIC convention value (documented as an operational choice)
+    tags:
+    - optimization
+    - assimilation
+    - variational
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  optimization.assimilation.variational.convergence_tolerance:
+    value: 1.0e-04
+    default: 1.0e-04
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1.0
+    category: numerical_parameter
+    description: Tolerance of the 3D-Var stopping test on the gradient norm of J (in the units of J per state unit). The
+      value 1e-4 is a RELIC convention value.
+    references:
+    - Nocedal, J. & Wright, S.J. (2006). Numerical Optimization, 2nd ed., Springer, ch. 3 (gradient-based stopping)
+    - RELIC convention value (documented as an operational choice)
+    tags:
+    - optimization
+    - assimilation
+    - variational
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  optimization.assimilation.variational.gradient_step_size:
+    value: 0.01
+    default: 0.01
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 1.0e-12
+    - 1000.0
+    category: numerical_parameter
+    description: Step s of the 3D-Var steepest descent x <- x - s grad J (halved after an iteration whose cost increased).
+      The value 0.01 is a RELIC convention value.
+    references:
+    - Nocedal, J. & Wright, S.J. (2006). Numerical Optimization, 2nd ed., Springer, ch. 3 (steepest descent)
+    - RELIC convention value (documented as an operational choice)
+    tags:
+    - optimization
+    - assimilation
+    - variational
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  optimization.assimilation.variational.background_error_scale:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 1.0e-12
+    - 1000000.0
+    category: numerical_parameter
+    description: Scale sigma_b of the 3D-Var background error covariance (B^-1 is divided by sigma_b^2). 1.0 leaves the
+      supplied B unchanged; it is a RELIC convention value.
+    references:
+    - Talagrand, O. & Courtier, P. (1987). Q. J. R. Meteorol. Soc. 113, 1311-1328 (background term of J)
+    - RELIC convention value (documented as an operational choice)
+    tags:
+    - optimization
+    - assimilation
+    - variational
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'

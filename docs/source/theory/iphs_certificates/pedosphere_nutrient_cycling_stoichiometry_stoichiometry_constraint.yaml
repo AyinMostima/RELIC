@@ -1,0 +1,195 @@
+{
+  "certificate_version": "1.0",
+  "process_id": "relic.scientific.pedosphere.nutrient_cycling.stoichiometry.StoichiometryConstraint",
+  "module_name": "StoichiometryConstraint",
+  "canonical_role": "observation",
+  "iphs_level": 1,
+  "iphs_level_evidence": {
+    "classification": "IPHS-compatible diagnostic or observation certificate",
+    "compatible_basis": "Read-only observation or diagnostic contract with declared interface and no state ownership"
+  },
+  "theory_document": "docs\\source\\theory\\stoichiometry_constraint.md",
+  "theory_document_status": "updated",
+  "legacy_formula": "C/N balance with mass conservation",
+  "literature_formula": "C/N balance with mass conservation",
+  "iphs_formula": "y_h = O_h x_h through the declared observation operator",
+  "legacy_expression": "C/N balance with mass conservation",
+  "iphs_expression": "y_h = O_h x_h through the declared observation operator",
+  "input_variables": [
+    "diagnostics.carbon_fluxes",
+    "diagnostics.nitrogen_fluxes",
+    "diagnostics.carbon_inputs",
+    "diagnostics.nitrogen_inputs",
+    "diagnostics.carbon_outputs",
+    "diagnostics.nitrogen_outputs"
+  ],
+  "output_variables": [
+    "diagnostics.stoichiometry_mass_balance_error_carbon",
+    "diagnostics.stoichiometry_mass_balance_error_nitrogen",
+    "diagnostics.stoichiometry_mass_balance_error_total",
+    "diagnostics.stoichiometry_constraint_violations_count"
+  ],
+  "parameter_keys": [
+    "pedosphere.stoichiometry.microbial_biomass_cn",
+    "pedosphere.stoichiometry.metabolic_litter_cn",
+    "pedosphere.stoichiometry.structural_litter_cn",
+    "pedosphere.stoichiometry.fast_som_cn",
+    "pedosphere.stoichiometry.slow_som_cn",
+    "pedosphere.stoichiometry.passive_som_cn",
+    "pedosphere.numerical.stoichiometric_flexibility",
+    "pedosphere.numerical.stoichiometric_correction_strength"
+  ],
+  "composition_ports": [
+    "phase8_runtime_port"
+  ],
+  "references": [
+    "Manzoni, S. & Porporato, A. (2009). Substrate-decomposer stoichiometry",
+    "Cleveland, C.C. & Liptzin, D. (2007). C:N:P stoichiometry in soil",
+    "Theory doc: docs/source/theory/stoichiometry_constraint.md"
+  ],
+  "baseline_tests": [
+    "test\\pedosphere\\nutrient_cycling\\test_stoichiometry.py",
+    "test\\audit\\phase8_scientific_inventory.test.py"
+  ],
+  "validation_tests": [
+    "test\\pedosphere\\nutrient_cycling\\test_stoichiometry.py",
+    "test\\audit\\phase8_scientific_inventory.test.py"
+  ],
+  "state_map": {
+    "diagnostics.carbon_fluxes": "diagnostics.carbon_fluxes mapped to canonical Phase 8 cochain basis",
+    "diagnostics.nitrogen_fluxes": "diagnostics.nitrogen_fluxes mapped to canonical Phase 8 cochain basis",
+    "diagnostics.carbon_inputs": "diagnostics.carbon_inputs mapped to canonical Phase 8 cochain basis",
+    "diagnostics.nitrogen_inputs": "diagnostics.nitrogen_inputs mapped to canonical Phase 8 cochain basis",
+    "diagnostics.carbon_outputs": "diagnostics.carbon_outputs mapped to canonical Phase 8 cochain basis",
+    "diagnostics.nitrogen_outputs": "diagnostics.nitrogen_outputs mapped to canonical Phase 8 cochain basis"
+  },
+  "parameter_map": {
+    "pedosphere.stoichiometry.microbial_biomass_cn": "C:N ratio of microbial biomass [dimensionless]",
+    "pedosphere.stoichiometry.metabolic_litter_cn": "C:N ratio of metabolic litter [dimensionless]",
+    "pedosphere.stoichiometry.structural_litter_cn": "C:N ratio of structural litter [dimensionless]",
+    "pedosphere.stoichiometry.fast_som_cn": "C:N ratio of the fast soil organic matter pool [dimensionless]",
+    "pedosphere.stoichiometry.slow_som_cn": "C:N ratio of the slow soil organic matter pool [dimensionless]",
+    "pedosphere.stoichiometry.passive_som_cn": "C:N ratio of the passive soil organic matter pool [dimensionless]",
+    "pedosphere.numerical.stoichiometric_flexibility": "Allowed relative deviation from the target C:N ratios [dimensionless]",
+    "pedosphere.numerical.stoichiometric_correction_strength": "Strength of the stoichiometric correction (0 none, 1 full) [dimensionless]"
+  },
+  "operator_map": {
+    "O_h": "declared observation map",
+    "H_h": "diagnostic metric or identity Hodge map"
+  },
+  "unit_map": {
+    "diagnostics.stoichiometry_mass_balance_error_carbon": "g C m-2",
+    "diagnostics.stoichiometry_mass_balance_error_nitrogen": "g N m-2",
+    "diagnostics.stoichiometry_mass_balance_error_total": "dimensionless",
+    "diagnostics.stoichiometry_constraint_violations_count": "dimensionless"
+  },
+  "input_output_map": {
+    "diagnostics.carbon_fluxes": "same interface variable preserved between legacy and IPHS runtime contracts",
+    "diagnostics.carbon_inputs": "same interface variable preserved between legacy and IPHS runtime contracts",
+    "diagnostics.carbon_outputs": "same interface variable preserved between legacy and IPHS runtime contracts",
+    "diagnostics.nitrogen_fluxes": "same interface variable preserved between legacy and IPHS runtime contracts",
+    "diagnostics.nitrogen_inputs": "same interface variable preserved between legacy and IPHS runtime contracts",
+    "diagnostics.nitrogen_outputs": "same interface variable preserved between legacy and IPHS runtime contracts",
+    "diagnostics.stoichiometry_constraint_violations_count": "same interface variable preserved between legacy and IPHS runtime contracts",
+    "diagnostics.stoichiometry_mass_balance_error_carbon": "same interface variable preserved between legacy and IPHS runtime contracts",
+    "diagnostics.stoichiometry_mass_balance_error_nitrogen": "same interface variable preserved between legacy and IPHS runtime contracts",
+    "diagnostics.stoichiometry_mass_balance_error_total": "same interface variable preserved between legacy and IPHS runtime contracts"
+  },
+  "interface_map": {
+    "forward_signature": "forward(self, state, time, dt)",
+    "bridge_class": "ScaleCoupling",
+    "abstraction_contract": "ScaleCoupling",
+    "state_write_mode": "existing RELIC simulator and StateManager update path",
+    "legacy_inputs": [
+      "diagnostics.carbon_fluxes",
+      "diagnostics.nitrogen_fluxes",
+      "diagnostics.carbon_inputs",
+      "diagnostics.nitrogen_inputs",
+      "diagnostics.carbon_outputs",
+      "diagnostics.nitrogen_outputs"
+    ],
+    "iphs_inputs": [
+      "diagnostics.carbon_fluxes",
+      "diagnostics.nitrogen_fluxes",
+      "diagnostics.carbon_inputs",
+      "diagnostics.nitrogen_inputs",
+      "diagnostics.carbon_outputs",
+      "diagnostics.nitrogen_outputs"
+    ],
+    "legacy_outputs": [
+      "diagnostics.stoichiometry_mass_balance_error_carbon",
+      "diagnostics.stoichiometry_mass_balance_error_nitrogen",
+      "diagnostics.stoichiometry_mass_balance_error_total",
+      "diagnostics.stoichiometry_constraint_violations_count"
+    ],
+    "iphs_outputs": [
+      "diagnostics.stoichiometry_mass_balance_error_carbon",
+      "diagnostics.stoichiometry_mass_balance_error_nitrogen",
+      "diagnostics.stoichiometry_mass_balance_error_total",
+      "diagnostics.stoichiometry_constraint_violations_count"
+    ]
+  },
+  "runtime_replacement_map": {
+    "runtime_uses_iphs": false,
+    "legacy_removed": false,
+    "replacement_entrypoint": "forward",
+    "preserved_numerics": "Existing ParameterManager-backed calculations define canonical IPHS operator coefficients, rates, ports, or observations.",
+    "no_legacy_mode": "No selectable legacy runtime branch is exposed for Phase 8 completion."
+  },
+  "state_advancement_map": {
+    "potential_basis": "declared RELIC state, port, or observation cochain basis",
+    "effort_variable": "ParameterManager-backed thermodynamic effort, driver, or diagnostic input used by the module",
+    "state_advancer": "y_h = O_h x_h through the declared observation operator",
+    "runtime_usage": "StoichiometryConstraint.forward applies the canonical observation or diagnostic operator and emits validation diagnostics through the production output path."
+  },
+  "parameter_management_map": {
+    "pedosphere.stoichiometry.microbial_biomass_cn": {
+      "source": "ParameterManager YAML"
+    },
+    "pedosphere.stoichiometry.metabolic_litter_cn": {
+      "source": "ParameterManager YAML"
+    },
+    "pedosphere.stoichiometry.structural_litter_cn": {
+      "source": "ParameterManager YAML"
+    },
+    "pedosphere.stoichiometry.fast_som_cn": {
+      "source": "ParameterManager YAML"
+    },
+    "pedosphere.stoichiometry.slow_som_cn": {
+      "source": "ParameterManager YAML"
+    },
+    "pedosphere.stoichiometry.passive_som_cn": {
+      "source": "ParameterManager YAML"
+    },
+    "pedosphere.numerical.stoichiometric_flexibility": {
+      "source": "ParameterManager YAML"
+    },
+    "pedosphere.numerical.stoichiometric_correction_strength": {
+      "source": "ParameterManager YAML"
+    }
+  },
+  "composition_management_map": {
+    "functor_metadata": "existing FunctorMetadata declares interfaces, execution phase, and conservation semantics",
+    "state_contract": "existing simulator state update path is preserved",
+    "validation_rule": "phase8 scientific inventory and equivalence certificate checks"
+  },
+  "dependency_interconnection_map": {
+    "dependencies": "mineralization, nitrification, denitrification, nitrogen_leaching, and root_nutrient_uptake provide nitrogen-stage ordering; carbon coupling uses the declared diagnostics.carbon_fluxes state input",
+    "mutually_exclusive_closures": "first_order_decomposition and microbial_enzyme_decomposition are alternative graph-selected carbon closures and are not simultaneous dependencies",
+    "direct_functor_calls": "none; ordered nitrogen stages and graph-selected carbon diagnostics arrive through declared state and dependency paths"
+  },
+  "overflow_routing_map": {
+    "diagnostic_residuals": "existing diagnostics and conservation checks route clipping or residual terms",
+    "discarded_residuals": "corrected carbon and nitrogen fluxes, per-pool violation masks, and carbon, nitrogen, and total mass-balance errors are all returned as namespaced diagnostics; no correction term is hidden"
+  },
+  "conservation_map": {
+    "conserved_quantities": "carbon|nitrogen|mass",
+    "balance_expression": "existing local balance is represented by the canonical Phase 8 state advancement map"
+  },
+  "entropy_audit": {
+    "operator_sign": "rates, mobilities, or diagnostic maps are non-negative or checked by existing validation hooks where physically required",
+    "sigma_expression": "canonical entropy production is non-negative for dissipative subexpressions"
+  },
+  "equivalence_type": "diagnostic"
+}
+

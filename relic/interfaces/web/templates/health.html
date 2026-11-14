@@ -1,0 +1,326 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} - RELIC{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>{{ title }}</h1>
+    <p class="page-description">
+        Comprehensive health monitoring for all RELIC subsystems with detailed diagnostics and recommendations.
+    </p>
+</div>
+
+<div class="health-overview">
+    <div class="overall-status">
+        <h2>Overall System Status</h2>
+        <div class="status-indicator status-{{ health_data.overall_status|lower if health_data.overall_status else 'unknown' }}">
+            <span class="status-dot"></span>
+            <span class="status-text">{{ health_data.overall_status|title if health_data.overall_status else 'Unknown' }}</span>
+        </div>
+        <div class="status-timestamp">
+            Last checked: <span id="last-updated">{{ health_data.timestamp|format_timestamp if health_data.timestamp else 'Unknown' }}</span>
+        </div>
+    </div>
+    
+    <div class="quick-actions">
+        <button class="btn btn-primary" onclick="refreshHealth()">Refresh Health Check</button>
+        <button class="btn btn-secondary" onclick="downloadReport()">Download Report</button>
+        {% if experimental_enabled %}
+        <button class="btn btn-accent" onclick="runDetailedCheck()">Detailed Check</button>
+        {% endif %}
+    </div>
+</div>
+
+<div class="subsystems-grid">
+    {% if health_data.subsystems %}
+    {% for subsystem, status in health_data.subsystems.items() %}
+    <div class="subsystem-card">
+        <div class="card-header">
+            <h3>{{ subsystem|title }}</h3>
+            <div class="subsystem-status status-{{ status.status|lower if status.status else 'unknown' }}">
+                {{ status.status|title if status.status else 'Unknown' }}
+            </div>
+        </div>
+        <div class="card-content">
+            {% if status.error %}
+                <div class="error-message">
+                    <strong>Error:</strong> {{ status.error }}
+                </div>
+            {% elif status.details %}
+                <div class="status-details">
+                    {% if status.details.dependencies %}
+                        <h4>Dependencies</h4>
+                        <ul class="dependency-list">
+                        {% for dep, available in status.details.dependencies.items() %}
+                            <li class="dependency-item {{ 'available' if available else 'missing' }}">
+                                <span class="dep-name">{{ dep|title }}</span>
+                                <span class="dep-status">{{ 'Available' if available else 'Missing' }}</span>
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    {% endif %}
+                    
+                    {% if status.details.capabilities %}
+                        <h4>Capabilities</h4>
+                        <ul class="capability-list">
+                        {% for capability, enabled in status.details.capabilities.items() %}
+                            <li class="capability-item {{ 'enabled' if enabled else 'disabled' }}">
+                                <span class="cap-name">{{ capability|title }}</span>
+                                <span class="cap-status">{{ 'Enabled' if enabled else 'Disabled' }}</span>
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            {% else %}
+                <p>Subsystem is operational with no additional details.</p>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="no-data">
+        <p>No subsystem health data available.</p>
+    </div>
+    {% endif %}
+</div>
+
+{% if health_data.warnings %}
+<div class="warnings-section">
+    <h2>Warnings</h2>
+    <div class="warning-list">
+        {% for warning in health_data.warnings %}
+        <div class="warning-item">
+            <span class="warning-icon">[WARN]</span>
+            <span class="warning-text">{{ warning }}</span>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+{% if health_data.errors %}
+<div class="errors-section">
+    <h2>Errors</h2>
+    <div class="error-list">
+        {% for error in health_data.errors %}
+        <div class="error-item">
+            <span class="error-icon">[ERROR]</span>
+            <span class="error-text">{{ error }}</span>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+{% if health_data.recommendations %}
+<div class="recommendations-section">
+    <h2>Recommendations</h2>
+    <div class="recommendation-list">
+        {% for recommendation in health_data.recommendations %}
+        <div class="recommendation-item">
+            <span class="rec-icon">[NOTE]</span>
+            <span class="rec-text">{{ recommendation }}</span>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<div class="health-actions">
+    <h2>System Maintenance</h2>
+    <div class="action-buttons">
+        <button class="btn btn-secondary" onclick="window.open('/api/health/compute', '_blank')">Compute Details</button>
+        <button class="btn btn-secondary" onclick="window.open('/api/health/data', '_blank')">Data Details</button>
+        <button class="btn btn-secondary" onclick="window.open('/api/health/params', '_blank')">Parameters Details</button>
+        {% if experimental_enabled %}
+        <button class="btn btn-accent" onclick="runSystemBenchmark()">System Benchmark</button>
+        <button class="btn btn-warning" onclick="clearCache()">Clear Cache</button>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let refreshInterval = null;
+
+// Auto-refresh every 30 seconds if enabled
+if (localStorage.getItem('autoRefreshHealth') === 'true') {
+    refreshInterval = setInterval(refreshHealth, 30000);
+}
+
+async function refreshHealth() {
+    const button = document.querySelector('button[onclick="refreshHealth()"]');
+    if (button) {
+        const originalText = button.textContent;
+        button.textContent = 'Refreshing...';
+        button.disabled = true;
+        
+        try {
+            const response = await fetch('/api/health/');
+            const data = await response.json();
+            
+            if (data.status === 'success') {
+                // Reload the page to show updated data
+                window.location.reload();
+            } else {
+                showMessage('Failed to refresh health data', 'error');
+            }
+        } catch (error) {
+            showMessage('Error refreshing health: ' + error.message, 'error');
+        } finally {
+            if (button) {
+                button.textContent = originalText;
+                button.disabled = false;
+            }
+        }
+    }
+}
+
+async function downloadReport() {
+    try {
+        const response = await fetch('/api/health/', {
+            headers: {
+                'Accept': 'application/json'
+            }
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            
+            // Create and download JSON report
+            const blob = new Blob([JSON.stringify(data, null, 2)], { 
+                type: 'application/json' 
+            });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `relic-health-report-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showMessage('Health report downloaded', 'success');
+        } else {
+            showMessage('Failed to generate report', 'error');
+        }
+    } catch (error) {
+        showMessage('Error downloading report: ' + error.message, 'error');
+    }
+}
+
+async function runDetailedCheck() {
+    const button = event.target;
+    const originalText = button.textContent;
+    button.textContent = 'Running...';
+    button.disabled = true;
+    
+    try {
+        // Run detailed health check with benchmark
+        const response = await fetch('/api/health/benchmark', { 
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            showMessage('Detailed check completed', 'success');
+            // Refresh the page to show updated results
+            setTimeout(() => window.location.reload(), 1000);
+        } else {
+            showMessage('Detailed check failed: ' + data.message, 'error');
+        }
+    } catch (error) {
+        showMessage('Error running detailed check: ' + error.message, 'error');
+    } finally {
+        button.textContent = originalText;
+        button.disabled = false;
+    }
+}
+
+async function runSystemBenchmark() {
+    const button = event.target;
+    const originalText = button.textContent;
+    button.textContent = 'Benchmarking...';
+    button.disabled = true;
+    
+    try {
+        const response = await fetch('/api/health/benchmark', { 
+            method: 'POST' 
+        });
+        
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            showMessage('System benchmark completed', 'success');
+            
+            // Show benchmark results in a simple alert (could be enhanced with modal)
+            const results = data.data.benchmark_results;
+            let message = 'Benchmark Results:\n';
+            if (results.cpu_benchmark) {
+                message += `CPU: ${results.cpu_benchmark.operations_per_second.toFixed(0)} ops/sec\n`;
+            }
+            if (results.gpu_benchmark && !results.gpu_benchmark.error) {
+                message += `GPU: ${results.gpu_benchmark.operations_per_second.toFixed(0)} ops/sec\n`;
+                message += `GPU Speedup: ${results.gpu_benchmark.speedup_over_cpu.toFixed(1)}x\n`;
+            }
+            
+            alert(message);
+        } else {
+            showMessage('Benchmark failed: ' + data.message, 'error');
+        }
+    } catch (error) {
+        showMessage('Error running benchmark: ' + error.message, 'error');
+    } finally {
+        button.textContent = originalText;
+        button.disabled = false;
+    }
+}
+
+function clearCache() {
+    if (confirm('Clear all cached data? This may temporarily slow down the system.')) {
+        showMessage('Cache clearing not implemented yet', 'warning');
+    }
+}
+
+function showMessage(message, type) {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message message-${type}`;
+    messageDiv.textContent = message;
+    messageDiv.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 12px 24px;
+        border-radius: 4px;
+        color: white;
+        background-color: ${type === 'success' ? '#28a745' : type === 'warning' ? '#ffc107' : '#dc3545'};
+        z-index: 1000;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    `;
+    
+    document.body.appendChild(messageDiv);
+    
+    setTimeout(() => {
+        messageDiv.remove();
+    }, 4000);
+}
+
+// Format timestamp filter (would be better to implement server-side)
+document.addEventListener('DOMContentLoaded', function() {
+    const timestampElement = document.getElementById('last-updated');
+    if (timestampElement) {
+        const timestamp = parseFloat(timestampElement.textContent);
+        if (!isNaN(timestamp)) {
+            const date = new Date(timestamp * 1000);
+            timestampElement.textContent = date.toLocaleString();
+        }
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,168 @@
+{
+  "certificate_version": "1.0",
+  "process_id": "relic.scientific.biosphere.stress.nutrient_stress.NutrientStress",
+  "module_name": "NutrientStress",
+  "canonical_role": "observation",
+  "iphs_level": 1,
+  "iphs_level_evidence": {
+    "classification": "IPHS-compatible diagnostic or observation certificate",
+    "compatible_basis": "Read-only observation or diagnostic contract with declared interface and no state ownership"
+  },
+  "theory_document": "docs\\source\\theory\\stress.md",
+  "theory_document_status": "updated",
+  "legacy_formula": "z_i=(c_i-c_i,min)/(c_i,crit-c_i,min); f_i=clip(max(z_i,0)^p,f_min,f_max); f_NP=min(f_N,f_P)",
+  "literature_formula": "Greenwood et al. (1990) describe c_N,crit(W)=a W^-b; Agren et al. (2012) treat Liebig limitation as a first-order approximation. Neither source establishes the implemented fixed-threshold power response as a universal law.",
+  "iphs_formula": "y_h = O_h(c_N,c_P;theta), a read-only phenomenological observation with no state advancement",
+  "legacy_expression": "z_i=(c_i-c_i,min)/(c_i,crit-c_i,min); f_i=clip(max(z_i,0)^p,f_min,f_max); f_NP=min(f_N,f_P)",
+  "iphs_expression": "y_h = O_h(c_N,c_P;theta) through the declared observation operator",
+  "input_variables": [
+    "nitrogen_concentration",
+    "phosphorus_concentration"
+  ],
+  "output_variables": [
+    "nutrient_stress_factor",
+    "diagnostics.nutrient_stress.nitrogen_factor",
+    "diagnostics.nutrient_stress.phosphorus_factor"
+  ],
+  "parameter_keys": [
+    "biosphere.stress.nutrient.n_critical_concentration",
+    "biosphere.stress.nutrient.n_minimum_concentration",
+    "biosphere.stress.nutrient.p_critical_concentration",
+    "biosphere.stress.nutrient.p_minimum_concentration",
+    "biosphere.stress.nutrient.nutrient_stress_exponent",
+    "biosphere.stress.global.factor_min",
+    "biosphere.stress.global.factor_max"
+  ],
+  "composition_ports": [
+    "nitrogen_concentration",
+    "phosphorus_concentration"
+  ],
+  "references": [
+    "Greenwood, D.J. et al. (1990). Annals of Botany 66, 425-436",
+    "Agren, G.I. et al. (2012). New Phytologist 194, 953-960",
+    "Aerts, R. and Chapin III, F.S. (2000). Advances in Ecological Research 30, 1-67"
+  ],
+  "baseline_tests": [
+    "test\\unit\\biosphere\\stress\\test_stress_simple_l1.py",
+    "test\\unit\\biosphere\\stress\\test_stress_comprehensive_l1.py"
+  ],
+  "validation_tests": [
+    "test\\integration\\biosphere\\stress\\test_stress_integration_l2.py",
+    "test\\system\\biosphere\\stress\\test_stress_system_l3.py",
+    "test\\audit\\phase8_scientific_inventory.test.py"
+  ],
+  "state_map": {
+    "nitrogen_concentration": "required plant-tissue nitrogen mass fraction supplied through StateManager",
+    "phosphorus_concentration": "required plant-tissue phosphorus mass fraction supplied through StateManager"
+  },
+  "parameter_map": {
+    "biosphere.stress.nutrient.n_critical_concentration": "Critical nitrogen concentration in plant tissue [kg N kg-1 DM]",
+    "biosphere.stress.nutrient.n_minimum_concentration": "Minimum nitrogen concentration in plant tissue [kg N kg-1 DM]",
+    "biosphere.stress.nutrient.p_critical_concentration": "Critical phosphorus concentration in plant tissue [kg P kg-1 DM]",
+    "biosphere.stress.nutrient.p_minimum_concentration": "Minimum phosphorus concentration in plant tissue [kg P kg-1 DM]",
+    "biosphere.stress.nutrient.nutrient_stress_exponent": "Exponent of the nutrient stress response [dimensionless]",
+    "biosphere.stress.global.factor_min": "Lower bound of the stress factor [dimensionless]",
+    "biosphere.stress.global.factor_max": "Upper bound of the stress factor [dimensionless]"
+  },
+  "operator_map": {
+    "O_h": "declared observation map",
+    "H_h": "diagnostic metric or identity Hodge map"
+  },
+  "unit_map": {
+    "nitrogen_concentration": "kg N kg-1 dry matter",
+    "phosphorus_concentration": "kg P kg-1 dry matter",
+    "nutrient_stress_factor": "1",
+    "diagnostics.nutrient_stress.nitrogen_factor": "1",
+    "diagnostics.nutrient_stress.phosphorus_factor": "1"
+  },
+  "input_output_map": {
+    "nitrogen_concentration": "canonical required observation input",
+    "phosphorus_concentration": "canonical required observation input",
+    "nutrient_stress_factor": "canonical bounded control output",
+    "diagnostics.nutrient_stress.nitrogen_factor": "namespaced component observation",
+    "diagnostics.nutrient_stress.phosphorus_factor": "namespaced component observation"
+  },
+  "interface_map": {
+    "forward_signature": "forward(self, state, time, dt)",
+    "bridge_class": "BiologicalProcessFunctor",
+    "abstraction_contract": "BiologicalProcess",
+    "state_write_mode": "UpdateItem REPLACE with per_timestep false",
+    "legacy_inputs": [
+      "nitrogen_concentration",
+      "phosphorus_concentration"
+    ],
+    "iphs_inputs": [
+      "nitrogen_concentration",
+      "phosphorus_concentration"
+    ],
+    "legacy_outputs": [
+      "nutrient_stress_factor",
+      "diagnostics.nutrient_stress.nitrogen_factor",
+      "diagnostics.nutrient_stress.phosphorus_factor"
+    ],
+    "iphs_outputs": [
+      "nutrient_stress_factor",
+      "diagnostics.nutrient_stress.nitrogen_factor",
+      "diagnostics.nutrient_stress.phosphorus_factor"
+    ]
+  },
+  "runtime_replacement_map": {
+    "runtime_uses_iphs": false,
+    "legacy_removed": false,
+    "replacement_entrypoint": "forward",
+    "preserved_numerics": "Existing ParameterManager-backed calculations define canonical IPHS operator coefficients, rates, ports, or observations.",
+    "no_legacy_mode": "Historical input aliases and old public outputs are not accepted or emitted by production forward."
+  },
+  "state_advancement_map": {
+    "potential_basis": "plant-tissue nitrogen and phosphorus mass-fraction observation inputs",
+    "effort_variable": "not applicable to this empirical level-1 observation",
+    "state_advancer": "none; y_h = O_h(c_N,c_P;theta) is read-only",
+    "runtime_usage": "NutrientStress.forward evaluates one bounded phenomenological observation and emits an explicit control plus two namespaced diagnostics without advancing nutrient state."
+  },
+  "parameter_management_map": {
+    "biosphere.stress.nutrient.n_critical_concentration": {
+      "source": "ParameterManager YAML"
+    },
+    "biosphere.stress.nutrient.n_minimum_concentration": {
+      "source": "ParameterManager YAML"
+    },
+    "biosphere.stress.nutrient.p_critical_concentration": {
+      "source": "ParameterManager YAML"
+    },
+    "biosphere.stress.nutrient.p_minimum_concentration": {
+      "source": "ParameterManager YAML"
+    },
+    "biosphere.stress.nutrient.nutrient_stress_exponent": {
+      "source": "ParameterManager YAML"
+    },
+    "biosphere.stress.global.factor_min": {
+      "source": "ParameterManager YAML"
+    },
+    "biosphere.stress.global.factor_max": {
+      "source": "ParameterManager YAML"
+    }
+  },
+  "composition_management_map": {
+    "functor_metadata": "existing FunctorMetadata declares interfaces, execution phase, and conservation semantics",
+    "state_contract": "StateManager receives three explicit REPLACE UpdateItems; only nutrient_stress_factor is a public control contract",
+    "validation_rule": "phase8 scientific inventory and equivalence certificate checks"
+  },
+  "dependency_interconnection_map": {
+    "dependencies": "no direct Functor dependency; both tissue concentrations are required StateManager or external composition ports",
+    "direct_functor_calls": "none declared by certificate"
+  },
+  "overflow_routing_map": {
+    "diagnostic_residuals": "not applicable; threshold saturation defines the bounded empirical observation",
+    "discarded_residuals": "no material, energy, nitrogen, or phosphorus residual"
+  },
+  "conservation_map": {
+    "conserved_quantities": "none; this Functor is read-only and owns no nutrient state",
+    "balance_expression": "no N/P stock, flux, source, sink, or state advance"
+  },
+  "entropy_audit": {
+    "operator_sign": "bounded outputs are validated in [0,1]",
+    "sigma_expression": "not applicable to this non-strict empirical observation"
+  },
+  "equivalence_type": "diagnostic"
+}
+

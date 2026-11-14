@@ -1,0 +1,217 @@
+certificate_version: '1.0'
+process_id: relic.scientific.pedosphere.methane.transport.MethaneTransportFunctor
+module_name: MethaneTransportFunctor
+canonical_role: transport
+iphs_level: 3
+iphs_level_evidence:
+  classification: IPHS-structured transport process certificate
+  compatible_basis: Process declares composition-safe IPHS or DEC structure
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: DEC/IPHS transport operator with conservative flux routing
+  structural_contribution: Methane storage, gradient, flux, Hodge, and matter-export port structures are declared for assembly audit
+  assembly_participation: Certificate participates in Phase 8 inventory and GraphIR structural audit
+  level_3_limit: Typed form, Hodge, port, or related structure is declared, but no runtime-linked IPHSStructureSpec contribution and executable level 4 or 5 certificate binding is present.
+theory_document: docs\source\theory\wetland_methane.md
+theory_document_status: updated
+legacy_formula: F_transport = min(M/dt, F_diffusion + F_ebullition + F_plant)
+literature_formula: Walter and Heimann (2000) separate diffusion, ebullition, and plant pathways; Yue et al. (2024), Eq. 42, includes texture-weighted gas and water diffusivity terms
+iphs_formula: F_request = F_diffusion + F_ebullition + F_plant; T_trans = -F_request; one aggregate internal interconnection is routed to MethaneBudgetCoupler
+legacy_expression: F_transport = min(M/dt, F_diffusion + F_ebullition + F_plant)
+iphs_expression: theta_air=porosity*(1-WFPS); D_eff=tortuosity*D_air*theta_air^a/porosity^b+D_water*WFPS; F_request=F_diff+F_ebb+F_plant; T_trans=-F_request
+input_variables:
+- ch4_soil_storage
+- water_filled_pore_space
+- porosity
+- atmospheric_ch4_concentration
+output_variables:
+- ch4_transport_loss_rate
+- ch4_storage_tendency_trans
+- diagnostics.methane_transport.diffusion_rate
+- diagnostics.methane_transport.ebullition_rate
+- diagnostics.methane_transport.plant_flux_rate
+parameter_keys:
+- pedosphere.methane.transport.diffusivity_air
+- pedosphere.methane.transport.diffusivity_water
+- pedosphere.methane.transport.tortuosity_factor
+- pedosphere.methane.transport.bubble_threshold_concentration
+- pedosphere.methane.transport.ebullition_timescale
+- pedosphere.methane.transport.plant_conductivity
+- pedosphere.methane.transport.aerenchyma_fraction
+- pedosphere.methane.transport.root_oxidation_fraction
+- pedosphere.methane.transport.layer_mixing_depth
+- pedosphere.physical.millington_quirk_exponent_numerator
+- pedosphere.physical.millington_quirk_exponent_denominator
+- pedosphere.numerical.minimum_timestep
+- pedosphere.numerical.epsilon_length
+- pedosphere.numerical.minimum_timescale
+composition_ports:
+- methane_transport_request
+references:
+- Walter and Heimann (2000) doi:10.1029/1999GB001204
+- Zhuang et al. (2004) doi:10.1029/2004GB002239
+- Chanton et al. (1992) doi:10.1029/91GB02969
+- Yue et al. (2024) doi:10.5194/gmd-17-4621-2024
+baseline_tests:
+- test\unit\pedosphere\methane\test_transport_paths.py
+- test\integration\pedosphere\methane\test_methane_budget.py
+- test\audit\phase8_scientific_inventory.test.py
+validation_tests:
+- test\unit\pedosphere\methane\test_transport_paths.py
+- test\unit\pedosphere\methane\test_units_conservation.py
+- test\pedosphere\methane\strict_overlap_registration.test.py
+- test\scientific\methane_physical_consistency\test_methane_physical_consistency.py
+- test\scientific\wetland_ch4_fluxnet\test_wetland_ch4_fluxnet.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  ch4_soil_storage: extensive methane-carbon storage used to calculate soil concentration
+  water_filled_pore_space: canonical water-filled pore-space fraction in [0,1]
+  porosity: canonical total pore fraction in (0,1]
+  atmospheric_ch4_concentration: canonical atmospheric methane-carbon concentration boundary value
+parameter_map:
+  pedosphere.methane.transport.diffusivity_air: free-air methane diffusivity D_air [m2 s-1]
+  pedosphere.methane.transport.diffusivity_water: aqueous methane diffusivity D_water [m2 s-1]
+  pedosphere.methane.transport.tortuosity_factor: calibrated gas-phase tortuosity factor tau [1]
+  pedosphere.methane.transport.bubble_threshold_concentration: ebullition concentration threshold [mol m-3]
+  pedosphere.methane.transport.ebullition_timescale: ebullition release timescale [s]
+  pedosphere.methane.transport.plant_conductivity: plant aerenchyma conductivity [m2 s-1]
+  pedosphere.methane.transport.aerenchyma_fraction: root aerenchyma fraction [1]
+  pedosphere.methane.transport.root_oxidation_fraction: fraction oxidized along the plant pathway [1]
+  pedosphere.methane.transport.layer_mixing_depth: representative mixing depth z [m]
+  pedosphere.physical.millington_quirk_exponent_numerator: air-filled porosity exponent a [1]
+  pedosphere.physical.millington_quirk_exponent_denominator: total porosity exponent b [1]
+  pedosphere.numerical.minimum_timestep: positive dt lower bound [s]
+  pedosphere.numerical.epsilon_length: positive depth lower bound [m]
+  pedosphere.numerical.minimum_timescale: positive timescale lower bound [s]
+physical_constant_ssot:
+  carbon_molar_mass:
+    key: relic.physical.constants.molecular_weights.carbon
+    access: get_physical_constant
+    role: Carbon molar mass used to convert methane molar concentration to CH4-C mass
+operator_map:
+  D_h: declared methane transport divergence map for structural audit
+  star_K: ParameterManager-backed non-negative effective diffusivity Hodge map
+  q_h: declared methane flux cochain
+  G_h: one aggregate methane_transport_request interconnection to MethaneBudgetCoupler
+  runtime_request: F_request = F_diffusion + F_ebullition + F_plant
+  shared_limiter_owner: MethaneBudgetCoupler owns storage availability and the realized atmospheric boundary
+unit_map:
+  ch4_transport_loss_rate: g C m-2 s-1
+  ch4_storage_tendency_trans: g C m-2 s-1
+  diagnostics.methane_transport.diffusion_rate: g C m-2 s-1
+  diagnostics.methane_transport.ebullition_rate: g C m-2 s-1
+  diagnostics.methane_transport.plant_flux_rate: g C m-2 s-1
+input_output_map:
+  air_filled_porosity: removed; canonical porosity and WFPS determine theta_air
+  root_length_density: removed because the runtime plant pathway has no root-length-density term
+  ch4_diffusion_rate: replaced by diagnostics.methane_transport.diffusion_rate
+  ch4_ebullition_rate: replaced by diagnostics.methane_transport.ebullition_rate
+  ch4_plant_flux_rate: replaced by diagnostics.methane_transport.plant_flux_rate
+  diagnostics.methane_transport.clipping_residual: removed; the shared limiter residual is diagnostics.methane_budget.transport_limiter_residual
+  ch4_soil_storage: canonical required input retained
+  water_filled_pore_space: canonical required input retained
+  porosity: canonical required input added
+  atmospheric_ch4_concentration: canonical required input added
+  ch4_transport_loss_rate: canonical signed internal request retained
+  ch4_storage_tendency_trans: canonical equal-opposite internal tendency retained
+interface_map:
+  forward_signature: forward(self, state, time, dt)
+  bridge_class: TransportMechanismFunctor
+  abstraction_contract: TransportMechanism
+  state_write_mode: explicit REPLACE per_timestep=False internal rate ports through StateManager; MethaneBudgetCoupler owns realized boundary and storage writes
+  legacy_inputs:
+  - ch4_soil_storage
+  - water_filled_pore_space
+  - porosity
+  - atmospheric_ch4_concentration
+  iphs_inputs:
+  - ch4_soil_storage
+  - water_filled_pore_space
+  - porosity
+  - atmospheric_ch4_concentration
+  legacy_outputs:
+  - ch4_transport_loss_rate
+  - ch4_storage_tendency_trans
+  - diagnostics.methane_transport.diffusion_rate
+  - diagnostics.methane_transport.ebullition_rate
+  - diagnostics.methane_transport.plant_flux_rate
+  iphs_outputs:
+  - ch4_transport_loss_rate
+  - ch4_storage_tendency_trans
+  - diagnostics.methane_transport.diffusion_rate
+  - diagnostics.methane_transport.ebullition_rate
+  - diagnostics.methane_transport.plant_flux_rate
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: ParameterManager-backed calibrated three-pathway transport defines one raw request; no local availability limiter remains.
+  no_legacy_mode: No selectable legacy runtime branch is exposed for Phase 8 completion.
+state_advancement_map:
+  potential_basis: declared methane storage, gradient, and flux cochain basis for structural audit only
+  effort_variable: soil-atmosphere methane concentration gradient
+  state_advancer: T_trans = -(F_diffusion + F_ebullition + F_plant)
+  runtime_usage: forward evaluates the calibrated hybrid once, returns one signed request and equal-opposite tendency, and delegates availability limiting to MethaneBudgetCoupler.
+parameter_management_map:
+  pedosphere.methane.transport.diffusivity_air:
+    source: ParameterManager YAML
+    accessor: self.get_parameter_value(...)
+  pedosphere.methane.transport.diffusivity_water:
+    source: ParameterManager YAML
+    accessor: self.get_parameter_value(...)
+  pedosphere.methane.transport.tortuosity_factor:
+    source: ParameterManager YAML
+    accessor: self.get_parameter_value(...)
+  pedosphere.methane.transport.bubble_threshold_concentration:
+    source: ParameterManager YAML
+    accessor: self.get_parameter_value(...)
+  pedosphere.methane.transport.ebullition_timescale:
+    source: ParameterManager YAML
+    accessor: self.get_parameter_value(...)
+  pedosphere.methane.transport.plant_conductivity:
+    source: ParameterManager YAML
+    accessor: self.get_parameter_value(...)
+  pedosphere.methane.transport.aerenchyma_fraction:
+    source: ParameterManager YAML
+    accessor: self.get_parameter_value(...)
+  pedosphere.methane.transport.root_oxidation_fraction:
+    source: ParameterManager YAML
+    accessor: self.get_parameter_value(...)
+  pedosphere.methane.transport.layer_mixing_depth:
+    source: ParameterManager YAML
+    accessor: self.get_parameter_value(...)
+  pedosphere.physical.millington_quirk_exponent_numerator:
+    source: ParameterManager YAML
+    accessor: self.get_parameter_value(...)
+  pedosphere.physical.millington_quirk_exponent_denominator:
+    source: ParameterManager YAML
+    accessor: self.get_parameter_value(...)
+  pedosphere.numerical.minimum_timestep:
+    source: ParameterManager YAML
+    accessor: self.get_parameter_value(...)
+  pedosphere.numerical.epsilon_length:
+    source: ParameterManager YAML
+    accessor: self.get_parameter_value(...)
+  pedosphere.numerical.minimum_timescale:
+    source: ParameterManager YAML
+    accessor: self.get_parameter_value(...)
+composition_management_map:
+  functor_metadata: exact four-input and five-output interface with TransportMechanismFunctor lifecycle
+  state_contract: signed internal transport ports are not counted as global carbon boundaries; budget outputs own the carbon ledger
+  validation_rule: phase8 scientific inventory and equivalence certificate checks
+dependency_interconnection_map:
+  dependencies: configuration_bound_scheduler_dependencies_or_empty
+  direct_functor_calls: none_no_direct_functor_calls
+  downstream_consumer: pedosphere_methane_budget
+overflow_routing_map:
+  diagnostic_residuals: the three pathway rates and their signed aggregate request are explicit; realized transport limiting is delegated to diagnostics.methane_budget.transport_limiter_residual
+  delegated_route: diagnostics.methane_budget.transport_limiter_residual records transport denied by the shared budget limiter
+  discarded_residuals: no_local_residual_is_discarded; the raw signed transport request and equal-opposite storage tendency are emitted in full, while the budget owner records any denied request
+conservation_map:
+  conserved_quantities: methane carbon across the internal request and tendency pair
+  balance_expression: ch4_transport_loss_rate + ch4_storage_tendency_trans = 0
+  global_ledger_owner: MethaneBudgetCoupler owns realized ch4_atmospheric_flux and ch4_soil_storage closure
+  open_system_route: methane_transport_request interconnection
+entropy_audit:
+  operator_sign: effective diffusivity is finite and non-negative; the signed concentration-driven request may reverse direction
+  sigma_expression: no independent entropy-production or port-power proof is claimed at level 3
+equivalence_type: port_equivalent

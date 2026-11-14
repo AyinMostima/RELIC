@@ -1,0 +1,42 @@
+variable: darcy_flux
+title: "Downward Darcy Water Flux per Layer"
+description: "Downward Darcy water flux per soil layer in m s-1, the advective velocity of SoluteAdvectionDiffusion1D for NO3 and DOC. Required; exactly one value per layer, finite and non-negative (bottom leaching). No relic Functor writes it under this name (supplied as forcing): soil_water_transport emits signed interface fluxes as diagnostics.soil_water_transport.darcy_flux."
+kind: forcing
+dimension:
+  udunits: "m s-1"
+  cf_standard_name: null
+support:
+  spatial_kind: grid_cell
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Bear, J. (1972). Dynamics of Fluids in Porous Media. American Elsevier, New York"
+numerics:
+  # Positive downward; the reader rejects negative values (bottom leaching).
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies: []
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/pedosphere/transport/solute_advection_diffusion.py"
+  runtime_role: "solute_advection_darcy_flux_forcing"
+  runtime_writer: null
+  note: "Reader: SoluteAdvectionDiffusion1D (metadata input_variables; input validation raises 'Missing required input: darcy_flux'; exactly n_layers values, finite, non-negative). No RELIC Functor writes darcy_flux: SoilWaterTransportFunctor writes the n + 1 signed interface fluxes as diagnostics.soil_water_transport.darcy_flux (m s-1, REPLACE), which is not this per-layer input."

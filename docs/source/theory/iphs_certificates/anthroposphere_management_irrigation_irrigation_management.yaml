@@ -1,0 +1,185 @@
+certificate_version: '1.0'
+process_id: relic.scientific.anthroposphere.management.irrigation.IrrigationManagement
+module_name: IrrigationManagement
+canonical_role: port
+iphs_level: 2
+iphs_level_evidence:
+  classification: IPHS-wrapped port process certificate
+  compatible_basis: Process declares composition-safe IPHS or DEC structure
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: G_h u_h port route with explicit boundary or external exchange
+  level_2_limit: The canonical runtime wrapper is declared, but no executable typed-cochain or IPHS structural contribution is bound; strict level 4 or 5 evidence is not claimed.
+theory_document: docs\source\theory\anthroposphere_management_irrigation.md
+theory_document_status: updated
+legacy_formula: I = (ET_c - P_eff - DeltaS) / E_irr
+literature_formula: M_gross = M_net / eta; M_delivered = eta M_gross
+iphs_formula: y = G_h u_h through the declared open management-water port map
+legacy_expression: I = (ET_c - P_eff - DeltaS) / E_irr
+iphs_expression: M_net = max((theta_fc-theta) Z_r rho_w - precipitation_flux dt, 0); M_gross = min(M_net/eta, F_max dt, M_quota); M_delivered = eta M_gross
+input_variables:
+- soil_moisture
+- precipitation_flux
+- land_use_type
+- irrigation_type
+- field_capacity
+- wilting_point
+- irrigation_remaining_quota
+output_variables:
+- irrigation_flux
+- abstraction_flux
+- irrigation_remaining_quota
+- diagnostics.irrigation.applied_water
+- diagnostics.irrigation.effective_efficiency
+- diagnostics.irrigation.moisture_response
+- diagnostics.irrigation.water_balance_residual
+parameter_keys:
+- anthroposphere.management.irrigation.surface_efficiency
+- anthroposphere.management.irrigation.sprinkler_efficiency
+- anthroposphere.management.irrigation.drip_efficiency
+- anthroposphere.management.irrigation.subsurface_efficiency
+- anthroposphere.management.irrigation.moisture_threshold
+- anthroposphere.management.irrigation.root_zone_depth
+- anthroposphere.management.irrigation.max_application_rate
+- anthroposphere.management.irrigation.conservation_tolerance
+composition_ports:
+- phase8_runtime_port
+references:
+- Allen et al. (1998) FAO-56 Crop evapotranspiration
+- FAO Determination of the irrigation schedule for a field
+- FAO Scheme irrigation water need and supply
+- Howell (2001) Enhancing water use efficiency in irrigated agriculture
+baseline_tests:
+- test\anthroposphere\management\test_irrigation_l1.py
+- test\anthroposphere\management\test_irrigation_parameters.py
+validation_tests:
+- test\anthroposphere\management\test_irrigation_l1.py
+- test\anthroposphere\management\test_irrigation_parameters.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  soil_moisture: soil_moisture mapped to canonical Phase 8 cochain basis
+  precipitation_flux: external precipitation mass-flux forcing mapped to the canonical water port
+  land_use_type: external land-use composition code controlling the managed port
+  irrigation_type: external irrigation-system code selecting ParameterManager efficiency
+  field_capacity: external soil hydraulic property controlling root-zone deficit
+  wilting_point: external soil hydraulic property controlling the irrigation trigger
+  irrigation_remaining_quota: remaining source-water quota [mm], owned state; initial value from the scenario initial state
+parameter_map:
+  anthroposphere.management.irrigation.surface_efficiency: Surface-system application efficiency [dimensionless]
+  anthroposphere.management.irrigation.sprinkler_efficiency: Sprinkler-system application efficiency [dimensionless]
+  anthroposphere.management.irrigation.drip_efficiency: Drip-system application efficiency [dimensionless]
+  anthroposphere.management.irrigation.subsurface_efficiency: Subsurface-system application efficiency [dimensionless]
+  anthroposphere.management.irrigation.moisture_threshold: Irrigation trigger as a fraction of the plant-available water range [dimensionless]
+  anthroposphere.management.irrigation.root_zone_depth: Effective root-zone depth [m]
+  anthroposphere.management.irrigation.max_application_rate: Maximum water application rate [mm hr-1]
+  anthroposphere.management.irrigation.conservation_tolerance: Water-port residual tolerance [kg m-2 s-1]
+  water_density: physical constants SSOT via get_physical_constant
+operator_map:
+  G_h: declared port map
+  H_h: positive port metric or conversion Hodge map
+unit_map:
+  irrigation_flux: kg m-2 s-1
+  abstraction_flux: kg m-2 s-1
+  irrigation_remaining_quota: mm
+  diagnostics.irrigation.applied_water: mm
+  diagnostics.irrigation.effective_efficiency: '1'
+  diagnostics.irrigation.moisture_response: '1'
+  diagnostics.irrigation.water_balance_residual: kg m-2 s-1
+input_output_map:
+  abstraction_flux: same interface variable preserved between legacy and IPHS runtime contracts
+  irrigation_flux: same interface variable preserved between legacy and IPHS runtime contracts
+  irrigation_remaining_quota: owned StateManager quota state, Q' = Q - A_used returned as REPLACE; a domain demand above Q is met at an equal percentage in every cell (WEAP21, Yates et al. 2005)
+  diagnostics.irrigation.applied_water: delivered depth of the step (readers integrate)
+  diagnostics.irrigation.effective_efficiency: explicit application-efficiency diagnostic
+  diagnostics.irrigation.moisture_response: explicit soil-moisture response diagnostic
+  diagnostics.irrigation.water_balance_residual: explicit delivered-versus-abstracted water residual
+  soil_moisture: required canonical root-zone moisture input
+  precipitation_flux: required canonical external precipitation mass flux
+  land_use_type: required canonical land-use composition code
+  irrigation_type: required canonical irrigation-system code
+  field_capacity: required canonical soil hydraulic property
+  wilting_point: required canonical soil hydraulic property
+interface_map:
+  forward_signature: forward(self, state, time, dt, **kwargs)
+  bridge_class: TransportMechanismFunctor
+  abstraction_contract: TransportMechanism
+  state_write_mode: explicit UpdateItem REPLACE with per_timestep false and source_functor irrigation_management
+  legacy_inputs:
+  - soil_moisture
+  - precipitation_flux
+  - land_use_type
+  - irrigation_type
+  - field_capacity
+  - wilting_point
+  - irrigation_remaining_quota
+  iphs_inputs:
+  - soil_moisture
+  - precipitation_flux
+  - land_use_type
+  - irrigation_type
+  - field_capacity
+  - wilting_point
+  - irrigation_remaining_quota
+  legacy_outputs:
+  - irrigation_flux
+  - abstraction_flux
+  - irrigation_remaining_quota
+  - diagnostics.irrigation.applied_water
+  - diagnostics.irrigation.effective_efficiency
+  - diagnostics.irrigation.moisture_response
+  - diagnostics.irrigation.water_balance_residual
+  iphs_outputs:
+  - irrigation_flux
+  - abstraction_flux
+  - irrigation_remaining_quota
+  - diagnostics.irrigation.applied_water
+  - diagnostics.irrigation.effective_efficiency
+  - diagnostics.irrigation.moisture_response
+  - diagnostics.irrigation.water_balance_residual
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: ParameterManager-backed FAO-style root-zone deficit and application-efficiency calculations define the single production port response.
+  no_legacy_mode: Forward is the only executable irrigation calculation; aliases, forcing defaults, and private second-formula helpers are absent.
+state_advancement_map:
+  potential_basis: declared RELIC state, port, or observation cochain basis
+  effort_variable: ParameterManager-backed root-zone deficit and application-efficiency control
+  state_advancer: y = G_h u_h through the declared open management-water port map
+  runtime_usage: IrrigationManagement.forward evaluates one phenomenological port response; strict IPHS runtime structure is not claimed.
+parameter_management_map:
+  anthroposphere.management.irrigation.surface_efficiency:
+    source: ParameterManager YAML
+  anthroposphere.management.irrigation.sprinkler_efficiency:
+    source: ParameterManager YAML
+  anthroposphere.management.irrigation.drip_efficiency:
+    source: ParameterManager YAML
+  anthroposphere.management.irrigation.subsurface_efficiency:
+    source: ParameterManager YAML
+  anthroposphere.management.irrigation.moisture_threshold:
+    source: ParameterManager YAML
+  anthroposphere.management.irrigation.root_zone_depth:
+    source: ParameterManager YAML
+  anthroposphere.management.irrigation.max_application_rate:
+    source: ParameterManager YAML
+  anthroposphere.management.irrigation.conservation_tolerance:
+    source: ParameterManager YAML
+  water_density:
+    source: ParameterManager physical constants SSOT via get_physical_constant
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares interfaces, execution phase, and conservation semantics
+  state_contract: existing simulator state update path is preserved
+  validation_rule: phase8 scientific inventory and equivalence certificate checks
+dependency_interconnection_map:
+  dependencies: no direct Functor dependency; canonical inputs are supplied by StateManager or external composition adapters
+  direct_functor_calls: none declared by certificate
+overflow_routing_map:
+  diagnostic_residuals: application loss is the declared difference between source abstraction and delivered irrigation; the water-balance residual is explicit
+  discarded_residuals: source abstraction and delivered irrigation are both exported as abstraction_flux and irrigation_flux; their efficiency-adjusted mismatch is exported as diagnostics.irrigation.water_balance_residual, so the application-loss remainder is not discarded
+conservation_map:
+  conserved_quantities: mass
+  balance_expression: irrigation_flux = abstraction_flux * application_efficiency; the open boundary loss is abstraction_flux - irrigation_flux
+  runtime_checker: check_conservation_laws reads diagnostics.irrigation.water_balance_residual instead of applying a closed-system output sum
+entropy_audit:
+  operator_sign: rates, mobilities, or diagnostic maps are non-negative or checked by existing validation hooks where physically required
+  sigma_expression: canonical entropy production is non-negative for dissipative subexpressions
+equivalence_type: port_equivalent

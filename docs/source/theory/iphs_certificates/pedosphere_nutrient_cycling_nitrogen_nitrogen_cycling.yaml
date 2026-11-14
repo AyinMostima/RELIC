@@ -1,0 +1,136 @@
+certificate_version: '1.0'
+process_id: relic.scientific.pedosphere.nutrient_cycling.nitrogen.NitrogenCycling
+module_name: NitrogenCycling
+canonical_role: reaction
+iphs_level: 2
+iphs_level_evidence:
+  classification: IPHS-wrapped reaction process certificate
+  compatible_basis: Reaction process is expressed through conserved or open stoichiometric ledgers
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: N_h r_h reaction-network state advance
+  level_2_limit: The canonical runtime wrapper is declared, but no executable typed-cochain or IPHS structural contribution is bound; strict level 4 or 5 evidence is not claimed.
+theory_document: docs\source\theory\nitrogen_cycling.md
+theory_document_status: updated
+legacy_formula: dNH4/dt = mineralization - nitrification - uptake_NH4; dNO3/dt = nitrification - denitrification - leaching - uptake_NO3
+literature_formula: dNH4/dt = mineralization - nitrification - uptake_NH4; dNO3/dt = nitrification - denitrification - leaching - uptake_NO3
+iphs_formula: diagnostic d_dot = N_h r_h for dependency increments; prognostic Delta_NH4_ext = c_kg_to_g (F_fert + F_urine) dt
+legacy_expression: dNH4/dt = mineralization - nitrification - uptake_NH4; dNO3/dt = nitrification - denitrification - leaching - uptake_NO3
+iphs_expression: diagnostic d_dot = N_h r_h with open_system_route=diagnostic_residual; fertilizer and dependency-selected urine inputs are routed once through the external NH4 port
+input_variables:
+- fertilizer_n_flux
+- urine_n_flux
+output_variables:
+- nh4_nitrogen
+- diagnostics.nitrogen_cycling.expected_delta_nh4_nitrogen
+- diagnostics.nitrogen_cycling.expected_delta_no3_nitrogen
+- diagnostics.nitrogen_cycling.expected_delta_mineral_nitrogen
+- diagnostics.nitrogen_cycling.external_fertilizer_n_delta
+- diagnostics.nitrogen_cycling.external_urine_n_delta
+parameter_keys:
+- relic.physical.constants.conversions.kg_to_g
+composition_ports:
+- fertilizer_n_flux -> nh4_nitrogen
+- urine_n_flux -> nh4_nitrogen when grazing_management is selected
+references:
+- Parton, W.J. et al. (1987). Soil Sci. Soc. Am. J., 51(5), 1173-1179.
+- Davidson, E.A. et al. (2012). Global Biogeochem. Cycles, 26(2).
+- Li, C. et al. (1992). J. Geophys. Res., 97(D9), 9759-9776.
+baseline_tests:
+- test\unit\pedosphere\test_nitrogen_cycling.py
+- test\integration\pedosphere\test_l2_nitrogen_cycling_integration.py
+- test\audit\phase8_scientific_inventory.test.py
+validation_tests:
+- test\unit\pedosphere\test_nitrogen_cycling.py
+- test\integration\pedosphere\test_l2_nitrogen_cycling_integration.py
+- test\audit\state_single_owner_budget_closure.test.py
+- test\audit\audit_gate_suite.test.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  fertilizer_n_flux: fertilizer_n_flux mapped to the declared external nitrogen port
+  urine_n_flux: dependency-selected grazing urine N mapped to the declared external nitrogen port
+  nh4_nitrogen: only the aggregate external-port increment is emitted by NitrogenCycling
+  diagnostics.nitrogen_cycling.expected_delta_nh4_nitrogen: read-only dependency projection
+  diagnostics.nitrogen_cycling.expected_delta_no3_nitrogen: read-only dependency projection
+parameter_map:
+  relic.physical.constants.conversions.kg_to_g: ParameterManager-backed physical constants SSOT conversion from kg N to g N
+operator_map:
+  N_h: declared stoichiometric or output incidence map for this reaction process
+  r_h: ParameterManager-backed process-rate vector evaluated by the production forward path
+unit_map:
+  fertilizer_n_flux: kg N m-2 s-1
+  urine_n_flux: kg N m-2 s-1
+  nh4_nitrogen: g N m-2
+  diagnostics.nitrogen_cycling.expected_delta_nh4_nitrogen: g N m-2
+  diagnostics.nitrogen_cycling.expected_delta_no3_nitrogen: g N m-2
+  diagnostics.nitrogen_cycling.expected_delta_mineral_nitrogen: g N m-2
+  diagnostics.nitrogen_cycling.external_fertilizer_n_delta: g N m-2
+  diagnostics.nitrogen_cycling.external_urine_n_delta: g N m-2
+input_output_map:
+  fertilizer_n_flux: declared external nitrogen input port
+  urine_n_flux: required external grazing nitrogen input when grazing_management is selected
+  nh4_nitrogen: aggregate fertilizer and selected-urine increment only; child increments are not copied
+  diagnostics.nitrogen_cycling.expected_delta_nh4_nitrogen: projected from canonical child outputs
+  diagnostics.nitrogen_cycling.expected_delta_no3_nitrogen: projected from canonical child outputs
+  diagnostics.nitrogen_cycling.expected_delta_mineral_nitrogen: sum of the two diagnostic mineral-pool increments
+  diagnostics.nitrogen_cycling.external_fertilizer_n_delta: explicit open-port contribution
+  diagnostics.nitrogen_cycling.external_urine_n_delta: explicit non-strict grazing urine open-port contribution
+interface_map:
+  forward_signature: forward(self, state, time, dt, subprocess_outputs=None, **kwargs)
+  bridge_class: BiologicalProcessFunctor
+  abstraction_contract: BiologicalProcess
+  state_write_mode: explicit UpdateItem ACCUMULATE per_timestep through the existing StateManager SCM ledger
+  legacy_inputs:
+  - fertilizer_n_flux
+  - urine_n_flux
+  iphs_inputs:
+  - fertilizer_n_flux
+  - urine_n_flux
+  legacy_outputs:
+  - nh4_nitrogen
+  - diagnostics.nitrogen_cycling.expected_delta_nh4_nitrogen
+  - diagnostics.nitrogen_cycling.expected_delta_no3_nitrogen
+  - diagnostics.nitrogen_cycling.expected_delta_mineral_nitrogen
+  - diagnostics.nitrogen_cycling.external_fertilizer_n_delta
+  - diagnostics.nitrogen_cycling.external_urine_n_delta
+  iphs_outputs:
+  - nh4_nitrogen
+  - diagnostics.nitrogen_cycling.expected_delta_nh4_nitrogen
+  - diagnostics.nitrogen_cycling.expected_delta_no3_nitrogen
+  - diagnostics.nitrogen_cycling.expected_delta_mineral_nitrogen
+  - diagnostics.nitrogen_cycling.external_fertilizer_n_delta
+  - diagnostics.nitrogen_cycling.external_urine_n_delta
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: Existing ParameterManager-backed calculations define canonical IPHS operator coefficients, rates, ports, or observations.
+  no_legacy_mode: No selectable legacy runtime branch is exposed for Phase 8 completion.
+state_advancement_map:
+  potential_basis: ammonium and nitrate dependency increments in g N m-2
+  effort_variable: already evaluated child-process increments supplied by the dependency graph
+  state_advancer: d_dot = N_h r_h is evaluated only as a diagnostic projection; the aggregate fertilizer and selected-urine boundary supplies the sole StateManager increment
+  runtime_usage: NitrogenCycling.forward calls advance_reaction_network with explicit N_h and r_h under diagnostic_residual routing, never re-emits child state or flux outputs, and emits only the aggregate external NH4 increment.
+  explicit_stoichiometric_usage: NitrogenCycling.forward materializes the two-row mineral-N diagnostic incidence map and evaluates N_h r_h through advance_reaction_network.
+parameter_management_map:
+  relic.physical.constants.conversions.kg_to_g:
+    source: ParameterManager-backed relic physical constants SSOT via get_physical_constant and UnifiedParameterManager.get
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares interfaces, execution phase, and conservation semantics
+  state_contract: child updates commit directly through StateManager; all shared pool writers use SCM-authorized UpdateItem ACCUMULATE per_timestep and the coordinator emits only the aggregate fertilizer and selected-urine increment
+  validation_rule: phase8 scientific inventory and equivalence certificate checks
+dependency_interconnection_map:
+  dependencies: mineralization, nitrification, denitrification, nitrogen_leaching, root_nutrient_uptake; optional graph-selected grazing_management boundary
+  dependency_owner: existing Functor dependency graph and scheduler
+  dependency_payload: subprocess_outputs mapping supplied by the composition stage
+  direct_functor_calls: none; all stage dependencies are scheduler-owned and their payloads arrive through subprocess_outputs, with no dependency instance invoked
+overflow_routing_map:
+  diagnostic_residuals: dependency projection is routed with open_system_route=diagnostic_residual and cannot mutate state
+  open_port: fertilizer and dependency-selected urine inputs are routed once to nh4_nitrogen through StateManager
+  discarded_residuals: dependency projection is observation-only, fertilizer and selected urine inputs enter ammonium once through StateManager, and the diagnostic-residual route cannot mutate state
+conservation_map:
+  conserved_quantities: nitrogen
+  balance_expression: closed child ledgers are validated by their IPHS reaction operators; leaching, uptake, fertilizer, and selected urine are explicit open matter ports; the diagnostic N_h r_h projection never mutates state; the urine route is a non-strict instantaneous urea-to-NH4 aggregation
+entropy_audit:
+  operator_sign: rates, mobilities, or diagnostic maps are non-negative or checked by existing validation hooks where physically required
+  sigma_expression: canonical entropy production is non-negative for dissipative subexpressions
+equivalence_type: thermodynamic_embedding

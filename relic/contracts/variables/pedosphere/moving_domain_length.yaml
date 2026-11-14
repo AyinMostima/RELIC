@@ -1,0 +1,47 @@
+variable: moving_domain_length
+title: "Moving-Domain Length"
+kind: state
+dimension:
+  udunits: "m"
+  cf_standard_name: null
+support:
+  spatial_kind: grid_cell
+  area_basis: grid_area
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions:
+      - cell
+owner: null
+aliases: []
+incrementable: true
+accumulates: null
+references:
+  - "Thomas, P.D. & Lombard, C.K. (1979). AIAA J. 17, 1030-1037 (geometric conservation law)"
+  - "Donea, J., Huerta, A., Ponthot, J.-Ph. & Rodriguez-Ferran, A. (2004). Arbitrary Lagrangian-Eulerian Methods, Encyclopedia of Computational Mechanics"
+numerics:
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments:
+    - name: "moving_domain_diffusion"
+      module: "relic.scientific.pedosphere.transport.moving_domain_diffusion"
+      provides:
+        - "moving_domain_length"
+      unit: "m"
+  tendencies: []
+flux_contract:
+  allowed_in: ["moving_domain_diffusion"]
+  allowed_out: ["moving_domain_diffusion"]
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-12
+      rtol: 1.0e-9
+provenance:
+  source_file: "relic/scientific/pedosphere/transport/moving_domain_diffusion.py"
+  runtime_role: "moving_domain_ale_state"
+  runtime_writer: "moving_domain_diffusion"
+  note: "Length L of the moving column; advanced by the boundary velocity w_b (geometry state of the ALE mapping x = xi L)."

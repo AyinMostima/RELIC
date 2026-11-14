@@ -1,0 +1,65 @@
+from __future__ import annotations
+
+import torch
+from torch import Tensor
+
+from relic.core.functor import (
+    FunctorMetadata,
+    ProcessCategory,
+    ScaleCouplingFunctor,
+    SpatialScale,
+    VariableKind,
+)
+
+
+class {{FUNCTOR_CLASS}}(ScaleCouplingFunctor):
+    """Scaffolded scale coupling functor."""
+
+    def __init__(self, config=None, name="{{EXTENSION_KEY}}", **kwargs):
+        metadata = FunctorMetadata(
+            name=name,
+            category=ProcessCategory.SCALE_COUPLING,
+            description="Scaffolded scale coupling extension functor.",
+            references=[
+                "Jones (1999). Monthly Weather Review 127:2204-2210.",
+            ],
+            mathematical_expression="{{OUTPUT_VARIABLE}} = template_rate * fine_scale_signal",
+            input_variables=["fine_scale_signal"],
+            output_variables=["{{OUTPUT_VARIABLE}}"],
+            spatial_scale=SpatialScale.LANDSCAPE,
+            variable_kind=VariableKind.DIAGNOSTIC,
+        )
+        super().__init__(name=name, config=config or {}, metadata=metadata, **kwargs)
+
+    def get_dependencies(self):
+        # Static Functor dependencies of this extension (Functor names, never
+        # state variables). FunctorBase merges them with config["dependencies"],
+        # set_dependencies and add_dependency; a bare list would drop those.
+        return self._merge_declared_dependencies([])
+
+    def forward(self, state, time, dt, **kwargs):
+        # References: Jones (1999).
+        # Mathematical expression: coupled_signal = alpha * fine_scale_signal.
+        # Parameters: alpha=template_rate [dimensionless], fine_scale_signal=[signal units].
+        signal = state.get("fine_scale_signal")
+        if signal is None:
+            signal_tensor = torch.tensor(0.0, dtype=torch.float32)
+        elif isinstance(signal, Tensor):
+            signal_tensor = signal
+        else:
+            signal_tensor = torch.tensor(float(signal), dtype=torch.float32)
+
+        rate_value = self.get_parameter_value("template_rate", required=False)
+        if rate_value is None:
+            raise ValueError("Missing parameter 'template_rate'. Define it in parameters.yaml.")
+        if isinstance(rate_value, Tensor):
+            rate_tensor = rate_value.to(device=signal_tensor.device, dtype=signal_tensor.dtype)
+        else:
+            rate_tensor = torch.tensor(
+                float(rate_value),
+                device=signal_tensor.device,
+                dtype=signal_tensor.dtype,
+            )
+
+        return {"{{OUTPUT_VARIABLE}}": rate_tensor * signal_tensor}
+

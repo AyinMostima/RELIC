@@ -1,0 +1,37 @@
+variable: residue_incorporation_rate
+title: "Tillage Residue Incorporation Fraction"
+description: "Fraction of the residue cover incorporated by the operation of the step, limited to [0, 1]; zero in a step without an operation."
+kind: diagnostic
+dimension:
+  udunits: "1"
+  cf_standard_name: null
+owner: "tillage_management"
+aliases: []
+incrementable: false
+accumulates: null
+numerics:
+  lower_bound: 0.0
+  upper_bound: 1.0
+  atol: 1.0e-12
+  rtol: 1.0e-09
+writers:
+  increments: []
+  tendencies:
+    - name: "tillage_management"
+      module: "relic.scientific.anthroposphere.management.tillage"
+      provides:
+        - "residue_incorporation_rate"
+      unit: "1"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/anthroposphere/management/tillage.py"
+  runtime_role: "tillage_event_residue_incorporation_observation"
+  runtime_writer: "tillage_management"
+  note: "Computed in _compute_rate_core in the step of an executed operation and limited to [0, 1] (zero without one), returned by TillageManagement.forward as UpdateItem(REPLACE, per_timestep=False, unit '1')."

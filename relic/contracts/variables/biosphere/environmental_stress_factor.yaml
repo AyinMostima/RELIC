@@ -1,0 +1,48 @@
+variable: diagnostics.bvoc.megan.environmental_stress_factor
+title: "MEGAN Environmental Stress Factor Diagnostic"
+description: "Combined environmental stress multiplier that the reduced MEGAN closure applies to every compound emission rate (E_i is multiplied by f_stress): the product of the declared stress controls, f_stress = f_w * f_T * f_O3 when all three are declared (stress_factors selects a subset). Dimensionless fraction in [0, 1]: 1 is unstressed, and with use_stress_functors false no control is declared and f_stress is 1. Namespaced REPLACE diagnostic of megan_bvoc_model, routed by partition_outputs to the diagnostics channel; no Functor reads it and it is never committed as state."
+kind: diagnostic
+dimension:
+  udunits: "1"
+  cf_standard_name: null
+support:
+  spatial_kind: grid_cell
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: "megan_bvoc_model"
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Guenther, A.B. et al. (2012). The Model of Emissions of Gases and Aerosols from Nature version 2.1 (MEGAN2.1). Geosci. Model Dev. 5, 1471-1492"
+numerics:
+  # Product of water_stress_factor, temperature_stress_factor and
+  # ozone_stress_factor, each a [0, 1] control (SCM bounds and
+  # megan_model.py _validate_inputs); the product stays in [0, 1].
+  lower_bound: 0.0
+  upper_bound: 1.0
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "megan_bvoc_model"
+      module: "relic.scientific.biosphere.bvoc.megan_model"
+      provides: ["diagnostics.bvoc.megan.environmental_stress_factor"]
+      unit: "dimensionless"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/biosphere/bvoc/megan_model.py"
+  runtime_role: "megan_environmental_stress_multiplier_diagnostic"
+  runtime_writer: "megan_bvoc_model"
+  note: "Declared output megan_model.py:113 and :217; f_stress = water_stress * temp_stress * ozone_stress at :1113 (ones when use_stress_functors is false, :809-811); applied to emissions at :881; emitted at :941-942 as UpdateItem REPLACE (:1011) with unit 'dimensionless' (:1027), equivalent to '1'. Inputs validated in [0, 1] at :1655. The former placeholder named the bare key environmental_stress_factor, which no relic Functor reads or writes."

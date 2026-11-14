@@ -1,0 +1,71 @@
+variable: latent_heat_flux
+title: "Surface Latent Heat Flux"
+kind: flux
+dimension:
+  udunits: "W m-2"
+  cf_standard_name: "surface_upward_latent_heat_flux"
+support:
+  spatial_kind: grid_cell
+  area_basis: ground_area
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+# Signed upward flux (CF surface_upward_latent_heat_flux sign convention;
+# lambda E = (Rn - G)/(1 + beta) is negative for dew or condensation). The
+# producers' non-negative ET projection is a model choice, not a bound.
+numerics:
+  lower_bound: null
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "penman_monteith_et"
+      module: "relic.scientific.hydrosphere.evapotranspiration.penman_monteith"
+      provides: ["latent_heat_flux"]
+      unit: "W m-2"
+    - name: "priestley_taylor_et"
+      module: "relic.scientific.hydrosphere.evapotranspiration.priestley_taylor"
+      provides: ["latent_heat_flux"]
+      unit: "W m-2"
+    - name: "CESMAdapter"
+      module: "relic.coupling.external.atmospheric_models.cesm_adapter"
+      provides: ["latent_heat_flux"]
+      unit: "W m-2"
+    - name: "CMIP6Adapter"
+      module: "relic.coupling.external.climate_models.cmip6_adapter"
+      provides: ["latent_heat_flux"]
+      unit: "W m-2"
+    - name: "WRFAdapter"
+      module: "relic.coupling.external.atmospheric_models.wrf_adapter"
+      provides: ["latent_heat_flux"]
+      unit: "W m-2"
+flux_contract:
+  allowed_in:
+    - "penman_monteith_et"
+    - "priestley_taylor_et"
+    - "CESMAdapter"
+    - "CMIP6Adapter"
+    - "WRFAdapter"
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/hydrosphere/evapotranspiration/penman_monteith.py"
+  runtime_role: "mutually_exclusive_surface_latent_heat_flux"
+  runtime_writers:
+    - "penman_monteith_et"
+    - "priestley_taylor_et"
+  adapter_writers:
+    - "CESMAdapter"
+    - "CMIP6Adapter"
+    - "WRFAdapter"

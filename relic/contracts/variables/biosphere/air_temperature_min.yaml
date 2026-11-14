@@ -1,0 +1,58 @@
+variable: air_temperature_min
+title: "Daily Minimum Air Temperature"
+kind: forcing
+dimension:
+  udunits: "K"
+  cf_standard_name: "air_temperature"
+  cell_methods: "time: minimum"
+# Support of the forcing air_temperature (atmosphere/air_temperature.yaml):
+# the daily minimum is the value of the grid-cell near-surface air temperature
+# field at the instant it is attained, so it is a point-in-time sample
+# (instantaneous), not an interval mean or integral; the extremum over the day
+# is the CF qualifier cell_methods "time: minimum" above (CF-1.8 section 7.3).
+support:
+  spatial_kind: grid_cell
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: null
+aliases: ["daily_minimum_air_temperature"]
+incrementable: false
+accumulates: null
+references:
+  - "relic/scientific/biosphere/phenology/models.py: daily minimum temperature [K]"
+  - "CF-1.8 section 7.3: cell_methods time: minimum"
+numerics:
+  lower_bound: 0.0
+  upper_bound: .inf
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "CMIP6Adapter"
+      module: "relic.coupling.external.climate_models.cmip6_adapter"
+      provides: ["air_temperature_min"]
+      unit: "K"
+    - name: "VICAdapter"
+      module: "relic.coupling.external.hydrological_models.vic_adapter"
+      provides: ["air_temperature_min"]
+      unit: "K"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/biosphere/phenology/models.py"
+  runtime_role: "phenology_daily_extremum_input"
+  runtime_writer: null
+  note: "CF air_temperature with cell_methods time: minimum; absolute temperature; no RELIC Functor writes it."
+  adapter_writers:
+    - "CMIP6Adapter"
+    - "VICAdapter"

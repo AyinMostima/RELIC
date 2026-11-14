@@ -1,0 +1,47 @@
+variable: antioxidant_depletion
+title: "Specific Antioxidant Consumption Rate"
+description: "Specific antioxidant consumption rate k_ax = D / C_ax [s-1] of ozone_stress: the detoxification flux D = min(F_O3, C_detox) [mol O3 m-2 s-1] of the declared detoxification reaction divided by the antioxidant capacity C_ax [mol O3 m-2]. A rate, not a fraction: the apoplastic ascorbate pool is replenished from the symplast (Ploechl et al. 2000) and is not a RELIC state, so no consumed fraction of a pool is formed. REPLACE output of ozone_stress; no relic Functor reads it."
+kind: diagnostic
+dimension:
+  udunits: "s-1"
+  cf_standard_name: null
+support:
+  spatial_kind: leaf
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: "ozone_stress"
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Ploechl, M., Lyons, T., Ollerenshaw, J. and Barnes, J. (2000). Simulating ozone detoxification in the leaf apoplast through the direct reaction with ascorbate. Planta 210, 454-467"
+  - "Emberson, L.D. et al. (2000). Modelling stomatal ozone flux across Europe. Environmental Pollution 109, 403-413"
+numerics:
+  # k_ax >= 0 is consumption of antioxidant by the detoxification reaction.
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "ozone_stress"
+      module: "relic.scientific.biosphere.stress.ozone_stress"
+      provides: ["antioxidant_depletion"]
+      unit: "s-1"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/biosphere/stress/ozone_stress.py"
+  runtime_role: "specific_antioxidant_consumption_rate"
+  runtime_writer: "ozone_stress"
+  note: "Written only by ozone_stress (metadata output_variables; k_ax = detoxification_flux / antioxidant_capacity in _evaluate_iphs_ozone_network, UpdateItem REPLACE, unit s-1, per_timestep False). C_ax = biosphere.stress.ozone.antioxidant_capacity [mol O3 m-2]. No relic Functor reads it; the tutorial case plots it (list only)."

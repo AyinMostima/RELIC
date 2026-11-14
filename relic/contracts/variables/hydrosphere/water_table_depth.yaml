@@ -1,0 +1,37 @@
+variable: water_table_depth
+title: "Water Table Depth"
+description: "Depth of the water table below the land surface, positive downward, written by groundwater_dynamics; CF v94 water_table_depth (m)."
+kind: state
+dimension:
+  udunits: "m"
+  cf_standard_name: "water_table_depth"
+owner: "groundwater_dynamics"
+aliases: []
+incrementable: false
+accumulates: null
+numerics:
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "groundwater_dynamics"
+      module: "relic.scientific.hydrosphere.groundwater.dynamics"
+      provides: ["water_table_depth"]
+      unit: "m"
+flux_contract:
+  allowed_in:
+    - "groundwater_dynamics"
+  allowed_out:
+    - "capillary_rise_transport"
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/hydrosphere/groundwater/dynamics.py"
+  runtime_role: "groundwater_water_table_full_state"
+  runtime_writer: "groundwater_dynamics"

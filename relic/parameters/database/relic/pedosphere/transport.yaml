@@ -1,0 +1,1438 @@
+﻿schema_version: 2.0.0
+tier: relic
+namespace: pedosphere.transport
+description: Transport process parameters for solute advection-diffusion and gas diffusion in pedosphere
+metadata:
+  created_by: RELIC Parameter System
+  last_modified: '2025-10-06T00:00:00Z'
+  schema_url: https://github.com/relic/parameter-schema/v2.0.0
+  notes: Parameters for soil solute transport (nitrate, dissolved organic carbon) and gas transport (CO2, N2O), including
+    distribution coefficients, diffusivities, dispersivities, numerical scheme settings, and boundary conditions. Some gas
+    properties reference physical.yaml for consistency.
+  version: 1.0.0
+parameters:
+  pedosphere.transport.nitrate_distribution_coefficient:
+    value: 0.1
+    units: L kg-1
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: solute_transport_parameter
+    description: Distribution coefficient (Kd) for nitrate sorption on soil particles, very mobile anion with minimal sorption
+    references:
+    - Jury & Horton (2004) Soil Physics 6th edition
+    - van Genuchten & Wierenga (1986) doi:10.2136/sssaj1986.03615995005000050013x
+    tags:
+    - learnable
+    - nitrate
+    - sorption
+    - NO3
+    dimension: distribution_coefficient
+    requires_grad: true
+    provenance:
+      source: Solute transport literature
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.nitrate_diffusivity_water:
+    value: 1.9e-09
+    default: 1.9e-09
+    units: m2 s-1
+    dtype: float32
+    bounds:
+    - 1.5e-09
+    - 2.2e-09
+    category: solute_transport_parameter
+    description: Molecular diffusivity of nitrate ion in water at 25 Celsius
+    references:
+    - Li & Gregory (1974) doi:10.1016/0016-7037(74)90022-2
+    - Appelo & Postma (2005) Geochemistry, Groundwater and Pollution
+    tags:
+    - constant
+    - nitrate
+    - diffusion
+    - molecular
+    dimension: diffusivity
+    requires_grad: false
+    provenance:
+      source: Chemical transport data
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.nitrate_longitudinal_dispersivity:
+    value: 0.01
+    default: 0.01
+    units: m
+    dtype: float32
+    bounds:
+    - 0.001
+    - 0.1
+    category: solute_transport_parameter
+    description: Longitudinal dispersivity for nitrate in soil, scale-dependent parameter
+    references:
+    - Gelhar et al. (1992) doi:10.1029/92WR00607
+    - Xu & Eckstein (1995) doi:10.1029/95WR00912
+    tags:
+    - learnable
+    - nitrate
+    - dispersivity
+    - longitudinal
+    dimension: length
+    requires_grad: true
+    provenance:
+      source: Field-scale dispersion studies
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.nitrate_transverse_dispersivity:
+    value: 0.001
+    default: 0.001
+    units: m
+    dtype: float32
+    bounds:
+    - 0.0001
+    - 0.01
+    category: solute_transport_parameter
+    description: Transverse dispersivity for nitrate in soil, typically 10 percent of longitudinal dispersivity
+    references:
+    - Gelhar et al. (1992) doi:10.1029/92WR00607
+    - Xu & Eckstein (1995) doi:10.1029/95WR00912
+    tags:
+    - learnable
+    - nitrate
+    - dispersivity
+    - transverse
+    dimension: length
+    requires_grad: true
+    provenance:
+      source: Field-scale dispersion studies
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.nitrate_minimum_concentration:
+    value: 1.0e-09
+    default: 1.0e-09
+    units: g m-3
+    dtype: float32
+    bounds:
+    - 1.0e-12
+    - 1.0e-06
+    category: numerical_parameter
+    description: Minimum nitrate concentration threshold for numerical stability in transport calculations
+    references:
+    - Numerical stability requirements for advection-diffusion solver
+    tags:
+    - numerical
+    - nitrate
+    - stability
+    - threshold
+    dimension: mass_concentration
+    requires_grad: false
+    provenance:
+      source: Numerical solver requirements
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.nitrate_temperature_coefficient:
+    value: 1.5
+    default: 1.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 2.0
+    category: solute_transport_parameter
+    description: Temperature activation factor for nitrate diffusivity, approximate Q10-like scaling
+    references:
+    - Appelo & Postma (2005) Geochemistry, Groundwater and Pollution
+    - Li & Gregory (1974) doi:10.1016/0016-7037(74)90022-2
+    tags:
+    - learnable
+    - nitrate
+    - temperature_response
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: Temperature-dependent diffusion
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.nitrate_freundlich_exponent:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.8
+    - 1.2
+    category: solute_transport_parameter
+    description: Freundlich isotherm exponent for nitrate sorption, 1.0 corresponds to linear isotherm
+    references:
+    - Jury & Horton (2004) Soil Physics
+    - Nielsen et al. (1986) Water Resources Monograph 11
+    tags:
+    - learnable
+    - nitrate
+    - sorption
+    - Freundlich
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: Sorption isotherm literature
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.doc_distribution_coefficient:
+    value: 2.0
+    default: 2.0
+    units: L kg-1
+    dtype: float32
+    bounds:
+    - 0.5
+    - 10.0
+    category: solute_transport_parameter
+    description: Distribution coefficient (Kd) for dissolved organic carbon sorption, moderate sorption to soil minerals
+    references:
+    - Kalbitz et al. (2000) doi:10.1016/S0016-7061(00)00027-2
+    - Kaiser & Guggenberger (2000) doi:10.1046/j.1365-2389.2000.00289.x
+    tags:
+    - learnable
+    - DOC
+    - sorption
+    - organic_carbon
+    dimension: distribution_coefficient
+    requires_grad: true
+    provenance:
+      source: Organic carbon transport studies
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.doc_diffusivity_water:
+    value: 6.0e-10
+    default: 6.0e-10
+    units: m2 s-1
+    dtype: float32
+    bounds:
+    - 3.0e-10
+    - 1.0e-09
+    category: solute_transport_parameter
+    description: Molecular diffusivity of dissolved organic carbon in water at 25 Celsius, lower than small ions due to larger
+      molecular size
+    references:
+    - Appelo & Postma (2005) Geochemistry, Groundwater and Pollution
+    - Qualls & Haines (1991) doi:10.2136/sssaj1991.03615995005500060005x
+    tags:
+    - constant
+    - DOC
+    - diffusion
+    - molecular
+    dimension: diffusivity
+    requires_grad: false
+    provenance:
+      source: Organic solute diffusion data
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.doc_longitudinal_dispersivity:
+    value: 0.01
+    default: 0.01
+    units: m
+    dtype: float32
+    bounds:
+    - 0.001
+    - 0.1
+    category: solute_transport_parameter
+    description: Longitudinal dispersivity for dissolved organic carbon in soil
+    references:
+    - Gelhar et al. (1992) doi:10.1029/92WR00607
+    - Kalbitz et al. (2000) doi:10.1016/S0016-7061(00)00027-2
+    tags:
+    - learnable
+    - DOC
+    - dispersivity
+    - longitudinal
+    dimension: length
+    requires_grad: true
+    provenance:
+      source: Field-scale dispersion studies
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.doc_transverse_dispersivity:
+    value: 0.001
+    default: 0.001
+    units: m
+    dtype: float32
+    bounds:
+    - 0.0001
+    - 0.01
+    category: solute_transport_parameter
+    description: Transverse dispersivity for dissolved organic carbon in soil
+    references:
+    - Gelhar et al. (1992) doi:10.1029/92WR00607
+    - Kalbitz et al. (2000) doi:10.1016/S0016-7061(00)00027-2
+    tags:
+    - learnable
+    - DOC
+    - dispersivity
+    - transverse
+    dimension: length
+    requires_grad: true
+    provenance:
+      source: Field-scale dispersion studies
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.doc_minimum_concentration:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: g m-3
+    dtype: float32
+    bounds:
+    - 1.0e-09
+    - 0.001
+    category: numerical_parameter
+    description: Minimum dissolved organic carbon concentration threshold for numerical stability
+    references:
+    - Numerical stability requirements for advection-diffusion solver
+    tags:
+    - numerical
+    - DOC
+    - stability
+    - threshold
+    dimension: mass_concentration
+    requires_grad: false
+    provenance:
+      source: Numerical solver requirements
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.doc_temperature_coefficient:
+    value: 1.3
+    default: 1.3
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 1.8
+    category: solute_transport_parameter
+    description: Temperature activation factor for dissolved organic carbon diffusivity
+    references:
+    - Appelo & Postma (2005) Geochemistry, Groundwater and Pollution
+    tags:
+    - learnable
+    - DOC
+    - temperature_response
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: Temperature-dependent diffusion
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.doc_freundlich_exponent:
+    value: 0.9
+    default: 0.9
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.7
+    - 1.1
+    category: solute_transport_parameter
+    description: Freundlich isotherm exponent for dissolved organic carbon sorption, slightly nonlinear
+    references:
+    - Kaiser & Guggenberger (2000) doi:10.1046/j.1365-2389.2000.00289.x
+    - Kalbitz et al. (2000) doi:10.1016/S0016-7061(00)00027-2
+    tags:
+    - learnable
+    - DOC
+    - sorption
+    - Freundlich
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: Organic carbon sorption studies
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.doc_biodegradation_rate:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: s-1
+    dtype: float32
+    bounds:
+    - 1.0e-08
+    - 0.0001
+    category: solute_transport_parameter
+    description: First-order biodegradation rate constant for dissolved organic carbon during transport
+    references:
+    - Qualls & Haines (1992) doi:10.1097/00010694-199205000-00003
+    - McDowell & Wood (1984) doi:10.1097/00010694-198408000-00001
+    tags:
+    - learnable
+    - DOC
+    - biodegradation
+    - first_order
+    dimension: frequency
+    requires_grad: true
+    provenance:
+      source: DOC mineralization studies
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.doc_biodegradation_q10:
+    value: 2.5
+    default: 2.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 2.0
+    - 3.0
+    category: solute_transport_parameter
+    description: Temperature sensitivity (Q10) for dissolved organic carbon biodegradation during transport
+    references:
+    - Qualls & Haines (1992) doi:10.1097/00010694-199205000-00003
+    - McDowell (2003) doi:10.1016/S0038-0717(03)00119-4
+    tags:
+    - learnable
+    - DOC
+    - biodegradation
+    - Q10
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: Temperature-dependent DOC mineralization
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.cfl_number:
+    value: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 0.9
+    category: numerical_parameter
+    description: Courant-Friedrichs-Lewy (CFL) number for numerical stability in advection-diffusion solver
+    references:
+    - Courant et al. (1928) Mathematische Annalen
+    - LeVeque (2002) Finite Volume Methods for Hyperbolic Problems
+    tags:
+    - numerical
+    - CFL
+    - stability
+    - time_step
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Numerical analysis literature
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.default_molecular_diffusivity_water:
+    value: 1.0e-09
+    units: m2 s-1
+    dtype: float32
+    bounds:
+    - 1.0e-10
+    - 1.0e-08
+    category: solute_transport_parameter
+    description: Default molecular diffusivity used for solute transport initialization
+    references:
+    - Bear (1972) Dynamics of Fluids in Porous Media
+    - Jury & Horton (2004) Soil Physics
+    tags:
+    - default
+    - diffusion
+    - molecular
+    dimension: diffusivity
+    requires_grad: false
+    provenance:
+      source: Solute transport literature
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.molecular_diffusivity_temperature_exponent:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float32
+    category: solute_transport_parameter
+    description: Temperature exponent n in D(T) = D0 * (T/T_ref)^n for molecular diffusion in water (Stokes-Einstein scaling).
+    references:
+    - Einstein (1905) Annalen der Physik 17:549-560
+    - Bear (1972) Dynamics of Fluids in Porous Media
+    tags:
+    - diffusion
+    - temperature_response
+    - solute
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: pedosphere solute diffusion scaling
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2026-01-29T00:00:00Z'
+    bounds:
+    - 0.0
+    - 50.0
+  pedosphere.transport.gravity_head_gradient:
+    value: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.9
+    - 1.1
+    category: numerical_parameter
+    description: Vertical head gradient term in Darcy-Buckingham flux (dz/dz) for 1D soil water flow.
+    references:
+    - Darcy (1856)
+    - Richards (1931) doi:10.1063/1.1745010
+    tags:
+    - numerical
+    - gravity
+    - darcy_flux
+    - transport
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Pedosphere transport numerical configuration
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2026-01-03T00:00:00Z'
+  pedosphere.transport.time_step_minimum:
+    value: 60.0
+    default: 60.0
+    units: s
+    dtype: float32
+    bounds:
+    - 1.0
+    - 300.0
+    category: numerical_parameter
+    description: Minimum time step for adaptive timestepping in transport solver (1 minute)
+    references:
+    - Adaptive timestepping protocol for transport processes
+    tags:
+    - numerical
+    - time_step
+    - adaptive
+    - minimum
+    dimension: time
+    requires_grad: false
+    provenance:
+      source: Numerical solver configuration
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.time_step_maximum:
+    value: 1800.0
+    units: s
+    dtype: float32
+    bounds:
+    - 600.0
+    - 3600.0
+    category: numerical_parameter
+    description: Maximum time step for adaptive timestepping in transport solver (30 minutes)
+    references:
+    - Adaptive timestepping protocol for transport processes
+    tags:
+    - numerical
+    - time_step
+    - adaptive
+    - maximum
+    dimension: time
+    requires_grad: false
+    provenance:
+      source: Numerical solver configuration
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.convergence_relative_tolerance:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-08
+    - 0.0001
+    category: numerical_parameter
+    description: Relative tolerance for iterative convergence in transport solver
+    references:
+    - Iterative solver convergence criteria
+    tags:
+    - numerical
+    - convergence
+    - tolerance
+    - relative
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Numerical solver configuration
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.convergence_absolute_tolerance:
+    value: 1.0e-09
+    default: 1.0e-09
+    units: g m-3
+    dtype: float32
+    bounds:
+    - 1.0e-12
+    - 1.0e-06
+    category: numerical_parameter
+    description: Absolute tolerance for iterative convergence in transport solver
+    references:
+    - Iterative solver convergence criteria
+    tags:
+    - numerical
+    - convergence
+    - tolerance
+    - absolute
+    dimension: mass_concentration
+    requires_grad: false
+    provenance:
+      source: Numerical solver configuration
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.max_solver_iterations:
+    value: 100
+    default: 100
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 10
+    - 500
+    category: numerical_parameter
+    description: Maximum number of iterations for iterative transport solver
+    references:
+    - Iterative solver configuration
+    tags:
+    - numerical
+    - convergence
+    - iterations
+    - maximum
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Numerical solver configuration
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.soil_profile_depth:
+    value: 1.0
+    default: 1.0
+    units: m
+    dtype: float32
+    bounds:
+    - 0.5
+    - 3.0
+    category: numerical_parameter
+    description: Total soil profile depth for transport calculations
+    references:
+    - Standard soil profile depth for biogeochemical modeling
+    tags:
+    - numerical
+    - grid
+    - depth
+    - profile
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: Model domain configuration
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.layer_thickness_ratio:
+    value: 1.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 3.0
+    category: numerical_parameter
+    description: Geometric progression ratio for layer thickness, 1.0 is uniform, greater than 1.0 gives finer resolution
+      near surface
+    references:
+    - Grid refinement protocol for soil transport
+    tags:
+    - numerical
+    - grid
+    - refinement
+    - geometric
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Numerical grid design
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.surface_flux_default:
+    value: 0.0
+    default: 0.0
+    units: g m-2 s-1
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.001
+    category: boundary_condition
+    description: Default surface gas flux when not specified by atmospheric coupling (zero flux boundary)
+    references:
+    - Boundary condition protocol for transport processes
+    tags:
+    - gas
+    - flux
+    - surface
+    - boundary
+    - default
+    dimension: mass_flux
+    requires_grad: false
+    provenance:
+      source: Model boundary condition defaults
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.flux_in_default:
+    value: 0.0
+    default: 0.0
+    units: g m-2 s-1
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.001
+    category: boundary_condition
+    description: Default incoming solute flux at surface when not specified by precipitation or irrigation coupling
+    references:
+    - Boundary condition protocol for solute transport
+    tags:
+    - solute
+    - flux
+    - input
+    - boundary
+    - default
+    dimension: mass_flux
+    requires_grad: false
+    provenance:
+      source: Model boundary condition defaults
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.diffusive_flux_default:
+    value: 0.0
+    default: 0.0
+    units: g m-2 s-1
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.001
+    category: default_value
+    description: Default diffusive flux when calculation fails or boundary data unavailable
+    references:
+    - Error handling protocol for transport calculations
+    tags:
+    - diffusion
+    - flux
+    - default
+    - error_handling
+    dimension: mass_flux
+    requires_grad: false
+    provenance:
+      source: Numerical stability requirements
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.surface_nitrate_concentration_bc:
+    value: 0.0
+    default: 0.0
+    units: g m-3
+    dtype: float32
+    bounds:
+    - 0.0
+    - 100.0
+    category: boundary_condition
+    description: Default surface boundary condition for nitrate concentration when using concentration-type BC
+    references:
+    - Boundary condition protocol for solute transport
+    tags:
+    - nitrate
+    - concentration
+    - surface
+    - boundary
+    dimension: mass_concentration
+    requires_grad: false
+    provenance:
+      source: Model boundary condition defaults
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.surface_doc_concentration_bc:
+    value: 0.0
+    default: 0.0
+    units: g m-3
+    dtype: float32
+    bounds:
+    - 0.0
+    - 500.0
+    category: boundary_condition
+    description: Default surface boundary condition for dissolved organic carbon concentration when using concentration-type
+      BC
+    references:
+    - Boundary condition protocol for solute transport
+    tags:
+    - DOC
+    - concentration
+    - surface
+    - boundary
+    dimension: mass_concentration
+    requires_grad: false
+    provenance:
+      source: Model boundary condition defaults
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.mass_balance_carbon_tolerance:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: g m-2
+    dtype: float32
+    bounds:
+    - 1.0e-09
+    - 0.001
+    category: numerical_parameter
+    description: Mass balance tolerance for carbon conservation check in transport
+    references:
+    - Conservation validation protocol
+    tags:
+    - numerical
+    - conservation
+    - carbon
+    - tolerance
+    dimension: mass_areal_density
+    requires_grad: false
+    provenance:
+      source: Conservation verification system
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.mass_balance_nitrogen_tolerance:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: g m-2
+    dtype: float32
+    bounds:
+    - 1.0e-09
+    - 0.001
+    category: numerical_parameter
+    description: Mass balance tolerance for nitrogen conservation check in transport
+    references:
+    - Conservation validation protocol
+    tags:
+    - numerical
+    - conservation
+    - nitrogen
+    - tolerance
+    dimension: mass_areal_density
+    requires_grad: false
+    provenance:
+      source: Conservation verification system
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.max_nitrate_concentration:
+    value: 1000.0
+    default: 1000.0
+    units: g m-3
+    dtype: float32
+    bounds:
+    - 100.0
+    - 5000.0
+    category: numerical_parameter
+    description: Maximum physically realistic nitrate concentration for validation
+    references:
+    - Physical limit constraints for transport solver
+    tags:
+    - numerical
+    - constraint
+    - nitrate
+    - maximum
+    dimension: mass_concentration
+    requires_grad: false
+    provenance:
+      source: Physical realism constraints
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.max_doc_concentration:
+    value: 5000.0
+    default: 5000.0
+    units: g m-3
+    dtype: float32
+    bounds:
+    - 1000.0
+    - 10000.0
+    category: numerical_parameter
+    description: Maximum physically realistic dissolved organic carbon concentration for validation
+    references:
+    - Physical limit constraints for transport solver
+    tags:
+    - numerical
+    - constraint
+    - DOC
+    - maximum
+    dimension: mass_concentration
+    requires_grad: false
+    provenance:
+      source: Physical realism constraints
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.max_leaching_flux:
+    value: 0.001
+    default: 0.001
+    units: g m-2 s-1
+    dtype: float32
+    bounds:
+    - 0.0001
+    - 0.01
+    category: numerical_parameter
+    description: Maximum physically realistic solute leaching flux for validation
+    references:
+    - Physical limit constraints for transport solver
+    tags:
+    - numerical
+    - constraint
+    - leaching
+    - maximum
+    dimension: mass_flux
+    requires_grad: false
+    provenance:
+      source: Physical realism constraints
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.max_gas_flux:
+    value: 0.0001
+    default: 0.0001
+    units: g m-2 s-1
+    dtype: float32
+    bounds:
+    - 1.0e-05
+    - 0.001
+    category: numerical_parameter
+    description: Maximum physically realistic gas diffusion flux for validation
+    references:
+    - Physical limit constraints for gas transport
+    tags:
+    - numerical
+    - constraint
+    - gas
+    - maximum
+    dimension: mass_flux
+    requires_grad: false
+    provenance:
+      source: Physical realism constraints
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.high_concentration_warning_threshold:
+    value: 100.0
+    default: 100.0
+    units: g m-3
+    dtype: float32
+    bounds:
+    - 10.0
+    - 500.0
+    category: numerical_parameter
+    description: Concentration threshold that triggers warning for unusually high solute values
+    references:
+    - Quality control protocol for transport calculations
+    tags:
+    - numerical
+    - warning
+    - quality_control
+    dimension: mass_concentration
+    requires_grad: false
+    provenance:
+      source: Quality control system
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.high_flux_warning_threshold:
+    value: 0.0001
+    default: 0.0001
+    units: g m-2 s-1
+    dtype: float32
+    bounds:
+    - 1.0e-05
+    - 0.001
+    category: numerical_parameter
+    description: Flux threshold that triggers warning for unusually high transport rates
+    references:
+    - Quality control protocol for transport calculations
+    tags:
+    - numerical
+    - warning
+    - quality_control
+    dimension: mass_flux
+    requires_grad: false
+    provenance:
+      source: Quality control system
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.diffusion_model:
+    value: millington_quirk
+    units: dimensionless
+    dtype: string
+    bounds: null
+    category: model_configuration
+    description: 'Gas diffusion model selection for soil air-filled pore space. Options: millington_quirk (default), penman,
+      dndc'
+    references:
+    - Millington & Quirk (1961) doi:10.1097/00010694-196111000-00003
+    - Penman (1940) Journal of Agricultural Science
+    - Li et al. (1992) DNDC model doi:10.1029/92JD00509
+    tags:
+    - model_selection
+    - gas_diffusion
+    - configuration
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Gas diffusion model selection
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.allow_constructor_overrides:
+    value: 0.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: model_configuration
+    description: Allow constructor overrides for pedosphere transport functors (1.0 enabled, 0.0 disabled).
+    references:
+    - Parameter governance policy for transport configuration overrides
+    tags:
+    - model_configuration
+    - override
+    - transport
+    - governance
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Transport configuration governance
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2026-01-07T00:00:00Z'
+  pedosphere.transport.temperature_correction:
+    value: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: model_configuration
+    description: Enable temperature-dependent gas diffusivity correction (1.0=enabled, 0.0=disabled)
+    references:
+    - Fuller et al. (1966) Temperature dependence doi:10.1021/ie50677a007
+    - Massman (1998) doi:10.1016/S0168-1923(98)00105-0
+    tags:
+    - model_configuration
+    - temperature_correction
+    - gas_diffusion
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Gas diffusion temperature correction protocol
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.atmospheric_exchange:
+    value: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: model_configuration
+    description: Enable atmospheric gas exchange at soil surface (1.0=enabled, 0.0=disabled, zero-gradient BC)
+    references:
+    - Boundary condition protocol for soil-atmosphere gas exchange
+    tags:
+    - model_configuration
+    - atmospheric_exchange
+    - boundary_condition
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Soil-atmosphere coupling configuration
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.n2o_dndc_clay_effect:
+    value: 0.124
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.05
+    - 0.25
+    category: gas_diffusion_parameter
+    description: Dimensionless clay coefficient in the DNDC N2O diffusion factor
+    references:
+    - Li et al. (1992) DNDC model structure doi:10.1029/92JD00509
+    - Li et al. (2000) DNDC parameterization doi:10.1016/S0304-3800(00)00248-9
+    - Song et al. (2021) DNDC diffusion equation doi:10.5194/gmd-2021-23-supplement
+    tags:
+    - learnable
+    - DNDC
+    - N2O
+    - clay_effect
+    - gas_diffusion
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: DNDC N2O diffusion formulation
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.n2o_dndc_porosity_effect:
+    value: 0.013
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.005
+    - 0.025
+    category: gas_diffusion_parameter
+    description: Dimensionless DNDC porosity coefficient in the N2O diffusion factor
+    references:
+    - Li et al. (1992) DNDC model structure doi:10.1029/92JD00509
+    - Li et al. (2000) DNDC parameterization doi:10.1016/S0304-3800(00)00248-9
+    - Song et al. (2021) DNDC diffusion equation doi:10.5194/gmd-2021-23-supplement
+    tags:
+    - learnable
+    - DNDC
+    - N2O
+    - porosity_effect
+    - gas_diffusion
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: DNDC N2O diffusion formulation
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.n2o_dndc_base_coefficient:
+    value: 0.018
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.01
+    - 0.05
+    category: gas_diffusion_parameter
+    description: Dimensionless base coefficient in the DNDC N2O diffusion factor
+    references:
+    - Li et al. (1992) DNDC model structure doi:10.1029/92JD00509
+    - Li et al. (2000) DNDC parameterization doi:10.1016/S0304-3800(00)00248-9
+    - Song et al. (2021) DNDC diffusion equation doi:10.5194/gmd-2021-23-supplement
+    tags:
+    - learnable
+    - DNDC
+    - N2O
+    - base_coefficient
+    - gas_diffusion
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: DNDC N2O diffusion formulation
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.n2o_dndc_clay_porosity_coefficient:
+    value: 0.016
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.01
+    - 0.03
+    category: gas_diffusion_parameter
+    description: DNDC model clay-porosity interaction coefficient for temperature-dependent N2O diffusion
+    references:
+    - Li et al. (1992) DNDC model structure doi:10.1029/92JD00509
+    - Li et al. (2000) DNDC parameterization doi:10.1016/S0304-3800(00)00248-9
+    - Song et al. (2021) DNDC diffusion equation doi:10.5194/gmd-2021-23-supplement
+    tags:
+    - learnable
+    - DNDC
+    - N2O
+    - clay_porosity_interaction
+    - gas_diffusion
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: DNDC N2O diffusion formulation
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.n2o_dndc_temperature_base:
+    value: 2.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.5
+    - 3.0
+    category: gas_diffusion_parameter
+    description: Dimensionless base for the DNDC N2O exponential temperature factor
+    references:
+    - Li et al. (1992) DNDC model structure doi:10.1029/92JD00509
+    - Li et al. (2000) DNDC parameterization doi:10.1016/S0304-3800(00)00248-9
+    - Song et al. (2021) DNDC diffusion equation doi:10.5194/gmd-2021-23-supplement
+    tags:
+    - learnable
+    - DNDC
+    - N2O
+    - temperature_response
+    - gas_diffusion
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: DNDC N2O diffusion formulation
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.n2o_dndc_temperature_divisor:
+    value: 20.0
+    units: K
+    dtype: float32
+    bounds:
+    - 10.0
+    - 30.0
+    category: gas_diffusion_parameter
+    description: Temperature interval divisor in the DNDC N2O exponential factor
+    references:
+    - Li et al. (1992) DNDC model structure doi:10.1029/92JD00509
+    - Li et al. (2000) DNDC parameterization doi:10.1016/S0304-3800(00)00248-9
+    - Song et al. (2021) DNDC diffusion equation doi:10.5194/gmd-2021-23-supplement
+    tags:
+    - learnable
+    - DNDC
+    - N2O
+    - temperature_divisor
+    - gas_diffusion
+    dimension: temperature
+    requires_grad: true
+    provenance:
+      source: DNDC N2O diffusion formulation
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.transport.two_region_mass_transfer_coefficient:
+    value: 2.0e-05
+    default: 2.0e-05
+    units: s-1
+    dtype: float64
+    bounds:
+    - 1.0e-08
+    - 1.0e-02
+    category: solute_transport_parameter
+    description: First-order mass transfer coefficient alpha between mobile and immobile soil water regions (two-region model)
+    references:
+    - van Genuchten, M.Th. & Wierenga, P.J. (1976). Soil Sci. Soc. Am. J., 40, 473-480.
+    - Haggerty, R. & Gorelick, S.M. (1995). Water Resour. Res., 31, 2383-2400.
+    tags:
+    - learnable
+    - two_region
+    - mobile_immobile
+    - memory
+    dimension: frequency
+    requires_grad: true
+    provenance:
+      source: Solute transport literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-13T00:00:00Z'
+  pedosphere.transport.two_region_mobile_water_content:
+    value: 0.25
+    default: 0.25
+    units: m3 m-3
+    dtype: float64
+    bounds:
+    - 0.01
+    - 0.6
+    category: solute_transport_parameter
+    description: Mobile (flowing) volumetric water content theta_m of the two-region model
+    references:
+    - van Genuchten, M.Th. & Wierenga, P.J. (1976). Soil Sci. Soc. Am. J., 40, 473-480.
+    tags:
+    - two_region
+    - mobile_immobile
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Solute transport literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-13T00:00:00Z'
+  pedosphere.transport.two_region_immobile_water_content:
+    value: 0.1
+    default: 0.1
+    units: m3 m-3
+    dtype: float64
+    bounds:
+    - 0.001
+    - 0.5
+    category: solute_transport_parameter
+    description: Immobile (stagnant) volumetric water content theta_im of the two-region model
+    references:
+    - van Genuchten, M.Th. & Wierenga, P.J. (1976). Soil Sci. Soc. Am. J., 40, 473-480.
+    tags:
+    - two_region
+    - mobile_immobile
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Solute transport literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-13T00:00:00Z'
+  pedosphere.transport.moving_domain_diffusivity:
+    value: 1.0e-09
+    default: 1.0e-09
+    units: m2 s-1
+    dtype: float64
+    bounds:
+    - 1.0e-12
+    - 1.0e-04
+    category: solute_transport_parameter
+    description: Effective solute diffusivity D of the moving-domain (ALE) column diffusion process
+    references:
+    - Crank, J. (1975). The Mathematics of Diffusion. Oxford University Press.
+    - Jury, W.A. & Horton, R. (2004). Soil Physics, 6th ed., Wiley.
+    tags:
+    - learnable
+    - moving_domain
+    - ale
+    dimension: diffusivity
+    requires_grad: true
+    provenance:
+      source: Solute transport literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-14T00:00:00Z'
+  pedosphere.transport.moving_domain_mesh_courant_max:
+    value: 0.9
+    default: 0.9
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.1
+    - 0.99
+    category: numerical_stability
+    description: Maximum mesh Courant number |w_b| dt / dx admitted by the explicit ALE moving-domain update
+    references:
+    - Thomas, P.D. & Lombard, C.K. (1979). AIAA J., 17, 1030-1037.
+    - Donea, J., Huerta, A., Ponthot, J.-Ph. & Rodriguez-Ferran, A. (2004). Arbitrary Lagrangian-Eulerian Methods, Encyclopedia of Computational Mechanics, ch. 14.
+    tags:
+    - numerical
+    - moving_domain
+    - ale
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: ALE literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-14T00:00:00Z'
+  pedosphere.transport.equilibrium_sorption_freundlich_coefficient:
+    value: 2.0e-03
+    default: 2.0e-03
+    units: m3 kg-1
+    dtype: float64
+    bounds:
+    - 1.0e-06
+    - 1.0
+    category: solute_transport_parameter
+    description: Freundlich coefficient K_f of the equilibrium isotherm S = K_f C^n with C in kg m-3 and S in kg kg-1 (generic sorbing solute)
+    references:
+    - Jury, W.A. & Horton, R. (2004). Soil Physics, 6th ed., Wiley, ch. 7.
+    - Mayes, M.A., Heal, K.R., Brandt, C.C., Phillips, J.R. & Jardine, P.M. (2012). Soil Sci. Soc. Am. J., 76, 199-206.
+    tags:
+    - learnable
+    - sorption
+    - freundlich
+    - descriptor_dae
+    dimension: distribution_coefficient
+    requires_grad: true
+    provenance:
+      source: Sorption isotherm literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-14T00:00:00Z'
+  pedosphere.transport.equilibrium_sorption_freundlich_exponent:
+    value: 0.8
+    default: 0.8
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.3
+    - 1.0
+    category: solute_transport_parameter
+    description: Freundlich exponent n of the equilibrium isotherm S = K_f C^n (1 is linear)
+    references:
+    - Jury, W.A. & Horton, R. (2004). Soil Physics, 6th ed., Wiley, ch. 7.
+    tags:
+    - sorption
+    - freundlich
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Sorption isotherm literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-14T00:00:00Z'
+  pedosphere.transport.equilibrium_sorption_dissolved_decay_rate:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: s-1
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1.0e-03
+    category: process_parameter
+    description: First-order degradation rate lambda of the dissolved phase of the sorbing solute
+    references:
+    - Jury, W.A. & Horton, R. (2004). Soil Physics, 6th ed., Wiley, ch. 7.
+    tags:
+    - degradation
+    - sorption
+    dimension: frequency
+    requires_grad: true
+    provenance:
+      source: Solute transport literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-14T00:00:00Z'
+  pedosphere.transport.equilibrium_sorption_consistency_tolerance:
+    value: 1.0e-09
+    default: 1.0e-09
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 1.0e-14
+    - 1.0e-04
+    category: numerical_stability
+    description: Relative tolerance of the consistent-initialization and constraint-residual checks of the equilibrium sorption DAE
+    references:
+    - Hairer, E. & Wanner, G. (1996). Solving Ordinary Differential Equations II, Springer, ch. VI (index-1 DAEs).
+    tags:
+    - numerical
+    - descriptor_dae
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: DAE literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-14T00:00:00Z'

@@ -1,0 +1,228 @@
+certificate_version: '1.0'
+process_id: relic.scientific.hydrosphere.groundwater.dynamics.GroundwaterDynamics
+module_name: groundwater_dynamics
+canonical_role: field
+iphs_level: 3
+iphs_level_evidence:
+  classification: IPHS-structured field process certificate
+  compatible_basis: Process declares composition-safe IPHS or DEC structure
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: Structured field update through IPHS-compatible operators
+  structural_contribution: Field state, operator, and audit maps are declared
+  assembly_participation: Certificate participates in Phase 8 inventory and GraphIR structural audit
+  level_3_limit: Typed form, Hodge, port, or related structure is declared, but no runtime-linked IPHSStructureSpec contribution and executable level 4 or 5 certificate binding is present.
+theory_document: docs\source\theory\hydrosphere_groundwater_dynamics.md
+theory_document_status: updated
+legacy_formula: Groundwater storage and water-table depth are updated from explicit drainage, lateral, pumping, capillary, and baseflow ports through an exponential porosity-depth relation.
+literature_formula: Water-table storage follows integration of a depth-dependent porosity profile and baseflow follows storage-depth recession concepts used in distributed hydrologic models.
+iphs_formula: S_dot = F_drain + F_lat - F_pump - F_cap - F_base; S(z) = integral n0 exp(-z/p) dz; star_Sy = diag(rho_w * S_y) >= 0.
+legacy_expression: S_new = storage_profile(z_new) + bias, z_new from exponential porosity integral and net groundwater input.
+iphs_expression: S_dot = F_drain + F_lat - F_pump - F_cap - F_base; H_h = 0.5 * z_h.T star_Sy z_h; e_z = star_Sy z_h; G_h = -inverse(star_Sy); y_h = G_h.T e_z = -z_h; sigma = z_h.T (star_Sy / tau_gw) z_h >= 0; dH/dt = -sigma + y_h.T u_h + P_residual.
+input_variables:
+- groundwater_storage
+- water_table_depth
+- drainage_flux
+- capillary_rise_flux
+- lateral_inflow
+- groundwater_pumping
+output_variables:
+- groundwater_storage
+- water_table_depth
+- baseflow_flux
+- diagnostics.groundwater
+parameter_keys:
+- hydrosphere.groundwater.surface_porosity
+- hydrosphere.groundwater.porosity_decay_length
+- hydrosphere.groundwater.max_water_table_depth
+- hydrosphere.groundwater.bedrock_depth
+- hydrosphere.groundwater.specific_yield
+- hydrosphere.groundwater.minimum_water_table_depth
+- hydrosphere.groundwater.minimum_depth_factor
+- hydrosphere.groundwater.drainage_time_constant
+- hydrosphere.groundwater.enable_lateral_flow
+- hydrosphere.groundwater.topographic_index
+- hydrosphere.numerical.minimum_timestep_tolerance
+- hydrosphere.numerical.epsilon_small
+composition_ports:
+- groundwater_recharge_flux
+- groundwater_lateral_inflow_flux
+- groundwater_pumping_flux
+- groundwater_capillary_rise_flux
+- groundwater_baseflow_flux
+references:
+- RHESSys compute_delta_water.c implementation.
+- Beven, K.J. and Kirkby, M.J. (1979). A physically based, variable contributing area model. Hydrological Sciences Bulletin, 24, 43-69.
+- Wigmosta, M.S. et al. (1994). A distributed hydrology-vegetation model for complex terrain. Water Resources Research, 30, 1665-1679.
+- Brutsaert, W. and Nieber, J.L. (1977). Regionalized drought flow hydrographs. Water Resources Research, 13, 637-643.
+baseline_tests:
+- test\scientific\hydrosphere\groundwater\groundwater_dynamics.test.py
+validation_tests:
+- test\scientific\hydrosphere\groundwater\groundwater_dynamics.test.py
+- test\validation\l1_unit\test_scientific_hydrosphere.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  groundwater_storage: groundwater storage S_gw [mm]
+  water_table_depth: depth to water table z_wt [m]
+  drainage_flux: recharge input from vadose-zone drainage [kg m-2 s-1]
+  capillary_rise_flux: groundwater-to-soil capillary export [kg m-2 s-1]
+  lateral_inflow: lateral groundwater input [kg m-2 s-1]
+  groundwater_pumping: groundwater abstraction export [kg m-2 s-1]
+  baseflow_flux: baseflow matter output [kg m-2 s-1]
+  diagnostics.groundwater: read-only groundwater balance and projection diagnostics
+parameter_map:
+  hydrosphere.groundwater.surface_porosity: surface porosity n0 [dimensionless]
+  hydrosphere.groundwater.porosity_decay_length: porosity decay length p [m]
+  hydrosphere.groundwater.max_water_table_depth: maximum water-table depth [m]
+  hydrosphere.groundwater.bedrock_depth: bedrock depth z_b [m]
+  hydrosphere.groundwater.specific_yield: specific yield S_y [dimensionless]
+  hydrosphere.groundwater.minimum_water_table_depth: minimum water-table depth [m]
+  hydrosphere.groundwater.minimum_depth_factor: minimum depth factor [dimensionless]
+  hydrosphere.groundwater.drainage_time_constant: baseflow recession time constant [s]
+  hydrosphere.groundwater.enable_lateral_flow: lateral inflow toggle [dimensionless]
+  hydrosphere.groundwater.topographic_index: TOPMODEL-like topographic index [dimensionless]
+  hydrosphere.numerical.minimum_timestep_tolerance: positive denominator floor for recession operators [s]
+  hydrosphere.numerical.epsilon_small: small numerical denominator [dimensionless]
+operator_map:
+  G_gw: groundwater recharge/baseflow port incidence
+  G_h: negative inverse storage Hodge maps signed boundary mass flux to positive-downward depth rate
+  star_Sy: build_hodge_contract and build_hodge_terms HodgeStarSpec
+  porosity_profile: _compute_porosity_at_depth and _integrate_storage exponential profile
+  water_table_solver: _solve_water_table_change analytical exponential integral inversion
+unit_map:
+  groundwater_storage: mm
+  water_table_depth: m
+  drainage_flux: kg m-2 s-1
+  capillary_rise_flux: kg m-2 s-1
+  lateral_inflow: kg m-2 s-1
+  groundwater_pumping: kg m-2 s-1
+  baseflow_flux: kg m-2 s-1
+  diagnostics.groundwater.effective_porosity: '1'
+  diagnostics.groundwater.groundwater_storage_increment: mm
+  diagnostics.groundwater.groundwater_storage_change_rate: mm s-1
+  diagnostics.groundwater.water_table_change_rate: m s-1
+  diagnostics.groundwater.net_groundwater_flux: mm s-1
+  diagnostics.groundwater.storage_deficit: mm
+  diagnostics.groundwater.saturation_fraction: '1'
+  diagnostics.groundwater.baseflow_depth_rate: mm s-1
+  diagnostics.groundwater.storage_balance_residual: mm
+  diagnostics.groundwater.storage_balance_roundoff_bound: mm
+  diagnostics.groundwater.water_table_bounds_residual: m
+  diagnostics.groundwater.groundwater_storage_negative_residual: mm
+  diagnostics.groundwater.energy_storage: kg m-1
+  diagnostics.groundwater.dissipation_rate: kg m-1 s-1
+  diagnostics.groundwater.dH_dt_audit: kg m-1 s-1
+  diagnostics.groundwater.port_power_residual: kg m-1 s-1
+input_output_map:
+  groundwater_storage: same storage state is read and replaced by both legacy and IPHS forms
+  water_table_depth: same depth state is read and replaced by both legacy and IPHS forms
+  drainage_flux: recharge enters the storage balance once as a canonical mass flux
+  capillary_rise_flux: the upstream capillary flux is debited once from groundwater storage
+  lateral_inflow: lateral inflow enters once as a canonical mass flux
+  groundwater_pumping: pumping leaves once as a canonical mass flux
+  baseflow_flux: start-of-step recession leaves storage and is emitted as an explicit REPLACE mass flux
+interface_map:
+  forward_signature: forward(self, state, time, dt, **kwargs)
+  bridge_class: PhysicalFieldFunctor
+  abstraction_contract: PhysicalField
+  state_write_mode: formal outputs use explicit UpdateItem(UpdateMode.REPLACE, per_timestep=False) through the existing StateManager path
+  state_query_boundary: get_value_at and interpolate fail fast because their signatures cannot receive the canonical StateManager-owned groundwater_storage
+  legacy_inputs:
+  - groundwater_storage
+  - water_table_depth
+  - drainage_flux
+  - capillary_rise_flux
+  - lateral_inflow
+  - groundwater_pumping
+  iphs_inputs:
+  - groundwater_storage
+  - water_table_depth
+  - drainage_flux
+  - capillary_rise_flux
+  - lateral_inflow
+  - groundwater_pumping
+  legacy_outputs:
+  - groundwater_storage
+  - water_table_depth
+  - baseflow_flux
+  - diagnostics.groundwater
+  iphs_outputs:
+  - groundwater_storage
+  - water_table_depth
+  - baseflow_flux
+  - diagnostics.groundwater
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: The existing exponential porosity storage and water-table solver realize the canonical IPHS field update.
+  no_legacy_mode: No runtime flag exposes a separate pre-Phase 8 groundwater branch.
+state_advancement_map:
+  potential_basis: groundwater storage and head cochain x_gw
+  effort_variable: state effort e_z = star_Sy z_h and conjugate port effort y_h = G_h.T e_z = -z_h
+  state_advancer: S_dot = F_drain + F_lat - F_pump - F_cap - F_base
+  runtime_usage: forward evaluates baseflow from the accepted start-of-step state, applies all five signed boundary terms to one storage and water-table update, maps mass flux to head rate through G_h, and emits namespaced conservation and non-strict IPHS audit diagnostics.
+parameter_management_map:
+  hydrosphere.groundwater.surface_porosity:
+    source: ParameterManager YAML
+  hydrosphere.groundwater.porosity_decay_length:
+    source: ParameterManager YAML
+  hydrosphere.groundwater.max_water_table_depth:
+    source: ParameterManager YAML
+  hydrosphere.groundwater.bedrock_depth:
+    source: ParameterManager YAML
+  hydrosphere.groundwater.specific_yield:
+    source: ParameterManager YAML
+  hydrosphere.groundwater.minimum_water_table_depth:
+    source: ParameterManager YAML
+  hydrosphere.groundwater.minimum_depth_factor:
+    source: ParameterManager YAML
+  hydrosphere.groundwater.drainage_time_constant:
+    source: ParameterManager YAML
+  hydrosphere.groundwater.enable_lateral_flow:
+    source: ParameterManager YAML
+  hydrosphere.groundwater.topographic_index:
+    source: ParameterManager YAML
+  hydrosphere.numerical.minimum_timestep_tolerance:
+    source: ParameterManager YAML
+  hydrosphere.numerical.epsilon_small:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares hydrosphere field role and soil/runoff/capillary coupling interfaces
+  structural_protocol: declared_forms, required_parameters, build_hodge_terms, dissipative_structure, ports
+  state_contract: existing PhysicalFieldFunctor and StateManager UpdateItem path
+  physical_constant_ssot: liquid water density is resolved only through get_physical_constant
+  ports:
+  - groundwater_recharge_flux
+  - groundwater_lateral_inflow_flux
+  - groundwater_pumping_flux
+  - groundwater_capillary_rise_flux
+  - groundwater_baseflow_flux
+dependency_interconnection_map:
+  dependencies: optional bucket_soil_moisture, richards_soil_moisture, vertical_percolation_transport, and capillary_rise_transport providers
+  direct_functor_calls: none; drainage, capillary rise, and optional soil-water providers interconnect through declared state or dependency graph alternatives
+  full_state_selection: groundwater_storage writers groundwater_dynamics and subsurface_runoff are mutually exclusive graph alternatives; exactly one may be registered
+  chain_maps:
+  - drainage_flux enters groundwater storage through the existing state graph
+  - capillary_rise_flux is produced once upstream, credited to soil, and debited from groundwater
+  - baseflow_flux leaves through the groundwater boundary port
+overflow_routing_map:
+  storage_balance: storage_increment - net_input is emitted as storage_balance_residual
+  storage_roundoff: Higham gamma_8 times the storage ledger scale is emitted as storage_balance_roundoff_bound; the raw residual remains available
+  water_table_bounds: water table lower and bedrock bound projection residuals are emitted as water_table_bounds_residual
+  storage_negative_projection: max(-new_storage, 0) is emitted as groundwater_storage_negative_residual
+  discarded_residuals: storage_balance_residual, storage_balance_roundoff_bound, water_table_bounds_residual, and groundwater_storage_negative_residual explicitly retain every ledger or bound projection term
+conservation_map:
+  conserved_quantity: water mass
+  balance_expression: Delta S = 1000 * dt / rho_w * (F_drain + F_lat - F_pump - F_cap - F_base) plus routed storage_balance_residual
+  local_check: FunctorMetadata declares mass and a process-specific hook returns max(abs(storage_balance_residual) - storage_balance_roundoff_bound, 0) in mm for the signed five-port open control volume; the generic mixed output sum is not used
+  port_balance: recharge and lateral ports enter while pumping, capillary, and baseflow ports leave
+entropy_audit:
+  dissipative_operator: star_Sy and M_h are symmetric positive semidefinite for positive rho_w and specific yield
+  storage_functional: H_h(z_h) = 0.5 * z_h.T star_Sy z_h
+  effort_definition: e_z = star_Sy z_h; G_h = -inverse(star_Sy); y_h = G_h.T e_z = -z_h
+  sigma_expression: sigma = z_h.T (star_Sy / tau_gw) z_h >= 0
+  dH_balance: dH/dt = -sigma + y_h.T u_h + P_residual, with all terms in kg m-1 s-1
+  validation_hook: build_hodge_contract(strict=True), dissipative_structure eigenvalue checks, energy_terms, entropy_terms, the five-port storage residual hook, and diagnostics.groundwater non-strict structured audit outputs
+equivalence_type: port_equivalent
+physical_constant_ssot:
+  water_density: get_physical_constant("water_density")

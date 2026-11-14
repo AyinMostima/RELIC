@@ -1,0 +1,48 @@
+schema_version: "1.0.0"
+description: "Schema for coupling contracts used by ScaleManager contract validation."
+required_top_level:
+  - schema_version
+  - contracts
+contract_fields:
+  module:
+    type: string
+    description: "Unique module or functor identifier."
+  variables:
+    type: list
+    item_type: string
+    description: "Variables covered by this contract."
+  update_mode:
+    type: string
+    allowed: ["accumulate", "replace", "flux"]
+    description: "State update mode used for contract variables."
+  direction:
+    type: string
+    allowed: ["in", "out", "inout"]
+    description: "Data flow direction for the port."
+  per_timestep:
+    type: boolean
+    description: "Whether value is pre-integrated over dt."
+  conservative:
+    type: boolean
+    description: "Whether variable participates in conservation audit."
+  type_id:
+    type: string
+    allowed: ["INT32", "INT64", "F32", "F64", "STR", "BYTES"]
+    description: "Portable scalar/buffer type identifier for plugin exchange."
+  provenance:
+    type: dict
+    description: "Optional provenance block, for example {git: ..., pkg: ...}."
+  time_scale:
+    type: string
+    description: "Expected temporal scale (for example second, hour, day)."
+  space_scale:
+    type: string
+    description: "Expected spatial scale (for example patch, hillslope, basin)."
+optional_fields:
+  notes:
+    type: string
+    description: "Free-form notes about the contract."
+  dependencies:
+    type: list
+    item_type: string
+    description: "Optional list of required upstream modules."

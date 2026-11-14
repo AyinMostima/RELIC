@@ -1,0 +1,72 @@
+schema_version: 2.0.0
+tier: relic
+namespace: coupling.external.regrid
+description: Quality control and numerical settings for external regridding
+metadata:
+  version: 1.0.0
+parameters:
+  coupling.external.regrid.missing_threshold:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: quality_control
+    description: Maximum fraction of missing source data allowed before regridding fails; the adapter quality control raises above it, and the external data validator reports a field above it as an ERROR (Validator._validate_data_completeness)
+    references:
+    - ESMF regridding quality control guidance
+    tags:
+    - quality_control
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: regridding_policy
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-11-30T00:00:00Z'
+  coupling.external.regrid.positive_definite:
+    value: false
+    default: false
+    units: dimensionless
+    dtype: bool
+    bounds:
+    - false
+    - true
+    category: quality_control
+    description: Enforce non-negative results for flux-like variables
+    references:
+    - ESMF positive definite option
+    tags:
+    - quality_control
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: regridding_policy
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-11-30T00:00:00Z'
+  coupling.external.regrid.check_conservation:
+    value: true
+    default: true
+    units: dimensionless
+    dtype: bool
+    bounds:
+    - false
+    - true
+    category: conservation
+    description: Enable conservative flux check during external regridding
+    references:
+    - Jones (1999) First- and second-order conservative remapping schemes
+    - CF Conventions 1.8 section 7.3 (cell_methods for conservation)
+    tags:
+    - conservation
+    - regridding
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: regridding_policy
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-12-01T00:00:00Z'

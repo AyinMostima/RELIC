@@ -1,0 +1,42 @@
+variable: microbial_activity_index
+title: "Microbial Activity Index"
+description: "Microbial activity index A of methanogenesis: an activity fraction in [0, 1] that multiplies the calibrated methane production directly (P_cal = Rh r f_T f_Eh A in methane_production; no normalisation). Required; finite, within [0, 1]. No relic Functor writes it (supplied as forcing)."
+kind: forcing
+dimension:
+  udunits: "1"
+  cf_standard_name: null
+support:
+  spatial_kind: grid_cell
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "DNDC95 reference source code: Dndc_main.cpp (line 973 limits the microbial activity index to 1) and Dndc_CH4.cpp (the index multiplies methanogenesis)"
+numerics:
+  # Activity fraction; the reader rejects values outside [0, 1].
+  lower_bound: 0.0
+  upper_bound: 1.0
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies: []
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/pedosphere/methane/production.py"
+  runtime_role: "microbial_activity_index_forcing"
+  runtime_writer: null
+  note: "Reader: MethaneProductionFunctor (metadata input_variables; a missing value raises; finite, within [0, 1]; A multiplies P_cal directly). The index and its limit 1 follow the DNDC95 reference code; no journal article defines it. No RELIC Functor writes microbial_activity_index."

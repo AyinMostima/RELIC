@@ -1,0 +1,43 @@
+variable: daylength
+title: "Daylength"
+description: "Daylength in s (0 to 86400 s, Campbell and Norman 1998), the photoperiod driver f_day of the GSI phenology (Jolly et al. 2005). No relic Functor writes it: it is supplied as forcing. This contract replaces the former validation.numerical.state_variable_bounds daylength entry of the initial-state schema; the phenology input range check (biosphere.phenology.validation_ranges.daylength.min/max) is a separate reader-side validation of the same range."
+kind: forcing
+dimension:
+  udunits: "s"
+  cf_standard_name: null
+support:
+  spatial_kind: grid_cell
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Campbell, G.S. and Norman, J.M. (1998). An Introduction to Environmental Biophysics, 2nd ed. Springer (daylength 0-24 h)"
+  - "Jolly, W.M., Nemani, R. and Running, S.W. (2005). A generalized, bioclimatic index to predict foliar phenology in response to climate. Global Change Biology 11, 619-632"
+numerics:
+  # Duration within one day: 0 <= daylength <= 86400 s.
+  lower_bound: 0.0
+  upper_bound: 86400.0
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies: []
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/biosphere/phenology/models.py"
+  runtime_role: "photoperiod_forcing"
+  runtime_writer: null
+  note: "Reader: GSIPhenology (metadata input_variables; required, ValueError naming it when missing; daylength outside [0, seconds_per_day] raises). No relic Functor writes daylength."

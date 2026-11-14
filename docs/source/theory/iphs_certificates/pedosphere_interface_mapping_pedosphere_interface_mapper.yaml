@@ -1,0 +1,144 @@
+certificate_version: '1.0'
+process_id: relic.scientific.pedosphere.interface_mapping.PedosphereInterfaceMapper
+module_name: PedosphereInterfaceMapper
+canonical_role: scale_coupling
+iphs_level: 2
+iphs_level_evidence:
+  classification: IPHS-wrapped scale coupling process certificate
+  compatible_basis: Process declares composition-safe IPHS or DEC structure
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: Typed chain-map or morphism composition operator
+  level_2_limit: The canonical runtime wrapper is declared, but no executable typed-cochain or IPHS structural contribution is bound; strict level 4 or 5 evidence is not claimed.
+theory_document: docs\source\theory\pedosphere_transport.md
+theory_document_status: updated
+legacy_formula: delta y_k = x_source(k) - y_k with dynamic source-key selection and a hidden zero fallback
+literature_formula: y_h = C_h x_h with C_h = I_3 for unit-preserving hydrological flux ports
+iphs_formula: y_h = C_h x_h through the declared chain map between scales
+legacy_expression: dynamic alias mapping emitted state-relative raw tensor increments
+iphs_expression: y_h = C_h x_h, C_h = I_3, with three required kg m-2 s-1 input and output ports
+input_variables:
+- drainage_flux
+- subsurface_runoff_flux
+- surface_runoff_flux
+output_variables:
+- leaching_flux
+- lateral_flow
+- surface_loss
+parameter_keys:
+- pedosphere.nutrient_cycling.n_noy_fraction
+- pedosphere.nutrient_cycling.n_nhx_fraction
+- pedosphere.phosphorus.p_po4_fraction
+- pedosphere.phosphorus.p_dust_fraction
+- pedosphere.transport.nitrate_distribution_coefficient
+- pedosphere.transport.doc_distribution_coefficient
+- pedosphere.numerical.epsilon_concentration
+- pedosphere.numerical.mass_balance_tolerance
+composition_ports:
+- phase8_runtime_port
+references:
+- Clark et al. (2011) doi:10.5194/gmd-4-677-2011
+- Clark et al. (2011) doi:10.5194/gmd-4-701-2011
+baseline_tests:
+- test\scientific\test_pedosphere_interface.py
+- test\unit\pedosphere\test_interface_mapping.py
+- test\audit\state_single_owner_budget_closure.test.py
+- test\audit\phase8_scientific_inventory.test.py
+validation_tests:
+- test\scientific\test_pedosphere_interface.py
+- test\unit\pedosphere\test_interface_mapping.py
+- test\audit\state_single_owner_budget_closure.test.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  drainage_flux: drainage_flux mapped to canonical Phase 8 cochain basis
+  subsurface_runoff_flux: subsurface_runoff_flux mapped to canonical Phase 8 cochain basis
+  surface_runoff_flux: surface_runoff_flux mapped to canonical Phase 8 cochain basis
+parameter_map:
+  pedosphere.nutrient_cycling.n_noy_fraction: Fraction of N deposition as NOy [dimensionless]
+  pedosphere.nutrient_cycling.n_nhx_fraction: Fraction of N deposition as NHx [dimensionless]
+  pedosphere.phosphorus.p_po4_fraction: Fraction of P deposition as PO4 [dimensionless]
+  pedosphere.phosphorus.p_dust_fraction: Fraction of P deposition as dust-P [dimensionless]
+  pedosphere.transport.nitrate_distribution_coefficient: Nitrate sorption distribution coefficient K_d [L kg-1]
+  pedosphere.transport.doc_distribution_coefficient: Dissolved organic carbon sorption distribution coefficient K_d [L kg-1]
+  pedosphere.numerical.epsilon_concentration: Concentration floor of the division guards [dimensionless]
+  pedosphere.numerical.mass_balance_tolerance: Relative tolerance of the mass balance checks [dimensionless]
+operator_map:
+  C_h: declared chain map
+  H_h: positive coupling metric or normalization map
+unit_map:
+  leaching_flux: kg m-2 s-1
+  lateral_flow: kg m-2 s-1
+  surface_loss: kg m-2 s-1
+input_output_map:
+  drainage_flux: same interface variable preserved between legacy and IPHS runtime contracts
+  lateral_flow: same interface variable preserved between legacy and IPHS runtime contracts
+  leaching_flux: same interface variable preserved between legacy and IPHS runtime contracts
+  subsurface_runoff_flux: same interface variable preserved between legacy and IPHS runtime contracts
+  surface_loss: same interface variable preserved between legacy and IPHS runtime contracts
+  surface_runoff_flux: same interface variable preserved between legacy and IPHS runtime contracts
+interface_map:
+  forward_signature: forward(self, state, time, dt)
+  bridge_class: ScaleCouplingFunctor
+  abstraction_contract: ScaleCoupling
+  state_write_mode: all three instantaneous water-flux outputs use UpdateItem REPLACE with per_timestep=false
+  legacy_inputs:
+  - drainage_flux
+  - subsurface_runoff_flux
+  - surface_runoff_flux
+  iphs_inputs:
+  - drainage_flux
+  - subsurface_runoff_flux
+  - surface_runoff_flux
+  legacy_outputs:
+  - leaching_flux
+  - lateral_flow
+  - surface_loss
+  iphs_outputs:
+  - leaching_flux
+  - lateral_flow
+  - surface_loss
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: Existing ParameterManager-backed calculations define canonical IPHS operator coefficients, rates, ports, or observations.
+  no_legacy_mode: No selectable legacy runtime branch is exposed for Phase 8 completion.
+state_advancement_map:
+  potential_basis: three hydrosphere water-flux ports ordered as drainage, subsurface runoff, and surface runoff
+  effort_variable: no thermodynamic effort is asserted for this level 2 unit-preserving port adapter
+  state_advancer: y_h = C_h x_h with C_h = I_3; no state integration occurs
+  runtime_usage: PedosphereInterfaceMapper.forward validates all three required ports and returns exactly three REPLACE UpdateItems without dynamic keys, defaults, or state-relative increments.
+parameter_management_map:
+  pedosphere.nutrient_cycling.n_noy_fraction:
+    source: ParameterManager YAML
+  pedosphere.nutrient_cycling.n_nhx_fraction:
+    source: ParameterManager YAML
+  pedosphere.phosphorus.p_po4_fraction:
+    source: ParameterManager YAML
+  pedosphere.phosphorus.p_dust_fraction:
+    source: ParameterManager YAML
+  pedosphere.transport.nitrate_distribution_coefficient:
+    source: ParameterManager YAML
+  pedosphere.transport.doc_distribution_coefficient:
+    source: ParameterManager YAML
+  pedosphere.numerical.epsilon_concentration:
+    source: ParameterManager YAML
+  pedosphere.numerical.mass_balance_tolerance:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares interfaces, execution phase, and conservation semantics
+  state_contract: instantaneous fluxes use StateManager REPLACE semantics and exact SCM units
+  validation_rule: phase8 scientific inventory and equivalence certificate checks
+dependency_interconnection_map:
+  dependencies: drainage_flux, subsurface_runoff_flux, and surface_runoff_flux are all required hydrosphere ports
+  direct_functor_calls: none declared by certificate
+overflow_routing_map:
+  diagnostic_residuals: none; the fixed identity port map performs no clipping or integration
+  bridge_free_approximations: none; upscale and downscale fail fast without explicit typed chain-map bridges
+  discarded_residuals: the canonical forward is an exact identity map from the three hydrosphere input ports to leaching_flux, lateral_flow, and surface_loss; invalid inputs and missing typed scale bridges are rejected rather than approximated
+conservation_map:
+  conserved_quantities: water mass flux is preserved pointwise by the unit map
+  balance_expression: leaching_flux=drainage_flux, lateral_flow=subsurface_runoff_flux, and surface_loss=surface_runoff_flux pointwise
+entropy_audit:
+  operator_sign: C_h = I_3 is non-negative and the three input fluxes are validated non-negative
+  sigma_expression: not applicable to this non-dissipative level 2 port adapter
+equivalence_type: port_equivalent

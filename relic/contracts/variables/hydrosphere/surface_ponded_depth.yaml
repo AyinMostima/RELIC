@@ -1,0 +1,59 @@
+variable: surface_ponded_depth
+title: "Surface Ponded Water Depth"
+kind: state
+dimension:
+  udunits: "mm"
+  cf_standard_name: null
+support:
+  spatial_kind: grid_cell
+  area_basis: grid_area
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions:
+      - cell
+owner: null
+aliases: []
+incrementable: true
+accumulates: null
+references:
+  - "Horton, R.E. (1933). Trans. Am. Geophys. Union 14, 446-460"
+  - "Beven, K.J. (2012). Rainfall-Runoff Modelling, The Primer, 2nd ed., Wiley"
+  - "Dooge, J.C.I. (1973). Linear Theory of Hydrologic Systems, USDA Tech. Bull. 1468"
+  - "Goebel, R., Sanfelice, R.G. and Teel, A.R. (2012). Hybrid Dynamical Systems, Princeton"
+numerics:
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments:
+    - name: "surface_ponding"
+      module: "relic.scientific.hydrosphere.runoff.surface_ponding"
+      provides:
+        - "surface_ponded_depth"
+      unit: "mm"
+  tendencies:
+    - name: "topology:ponding_onset"
+      module: "relic.core.simulator.registration"
+      provides:
+        - "surface_ponded_depth"
+      unit: "mm"
+    - name: "topology:ponding_cessation"
+      module: "relic.core.simulator.registration"
+      provides:
+        - "surface_ponded_depth"
+      unit: "mm"
+flux_contract:
+  allowed_in: ["surface_ponding"]
+  allowed_out: ["surface_ponding"]
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-12
+      rtol: 1.0e-9
+provenance:
+  source_file: "relic/scientific/hydrosphere/runoff/surface_ponding.py"
+  runtime_role: "hortonian_ponding_storage"
+  runtime_writer: "surface_ponding"
+  note: "Depth of water ponded on the surface after Hortonian excess; drains as overland flow with the linear-reservoir residence time. Written only while the surface_ponding provider is connected; set by the ponding_onset and ponding_cessation topology remaps."

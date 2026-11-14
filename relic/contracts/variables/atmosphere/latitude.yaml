@@ -1,0 +1,43 @@
+variable: latitude
+title: "Latitude"
+description: "Geographic latitude of the cell centre in degrees north (CF latitude, canonical unit degrees_north), read by the daylight_gauss temporal support (relic/scientific/atmosphere/daylight_quadrature.py) of farquhar_photosynthesis, medlyn_stomatal_conductance, ozone_stress, leaf_energy_balance and megan_bvoc_model for the FAO-56 sunset hour angle omega_s = arccos(-tan(phi) tan(delta)) (Eq. 25), the day length N = 24 omega_s / pi (Eq. 34) and the solar elevation of the daylight Gauss instants (Eq. 28 integrand). No RELIC Functor writes it: it is supplied as forcing (a static field)."
+kind: forcing
+dimension:
+  udunits: "degrees_north"
+  cf_standard_name: "latitude"
+support:
+  spatial_kind: grid_cell
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Allen, R.G. et al. (1998). Crop evapotranspiration. FAO Irrigation and Drainage Paper 56, Eqs. 24, 25, 28 and 34"
+  - "CF-1.8 section 4.1: latitude coordinate, units degrees_north"
+numerics:
+  # Geographic latitude: -90 <= phi <= 90 degrees north.
+  lower_bound: -90.0
+  upper_bound: 90.0
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies: []
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/atmosphere/daylight_quadrature.py"
+  runtime_role: "daylight_support_latitude_forcing"
+  runtime_writer: null
+  note: "Declared input only with config temporal_support daylight_gauss of its readers; latitude outside [-90, 90] raises ValueError in relic/scientific/atmosphere/solar_geometry.py. No RELIC Functor writes latitude."

@@ -1,0 +1,61 @@
+schema_version: 2.0.0
+tier: relic
+namespace: interfaces.api
+description: REST API server settings held in one place (process-local request rate limiting)
+metadata:
+  created_by: RELIC Parameter System
+  last_modified: '2026-09-26T00:00:00Z'
+  schema_url: https://github.com/relic/parameter-schema/v2.0.0
+  version: 1.0.0
+parameters:
+  interfaces.api.rate_limit.requests_per_minute:
+    value: 120
+    default: 120
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 1000000
+    category: configuration
+    description: Largest number of requests one client address may send within one rate-limit window before the API
+      answers HTTP 429 (RateLimitingMiddleware; /health paths are exempt). The client address is the first
+      X-Forwarded-For entry, else the transport client host; requests with neither share one bucket
+      (MISSING_CLIENT_ADDRESS_BUCKET) and together get one client's allowance. create_app reads it unless the caller
+      passes requests_per_minute explicitly. Operational setting, not a scientific parameter.
+    references:
+    - RELIC convention value (operational API setting)
+    tags:
+    - interfaces
+    - api
+    - rate_limit
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  interfaces.api.rate_limit.window_seconds:
+    value: 60
+    default: 60
+    units: s
+    dtype: int32
+    bounds:
+    - 1
+    - 86400
+    category: configuration
+    description: Length of the sliding window over which RateLimitingMiddleware counts the requests of one client
+      address. Operational setting, not a scientific parameter.
+    references:
+    - RELIC convention value (operational API setting)
+    tags:
+    - interfaces
+    - api
+    - rate_limit
+    dimension: time
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'

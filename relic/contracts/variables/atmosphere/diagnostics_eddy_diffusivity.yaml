@@ -1,0 +1,47 @@
+variable: diagnostics.eddy_diffusivity
+title: "Domain-Mean Atmospheric Tracer Eddy Diffusivity"
+description: "Domain mean of the stability-dependent eddy diffusivity K_eddy of the atmospheric K-theory tracer closure (Stull 1988): K0 = f * K_max; K_eddy = K0 * (1 + a * s / (1 + s)) for unstable s = -zeta > 0, else K0 / (1 + b * zeta), where zeta is diagnostics.stability_parameter (z / L for monin-obukhov, the bulk Richardson number for richardson); capped at atmosphere.turbulence.eddy_diffusivity_max. The constant scheme skips the closure and returns K0. Excludes the molecular diffusivity added for transport. Non-negative magnitude with no direction. Written only by atmospheric_advection_diffusion as a read-only step diagnostic."
+kind: diagnostic
+dimension:
+  udunits: "m2 s-1"
+  cf_standard_name: null
+support:
+  spatial_kind: null
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: []
+owner: "atmospheric_advection_diffusion"
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Stull, R.B. (1988). An Introduction to Boundary Layer Meteorology, Kluwer"
+numerics:
+  # K_eddy >= 0 for the non-negative YAML coefficients f, a, b; its cap is
+  # the ParameterManager value eddy_diffusivity_max, not a declared bound.
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "atmospheric_advection_diffusion"
+      module: "relic.scientific.atmosphere.transport.AtmosphericAdvectionDiffusionFunctor"
+      provides: ["diagnostics.eddy_diffusivity"]
+      unit: "m2 s-1"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/atmosphere/transport/AtmosphericAdvectionDiffusionFunctor.py"
+  runtime_role: "atmospheric_transport_mean_eddy_diffusivity_observation"
+  runtime_writer: "atmospheric_advection_diffusion"
+  note: "Scalar torch.mean of the closure field: AtmosphericAdvectionDiffusionFunctor.py:805,974; closure at AtmosphericAdvectionDiffusionFunctor.py:1168-1189 (constant scheme returns K0 at :1181-1182; the closure argument is the stability returned by _compute_atmospheric_stability, :802-805); coefficients in relic/parameters/database/relic/atmosphere/turbulence.yaml (transport_* and eddy_diffusivity_max)."

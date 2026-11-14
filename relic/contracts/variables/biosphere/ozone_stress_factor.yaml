@@ -1,0 +1,40 @@
+variable: ozone_stress_factor
+title: "Ozone Stress Factor"
+description: "Instantaneous ozone stress control f_O3 = clip(1 - min(max(F_O3 / C_detox, 0), r_max), f_min, f_max) [1] of ozone_stress, from the stomatal ozone uptake F_O3 = eta [O3] g_s / k_O3 [mol O3 m-2 leaf s-1] of the representative leaf (Sitch et al. 2007, as given by Leung et al. 2020, Eq. 5; Emberson et al. 2000) and the detoxification flux capacity C_detox [mol O3 m-2 s-1]; 1 is unstressed and f_O3 = 1 where g_s = 0 or [O3] = 0. Not an accumulated POD_Y or AOT40 response. Read by megan_bvoc_model when its stress_factors contain ozone, and optionally by farquhar_photosynthesis."
+kind: diagnostic
+dimension:
+  udunits: "dimensionless"
+  cf_standard_name: null
+support:
+  spatial_kind: leaf
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: "ozone_stress"
+aliases: []
+incrementable: false
+accumulates: null
+numerics:
+  lower_bound: 0.0
+  upper_bound: 1.0
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "ozone_stress"
+      module: "relic.scientific.biosphere.stress.ozone_stress"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/biosphere/stress/ozone_stress.py"
+  runtime_role: "ozone_stress_diagnostic"
+  runtime_writer: "ozone_stress"

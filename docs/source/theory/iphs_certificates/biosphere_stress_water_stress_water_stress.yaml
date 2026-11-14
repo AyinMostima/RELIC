@@ -1,0 +1,135 @@
+{
+  "certificate_version": "1.0",
+  "process_id": "relic.scientific.biosphere.stress.water_stress.WaterStress",
+  "module_name": "WaterStress",
+  "canonical_role": "observation",
+  "iphs_level": 1,
+  "iphs_level_evidence": {
+    "classification": "IPHS-compatible diagnostic or observation certificate",
+    "compatible_basis": "Read-only observation or diagnostic contract with declared interface and no state ownership"
+  },
+  "theory_document": "docs\\source\\theory\\stress.md",
+  "theory_document_status": "updated",
+  "legacy_formula": "f_{water} = (psi - psi_wilt) / (psi_{fc} - psi_{wilt})",
+  "literature_formula": "f_{water} = (psi - psi_wilt) / (psi_{fc} - psi_{wilt})",
+  "iphs_formula": "y_h = O_h x_h through the declared observation operator",
+  "legacy_expression": "f_{water} = (psi - psi_wilt) / (psi_{fc} - psi_{wilt})",
+  "iphs_expression": "y_h = O_h x_h through the declared observation operator",
+  "input_variables": [
+    "soil_water_potential"
+  ],
+  "output_variables": [
+    "water_stress_factor"
+  ],
+  "parameter_keys": [
+    "biosphere.stress.water.wilting_point_potential",
+    "biosphere.stress.water.field_capacity_potential",
+    "biosphere.stress.global.factor_min",
+    "biosphere.stress.global.factor_max"
+  ],
+  "composition_ports": [
+    "soil_water_potential"
+  ],
+  "references": [
+    "Boyer, J.S. (1982). Plant productivity and environment. Science 218, 443-448",
+    "Hsiao, T.C. (1973). Plant responses to water stress. Annual Review of Plant Physiology 24, 519-570",
+    "Jones, H.G. (2007). Monitoring plant and soil water status. Journal of Experimental Botany 58, 155-173"
+  ],
+  "baseline_tests": [
+    "test\\biosphere\\stress\\test_water_stress_parameters.py"
+  ],
+  "validation_tests": [
+    "test\\unit\\biosphere\\stress\\test_stress_simple_l1.py",
+    "test\\integration\\biosphere\\stress\\test_stress_integration_l2.py",
+    "test\\system\\biosphere\\stress\\test_stress_system_l3.py"
+  ],
+  "state_map": {
+    "soil_water_potential": "required external or upstream StateManager port in MPa"
+  },
+  "parameter_map": {
+    "biosphere.stress.water.wilting_point_potential": "Water potential at permanent wilting point [MPa]",
+    "biosphere.stress.water.field_capacity_potential": "Water potential at field capacity [MPa]",
+    "biosphere.stress.global.factor_min": "Lower bound for stress factors [dimensionless]",
+    "biosphere.stress.global.factor_max": "Upper bound for stress factors [dimensionless]"
+  },
+  "operator_map": {
+    "O_h": "declared observation map",
+    "H_h": "diagnostic metric or identity Hodge map"
+  },
+  "unit_map": {
+    "soil_water_potential": "MPa",
+    "water_stress_factor": "1"
+  },
+  "input_output_map": {
+    "soil_water_potential": "canonical required input to the bounded observation map",
+    "water_stress_factor": "canonical bounded output from the observation map"
+  },
+  "interface_map": {
+    "forward_signature": "forward(self, state, time, dt)",
+    "bridge_class": "BiologicalProcessFunctor",
+    "abstraction_contract": "BiologicalProcess",
+    "state_write_mode": "UpdateItem REPLACE with per_timestep false",
+    "legacy_inputs": [
+      "soil_water_potential"
+    ],
+    "iphs_inputs": [
+      "soil_water_potential"
+    ],
+    "legacy_outputs": [
+      "water_stress_factor"
+    ],
+    "iphs_outputs": [
+      "water_stress_factor"
+    ]
+  },
+  "runtime_replacement_map": {
+    "runtime_uses_iphs": false,
+    "legacy_removed": false,
+    "replacement_entrypoint": "forward",
+    "preserved_numerics": "Existing ParameterManager-backed calculations define canonical IPHS operator coefficients, rates, ports, or observations.",
+    "no_legacy_mode": "No selectable legacy runtime branch is exposed for Phase 8 completion."
+  },
+  "state_advancement_map": {
+    "potential_basis": "soil_water_potential observation input in MPa",
+    "effort_variable": "not applicable to this empirical level-1 observation",
+    "state_advancer": "y_h = O_h x_h through the declared observation operator",
+    "runtime_usage": "WaterStress.forward evaluates one bounded observation and emits water_stress_factor without advancing water state."
+  },
+  "parameter_management_map": {
+    "biosphere.stress.water.wilting_point_potential": {
+      "source": "ParameterManager YAML"
+    },
+    "biosphere.stress.water.field_capacity_potential": {
+      "source": "ParameterManager YAML"
+    },
+    "biosphere.stress.global.factor_min": {
+      "source": "ParameterManager YAML"
+    },
+    "biosphere.stress.global.factor_max": {
+      "source": "ParameterManager YAML"
+    }
+  },
+  "composition_management_map": {
+    "functor_metadata": "existing FunctorMetadata declares interfaces, execution phase, and conservation semantics",
+    "state_contract": "StateManager receives one explicit REPLACE UpdateItem",
+    "validation_rule": "phase8 scientific inventory and equivalence certificate checks"
+  },
+  "dependency_interconnection_map": {
+    "dependencies": "no direct Functor dependency; soil_water_potential is a required StateManager port",
+    "direct_functor_calls": "none declared by certificate"
+  },
+  "overflow_routing_map": {
+    "diagnostic_residuals": "not applicable; threshold saturation defines the bounded observation",
+    "discarded_residuals": "no material or energy residual"
+  },
+  "conservation_map": {
+    "conserved_quantities": "none; this Functor is read-only",
+    "balance_expression": "no water stock, flux, source, sink, or state advance"
+  },
+  "entropy_audit": {
+    "operator_sign": "bounded output is validated in [0, 1]",
+    "sigma_expression": "not applicable to this non-strict empirical observation"
+  },
+  "equivalence_type": "diagnostic"
+}
+

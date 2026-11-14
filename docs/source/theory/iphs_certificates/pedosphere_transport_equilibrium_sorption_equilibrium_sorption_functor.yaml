@@ -1,0 +1,172 @@
+certificate_version: '1.0'
+process_id: relic.scientific.pedosphere.transport.equilibrium_sorption.EquilibriumSorptionFunctor
+module_name: EquilibriumSorptionFunctor
+canonical_role: field
+iphs_level: 2
+iphs_level_evidence:
+  classification: IPHS-wrapped index-1 descriptor DAE certificate (equilibrium Freundlich sorption with dissolved decay, hybrid semantic descriptor_dae)
+  compatible_basis: One prognostic cochain equilibrium_total_solute_mass [kg m-3] and two algebraic cochains equilibrium_dissolved_concentration [kg m-3] and equilibrium_sorbed_concentration [kg kg-1] on the cell basis, tied by the mass partition and the Freundlich isotherm
+  runtime_replacement: forward verifies the consistent input triple, solves the scalar implicit constraint of the step with the existing BracketedBisectionSolver (implicit parameter gradients), and emits the differential increment plus the re-solved algebraic states; no legacy branch, no separate DAE manager.
+  canonical_operator: dy/dt = -lambda theta C; 0 = theta C + rho_b K_f C^n - y; S = K_f C^n; implicit step theta C' + rho_b K_f C'^n + dt lambda theta C' = y
+  level_2_limit: The canonical DAE runtime wrapper is declared and executed with consistent initialization, constraint residual, and convergence reporting, but no Hamiltonian, entropy, or IPHS structure is claimed for the sorption partition; strict level 3 to 5 evidence is not applicable.
+theory_document: docs\source\theory\pedosphere_equilibrium_sorption.md
+theory_document_status: updated
+legacy_formula: dy/dt = -lambda theta C, y = theta C + rho_b S, S = K_f C^n
+literature_formula: Freundlich equilibrium sorption with retardation (Jury and Horton 2004; Mayes et al. 2012) and first-order dissolved-phase degradation; semi-explicit index-1 DAE with algebraic elimination (Hairer and Wanner 1996)
+iphs_formula: E x_dot = f(x), g(x) = 0 with x = (y, C, S), E = diag(1, 0, 0), g = (theta C + rho_b S - y, S - K_f C^n); g_z invertible (index 1)
+legacy_expression: y' = y - dt lambda theta C', C' from theta C' + rho_b K_f C'^n + dt lambda theta C' = y, S' = K_f C'^n
+iphs_expression: consistent initial triple verified within the relative tolerance; C' bracketed on [0, y/theta]; constraint residual and solver iterations reported; non-convergence fails the step
+input_variables:
+- equilibrium_total_solute_mass
+- equilibrium_dissolved_concentration
+- equilibrium_sorbed_concentration
+- soil_moisture
+- bulk_density
+output_variables:
+- equilibrium_total_solute_mass
+- equilibrium_dissolved_concentration
+- equilibrium_sorbed_concentration
+- diagnostics.equilibrium_sorption.constraint_residual
+- diagnostics.equilibrium_sorption.degradation_flux
+- diagnostics.equilibrium_sorption.solver_iterations
+parameter_keys:
+- pedosphere.transport.equilibrium_sorption_freundlich_coefficient
+- pedosphere.transport.equilibrium_sorption_freundlich_exponent
+- pedosphere.transport.equilibrium_sorption_dissolved_decay_rate
+- pedosphere.transport.equilibrium_sorption_consistency_tolerance
+- computation.solvers.bracketed_bisection.atol
+- computation.solvers.bracketed_bisection.rtol
+- computation.solvers.bracketed_bisection.max_iterations
+composition_ports: []
+references:
+- Jury, W.A. & Horton, R. (2004). Soil Physics, 6th ed., Wiley, ch. 7
+- Mayes, M.A., Heal, K.R., Brandt, C.C., Phillips, J.R. & Jardine, P.M. (2012). Relation between soil order and sorption of dissolved organic carbon in temperate subsoils. Soil Sci. Soc. Am. J. 76, 199-206
+- Hairer, E. & Wanner, G. (1996). Solving Ordinary Differential Equations II, Springer, ch. VI
+- Burden, R.L. & Faires, J.D. (2010). Numerical Analysis (bracketed bisection)
+baseline_tests:
+- test\unit\pedosphere\test_equilibrium_sorption.py
+- test\audit\phase8_scientific_inventory.test.py
+validation_tests:
+- test\unit\pedosphere\test_equilibrium_sorption.py
+- test\integration\test_equilibrium_sorption_dae_integration.py
+- test\unit\validation\framework\rules\stochastic_sdae_structure.test.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  equilibrium_total_solute_mass: differential state y = theta C + rho_b S [kg m-3]; input state and accumulated increment
+  equilibrium_dissolved_concentration: algebraic state C [kg m-3]; input state and full-state replacement each step
+  equilibrium_sorbed_concentration: algebraic state S = K_f C^n [kg kg-1]; input state and full-state replacement each step
+  soil_moisture: volumetric liquid soil water content theta [m3 m-3], the prognostic soil_moisture state, read and never written
+  bulk_density: dry bulk density rho_b [kg m-3] read as forcing (bulk_density contract)
+  diagnostics.equilibrium_sorption.constraint_residual: "abs(theta C' + rho_b S' - y') after the step [kg m-3]"
+  diagnostics.equilibrium_sorption.degradation_flux: lambda theta C' [kg m-3 s-1]
+  diagnostics.equilibrium_sorption.solver_iterations: bisection iterations of the step [1]
+parameter_map:
+  pedosphere.transport.equilibrium_sorption_freundlich_coefficient: Freundlich coefficient K_f [m3 kg-1]
+  pedosphere.transport.equilibrium_sorption_freundlich_exponent: Freundlich exponent n [dimensionless]
+  pedosphere.transport.equilibrium_sorption_dissolved_decay_rate: Dissolved-phase decay rate lambda [s-1]
+  pedosphere.transport.equilibrium_sorption_consistency_tolerance: Relative consistency tolerance [dimensionless]
+  computation.solvers.bracketed_bisection.atol: Absolute interval tolerance of the bisection root solve [dimensionless]
+  computation.solvers.bracketed_bisection.rtol: Relative interval tolerance of the bisection root solve [dimensionless]
+  computation.solvers.bracketed_bisection.max_iterations: Maximum bracket contractions of the bisection root solve [dimensionless]
+operator_map:
+  constraint: g(y, C) = theta C + rho_b K_f C^n - y with g_C = theta + rho_b K_f n C^(n-1) > 0 (index 1)
+  elimination: scalar monotone equation F(C') = theta C' + rho_b K_f C'^n + dt lambda theta C' - y solved on the exact bracket [0, y/theta] by the existing BracketedBisectionSolver
+  differential_update: implicit Euler y' = y - dt lambda theta C'
+  restart_projection: the stored (y, C, S) triple is re-verified for consistency at every step, so a restored checkpoint is re-projected by the same check before advancing
+unit_map:
+  equilibrium_total_solute_mass: kg m-3
+  equilibrium_dissolved_concentration: kg m-3
+  equilibrium_sorbed_concentration: kg kg-1
+  soil_moisture: m3 m-3
+  diagnostics.equilibrium_sorption.constraint_residual: kg m-3
+  diagnostics.equilibrium_sorption.degradation_flux: kg m-3 s-1
+  diagnostics.equilibrium_sorption.solver_iterations: '1'
+input_output_map:
+  equilibrium_total_solute_mass: canonical state input and UpdateItem ACCUMULATE increment, per_timestep true
+  equilibrium_dissolved_concentration: canonical algebraic input and UpdateItem REPLACE full state
+  equilibrium_sorbed_concentration: canonical algebraic input and UpdateItem REPLACE full state
+  soil_moisture: state input read from the state; never written
+  diagnostics.equilibrium_sorption.constraint_residual: canonical REPLACE observation of the descriptor residual route
+  diagnostics.equilibrium_sorption.degradation_flux: canonical REPLACE observation of the implicit sink
+  diagnostics.equilibrium_sorption.solver_iterations: canonical REPLACE observation of the solve effort
+interface_map:
+  forward_signature: forward(self, state, time, dt, **kwargs)
+  bridge_class: PhysicalFieldFunctor
+  abstraction_contract: PhysicalField
+  constructor_selection: EquilibriumSorptionFunctor()
+  state_write_mode: UpdateItem ACCUMULATE with per_timestep true for the differential state and REPLACE for the algebraic states and diagnostics
+  legacy_inputs:
+  - equilibrium_total_solute_mass
+  - equilibrium_dissolved_concentration
+  - equilibrium_sorbed_concentration
+  - soil_moisture
+  - bulk_density
+  iphs_inputs:
+  - equilibrium_total_solute_mass
+  - equilibrium_dissolved_concentration
+  - equilibrium_sorbed_concentration
+  - soil_moisture
+  - bulk_density
+  legacy_outputs:
+  - equilibrium_total_solute_mass
+  - equilibrium_dissolved_concentration
+  - equilibrium_sorbed_concentration
+  - diagnostics.equilibrium_sorption.constraint_residual
+  - diagnostics.equilibrium_sorption.degradation_flux
+  - diagnostics.equilibrium_sorption.solver_iterations
+  iphs_outputs:
+  - equilibrium_total_solute_mass
+  - equilibrium_dissolved_concentration
+  - equilibrium_sorbed_concentration
+  - diagnostics.equilibrium_sorption.constraint_residual
+  - diagnostics.equilibrium_sorption.degradation_flux
+  - diagnostics.equilibrium_sorption.solver_iterations
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward -> relic.computation.solvers.nonlinear.BracketedBisectionSolver.solve
+  preserved_numerics: The single forward path verifies consistency, solves the scalar constraint of the step on its exact bracket, and emits the implicit increment and the re-solved algebraic states; no alternative branch or projection exists.
+  no_legacy_mode: No selectable legacy runtime branch is exposed; the Functor was introduced directly on the canonical root-solver owner.
+  non_strict_reason: Level 2 declares the canonical DAE runtime wrapper; no IPHS structure, Hamiltonian, or entropy claim is made for the sorption partition.
+state_advancement_map:
+  potential_basis: differential total mass y on the cell basis with the algebraic pair (C, S) on the constraint manifold; no storage functional is claimed
+  effort_variable: none; the partition and isotherm are algebraic constraints, not variational efforts
+  state_advancer: y' = y - dt lambda theta C' with C' from the bracketed solve of the implicit constraint and S' = K_f C'^n
+  runtime_usage: EquilibriumSorptionFunctor.forward validates states and water content, rejects inconsistent triples, solves the scalar constraint with BracketedBisectionSolver, raises on non-convergence, emits one ACCUMULATE increment, two REPLACE algebraic states, and three REPLACE diagnostics, and reports the total-mass ledger residual through check_conservation_laws.
+parameter_management_map:
+  pedosphere.transport.equilibrium_sorption_freundlich_coefficient:
+    source: ParameterManager YAML
+  pedosphere.transport.equilibrium_sorption_freundlich_exponent:
+    source: ParameterManager YAML
+  pedosphere.transport.equilibrium_sorption_dissolved_decay_rate:
+    source: ParameterManager YAML
+  pedosphere.transport.equilibrium_sorption_consistency_tolerance:
+    source: ParameterManager YAML
+  computation.solvers.bracketed_bisection.atol:
+    source: ParameterManager YAML
+  computation.solvers.bracketed_bisection.rtol:
+    source: ParameterManager YAML
+  computation.solvers.bracketed_bisection.max_iterations:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares three state inputs, one forcing input, three state outputs, three diagnostics, no dependencies, and the mass conservation law
+  state_contract: SCM contracts equilibrium_total_solute_mass (kg m-3), equilibrium_dissolved_concentration (kg m-3), equilibrium_sorbed_concentration (kg kg-1), and the three diagnostics.equilibrium_sorption.* contracts type the GraphIR ports
+  validation_rule: stochastic_sdae_check with the descriptor_dae execution binding (descriptor_constraints with the linear partition operator A_h = [[-1, theta, rho_b]], descriptor_restart with algebraic_state_keys and projection_on_restore true), phase8 scientific inventory, and equivalence certificate checks
+  constraint_binding: execution_bindings.descriptor_dae names this class, its forward, the state triple, algebraic_state_scope state_manager, and the unit test as executed evidence
+dependency_interconnection_map:
+  dependencies: no Functor dependencies; get_dependencies() returns an empty list
+  direct_functor_calls: none; only the canonical BracketedBisectionSolver owner is invoked
+overflow_routing_map:
+  invalid_state_route: missing, non-tensor, non-floating, non-finite, negative, or shape-mismatched states and water content outside (0, 1] fail before any solve or UpdateItem
+  inconsistent_initialization_route: an input triple violating the partition or isotherm beyond the relative tolerance fails before any solve; nothing is projected silently
+  solver_failure_route: a non-converged bracketed solve raises with status, iterations, and residual norm; no partial state is emitted
+  discarded_residuals: no residual is discarded; the constraint residual and solver iterations are emitted every step
+conservation_map:
+  conserved_quantity: mass
+  balance_expression: y' - y + dt lambda theta C' = 0 (degradation is the only sink; the partition constraint holds at the end of the step within the solver tolerance)
+  local_check: check_conservation_laws reports abs(Delta y + dt degradation_flux) in kg m-3
+  functor_law: FunctorMetadata.conservation_laws includes mass
+entropy_audit:
+  operator_sign: lambda >= 0 removes dissolved mass; K_f > 0 and n > 0 keep g_C > 0 so the index-1 elimination is well posed
+  sigma_expression: no entropy-production claim is made; the partition is an equilibrium constraint and the decay an empirical sink
+equivalence_type: exact

@@ -1,0 +1,53 @@
+variable: air_temperature
+title: "Air Temperature"
+kind: forcing
+dimension:
+  udunits: "K"
+  cf_standard_name: "air_temperature"
+support:
+  spatial_kind: grid_cell
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+numerics:
+  lower_bound: 0.0
+  upper_bound: 500.0
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "CESMAdapter"
+      module: "relic.coupling.external.atmospheric_models.cesm_adapter"
+      provides: ["air_temperature"]
+      unit: "K"
+    - name: "CMIP6Adapter"
+      module: "relic.coupling.external.climate_models.cmip6_adapter"
+      provides: ["air_temperature"]
+      unit: "K"
+    - name: "WRFAdapter"
+      module: "relic.coupling.external.atmospheric_models.wrf_adapter"
+      provides: ["air_temperature"]
+      unit: "K"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "external_forcing_adapter"
+  runtime_role: "external_air_temperature_forcing"
+  runtime_writer: null
+  adapter_writers:
+    - "CESMAdapter"
+    - "CMIP6Adapter"
+    - "WRFAdapter"

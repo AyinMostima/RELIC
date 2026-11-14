@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} - RELIC{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>{{ title }}</h1>
+    <p class="page-description">
+        Monitor computational performance, run benchmarks, and manage acceleration resources.
+    </p>
+</div>
+
+<div class="compute-overview">
+    <div class="compute-cards">
+        <div class="compute-card">
+            <h3>GPU Acceleration</h3>
+            <div id="gpu-status" class="status-placeholder">Loading...</div>
+            <button class="btn btn-secondary" onclick="checkGPUStatus()">Check Status</button>
+        </div>
+        
+        <div class="compute-card">
+            <h3>Performance Benchmark</h3>
+            <div id="benchmark-results" class="status-placeholder">No recent benchmarks</div>
+            <button class="btn btn-primary" onclick="runBenchmark()">Run Benchmark</button>
+        </div>
+        
+        <div class="compute-card">
+            <h3>Distributed Computing</h3>
+            <div id="distributed-status" class="status-placeholder">Not configured</div>
+            {% if experimental_enabled %}
+            <button class="btn btn-secondary" onclick="testDistributed()">Test DDP</button>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="placeholder-content">
+    <p><strong>Note:</strong> Detailed compute monitoring interface is under development.</p>
+    <p>For now, use the <a href="/api/docs#/Compute" target="_blank">Compute API endpoints</a> directly.</p>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+async function checkGPUStatus() {
+    const statusEl = document.getElementById('gpu-status');
+    statusEl.textContent = 'Checking...';
+    
+    try {
+        const response = await fetch('/api/health/compute');
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            const deps = data.data.dependencies || {};
+            const hasGPU = deps.cuda || false;
+            statusEl.innerHTML = hasGPU ? 
+                '<span class="status-success">CUDA Available</span>' : 
+                '<span class="status-warning">CUDA Not Available</span>';
+        } else {
+            statusEl.innerHTML = '<span class="status-error">Check Failed</span>';
+        }
+    } catch (error) {
+        statusEl.innerHTML = '<span class="status-error">Error: ' + error.message + '</span>';
+    }
+}
+
+async function runBenchmark() {
+    const resultsEl = document.getElementById('benchmark-results');
+    const button = event.target;
+    
+    button.textContent = 'Running...';
+    button.disabled = true;
+    resultsEl.textContent = 'Running benchmark...';
+    
+    try {
+        const response = await fetch('/api/health/benchmark', { method: 'POST' });
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            const results = data.data.benchmark_results;
+            let html = '<div class="benchmark-results">';
+            
+            if (results.cpu_benchmark) {
+                html += `<div>CPU: ${results.cpu_benchmark.operations_per_second.toFixed(0)} ops/sec</div>`;
+            }
+            
+            if (results.gpu_benchmark && !results.gpu_benchmark.error) {
+                html += `<div>GPU: ${results.gpu_benchmark.operations_per_second.toFixed(0)} ops/sec</div>`;
+                html += `<div>Speedup: ${results.gpu_benchmark.speedup_over_cpu.toFixed(1)}x</div>`;
+            }
+            
+            html += '</div>';
+            resultsEl.innerHTML = html;
+        } else {
+            resultsEl.innerHTML = '<span class="status-error">Benchmark Failed</span>';
+        }
+    } catch (error) {
+        resultsEl.innerHTML = '<span class="status-error">Error: ' + error.message + '</span>';
+    } finally {
+        button.textContent = 'Run Benchmark';
+        button.disabled = false;
+    }
+}
+
+function testDistributed() {
+    alert('Distributed computing test not yet implemented');
+}
+
+// Load initial status
+document.addEventListener('DOMContentLoaded', checkGPUStatus);
+</script>
+{% endblock %}

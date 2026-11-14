@@ -1,0 +1,42 @@
+variable: environmental_modifier
+title: "Pool Turnover Environmental Modifier"
+description: "Dimensionless multiplicative environmental (temperature times moisture) scaler of the SOM pool turnover rates in pools_matrix. Required; finite, non-negative and shaped like the pools. No relic Functor writes it under this name (supplied as forcing): first_order_decomposition emits its f_env as diagnostics.first_order_decomposition.environmental_modifier."
+kind: forcing
+dimension:
+  udunits: "1"
+  cf_standard_name: null
+support:
+  spatial_kind: grid_cell
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Parton, W.J. et al. (1987). Analysis of factors controlling soil organic matter levels in Great Plains grasslands. Soil Sci. Soc. Am. J. 51, 1173-1179"
+numerics:
+  # Non-negative multiplier; the reader rejects negative values.
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies: []
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/pedosphere/carbon_pools/pools_matrix.py"
+  runtime_role: "pool_turnover_environmental_modifier_forcing"
+  runtime_writer: null
+  note: "Reader: PoolsMatrix (metadata input_variables; a missing value raises KeyError; finite, non-empty, pool-shaped, non-negative). No RELIC Functor writes environmental_modifier: FirstOrderDecomposition writes f_env = f_T f_theta as diagnostics.first_order_decomposition.environmental_modifier (dimensionless, REPLACE)."

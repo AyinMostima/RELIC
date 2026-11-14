@@ -1,0 +1,68 @@
+variable: evapotranspiration_flux
+title: "Evapotranspiration Flux"
+kind: flux
+dimension:
+  udunits: "kg m-2 s-1"
+  cf_standard_name: "water_evapotranspiration_flux"
+support:
+  spatial_kind: grid_cell
+  area_basis: ground_area
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+# Signed upward water flux (CF water_evapotranspiration_flux: evaporation
+# positive, dew/condensation negative). The producers' non-negative ET
+# projection is a model choice, not a bound of the quantity.
+numerics:
+  lower_bound: null
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "penman_monteith_et"
+      module: "relic.scientific.hydrosphere.evapotranspiration.penman_monteith"
+      provides: ["evapotranspiration_flux"]
+      unit: "kg m-2 s-1"
+    - name: "priestley_taylor_et"
+      module: "relic.scientific.hydrosphere.evapotranspiration.priestley_taylor"
+      provides: ["evapotranspiration_flux"]
+      unit: "kg m-2 s-1"
+    - name: "SWATAdapter"
+      module: "relic.coupling.external.hydrological_models.swat_adapter"
+      provides: ["evapotranspiration_flux"]
+      unit: "kg m-2 s-1"
+    - name: "VICAdapter"
+      module: "relic.coupling.external.hydrological_models.vic_adapter"
+      provides: ["evapotranspiration_flux"]
+      unit: "kg m-2 s-1"
+flux_contract:
+  allowed_in:
+    - "penman_monteith_et"
+    - "priestley_taylor_et"
+    - "SWATAdapter"
+    - "VICAdapter"
+  allowed_out:
+    - "bucket_soil_moisture"
+    - "richards_soil_moisture"
+    - "soil_water_transport"
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/hydrosphere/evapotranspiration/penman_monteith.py"
+  runtime_role: "mutually_exclusive_surface_water_vapor_flux"
+  runtime_writers:
+    - "penman_monteith_et"
+    - "priestley_taylor_et"
+  adapter_writers:
+    - "SWATAdapter"
+    - "VICAdapter"

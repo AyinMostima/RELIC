@@ -1,0 +1,402 @@
+schema_version: 2.0.0
+tier: relic
+namespace: atmosphere.most
+description: Monin-Obukhov Similarity Theory (MOST) parameters for turbulent surface layer calculations including mixing length
+  and stability functions
+metadata:
+  created_by: RELIC Parameter System
+  last_modified: '2026-01-07T14:20:26Z'
+  schema_url: https://github.com/relic/parameter-schema/v2.0.0
+  version: 1.0.0
+parameters:
+  atmosphere.most.c_mu:
+    value: 0.09
+    default: 0.09
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.05
+    - 0.12
+    category: turbulence_parameter
+    description: Turbulence model constant used in TKE-based mixing length formulations
+    references:
+    - Launder & Spalding (1974)
+    tags:
+    - turbulence
+    - closure
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: parameter_consolidation
+      last_modified: '2025-10-09T00:00:00Z'
+  atmosphere.most.lambda_blackadar:
+    value: 150.0
+    default: 150.0
+    units: m
+    dtype: float32
+    bounds:
+    - 50.0
+    - 500.0
+    category: mixing_length_parameter
+    description: Asymptotic mixing length scale in Blackadar formulation for neutral conditions
+    references:
+    - Blackadar (1962)
+    tags:
+    - mixing_length
+    - boundary_layer
+    dimension: length
+    requires_grad: true
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: parameter_consolidation
+      last_modified: '2025-10-09T00:00:00Z'
+  atmosphere.most.canopy_beta:
+    value: 0.3
+    default: 0.3
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 0.6
+    category: mixing_length_parameter
+    description: Canopy mixing length coefficient within vegetation canopy (beta parameter)
+    references:
+    - Wilson & Shaw (1977)
+    tags:
+    - canopy
+    - vegetation
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: parameter_consolidation
+      last_modified: '2025-10-09T00:00:00Z'
+  atmosphere.most.c_l_local_mixing:
+    value: 0.76
+    default: 0.76
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 1.0
+    category: mixing_length_parameter
+    description: Local mixing length coefficient for stable stratification conditions
+    references:
+    - Delage (1974)
+    tags:
+    - mixing_length
+    - stability
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: parameter_consolidation
+      last_modified: '2025-10-09T00:00:00Z'
+  atmosphere.most.beta_stable:
+    value: 5.0
+    default: 5.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 4.0
+    - 6.0
+    category: stability_parameter
+    description: Shared stable-regime coefficient for Businger-Dyer momentum and scalar similarity functions
+    references:
+    - Businger et al. (1971)
+    - Dyer (1974)
+    tags:
+    - stability
+    - most
+    - momentum_flux
+    - scalar_flux
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: parameter_consolidation
+      last_modified: '2025-11-02T00:00:00Z'
+  atmosphere.most.gamma_unstable:
+    value: 16.0
+    default: 16.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 12.0
+    - 20.0
+    category: stability_parameter
+    description: Shared unstable-regime coefficient for Businger-Dyer momentum and scalar similarity functions
+    references:
+    - Businger et al. (1971)
+    - Högström (1988)
+    tags:
+    - stability
+    - most
+    - momentum_flux
+    - scalar_flux
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: parameter_consolidation
+      last_modified: '2025-11-02T00:00:00Z'
+  atmosphere.most.stable_correction_limit:
+    value: 2.0
+    default: 2.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 5.0
+    category: stability_parameter
+    description: Configured positive zeta boundary for the RELIC Businger-Dyer operational domain; values outside require a different explicit similarity closure
+    references:
+    - Businger et al. (1971). Flux-profile relationships in the atmospheric surface layer
+    - Foken (2006). 50 years of the Monin-Obukhov similarity theory
+    tags:
+    - most
+    - validity_domain
+    - stable
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_configured_operational_envelope
+      schema_version: 2.0.0
+      created_by: most_ssot_closure
+      last_modified: '2026-07-16T00:00:00Z'
+  atmosphere.most.unstable_correction_limit:
+    value: 2.0
+    default: 2.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 5.0
+    category: stability_parameter
+    description: Configured absolute negative zeta boundary for the RELIC Businger-Dyer operational domain; values outside require a different explicit similarity closure
+    references:
+    - Businger et al. (1971). Flux-profile relationships in the atmospheric surface layer
+    - Foken (2006). 50 years of the Monin-Obukhov similarity theory
+    tags:
+    - most
+    - validity_domain
+    - unstable
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_configured_operational_envelope
+      schema_version: 2.0.0
+      created_by: most_ssot_closure
+      last_modified: '2026-07-16T00:00:00Z'
+  atmosphere.most.clamp_min_K:
+    value: 0.01
+    default: 0.01
+    units: m2 s-1
+    dtype: float32
+    bounds:
+    - 0.001
+    - 5.0
+    category: numerical_stability
+    description: Minimum eddy diffusivity to maintain numerical stability in MOST operators
+    references:
+    - Stull (1988)
+    tags:
+    - numerical
+    - stability
+    - eddy_diffusivity
+    dimension: diffusivity
+    requires_grad: false
+    provenance:
+      source: numerical_stability_guidelines
+      schema_version: 2.0.0
+      created_by: parameter_consolidation
+      last_modified: '2025-11-02T00:00:00Z'
+  atmosphere.most.clamp_min_mixing_length:
+    value: 0.01
+    default: 0.01
+    units: m
+    dtype: float32
+    bounds:
+    - 0.01
+    - 0.01
+    category: numerical_stability
+    description: Minimum mixing length used by MOST mixing-length operators.
+    references:
+    - Stull (1988)
+    tags:
+    - numerical
+    - stability
+    - mixing_length
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: numerical_stability_guidelines
+      schema_version: 2.0.0
+      created_by: atmosphere_audit_v4
+      last_modified: '2026-02-11T00:00:00Z'
+  atmosphere.most.canopy_displacement_ratio:
+    value: 0.67
+    default: 0.67
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.67
+    - 0.67
+    category: canopy_parameter
+    description: Displacement-height ratio d/hc for canopy mixing-length parameterization.
+    references:
+    - Shaw & Pereira (1982)
+    tags:
+    - canopy
+    - displacement
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: atmosphere_audit_v4
+      last_modified: '2026-02-11T00:00:00Z'
+  atmosphere.most.roughness_sublayer_c:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 0.5
+    category: empirical_parameter
+    description: Empirical coefficient for roughness sublayer correction.
+    references:
+    - Garratt (1980)
+    - Cellier & Brunet (1992)
+    tags:
+    - roughness_sublayer
+    - empirical
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: atmosphere_audit_v4
+      last_modified: '2026-02-11T00:00:00Z'
+  atmosphere.most.bulk_wind_speed_safeguard:
+    value: 0.1
+    default: 0.1
+    units: m s-1
+    dtype: float32
+    bounds:
+    - 0.1
+    - 0.1
+    category: numerical_stability
+    description: Minimum wind-speed magnitude used in bulk transfer coefficients.
+    references:
+    - Garratt (1992)
+    tags:
+    - bulk_transfer
+    - safeguard
+    dimension: velocity
+    requires_grad: false
+    provenance:
+      source: numerical_stability_guidelines
+      schema_version: 2.0.0
+      created_by: atmosphere_audit_v4
+      last_modified: '2026-02-11T00:00:00Z'
+  atmosphere.most.bulk_temperature_difference_safeguard:
+    value: 0.01
+    default: 0.01
+    units: K
+    dtype: float32
+    bounds:
+    - 0.01
+    - 0.01
+    category: numerical_stability
+    description: Minimum air-surface temperature difference used in bulk transfer coefficients.
+    references:
+    - Garratt (1992)
+    tags:
+    - bulk_transfer
+    - safeguard
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: numerical_stability_guidelines
+      schema_version: 2.0.0
+      created_by: atmosphere_audit_v4
+      last_modified: '2026-02-11T00:00:00Z'
+  atmosphere.most.h_min_safeguard:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: W m-2
+    dtype: float32
+    bounds:
+    - 1.0e-06
+    - 1.0e-06
+    category: numerical_stability
+    description: Minimum absolute sensible heat flux used to avoid singular Monin-Obukhov length.
+    references:
+    - Monin & Obukhov (1954)
+    - Stull (1988)
+    tags:
+    - most
+    - numerical
+    - safeguard
+    dimension: energy_flux
+    requires_grad: false
+    provenance:
+      source: numerical_stability_guidelines
+      schema_version: 2.0.0
+      created_by: atmosphere_audit_v5
+      last_modified: '2026-02-12T00:00:00Z'
+  atmosphere.most.monin_obukhov_length_clamp_min:
+    value: -1000.0
+    default: -1000.0
+    units: m
+    dtype: float32
+    bounds:
+    - -5000.0
+    - -10.0
+    category: numerical_stability
+    description: Lower clamp bound for Monin-Obukhov length in MOST solvers.
+    references:
+    - Stull (1988)
+    tags:
+    - most
+    - numerical
+    - clamp
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: numerical_stability_guidelines
+      schema_version: 2.0.0
+      created_by: atmosphere_audit_v5
+      last_modified: '2026-02-12T00:00:00Z'
+  atmosphere.most.monin_obukhov_length_clamp_max:
+    value: 1000.0
+    default: 1000.0
+    units: m
+    dtype: float32
+    bounds:
+    - 10.0
+    - 5000.0
+    category: numerical_stability
+    description: Upper clamp bound for Monin-Obukhov length in MOST solvers.
+    references:
+    - Stull (1988)
+    tags:
+    - most
+    - numerical
+    - clamp
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: numerical_stability_guidelines
+      schema_version: 2.0.0
+      created_by: atmosphere_audit_v5
+      last_modified: '2026-02-12T00:00:00Z'

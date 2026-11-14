@@ -1,0 +1,882 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pedosphere Theory &mdash; RELIC 1.0.0 Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=mono5" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=a12e3537"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../_static/language_switch.js?v=mono5"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Anthroposphere Theory" href="anthroposphere.html" />
+    <link rel="prev" title="Hydrosphere Theory" href="hydrosphere.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            RELIC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">RELIC Guide</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../architecture.html">System Architecture</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#scope-and-architectural-contract">Scope and architectural contract</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#architecture-capability-map">Architecture capability map</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#package-ownership-and-seven-layer-map">Package ownership and seven-layer map</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#four-scientific-abstractions">Four scientific abstractions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#functor-lifecycle-and-metadata">Functor lifecycle and metadata</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#variable-roles-and-state-ownership">Variable roles and state ownership</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#parameters-constants-units-and-time">Parameters, constants, units, and time</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#simulator-execution-rates-and-device-policy">Simulator, execution rates, and device policy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#structural-scientific-layer">Structural scientific layer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#end-to-end-assembly-and-execution">End-to-end assembly and execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#connection-and-conservation-rules">Connection and conservation rules</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Scientific Theory and Governing Equations</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="foundations.html">Mathematical Foundations, State, Units, and Conservation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="foundations.html#architectural-contract-and-notation">Architectural contract and notation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="foundations.html#four-scientific-abstractions-and-functor-lifecycle">Four scientific abstractions and Functor lifecycle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="foundations.html#spatial-quantity-basis-and-temporal-overlap-laws">Spatial quantity basis and temporal overlap laws</a></li>
+<li class="toctree-l3"><a class="reference internal" href="foundations.html#universal-conservation-and-balance-laws">Universal conservation and balance laws</a></li>
+<li class="toctree-l3"><a class="reference internal" href="foundations.html#transactional-statemanager-governance-i1-i7">Transactional StateManager governance (<code class="docutils literal notranslate"><span class="pre">I1</span></code>–<code class="docutils literal notranslate"><span class="pre">I7</span></code>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="foundations.html#centralized-parametermanager-and-physical-constant-ssot">Centralized ParameterManager and physical-constant SSOT</a></li>
+<li class="toctree-l3"><a class="reference internal" href="foundations.html#piecewise-smooth-discrete-adjoint-differentiation-and-device-policy">Piecewise-smooth discrete adjoint differentiation and device policy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="foundations.html#bounded-mathematical-contracts-and-runtime-boundary-i-vs-n">Bounded mathematical contracts and runtime boundary (<code class="docutils literal notranslate"><span class="pre">[I]</span></code> vs <code class="docutils literal notranslate"><span class="pre">[N]</span></code>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="foundations.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dec_iphs_generic.html">DEC, IPHS, GENERIC, Ports, and Reaction Structure</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dec_iphs_generic.html#structural-governance-lifecycle">Structural governance lifecycle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dec_iphs_generic.html#discrete-exterior-calculus-relic-computation-operators-dec">Discrete exterior calculus (<code class="docutils literal notranslate"><span class="pre">relic.computation.operators.dec</span></code>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dec_iphs_generic.html#irreversible-port-hamiltonian-and-generic-lowering">Irreversible port-Hamiltonian and GENERIC lowering</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dec_iphs_generic.html#equivalence-certificates-and-live-repository-inventory">Equivalence certificates and live repository inventory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dec_iphs_generic.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="numerics.html">Numerical Integration, Splitting, Stability, Scale Coupling, and Hybrid Events</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="numerics.html#method-of-lines-formulation-and-solver-registry">Method-of-lines formulation and solver registry</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numerics.html#deterministic-time-stepping-linear-and-nonlinear-solvers">Deterministic time-stepping, linear, and nonlinear solvers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numerics.html#multi-rate-execution-operator-splitting-and-step-control">Multi-rate execution, operator splitting, and step control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numerics.html#transport-stability-and-nonlinear-richards-closure">Transport stability and nonlinear Richards closure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numerics.html#conservative-spatial-remapping-and-internal-cross-domain-couplers">Conservative spatial remapping and internal cross-domain couplers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numerics.html#transverse-hybrid-events-and-saltation-matrix-sensitivities">Transverse hybrid events and saltation-matrix sensitivities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numerics.html#stochastic-memory-ale-dae-and-topology-transition-families">Stochastic, memory, ALE, DAE, and topology-transition families</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numerics.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="atmosphere.html">Atmosphere Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="atmosphere.html#scope-process-inventory-and-certificate-map">Scope, process inventory, and certificate map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="atmosphere.html#solar-thermal-and-canopy-radiation">Solar, thermal, and canopy radiation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="atmosphere.html#surface-layer-turbulence-and-boundary-layer-tracer-transport">Surface-layer turbulence and boundary-layer tracer transport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="atmosphere.html#gas-phase-chemistry-open-tropospheric-kinetics-and-closed-level-5-generic-point">Gas-phase chemistry: open tropospheric kinetics and closed Level-5 GENERIC point</a></li>
+<li class="toctree-l3"><a class="reference internal" href="atmosphere.html#stochastic-atmospheric-forcing-and-replay-contracts">Stochastic atmospheric forcing and replay contracts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="atmosphere.html#atmospheric-observation-operators">Atmospheric observation operators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="atmosphere.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="biosphere.html">Biosphere Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="biosphere.html#scope-process-inventory-and-certificate-map">Scope, process inventory, and certificate map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="biosphere.html#photosynthesis-and-stomatal-conductance">Photosynthesis and stomatal conductance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="biosphere.html#autotrophic-respiration-allocation-and-structural-growth">Autotrophic respiration, allocation, and structural growth</a></li>
+<li class="toctree-l3"><a class="reference internal" href="biosphere.html#phenology-and-abiotic-stress-closures">Phenology and abiotic stress closures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="biosphere.html#biogenic-volatile-organic-compound-bvoc-synthesis-and-emission">Biogenic volatile organic compound (BVOC) synthesis and emission</a></li>
+<li class="toctree-l3"><a class="reference internal" href="biosphere.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hydrosphere.html">Hydrosphere Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hydrosphere.html#scope-process-inventory-and-certificate-map">Scope, process inventory, and certificate map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydrosphere.html#evapotranspiration-closures">Evapotranspiration closures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydrosphere.html#snowpack-mass-energy-balance-and-snow-albedo">Snowpack mass-energy balance and snow albedo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydrosphere.html#soil-water-retention-bucket-storage-and-richards-vadose-flow">Soil-water retention, bucket storage, and Richards vadose flow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydrosphere.html#surface-runoff-and-hybrid-event-driven-hortonian-ponding">Surface runoff and hybrid event-driven Hortonian ponding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydrosphere.html#subsurface-stormflow-vadose-aquifer-exchange-and-groundwater">Subsurface stormflow, vadose-aquifer exchange, and groundwater</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydrosphere.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Pedosphere Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#scope-process-inventory-and-certificate-map">Scope, process inventory, and certificate map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#soil-organic-carbon-turnover-and-cross-sphere-interface-maps">Soil organic carbon turnover and cross-sphere interface maps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#soil-nitrogen-root-p-uptake-and-c-n-stoichiometry-boundaries">Soil nitrogen, root P uptake, and C:N stoichiometry boundaries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#wetland-methane-request-and-coupler-architecture">Wetland methane request-and-coupler architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#porous-media-water-gas-solute-dae-ale-and-memory-transport">Porous-media water, gas, solute, DAE, ALE, and memory transport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="anthroposphere.html">Anthroposphere Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="anthroposphere.html#scope-process-inventory-and-fail-closed-boundary-status">Scope, process inventory, and fail-closed boundary status</a></li>
+<li class="toctree-l3"><a class="reference internal" href="anthroposphere.html#fail-closed-level-0-boundaries-vs-implemented-emission-operators">Fail-closed Level-0 boundaries vs implemented emission operators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="anthroposphere.html#continuous-time-markov-land-use-transitions-and-parameter-projection">Continuous-time Markov land-use transitions and parameter projection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="anthroposphere.html#management-coordination-and-agricultural-water-nutrient-ports">Management coordination and agricultural water-nutrient ports</a></li>
+<li class="toctree-l3"><a class="reference internal" href="anthroposphere.html#managed-biomass-removal-livestock-grazing-fire-and-tillage">Managed biomass removal, livestock grazing, fire, and tillage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="anthroposphere.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="isotopes_transport.html">Stable Isotopes and General Transport Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="isotopes_transport.html#scope-component-inventory-and-certificate-map">Scope, component inventory, and certificate map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="isotopes_transport.html#stable-isotope-ratios-exact-binary-fractionation-and-fail-closed-ledger-status">Stable-isotope ratios, exact binary fractionation, and fail-closed ledger status</a></li>
+<li class="toctree-l3"><a class="reference internal" href="isotopes_transport.html#general-conservative-transport-functors">General conservative transport Functors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="isotopes_transport.html#references">References</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../science/index.html">Core Scientific Class Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../science/anthroposphere.html">Anthroposphere Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#atmosphere-coupling">atmosphere_coupling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#sector-allocation">sector_allocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#species-mapping">species_mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#anthroposphere-interface-mapping">anthroposphere_interface_mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#emission-inventory">emission_inventory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#land-use-parameter-mapping">land_use_parameter_mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#land-use-transitions">land_use_transitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#management-coordinator">management_coordinator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#fertilization-management">fertilization_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#fire-management">fire_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#grazing-management">grazing_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#harvest-management">harvest_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#irrigationmanagement">IrrigationManagement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#tillagemanagement">TillageManagement</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/atmosphere.html">Atmosphere Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#chemistryfunctor">ChemistryFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#class-atmosphere-chemistry-chemistry-functor-closed-constant-volume">ChemistryFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#environmentalforcingfunctor">EnvironmentalForcingFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#radiationenergyconservationvalidator">RadiationEnergyConservationValidator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#radiationfield">RadiationField</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#radiationfunctor">RadiationFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#markedpoissonrainfallfunctor">MarkedPoissonRainfallFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#ornsteinuhlenbecktemperaturefunctor">OrnsteinUhlenbeckTemperatureFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#atmosphericadvectiondiffusionfunctor">AtmosphericAdvectionDiffusionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#drydepositionaggregator">DryDepositionAggregator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#eddydiffusionblmfunctor">EddyDiffusionBLMFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#turbulencefunctor">TurbulenceFunctor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/biosphere.html">Biosphere Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#meganmodel">MEGANModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#isoprenesynthesis">IsopreneSynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#monoterpenesynthesis">MonoterpeneSynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#sesquiterpenestressmodel">SesquiterpeneStressModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#sesquiterpenesynthesis">SesquiterpeneSynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#biomassallocation">BiomassAllocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#phenologygrowth">PhenologyGrowth</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#structuralgrowth">StructuralGrowth</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#cropphenology">CropPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#gddphenology">GDDPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#gsiphenology">GSIPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#staticphenology">StaticPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#phenologyfunctor">PhenologyFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#farquharphotosynthesis">FarquharPhotosynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#medlynstomatalconductance">MedlynStomatalConductance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#autotrophicrespiration">AutotrophicRespiration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#growthrespiration">GrowthRespiration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#maintenancerespiration">MaintenanceRespiration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#nutrientstress">NutrientStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#ozonestress">OzoneStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#thermalstress">ThermalStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#waterstress">WaterStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#simplecanopyphotosynthesis">SimpleCanopyPhotosynthesis</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/hydrosphere.html">Hydrosphere Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#penman-monteith-et">penman_monteith_et</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#priestley-taylor-et">priestley_taylor_et</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#groundwater-dynamics">groundwater_dynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#subsurface-runoff">subsurface_runoff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#hortonianpondingeventfunctor">HortonianPondingEventFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#surfacepondingfunctor">SurfacePondingFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#surface-runoff">surface_runoff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#snow-albedo">snow_albedo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#snow-pack">snow_pack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#bucket-soil-moisture">bucket_soil_moisture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#soilwaterretention">SoilWaterRetention</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#richards-soil-moisture">richards_soil_moisture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#capillary-rise-transport">capillary_rise_transport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#vertical-percolation-transport">vertical_percolation_transport</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/pedosphere.html">Pedosphere Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#carbonpoolsfunctor">CarbonPoolsFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#poolsmatrix">PoolsMatrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#firstorderdecomposition">FirstOrderDecomposition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#microbialenzymedecomposition">MicrobialEnzymeDecomposition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#litterfallinterfacemapper">LitterfallInterfaceMapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#pedosphereinterfacemapper">PedosphereInterfaceMapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methanebudgetcoupler">MethaneBudgetCoupler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methaneoxidationfunctor">MethaneOxidationFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methaneproductionfunctor">MethaneProductionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methanescalecouplingfunctor">MethaneScaleCouplingFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methanetransportfunctor">MethaneTransportFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#denitrification-process">denitrification_process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#mineralizationprocess">MineralizationProcess</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#nitrification-process">nitrification_process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#nitrogenleachingprocess">NitrogenLeachingProcess</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#nitrogencycling">NitrogenCycling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#rootnutrientuptake">RootNutrientUptake</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#stoichiometryconstraint">StoichiometryConstraint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#equilibriumsorptionfunctor">EquilibriumSorptionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#gasdiffusion1d">GasDiffusion1D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#movingdomaindiffusionfunctor">MovingDomainDiffusionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#soil-water-transport">soil_water_transport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#soluteadvectiondiffusion1d">SoluteAdvectionDiffusion1D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#tworegionmasstransferfunctor">TwoRegionMassTransferFunctor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/isotopes.html">Stable-Isotope Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/isotopes.html#isotopeheartbeatfunctor">IsotopeHeartbeatFunctor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/transport.html">General Transport Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#advection-diffusion">advection_diffusion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#linear-advection">linear_advection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#fickian-diffusion">fickian_diffusion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#class-transport-diffusion-fickian-diffusion-strict-runtime-point">fickian_diffusion</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/index.html#complete-coverage-matrix">Complete coverage matrix</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">RELIC Workflows</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#learning-tracks">Learning tracks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#how-to-use-a-tutorial">How to use a tutorial</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/installation_and_imports.html">Installation and Imports</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/configuration_and_parameters.html">Configuration and Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/state_functors_and_simulation.html">State, Functors, and Simulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/graph_validation_and_execution.html">Graph Validation and Execution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/persistence_outputs_and_data_io.html">Persistence, Outputs, and Data I/O</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/coupling_workflows.html">Coupling Workflows</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/calibration_sensitivity_and_uq.html">Calibration, Sensitivity Analysis, and Uncertainty Quantification</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/devices_and_distributed.html">Devices and Distributed Execution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/cli_and_extensions.html">CLI and Extensions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestration.html">Graph Orchestration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#canonical-owners">Canonical owners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#graphir">GraphIR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#portspec-and-the-contract-boundary">PortSpec and the contract boundary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#validation">Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#adapters">Adapters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#compilation-and-execution">Compilation and execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#strict-iphs-dec-boundary">Strict IPHS/DEC boundary</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../operations.html">Operations Quick Start</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#select-a-workflow">Select a workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#environment-preflight">Environment preflight</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#first-successful-run">First successful run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#benchmark-style-acceptance-checklist">Benchmark-style acceptance checklist</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#minimal-runtime-sequence">Minimal runtime sequence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#troubleshooting-order">Troubleshooting order</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#immediate-stop-conditions">Immediate stop conditions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../extension_contracts.html">Extension Contracts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#reuse-first-decision">Reuse-first decision</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#adding-a-scientific-functor">Adding a scientific Functor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#parameter-extension">Parameter extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#variable-contract-extension">Variable contract extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#graph-and-adapter-extension">Graph and adapter extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#external-extension-paths">External extension paths</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#scientific-structure-claims">Scientific structure claims</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#explicit-unavailable-scientific-boundaries">Explicit unavailable scientific boundaries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#anti-redundancy-boundary">Anti-redundancy boundary</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">Core API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/index.html#coverage-contract">Coverage contract</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/core_runtime.html">Core Runtime API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/parameters_contracts.html">Parameters and Parameter Contracts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/orchestration_validation.html">Orchestration, Contracts, and Validation API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/scientific_structure_extensions.html">Scientific Structure and Extension APIs</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">RELIC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Scientific Theory and Governing Equations</a></li>
+      <li class="breadcrumb-item active">Pedosphere Theory</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="pedosphere-theory">
+<h1>Pedosphere Theory<a class="headerlink" href="#pedosphere-theory" title="Link to this heading"></a></h1>
+<section id="scope-process-inventory-and-certificate-map">
+<h2>Scope, process inventory, and certificate map<a class="headerlink" href="#scope-process-inventory-and-certificate-map" title="Link to this heading"></a></h2>
+<p>The RELIC pedosphere domain (<code class="docutils literal notranslate"><span class="pre">relic.scientific.pedosphere</span></code>) represents litter
+and soil organic carbon turnover, cross-sphere litterfall and hydrological
+chain maps, soil nitrogen mineralization, nitrification, denitrification, and
+leaching, root nitrogen and phosphorus uptake, diagnostic C:N stoichiometry
+auditing, wetland methane production, oxidation, three-pathway transport, and
+single-owner budget realization, as well as porous-media water, gas, solute,
+Freundlich index-1 equilibrium-sorption DAE, moving-domain ALE diffusion, and
+mobile-immobile two-region mass transfer (<em>Methods of Ecological Analysis</em>,
+Chapter 23).</p>
+<p>Twenty-four concrete scientific Functors reside in <code class="docutils literal notranslate"><span class="pre">relic.scientific.pedosphere</span></code>,
+each paired with an <code class="docutils literal notranslate"><span class="pre">IPHSEquivalenceCertificate</span></code> spanning <code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">1</span></code> (<code class="docutils literal notranslate"><span class="pre">3</span></code> classes),
+<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code> (<code class="docutils literal notranslate"><span class="pre">13</span></code> classes), and <code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">3</span></code> (<code class="docutils literal notranslate"><span class="pre">8</span></code> classes):</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Subsystem</p></th>
+<th class="head"><p>Functor</p></th>
+<th class="head"><p>Canonical bridge</p></th>
+<th class="head"><p>Cert. level</p></th>
+<th class="head"><p>Status</p></th>
+<th class="head"><p>Primary runtime role and state semantics</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Soil organic carbon</p></td>
+<td><p><a class="reference internal" href="../science/pedosphere.html#class-relic-scientific-pedosphere-carbon-pools-carbon-pools-functor-carbonpoolsfunctor"><span class="std std-ref">CarbonPoolsFunctor</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">BiologicalProcessFunctor</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">1</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Read-only 5-pool areal carbon stock summation (<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code> observation)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Soil organic carbon</p></td>
+<td><p><a class="reference internal" href="../science/pedosphere.html#class-relic-scientific-pedosphere-carbon-pools-pools-matrix-poolsmatrix"><span class="std std-ref">PoolsMatrix</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">BiologicalProcessFunctor</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Linear compartment-matrix <span class="math notranslate nohighlight">\((T - I_d)K\mathbf{C}\)</span> turnover and <span class="math notranslate nohighlight">\(R_{\mathrm{hetero}}\)</span> (<code class="docutils literal notranslate"><span class="pre">ACCUMULATE</span></code> / <code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p>Soil organic carbon</p></td>
+<td><p><a class="reference internal" href="../science/pedosphere.html#class-relic-scientific-pedosphere-decomposition-first-order-firstorderdecomposition"><span class="std std-ref">FirstOrderDecomposition</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">BiologicalProcessFunctor</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Pool-resolved <span class="math notranslate nohighlight">\(Q_{10}\)</span>/Arrhenius and moisture-scaled decay (<code class="docutils literal notranslate"><span class="pre">ACCUMULATE</span></code> / <code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Soil organic carbon</p></td>
+<td><p><a class="reference internal" href="../science/pedosphere.html#class-relic-scientific-pedosphere-decomposition-microbial-enzyme-microbialenzymedecomposition"><span class="std std-ref">MicrobialEnzymeDecomposition</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">BiologicalProcessFunctor</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Reverse Michaelis-Menten microbial-biomass assimilation and turnover (<code class="docutils literal notranslate"><span class="pre">ACCUMULATE</span></code> / <code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p>Cross-sphere mappers</p></td>
+<td><p><a class="reference internal" href="../science/pedosphere.html#class-relic-scientific-pedosphere-interface-mapping-litterfallinterfacemapper"><span class="std std-ref">LitterfallInterfaceMapper</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ScaleCouplingFunctor</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Element-conserving plant litter and dung C/N projection onto soil input ports (<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Cross-sphere mappers</p></td>
+<td><p><a class="reference internal" href="../science/pedosphere.html#class-relic-scientific-pedosphere-interface-mapping-pedosphereinterfacemapper"><span class="std std-ref">PedosphereInterfaceMapper</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ScaleCouplingFunctor</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Unit-preserving <span class="math notranslate nohighlight">\(I_3\)</span> hydrological flux chain map (<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p>Nitrogen &amp; nutrients</p></td>
+<td><p><a class="reference internal" href="../science/pedosphere.html#class-relic-scientific-pedosphere-nutrient-cycling-mineralization-mineralizationprocess"><span class="std std-ref">MineralizationProcess</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">BiologicalProcessFunctor</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Gross organic-N mineralization and CUE-driven <span class="math notranslate nohighlight">\(\mathrm{NH_4^+}\)</span> immobilization (<code class="docutils literal notranslate"><span class="pre">ACCUMULATE</span></code> / <code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Nitrogen &amp; nutrients</p></td>
+<td><p><a class="reference internal" href="../science/pedosphere.html#class-relic-scientific-pedosphere-nutrient-cycling-nitrification-nitrificationprocess"><span class="std std-ref">NitrificationProcess</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">BiologicalProcessFunctor</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Aerobic Michaelis-Menten <span class="math notranslate nohighlight">\(\mathrm{NH_4^+} \rightarrow \mathrm{NO_3^-} + \mathrm{N_2O}\)</span> oxidation (<code class="docutils literal notranslate"><span class="pre">ACCUMULATE</span></code> / <code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p>Nitrogen &amp; nutrients</p></td>
+<td><p><a class="reference internal" href="../science/pedosphere.html#class-relic-scientific-pedosphere-nutrient-cycling-denitrification-denitrificationprocess"><span class="std std-ref">DenitrificationProcess</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">BiologicalProcessFunctor</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Anaerobic WFPS-gated <span class="math notranslate nohighlight">\(\mathrm{NO_3^-} \rightarrow \mathrm{N_2O} + \mathrm{N_2}\)</span> reduction (<code class="docutils literal notranslate"><span class="pre">ACCUMULATE</span></code> / <code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Nitrogen &amp; nutrients</p></td>
+<td><p><a class="reference internal" href="../science/pedosphere.html#class-relic-scientific-pedosphere-nutrient-cycling-nitrogen-nitrogencycling"><span class="std std-ref">NitrogenCycling</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">BiologicalProcessFunctor</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Diagnostic N-tendency aggregation plus external fertilizer/urine <span class="math notranslate nohighlight">\(\mathrm{NH_4^+}\)</span> port (<code class="docutils literal notranslate"><span class="pre">ACCUMULATE</span></code> / <code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p>Nitrogen &amp; nutrients</p></td>
+<td><p><a class="reference internal" href="../science/pedosphere.html#class-relic-scientific-pedosphere-nutrient-cycling-nitrogen-leaching-nitrogenleachingprocess"><span class="std std-ref">NitrogenLeachingProcess</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">TransportMechanismFunctor</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">3</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Retarded drainage-driven <span class="math notranslate nohighlight">\(\mathrm{NO_3^-}\)</span> export (<code class="docutils literal notranslate"><span class="pre">ACCUMULATE</span></code> / <code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Nitrogen &amp; nutrients</p></td>
+<td><p><a class="reference internal" href="../science/pedosphere.html#class-relic-scientific-pedosphere-nutrient-cycling-root-nutrient-uptake-rootnutrientuptake"><span class="std std-ref">RootNutrientUptake</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">BiologicalProcessFunctor</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Layered Michaelis-Menten <span class="math notranslate nohighlight">\(\mathrm{NO_3^-}\)</span>, <span class="math notranslate nohighlight">\(\mathrm{NH_4^+}\)</span>, and 4-way-bounded <span class="math notranslate nohighlight">\(\mathrm{P}\)</span> root uptake (<code class="docutils literal notranslate"><span class="pre">ACCUMULATE</span></code> / <code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p>Nitrogen &amp; nutrients</p></td>
+<td><p><a class="reference internal" href="../science/pedosphere.html#class-relic-scientific-pedosphere-nutrient-cycling-stoichiometry-stoichiometryconstraint"><span class="std std-ref">StoichiometryConstraint</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ScaleCouplingFunctor</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">1</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Read-only C:N flux-ratio and mass-balance violation audit (<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code> diagnostics)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Wetland methane</p></td>
+<td><p><a class="reference internal" href="../science/pedosphere.html#class-relic-scientific-pedosphere-methane-production-methaneproductionfunctor"><span class="std std-ref">MethaneProductionFunctor</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">BiologicalProcessFunctor</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>iMAPLE inundation and redox-calibrated <span class="math notranslate nohighlight">\(\mathrm{CH_4}\)</span> production tendency (<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p>Wetland methane</p></td>
+<td><p><a class="reference internal" href="../science/pedosphere.html#class-relic-scientific-pedosphere-methane-oxidation-methaneoxidationfunctor"><span class="std std-ref">MethaneOxidationFunctor</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">BiologicalProcessFunctor</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Dual-substrate (<span class="math notranslate nohighlight">\(\mathrm{CH_4}, \mathrm{O_2}\)</span>) Michaelis-Menten methanotrophy request (<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Wetland methane</p></td>
+<td><p><a class="reference internal" href="../science/pedosphere.html#class-relic-scientific-pedosphere-methane-transport-methanetransportfunctor"><span class="std std-ref">MethaneTransportFunctor</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">TransportMechanismFunctor</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">3</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Diffusion, ebullition, and aerenchyma plant-mediated <span class="math notranslate nohighlight">\(\mathrm{CH_4}\)</span> flux request (<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p>Wetland methane</p></td>
+<td><p><a class="reference internal" href="../science/pedosphere.html#class-relic-scientific-pedosphere-methane-budget-coupler-methanebudgetcoupler"><span class="std std-ref">MethaneBudgetCoupler</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ScaleCouplingFunctor</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Single storage-realization owner for <code class="docutils literal notranslate"><span class="pre">ch4_soil_storage</span></code> and <code class="docutils literal notranslate"><span class="pre">ch4_atmospheric_flux</span></code> (<code class="docutils literal notranslate"><span class="pre">ACCUMULATE</span></code> / <code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Wetland methane</p></td>
+<td><p><a class="reference internal" href="../science/pedosphere.html#class-relic-scientific-pedosphere-methane-scales-methanescalecouplingfunctor"><span class="std std-ref">MethaneScaleCouplingFunctor</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ScaleCouplingFunctor</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">1</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Bounded diagnostic wetland-pathway routing weight (<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p>Porous-media transport</p></td>
+<td><p><a class="reference internal" href="../science/pedosphere.html#class-relic-scientific-pedosphere-transport-soilwatertransportfunctor-soilwatertransportfunctor"><span class="std std-ref">SoilWaterTransportFunctor</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">TransportMechanismFunctor</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">3</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>1D mixed-form Richards unsaturated soil-water solver (<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Porous-media transport</p></td>
+<td><p><a class="reference internal" href="../science/pedosphere.html#class-relic-scientific-pedosphere-transport-gas-diffusion-gasdiffusion1d"><span class="std std-ref">GasDiffusion1D</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">TransportMechanismFunctor</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">3</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>1D Millington-Quirk <span class="math notranslate nohighlight">\(\mathrm{CO_2}\)</span>-C and <span class="math notranslate nohighlight">\(\mathrm{N_2O}\)</span>-N vadose gas diffusion (<code class="docutils literal notranslate"><span class="pre">ACCUMULATE</span></code> / <code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p>Porous-media transport</p></td>
+<td><p><a class="reference internal" href="../science/pedosphere.html#class-relic-scientific-pedosphere-transport-solute-advection-diffusion-soluteadvectiondiffusion1d"><span class="std std-ref">SoluteAdvectionDiffusion1D</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">TransportMechanismFunctor</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">3</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>1D retarded <span class="math notranslate nohighlight">\(\mathrm{NO_3^-}\)</span>-N and DOC-C advection-dispersion (<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Porous-media transport</p></td>
+<td><p><a class="reference internal" href="../science/pedosphere.html#class-relic-scientific-pedosphere-transport-equilibrium-sorption-equilibriumsorptionfunctor"><span class="std std-ref">EquilibriumSorptionFunctor</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">PhysicalFieldFunctor</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Freundlich index-1 descriptor DAE with implicit dissolved decay via <code class="docutils literal notranslate"><span class="pre">BracketedBisectionSolver</span></code> (<code class="docutils literal notranslate"><span class="pre">ACCUMULATE</span></code> / <code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p>Porous-media transport</p></td>
+<td><p><a class="reference internal" href="../science/pedosphere.html#class-relic-scientific-pedosphere-transport-moving-domain-diffusion-movingdomaindiffusionfunctor"><span class="std std-ref">MovingDomainDiffusionFunctor</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">TransportMechanismFunctor</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">3</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>1D ALE finite-volume diffusion on a uniformly stretching column with exact GCL (<code class="docutils literal notranslate"><span class="pre">ACCUMULATE</span></code> / <code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Porous-media transport</p></td>
+<td><p><a class="reference internal" href="../science/pedosphere.html#class-relic-scientific-pedosphere-transport-two-region-mass-transfer-tworegionmasstransferfunctor"><span class="std std-ref">TwoRegionMassTransferFunctor</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">TransportMechanismFunctor</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">3</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Mobile-immobile exact matrix-exponential solute exchange (<code class="docutils literal notranslate"><span class="pre">SubFlowAccuracy.EXACT</span></code>, <code class="docutils literal notranslate"><span class="pre">ACCUMULATE</span></code> / <code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+</tbody>
+</table>
+<p>General conservation ledgers follow <a class="reference internal" href="foundations.html"><span class="std std-doc">Mathematical Foundations</span></a>,
+discrete cochain operators follow <a class="reference internal" href="dec_iphs_generic.html"><span class="std std-doc">DEC, IPHS, and GENERIC</span></a>,
+and DAE, ALE, and splitting contracts follow <a class="reference internal" href="numerics.html"><span class="std std-doc">Numerical Methods</span></a>.</p>
+</section>
+<section id="soil-organic-carbon-turnover-and-cross-sphere-interface-maps">
+<h2>Soil organic carbon turnover and cross-sphere interface maps<a class="headerlink" href="#soil-organic-carbon-turnover-and-cross-sphere-interface-maps" title="Link to this heading"></a></h2>
+<section id="five-pool-observation-and-mutually-exclusive-decomposition-closures">
+<h3>Five-pool observation and mutually exclusive decomposition closures<a class="headerlink" href="#five-pool-observation-and-mutually-exclusive-decomposition-closures" title="Link to this heading"></a></h3>
+<p>On the canonical five-pool areal carbon vector
+<span class="math notranslate nohighlight">\(\mathbf{C} = (C_{\mathrm{met}}, C_{\mathrm{str}}, C_{\mathrm{fast}}, C_{\mathrm{slow}}, C_{\mathrm{passive}})^{\mathsf{T}}\)</span>
+[g C m<span class="math notranslate nohighlight">\(^{-2}\)</span>], <code class="docutils literal notranslate"><span class="pre">CarbonPoolsFunctor</span></code> (<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">1</span></code>) evaluates the per-cell total
+<span class="math notranslate nohighlight">\(C_{\mathrm{total}}(c) = \sum_i C_i(c)\)</span> across the pool axis without summing
+across unequal-area grid cells or modifying stocks (<span class="math notranslate nohighlight">\(\Delta \mathbf{C} = \mathbf{0}\)</span>).</p>
+<p>A simulation graph selects <strong>at most one</strong> prognostic decomposition owner for a
+given soil carbon support (Parton et al., 1987; Coleman and Jenkinson, 1996;
+Wieder et al., 2013):</p>
+<ol class="arabic">
+<li><p><strong>Compartment matrix (<code class="docutils literal notranslate"><span class="pre">PoolsMatrix</span></code>, <code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>)</strong>: with diagonal turnover
+matrix <span class="math notranslate nohighlight">\(K\)</span> [s<span class="math notranslate nohighlight">\(^{-1}\)</span>], column-sub-stochastic transfer matrix <span class="math notranslate nohighlight">\(T\)</span> (<span class="math notranslate nohighlight">\(T_{ij} \ge 0\)</span>,
+<span class="math notranslate nohighlight">\(\sum_i T_{ij} \le 1\)</span>), environmental scalar <span class="math notranslate nohighlight">\(f_{\mathrm{env}}\)</span>, and litter
+input vector <span class="math notranslate nohighlight">\(\mathbf{I}\)</span> [g C m<span class="math notranslate nohighlight">\(^{-2}\)</span> s<span class="math notranslate nohighlight">\(^{-1}\)</span>],</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{D} = f_{\mathrm{env}} K \mathbf{C}, \qquad \frac{\mathrm{d}\mathbf{C}}{\mathrm{d}t} = (T - I_d)\mathbf{D} + \mathbf{I}, \qquad R_{\mathrm{hetero}} = \mathbf{1}^{\mathsf{T}}(I_d - T)\mathbf{D},\]</div>
+<p>satisfying the exact open carbon ledger
+<span class="math notranslate nohighlight">\(\sum_i \Delta C_i + R_{\mathrm{hetero}}\Delta t - \sum_i I_i\Delta t = 0\)</span>.</p>
+</li>
+<li><p><strong>Pool-resolved first-order kinetics (<code class="docutils literal notranslate"><span class="pre">FirstOrderDecomposition</span></code>, <code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>)</strong>:
+replaces scalar <span class="math notranslate nohighlight">\(f_{\mathrm{env}}K\)</span> with pool-specific decay rates
+<span class="math notranslate nohighlight">\(D_i = k_i\,f_T(T)\,f_\theta(\theta)\,f_{q,i}\,C_i\)</span> under <span class="math notranslate nohighlight">\(Q_{10}\)</span> or
+Arrhenius thermal scaling and clay/lignin stabilization modifiers <span class="math notranslate nohighlight">\(f_{q,i}\)</span>,
+closing the same five-pool carbon and <span class="math notranslate nohighlight">\(R_{\mathrm{hetero}}\)</span> ledger.</p></li>
+<li><p><strong>Reverse Michaelis-Menten microbial-enzyme kinetics (<code class="docutils literal notranslate"><span class="pre">MicrobialEnzymeDecomposition</span></code>, <code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>)</strong>:
+couples substrate pools <span class="math notranslate nohighlight">\(S_i\)</span> [g C m<span class="math notranslate nohighlight">\(^{-2}\)</span>] to active microbial biomass
+<span class="math notranslate nohighlight">\(M_{\mathrm{mic}}\)</span> [g C m<span class="math notranslate nohighlight">\(^{-2}\)</span>] with carbon-use efficiency <span class="math notranslate nohighlight">\(\mathrm{CUE} \in (0, 1)\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[V_i = \frac{M_{\mathrm{mic}}\,V_{\max,i}(T, \theta)\,S_i}{K_{m,i}(T) + M_{\mathrm{mic}}}, \qquad \frac{\mathrm{d}M_{\mathrm{mic}}}{\mathrm{d}t} = \mathrm{CUE}\sum_i V_i - D_{\mathrm{mic}}, \qquad R_{\mathrm{microbial}} = (1 - \mathrm{CUE})\sum_i V_i + D_{\mathrm{mic}},\]</div>
+<p>where <span class="math notranslate nohighlight">\(D_{\mathrm{mic}} = (\tau_{\mathrm{turn}} + \tau_{\mathrm{maint}}f_T)M_{\mathrm{mic}}\)</span>
+so <span class="math notranslate nohighlight">\(\sum_i \Delta S_i + \Delta M_{\mathrm{mic}} + R_{\mathrm{microbial}}\Delta t = 0\)</span>
+prior to external litter addition.</p>
+</li>
+</ol>
+</section>
+<section id="litterfall-and-hydrological-chain-maps">
+<h3>Litterfall and hydrological chain maps<a class="headerlink" href="#litterfall-and-hydrological-chain-maps" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">LitterfallInterfaceMapper</span></code> (<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>) partitions plant litter and livestock
+dung inputs onto metabolic and structural litter ports while preserving total C
+and N mass:
+<span class="math notranslate nohighlight">\(F_{\mathrm{met,C}} + F_{\mathrm{str,C}} = F_{\mathrm{plant,C}} + F_{\mathrm{dung,C}}\)</span>
+and <span class="math notranslate nohighlight">\(F_{\mathrm{org,N}} = F_{\mathrm{plant,N}} + F_{\mathrm{dung,N}}\)</span>.
+<code class="docutils literal notranslate"><span class="pre">PedosphereInterfaceMapper</span></code> (<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>) projects hydrological boundary fluxes
+(infiltration, evapotranspiration, drainage) onto pedosphere port names via the
+identity chain map <span class="math notranslate nohighlight">\(\mathbf{y}_h = I_3\mathbf{x}_h\)</span> (<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>) without
+recomputing hydrological closures.</p>
+</section>
+</section>
+<section id="soil-nitrogen-root-p-uptake-and-c-n-stoichiometry-boundaries">
+<h2>Soil nitrogen, root P uptake, and C:N stoichiometry boundaries<a class="headerlink" href="#soil-nitrogen-root-p-uptake-and-c-n-stoichiometry-boundaries" title="Link to this heading"></a></h2>
+<section id="mineralization-nitrification-denitrification-aggregation-and-leaching">
+<h3>Mineralization, nitrification, denitrification, aggregation, and leaching<a class="headerlink" href="#mineralization-nitrification-denitrification-aggregation-and-leaching" title="Link to this heading"></a></h3>
+<ol class="arabic">
+<li><p><strong>Mineralization and immobilization (<code class="docutils literal notranslate"><span class="pre">MineralizationProcess</span></code>, <code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>)</strong>:
+bounds gross organic-N mineralization and microbial <span class="math notranslate nohighlight">\(\mathrm{NH_4^+}\)</span>
+immobilization against available stocks over <span class="math notranslate nohighlight">\(\Delta t\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[R_{\mathrm{gross}} = \min\!\left(k_{\min} N_{\mathrm{org}} f_{\mathrm{env}},\; \frac{N_{\mathrm{org}}}{\Delta t}\right), \qquad R_{\mathrm{immob}} = \min\!\left(\frac{\mathrm{CUE}\cdot \mathrm{DEC}}{\mathrm{CN}_{\mathrm{mic}}\,\eta_N},\; \frac{N_{\mathrm{NH_4}}}{\Delta t}\right),\]</div>
+<p>preserving <span class="math notranslate nohighlight">\(\Delta N_{\mathrm{org}} + \Delta N_{\mathrm{NH_4}} + \Delta N_{\mathrm{mic}} = 0\)</span>
+on internal transformations.</p>
+</li>
+<li><p><strong>Nitrification (<code class="docutils literal notranslate"><span class="pre">NitrificationProcess</span></code>, <code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>) and denitrification (<code class="docutils literal notranslate"><span class="pre">DenitrificationProcess</span></code>, <code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>)</strong>:
+both consume <code class="docutils literal notranslate"><span class="pre">water_filled_pore_space</span></code> <span class="math notranslate nohighlight">\(W \in [0, 1]\)</span> (Linn and Doran, 1984;
+Del Grosso et al., 2000) under documented RELIC piecewise-linear oxygen and
+anaerobic ramps (<span class="math notranslate nohighlight">\(W_{\mathrm{opt}} = W_{\mathrm{thr}} = 0.6\)</span>, minimum floor <span class="math notranslate nohighlight">\(0.1\)</span>):</p>
+<div class="math notranslate nohighlight">
+\[r_{\mathrm{nit}} = V_{\max,\mathrm{nit}}\,\frac{N_{\mathrm{NH_4}}}{K_{m,\mathrm{NH_4}} + N_{\mathrm{NH_4}}}\,f_T\,f_{\mathrm{pH}}\,f_{\mathrm{O_2}}(W), \qquad r_{\mathrm{denit}} = V_{\max,\mathrm{denit}}\,\frac{N_{\mathrm{NO_3}}}{K_{m,\mathrm{NO_3}} + N_{\mathrm{NO_3}}}\,f_{\mathrm{anaer}}(W)\,f_C\,f_T\,f_{\mathrm{pH}},\]</div>
+<p>closing local nitrogen mass ledgers
+<span class="math notranslate nohighlight">\(\Delta N_{\mathrm{NH_4}} + \Delta N_{\mathrm{NO_3}} + \Delta N_{\mathrm{N_2O,nit}} = 0\)</span>
+and <span class="math notranslate nohighlight">\(\Delta N_{\mathrm{NO_3}} + \Delta N_{\mathrm{N_2O,denit}} + \Delta N_{\mathrm{N_2}} = 0\)</span>.</p>
+</li>
+<li><p><strong>Diagnostic N aggregation (<code class="docutils literal notranslate"><span class="pre">NitrogenCycling</span></code>, <code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>) and retarded leaching (<code class="docutils literal notranslate"><span class="pre">NitrogenLeachingProcess</span></code>, <code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">3</span></code>)</strong>:
+<code class="docutils literal notranslate"><span class="pre">NitrogenCycling</span></code> aggregates child process rates diagnostically without
+re-running child kinetics and commits only the external fertilizer-plus-urine
+ammonium increment <span class="math notranslate nohighlight">\(\Delta N_{\mathrm{NH_4,ext}} = 1000(F_{\mathrm{fert}} + F_{\mathrm{urine}})\Delta t\)</span>
+via <code class="docutils literal notranslate"><span class="pre">UpdateItem(ACCUMULATE,</span> <span class="pre">per_timestep=True)</span></code>. <code class="docutils literal notranslate"><span class="pre">NitrogenLeachingProcess</span></code>
+computes drainage-driven export from mobile retarded nitrate concentration
+<span class="math notranslate nohighlight">\(C_{\mathrm{NO_3,mob}} = \frac{N_{\mathrm{NO_3}}/(\theta z_s)}{1 + \rho_b K_d / \theta}\)</span>
+and water drainage <span class="math notranslate nohighlight">\(F_w\)</span>, bounded by pool availability and minimum depletion
+timescale so <span class="math notranslate nohighlight">\(\Delta N_{\mathrm{NO_3}} + F_{N,\mathrm{leach}}\Delta t = 0\)</span>.</p></li>
+</ol>
+</section>
+<section id="root-n-and-p-uptake-and-c-n-diagnostic-scope">
+<h3>Root N and P uptake and C:N diagnostic scope<a class="headerlink" href="#root-n-and-p-uptake-and-c-n-diagnostic-scope" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">relic.scientific.pedosphere.nutrient_cycling.root_nutrient_uptake.RootNutrientUptake</span></code>
+(<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>) evaluates layered Michaelis-Menten root uptake
+<span class="math notranslate nohighlight">\(U_i(z) = V_{\max,i}\frac{C_i(z)}{K_{m,i} + C_i(z)} f_T f_W W_{\mathrm{root}}(z)\)</span>
+(Barber, 1995) for <span class="math notranslate nohighlight">\(\mathrm{NO_3^-}\)</span>, <span class="math notranslate nohighlight">\(\mathrm{NH_4^+}\)</span>, and dissolved
+phosphorus. Molar plant nitrogen storage <span class="math notranslate nohighlight">\(S_N\)</span> [mol N m<span class="math notranslate nohighlight">\(^{-2}\)</span>] and gram-basis
+soil pools <span class="math notranslate nohighlight">\(m_{\mathrm{NO_3}}, m_{\mathrm{NH_4}}\)</span> [g N m<span class="math notranslate nohighlight">\(^{-2}\)</span>] close via
+<span class="math notranslate nohighlight">\((\Delta m_{\mathrm{NO_3}} + \Delta m_{\mathrm{NH_4}})/M_N + \Delta S_N = 0\)</span>.
+Realized molar phosphorus uptake rate <span class="math notranslate nohighlight">\(U_P\)</span> [mol P m<span class="math notranslate nohighlight">\(^{-2}\)</span> s<span class="math notranslate nohighlight">\(^{-1}\)</span>] is bounded
+by a four-way minimum over kinetic uptake capacity <span class="math notranslate nohighlight">\(U_{P,\mathrm{kin}}\)</span>, plant
+demand <span class="math notranslate nohighlight">\(D_P\)</span>, available labile soil phosphorus <span class="math notranslate nohighlight">\(P_{\mathrm{avail}}\)</span> [g P m<span class="math notranslate nohighlight">\(^{-2}\)</span>],
+and remaining plant P storage capacity <span class="math notranslate nohighlight">\(P_{\mathrm{cap,mol}}\)</span> [mol P m<span class="math notranslate nohighlight">\(^{-2}\)</span>]:</p>
+<div class="math notranslate nohighlight">
+\[
+U_P = \min\!\left(U_{P,\mathrm{kin}},\; D_P,\; \frac{P_{\mathrm{avail}}}{M_P\,\Delta t},\; \frac{P_{\mathrm{cap,mol}}}{\Delta t}\right),
+\qquad
+\Delta P_{\mathrm{avail}} + \Delta P_{\mathrm{plant}} = 0.
+\]</div>
+<p><strong>Phosphorus and stoichiometry scope boundary</strong>: <code class="docutils literal notranslate"><span class="pre">RootNutrientUptake</span></code> (together
+with managed phosphate delivery from <code class="docutils literal notranslate"><span class="pre">FertilizationManagement</span></code> and foliar N:P
+limitation in <code class="docutils literal notranslate"><span class="pre">NutrientStress</span></code>) constitutes the implemented <code class="docutils literal notranslate"><span class="pre">[I]</span></code> phosphorus
+interface. Standalone multi-pool soil phosphorus weathering, occlusion,
+mineralization, and P-leaching Functors remain <code class="docutils literal notranslate"><span class="pre">[N]</span></code>. Separately,
+<code class="docutils literal notranslate"><span class="pre">relic.scientific.pedosphere.nutrient_cycling.stoichiometry.StoichiometryConstraint</span></code>
+(<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">1</span></code>, <code class="docutils literal notranslate"><span class="pre">ScaleCouplingFunctor</span></code>) is a read-only C:N flux-ratio and
+mass-balance diagnostic observer (<span class="math notranslate nohighlight">\(\Delta \mathbf{x} = \mathbf{0}\)</span>); it neither
+projects state onto a stoichiometric manifold nor audits phosphorus pools.</p>
+</section>
+</section>
+<section id="wetland-methane-request-and-coupler-architecture">
+<h2>Wetland methane request-and-coupler architecture<a class="headerlink" href="#wetland-methane-request-and-coupler-architecture" title="Link to this heading"></a></h2>
+<p>To prevent competing storage clamps across methanogenesis, methanotrophy, and
+three-pathway gas escape, RELIC separates wetland <span class="math notranslate nohighlight">\(\mathrm{CH_4}\)</span> into three
+stateless tendency/request Functors, one prognostic budget owner, and one
+diagnostic scale-routing observer:</p>
+<ol class="arabic">
+<li><p><strong>Production request (<code class="docutils literal notranslate"><span class="pre">MethaneProductionFunctor</span></code>, <code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>)</strong>: blends the
+iMAPLE inundation branch (Yue et al., 2024, Eq. 34) and a redox-gated
+calibrated branch with gating weight <span class="math notranslate nohighlight">\(w \in [0, 1]\)</span> and peaked temperature
+response <span class="math notranslate nohighlight">\(f_{ST}(T)\)</span> (Zhu et al., 2014):</p>
+<div class="math notranslate nohighlight">
+\[P_{\mathrm{CH_4}} = (1 - w)\,R_h r f_{ST}(T) f_{\mathrm{pH}} f_{\mathrm{wet}} + w\,R_h r f_{ST}(T) f_{Eh}(Eh)\,A.\]</div>
+</li>
+<li><p><strong>Oxidation request (<code class="docutils literal notranslate"><span class="pre">MethaneOxidationFunctor</span></code>, <code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>)</strong>: evaluates dual
+Michaelis-Menten kinetics in porewater <span class="math notranslate nohighlight">\(\mathrm{CH_4}\)</span> and <span class="math notranslate nohighlight">\(\mathrm{O_2}\)</span>
+concentrations (Riley et al., 2011, Eq. 7; Oleson et al., 2013, Eq. 19.11),
+bounded by <span class="math notranslate nohighlight">\(M_{\mathrm{CH_4}}/\Delta t\)</span>.</p></li>
+<li><p><strong>Three-pathway transport request (<code class="docutils literal notranslate"><span class="pre">MethaneTransportFunctor</span></code>, <code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">3</span></code>)</strong>:
+sums aqueous-gaseous molecular diffusion <span class="math notranslate nohighlight">\(F_{\mathrm{diff}}\)</span>, threshold
+ebullition <span class="math notranslate nohighlight">\(F_{\mathrm{ebull}}\)</span>, and aerenchyma plant-mediated venting
+<span class="math notranslate nohighlight">\(F_{\mathrm{plant}}\)</span> (Walter and Heimann, 2000) into
+<span class="math notranslate nohighlight">\(F_{\mathrm{req}} = F_{\mathrm{diff}} + F_{\mathrm{ebull}} + F_{\mathrm{plant}}\)</span>
+and <span class="math notranslate nohighlight">\(T_{\mathrm{trans}} = -F_{\mathrm{req}}\)</span> (<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>).</p></li>
+<li><p><strong>Single realization owner (<code class="docutils literal notranslate"><span class="pre">MethaneBudgetCoupler</span></code>, <code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>)</strong>: integrates
+combined tendencies <span class="math notranslate nohighlight">\(\Delta M_{\mathrm{raw}} = (T_{\mathrm{prod}} + T_{\mathrm{oxid}} + T_{\mathrm{trans}})\Delta t\)</span>,
+enforces non-negativity once via <span class="math notranslate nohighlight">\(\Delta M = \max(\Delta M_{\mathrm{raw}}, -M_{\mathrm{CH_4}})\)</span>,
+commits <span class="math notranslate nohighlight">\(\Delta M\)</span> to <code class="docutils literal notranslate"><span class="pre">ch4_soil_storage</span></code> (<code class="docutils literal notranslate"><span class="pre">ACCUMULATE</span></code>, <code class="docutils literal notranslate"><span class="pre">per_timestep=True</span></code>),
+and deducts any storage-limiter deficit <span class="math notranslate nohighlight">\(R_{\mathrm{lim}} = (\Delta M - \Delta M_{\mathrm{raw}})/\Delta t\)</span>
+from realized atmospheric emission <span class="math notranslate nohighlight">\(F_{\mathrm{atm}} = F_{\mathrm{req}} - R_{\mathrm{lim}}\)</span>
+so <span class="math notranslate nohighlight">\(\Delta M + (O - P_{\mathrm{CH_4}} + F_{\mathrm{atm}})\Delta t = 0\)</span>.
+<code class="docutils literal notranslate"><span class="pre">MethaneScaleCouplingFunctor</span></code> (<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">1</span></code>) computes the bounded diagnostic
+routing weight <span class="math notranslate nohighlight">\(w_{\mathrm{DNDC}} = \operatorname{clip}(\alpha_{\mathrm{wet}}f_{\mathrm{wet}} + \alpha_{\mathrm{wfps}}W + \alpha_{\mathrm{data}}s_{\mathrm{data}} - \tau,\; 0,\; 1)\)</span>.</p></li>
+</ol>
+</section>
+<section id="porous-media-water-gas-solute-dae-ale-and-memory-transport">
+<h2>Porous-media water, gas, solute, DAE, ALE, and memory transport<a class="headerlink" href="#porous-media-water-gas-solute-dae-ale-and-memory-transport" title="Link to this heading"></a></h2>
+<section id="richards-water-millington-quirk-gas-diffusion-and-retarded-solute-transport">
+<h3>Richards water, Millington-Quirk gas diffusion, and retarded solute transport<a class="headerlink" href="#richards-water-millington-quirk-gas-diffusion-and-retarded-solute-transport" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">SoilWaterTransportFunctor</span></code> (<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">3</span></code>) solves the 1D mixed Richards balance
+<span class="math notranslate nohighlight">\(\partial_t \theta = -\partial_z q + S\)</span> with <span class="math notranslate nohighlight">\(q = -K(\theta)\partial_z(h + z)\)</span>
+in discrete cochain form <span class="math notranslate nohighlight">\(\dot{\boldsymbol{\theta}}_h = -D_h \mathbf{q}_h + G_h \mathbf{u}_h\)</span>
+(<span class="math notranslate nohighlight">\(\star_K = \star_K^{\mathsf{T}} \succeq 0\)</span>), emitting full next-state
+<code class="docutils literal notranslate"><span class="pre">soil_moisture</span></code> via <code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GasDiffusion1D</span></code> (<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">3</span></code>) diffuses vadose <span class="math notranslate nohighlight">\(\mathrm{CO_2}\)</span>-C and
+<span class="math notranslate nohighlight">\(\mathrm{N_2O}\)</span>-N profiles under Millington and Quirk (1961) tortuosity above
+a no-flux lower boundary (<code class="docutils literal notranslate"><span class="pre">ACCUMULATE</span></code> concentration increments, <code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>
+surface efflux).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SoluteAdvectionDiffusion1D</span></code> (<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">3</span></code>) solves 1D retarded
+advection-dispersion <span class="math notranslate nohighlight">\(\partial_t\left((\theta + \rho_b K_d)C\right) = -\partial_z\left(q C - K_{\mathrm{disp}}\partial_z C\right)\)</span>
+for <span class="math notranslate nohighlight">\(\mathrm{NO_3^-}\)</span>-N and DOC-C, verifying
+<span class="math notranslate nohighlight">\(M^{n+1} - M^n - (F_{\mathrm{top}} - F_{\mathrm{bot}})\Delta t = 0\)</span>.</p></li>
+</ul>
+</section>
+<section id="freundlich-equilibrium-sorption-index-1-descriptor-dae-equilibriumsorptionfunctor-level-2">
+<h3>Freundlich equilibrium-sorption index-1 descriptor DAE (<code class="docutils literal notranslate"><span class="pre">EquilibriumSorptionFunctor</span></code>, Level 2)<a class="headerlink" href="#freundlich-equilibrium-sorption-index-1-descriptor-dae-equilibriumsorptionfunctor-level-2" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">relic.scientific.pedosphere.transport.equilibrium_sorption.EquilibriumSorptionFunctor</span></code>
+(<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>, <code class="docutils literal notranslate"><span class="pre">PhysicalFieldFunctor</span></code>) formulates nonlinear Freundlich equilibrium
+sorption <span class="math notranslate nohighlight">\(S = K_f C^n\)</span> (<span class="math notranslate nohighlight">\(n \in [0.3, 1.0]\)</span>) with first-order dissolved-phase
+degradation rate <span class="math notranslate nohighlight">\(\lambda \ge 0\)</span> (Jury and Horton, 2004; Mayes et al., 2012;
+Hairer and Wanner, 1996) as a semi-explicit index-1 descriptor DAE
+<span class="math notranslate nohighlight">\(E\dot{\mathbf{x}} = \mathbf{f}(\mathbf{x})\)</span>, <span class="math notranslate nohighlight">\(\mathbf{g}(\mathbf{x}) = \mathbf{0}\)</span>
+on <span class="math notranslate nohighlight">\(\mathbf{x} = (y, C, S)^{\mathsf{T}}\)</span> with <span class="math notranslate nohighlight">\(E = \operatorname{diag}(1, 0, 0)\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\mathrm{d}y}{\mathrm{d}t} = -\lambda\,\theta\,C,
+\qquad
+g_1(y, C, S) = \theta C + \rho_b S - y = 0,
+\qquad
+g_2(C, S) = S - K_f C^n = 0.
+\]</div>
+<p>Because <span class="math notranslate nohighlight">\(\partial_C(\theta C + \rho_b K_f C^n - y) = \theta + \rho_b K_f n C^{n-1} &gt; 0\)</span>
+for <span class="math notranslate nohighlight">\(\theta &gt; 0\)</span> and <span class="math notranslate nohighlight">\(C &gt; 0\)</span>, the algebraic Jacobian is strictly positive
+(differentiation index 1). At every step (including post-checkpoint restart
+validation of the stored <span class="math notranslate nohighlight">\((y, C, S)\)</span> triple), implicit backward-Euler
+elimination solves the strictly monotone scalar equation</p>
+<div class="math notranslate nohighlight">
+\[
+F(C') = \theta(1 + \lambda\,\Delta t)C' + \rho_b K_f (C')^n - y = 0,
+\qquad
+C' \in \left[0,\; \frac{y}{\theta}\right],
+\]</div>
+<p>via <code class="docutils literal notranslate"><span class="pre">relic.computation.solvers.nonlinear.BracketedBisectionSolver</span></code>, updates
+differential total mass <span class="math notranslate nohighlight">\(y' = y - \lambda\,\theta\,C'\Delta t\)</span> via
+<code class="docutils literal notranslate"><span class="pre">UpdateItem(ACCUMULATE,</span> <span class="pre">per_timestep=True)</span></code>, and replaces algebraic states
+<span class="math notranslate nohighlight">\(C'\)</span> and <span class="math notranslate nohighlight">\(S' = K_f (C')^n\)</span> (<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>), reporting the post-step manifold residual
+<span class="math notranslate nohighlight">\(\lvert \theta C' + \rho_b S' - y' \rvert\)</span>.</p>
+</section>
+<section id="d-ale-moving-domain-diffusion-and-exact-gcl-movingdomaindiffusionfunctor-level-3">
+<h3>1D ALE moving-domain diffusion and exact GCL (<code class="docutils literal notranslate"><span class="pre">MovingDomainDiffusionFunctor</span></code>, Level 3)<a class="headerlink" href="#d-ale-moving-domain-diffusion-and-exact-gcl-movingdomaindiffusionfunctor-level-3" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">relic.scientific.pedosphere.transport.moving_domain_diffusion.MovingDomainDiffusionFunctor</span></code>
+(<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">3</span></code>, <code class="docutils literal notranslate"><span class="pre">TransportMechanismFunctor</span></code>) solves Fickian solute diffusion on a
+uniformly stretching or compressing 1D column <span class="math notranslate nohighlight">\(x(\xi, t) = \xi L(t)\)</span>,
+<span class="math notranslate nohighlight">\(\xi \in [0, 1]\)</span>, driven by lower-boundary velocity <span class="math notranslate nohighlight">\(w_b\)</span> [m s<span class="math notranslate nohighlight">\(^{-1}\)</span>] (Thomas
+and Lombard, 1979; Donea et al., 2004). With <span class="math notranslate nohighlight">\(N\)</span> uniform cells of thickness
+<span class="math notranslate nohighlight">\(V_i(t) = \Delta x(t) = L(t)/N\)</span> and face velocities <span class="math notranslate nohighlight">\(w_k = (k/N)w_b\)</span>
+(<span class="math notranslate nohighlight">\(k = 0, \dots, N\)</span>), the discrete Geometric Conservation Law (GCL) holds
+identically:</p>
+<div class="math notranslate nohighlight">
+\[
+V_i(t + \Delta t) - V_i(t) = \Delta t\,(w_{i+1} - w_i) = \frac{w_b\,\Delta t}{N},
+\qquad
+L(t + \Delta t) = L(t) + w_b\,\Delta t.
+\]</div>
+<p>Subject to both diffusive Von Neumann and mesh-Courant (<span class="math notranslate nohighlight">\(\lvert w_b \rvert \Delta t / \Delta x \le \mathrm{CFL}_{\mathrm{mesh,max}}\)</span>)
+bounds, cell solute mass <span class="math notranslate nohighlight">\(m_i = V_i c_i\)</span> advances by zero-flux interior
+diffusion plus upwind relative swept-face fluxes <span class="math notranslate nohighlight">\(s_k = c_{\mathrm{face},k} w_k\)</span>
+(entraining exterior concentration <span class="math notranslate nohighlight">\(c_b\)</span> when <span class="math notranslate nohighlight">\(w_b &gt; 0\)</span> and exporting bottom-cell
+<span class="math notranslate nohighlight">\(c_{N-1}\)</span> when <span class="math notranslate nohighlight">\(w_b &lt; 0\)</span>):</p>
+<div class="math notranslate nohighlight">
+\[
+m_i(t + \Delta t) = m_i(t) + \Delta t\left(r_{\mathrm{diff},i}\,\Delta x(t) + s_{i+1} - s_i\right),
+\qquad
+c_i(t + \Delta t) = \frac{m_i(t + \Delta t)}{V_i(t + \Delta t)}.
+\]</div>
+<p>On the time-dependent Hodge metric <span class="math notranslate nohighlight">\(\star(t) = \operatorname{diag}(L(t)/N)\)</span> with
+quadratic storage <span class="math notranslate nohighlight">\(H = \frac{1}{2}\mathbf{c}^{\mathsf{T}}\star(t)\mathbf{c}\)</span> and
+<span class="math notranslate nohighlight">\(\dot{\star} = \operatorname{diag}(w_b / N)\)</span>, the moving-geometry power term
+<span class="math notranslate nohighlight">\(-\frac{1}{2}\mathbf{c}^{\mathsf{T}}\dot{\star}\mathbf{c}\)</span> is emitted explicitly
+in <code class="docutils literal notranslate"><span class="pre">diagnostics.moving_domain.geometry_power</span></code> alongside <code class="docutils literal notranslate"><span class="pre">gcl_residual</span></code> and
+<code class="docutils literal notranslate"><span class="pre">mass_balance_residual</span></code>.</p>
+</section>
+<section id="mobile-immobile-exact-exponential-memory-exchange-tworegionmasstransferfunctor-level-3">
+<h3>Mobile-immobile exact exponential memory exchange (<code class="docutils literal notranslate"><span class="pre">TwoRegionMassTransferFunctor</span></code>, Level 3)<a class="headerlink" href="#mobile-immobile-exact-exponential-memory-exchange-tworegionmasstransferfunctor-level-3" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">relic.scientific.pedosphere.transport.two_region_mass_transfer.TwoRegionMassTransferFunctor</span></code>
+(<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">3</span></code>, <code class="docutils literal notranslate"><span class="pre">TransportMechanismFunctor</span></code>) implements first-order mass transfer of
+rate <span class="math notranslate nohighlight">\(\alpha &gt; 0\)</span> [s<span class="math notranslate nohighlight">\(^{-1}\)</span>] between mobile (<span class="math notranslate nohighlight">\(\theta_m, c_m\)</span>) and stagnant
+immobile (<span class="math notranslate nohighlight">\(\theta_{\mathrm{im}}, c_{\mathrm{im}}\)</span>) pore-water regions (van
+Genuchten and Wierenga, 1976; Haggerty and Gorelick, 1995). On the
+<span class="math notranslate nohighlight">\(\theta\)</span>-weighted storage state <span class="math notranslate nohighlight">\(\mathbf{x} = (\theta_m c_m, \theta_{\mathrm{im}} c_{\mathrm{im}})^{\mathsf{T}}\)</span>
+with quadratic free-energy proxy
+<span class="math notranslate nohighlight">\(H(\mathbf{x}) = \frac{1}{2}(\theta_m c_m^2 + \theta_{\mathrm{im}} c_{\mathrm{im}}^2)\)</span>
+and conjugate effort <span class="math notranslate nohighlight">\(\mathbf{e} = \frac{\partial H}{\partial \mathbf{x}} = (c_m, c_{\mathrm{im}})^{\mathsf{T}}\)</span>,
+the dynamics form a purely dissipative system (<span class="math notranslate nohighlight">\(J_h = 0\)</span>):</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\frac{\mathrm{d}\mathbf{x}}{\mathrm{d}t} = -R_h\mathbf{e},
+\qquad
+R_h = \alpha
+\begin{bmatrix}
+1 &amp; -1 \\
+-1 &amp; 1
+\end{bmatrix} \succeq 0,
+\qquad
+\frac{\mathrm{d}H}{\mathrm{d}t} = -\alpha(c_m - c_{\mathrm{im}})^2 \le 0.
+\end{split}\]</div>
+<p>Eliminating <span class="math notranslate nohighlight">\(c_{\mathrm{im}}\)</span> yields the passive exponential Volterra memory
+kernel <span class="math notranslate nohighlight">\(K(t) = \alpha\omega\exp(-\omega t)\)</span> with <span class="math notranslate nohighlight">\(\omega = \alpha / \theta_{\mathrm{im}}\)</span>.
+Over each step <span class="math notranslate nohighlight">\(\Delta t\)</span>, <code class="docutils literal notranslate"><span class="pre">TwoRegionMassTransferFunctor</span></code> advances the linear
+<span class="math notranslate nohighlight">\(2 \times 2\)</span> exchange analytically via its exact matrix exponential
+<span class="math notranslate nohighlight">\(c_m(t+\Delta t) - c_{\mathrm{im}}(t+\Delta t) = (c_m(t) - c_{\mathrm{im}}(t))\exp(-\kappa \Delta t)\)</span>
+with <span class="math notranslate nohighlight">\(\kappa = \alpha(\theta_m^{-1} + \theta_{\mathrm{im}}^{-1})\)</span>, conserving
+total pore solute <span class="math notranslate nohighlight">\(\theta_m \Delta c_m + \theta_{\mathrm{im}}\Delta c_{\mathrm{im}} = 0\)</span>
+to machine precision and declaring <code class="docutils literal notranslate"><span class="pre">relic.core.functor.SubFlowAccuracy.EXACT</span></code> on
+its state update.</p>
+</section>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Barber, S. A. (1995). <em>Soil Nutrient Bioavailability: A Mechanistic Approach</em> (2nd ed.). Wiley.</p></li>
+<li><p>Coleman, K. and Jenkinson, D. S. (1996). RothC-26.3 – A model for the turnover of carbon in soil. In <em>Evaluation of Soil Organic Matter Models</em>, Springer, 237-246.</p></li>
+<li><p>Del Grosso, S. J. et al. (2000). General model for N2O and N2 gas emissions from soils due to denitrification. <em>Global Biogeochemical Cycles</em>, 14, 1045-1060. doi:10.1029/1999GB001225.</p></li>
+<li><p>Donea, J., Huerta, A., Ponthot, J.-Ph., and Rodriguez-Ferran, A. (2004). Arbitrary Lagrangian-Eulerian methods. In <em>Encyclopedia of Computational Mechanics</em>, Vol. 1, Ch. 14, Wiley.</p></li>
+<li><p>Haggerty, R. and Gorelick, S. M. (1995). Multiple-rate mass transfer for modeling diffusion and surface reactions in media with pore-scale heterogeneity. <em>Water Resources Research</em>, 31, 2383-2400.</p></li>
+<li><p>Hairer, E. and Wanner, G. (1996). <em>Solving Ordinary Differential Equations II: Stiff and Differential-Algebraic Problems</em> (2nd ed.). Springer.</p></li>
+<li><p>Jury, W. A. and Horton, R. (2004). <em>Soil Physics</em> (6th ed.). Wiley.</p></li>
+<li><p>Linn, D. M. and Doran, J. W. (1984). Effect of water-filled pore space on carbon dioxide and nitrous oxide production in tilled and nontilled soils. <em>Soil Science Society of America Journal</em>, 48, 1267-1272.</p></li>
+<li><p>Mayes, M. A., Heal, K. R., Brandt, C. C., Phillips, J. R., and Jardine, P. M. (2012). Relation between soil order and sorption of dissolved organic carbon in temperate subsoils. <em>Soil Science Society of America Journal</em>, 76, 199-206.</p></li>
+<li><p>Millington, R. J. and Quirk, J. P. (1961). Permeability of porous solids. <em>Transactions of the Faraday Society</em>, 57, 1200-1207.</p></li>
+<li><p>Oleson, K. W. et al. (2013). <em>Technical Description of version 4.5 of the Community Land Model (CLM)</em>. NCAR/TN-503+STR.</p></li>
+<li><p>Parton, W. J., Schimel, D. S., Cole, C. V., and Ojima, D. S. (1987). Analysis of factors controlling soil organic matter levels in Great Plains grasslands. <em>Soil Science Society of America Journal</em>, 51, 1173-1179.</p></li>
+<li><p>Riley, W. J. et al. (2011). Barriers to predicting changes in global terrestrial methane fluxes: analyses using CLM4Me, a methane biogeochemistry model integrated in CESM. <em>Biogeosciences</em>, 8, 1925-1953. doi:10.5194/bg-8-1925-2011.</p></li>
+<li><p>Simunek, J., van Genuchten, M. T., and Sejna, M. (2008). Development and applications of the HYDRUS and STANMOD software packages. <em>Vadose Zone Journal</em>, 7, 587-600. doi:10.2136/vzj2007.0077.</p></li>
+<li><p>Thomas, P. D. and Lombard, C. K. (1979). Geometric conservation law and its application to flow computations on moving grids. <em>AIAA Journal</em>, 17, 1030-1037.</p></li>
+<li><p>van Genuchten, M. T. and Wierenga, P. J. (1976). Mass transfer studies in sorbing porous media I. Analytical solutions. <em>Soil Science Society of America Journal</em>, 40, 473-480.</p></li>
+<li><p>Walter, B. P. and Heimann, M. (2000). A process-based, climate-sensitive model to derive methane emissions from natural wetlands. <em>Global Biogeochemical Cycles</em>, 14, 745-765.</p></li>
+<li><p>Wieder, W. R., Bonan, G. B., and Allison, S. D. (2013). Global soil carbon projections are improved by modelling microbial processes. <em>Nature Climate Change</em>, 3, 909-912.</p></li>
+<li><p>Yue, X. et al. (2024). Development and evaluation of the interactive Model for Air Pollution and Land Ecosystems (iMAPLE) version 1.0. <em>Geoscientific Model Development</em>, 17, 4621-4642. doi:10.5194/gmd-17-4621-2024.</p></li>
+<li><p>Zhu, Q., Liu, J., Peng, C., Chen, H., Fang, X., Jiang, H., Yang, G., Zhu, D., Wang, W., and Zhou, X. (2014). Modelling methane emissions from natural wetlands by development and application of the TRIPLEX-GHG model. <em>Geoscientific Model Development</em>, 7, 981-999.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="hydrosphere.html" class="btn btn-neutral float-left" title="Hydrosphere Theory" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="anthroposphere.html" class="btn btn-neutral float-right" title="Anthroposphere Theory" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

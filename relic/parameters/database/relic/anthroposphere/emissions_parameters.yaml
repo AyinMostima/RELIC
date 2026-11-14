@@ -1,0 +1,6390 @@
+﻿schema_version: 2.0.0
+tier: relic
+namespace: anthroposphere.emissions
+description: Anthropogenic emissions parameters with standardized flatten structure
+metadata:
+  created_by: RELIC Parameter System
+  last_modified: '2026-01-07T14:20:26Z'
+  schema_url: https://github.com/relic/parameter-schema/v2.0.0
+  version: 1.0.0
+parameters:
+  anthroposphere.emissions.clamp.max_sector:
+    value: 9
+    default: 9
+    units: dimensionless
+    bounds:
+    - 0
+    - 9
+    description: Maximum sector index
+    references:
+    - Implementation requirement
+    dtype: int64
+    category: numerical_constraint
+    dimension: dimensionless
+    tags:
+    - max_sector
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  anthroposphere.emissions.clamp.min_sector:
+    value: 0
+    default: 0
+    units: dimensionless
+    bounds:
+    - 0
+    - 9
+    description: Minimum sector index
+    references:
+    - Implementation requirement
+    dtype: int64
+    category: numerical_constraint
+    dimension: dimensionless
+    tags:
+    - min_sector
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  anthroposphere.emissions.allow_config_override:
+    value: false
+    default: false
+    units: dimensionless
+    dtype: bool
+    bounds:
+    - 0
+    - 1
+    category: model_parameter
+    description: Allow config-based overrides of emissions parameters when explicitly enabled.
+    references:
+    - RELIC parameter governance
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-01-07T00:00:00Z'
+    tags: &id001 []
+  anthroposphere.emissions.spatial_allocation.default_grid_size:
+    value: 10
+    default: 10
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 4
+    - 128
+    category: model_parameter
+    description: Default grid dimension used to synthesize spatial proxies when inventories lack gridded detail.
+    references:
+    - Crippa et al. (2020) DOI:10.1038/s41597-020-0462-2
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC sector allocation defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-09T00:00:00Z'
+    tags: *id001
+  anthroposphere.emissions.spatial_allocation.urbanization_threshold:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.01
+    - 0.5
+    category: model_parameter
+    description: Threshold on normalized population density used to classify cells as urban.
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC sector allocation defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-09T00:00:00Z'
+    references: &id002
+    - '[NEEDS_CITATION]'
+    tags: *id001
+  anthroposphere.emissions.spatial_allocation.transport_perturbation.start:
+    value: 1.2
+    default: 1.2
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 2.0
+    category: model_parameter
+    description: Starting weight for transport proxy perturbation gradient.
+    references:
+    - CMAQ User Guide (2019)
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC sector allocation defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-01-27T00:00:00Z'
+    tags: *id001
+  anthroposphere.emissions.spatial_allocation.transport_perturbation.end:
+    value: 0.8
+    default: 0.8
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 2.0
+    category: model_parameter
+    description: Ending weight for transport proxy perturbation gradient.
+    references:
+    - CMAQ User Guide (2019)
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC sector allocation defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-01-27T00:00:00Z'
+    tags: *id001
+  anthroposphere.emissions.spatial_allocation.industry_population_proxy_threshold:
+    value: 0.05
+    default: 0.05
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.5
+    category: model_parameter
+    description: Structure threshold below which population proxy replaces GDP for industry.
+    references:
+    - CMAQ User Guide (2019)
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC sector allocation defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-01-27T00:00:00Z'
+    tags: *id001
+  anthroposphere.emissions.resolution_conversion.default_target_resolution:
+    value:
+    - 64
+    - 64
+    default: null
+    units: dimensionless
+    dtype: list
+    category: model_parameter
+    description: Target grid dimensions used for downscaling coarse sector totals.
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC sector allocation defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-09T00:00:00Z'
+    references: *id002
+    tags: *id001
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+  anthroposphere.emissions.resolution_conversion.resolution_tolerance:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-08
+    - 0.001
+    category: model_parameter
+    description: Tolerance determining when source and target resolutions are considered identical.
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC sector allocation defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-09T00:00:00Z'
+    references: *id002
+    tags: *id001
+  anthroposphere.emissions.resolution_conversion.temporal_weighting.hourly_weight:
+    value: 0.6
+    default: 0.6
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: model_parameter
+    description: Weight assigned to hourly emission factors when combining temporal profiles.
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC sector allocation defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-09T00:00:00Z'
+    references: *id002
+    tags: *id001
+  anthroposphere.emissions.resolution_conversion.temporal_weighting.weekly_weight:
+    value: 0.2
+    default: 0.2
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: model_parameter
+    description: Weight assigned to weekly emission factors.
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC sector allocation defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-09T00:00:00Z'
+    references: *id002
+    tags: *id001
+  anthroposphere.emissions.resolution_conversion.temporal_weighting.monthly_weight:
+    value: 0.2
+    default: 0.2
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: model_parameter
+    description: Weight assigned to monthly emission factors.
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC sector allocation defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-09T00:00:00Z'
+    references: *id002
+    tags: *id001
+  anthroposphere.emissions.proxy_weights.default.population:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 5.0
+    description: Default proxy weight for population density.
+    references:
+    - CMAQ User Guide (2019)
+    dtype: float32
+    category: weighting_parameter
+    dimension: dimensionless
+    tags:
+    - proxy_weights
+    requires_grad: false
+    provenance:
+      source: RELIC sector allocation defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-01-27T00:00:00Z'
+  anthroposphere.emissions.proxy_weights.default.gdp:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 5.0
+    description: Default proxy weight for GDP density.
+    references:
+    - CMAQ User Guide (2019)
+    dtype: float32
+    category: weighting_parameter
+    dimension: dimensionless
+    tags:
+    - proxy_weights
+    requires_grad: false
+    provenance:
+      source: RELIC sector allocation defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-01-27T00:00:00Z'
+  anthroposphere.emissions.proxy_weights.default.roads:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 5.0
+    description: Default proxy weight for road density.
+    references:
+    - CMAQ User Guide (2019)
+    dtype: float32
+    category: weighting_parameter
+    dimension: dimensionless
+    tags:
+    - proxy_weights
+    requires_grad: false
+    provenance:
+      source: RELIC sector allocation defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-01-27T00:00:00Z'
+  anthroposphere.emissions.proxy_weights.default.land_use:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 5.0
+    description: Default proxy weight for land-use fractions.
+    references:
+    - CMAQ User Guide (2019)
+    dtype: float32
+    category: weighting_parameter
+    dimension: dimensionless
+    tags:
+    - proxy_weights
+    requires_grad: false
+    provenance:
+      source: RELIC sector allocation defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-01-27T00:00:00Z'
+  anthroposphere.emissions.atmospheric_stability.default_class:
+    value: 3
+    default: 3
+    units: dimensionless
+    bounds:
+    - 1
+    - 6
+    description: Default Pasquill-Gifford stability class (1=A very unstable ... 6=F very stable).
+    references:
+    - Pasquill (1961) Meteorological Magazine 90:33-49
+    - Gifford (1961) Nuclear Safety 2:47-51
+    dtype: int64
+    category: meteorological_parameter
+    dimension: dimensionless
+    tags:
+    - stability_class
+    - atmospheric_dispersion
+    requires_grad: false
+    provenance:
+      source: anthropogenic_emissions_defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-07T00:00:00Z'
+  anthroposphere.emissions.atmospheric_stability.neutral_class:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    category: meteorological_parameter
+    description: Neutral atmospheric stability class used when diagnostics are absent.
+    references:
+    - Stull (1988) Boundary-Layer Meteorology
+    tags:
+    - stability_class
+    - default_value
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthropogenic_emissions_defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-07T00:00:00Z'
+    bounds:
+    - 0.0
+    - 100.0
+  anthroposphere.emissions.allocation_efficiency:
+    value: 0.9
+    default: 0.9
+    units: dimensionless
+    bounds:
+    - 0.8
+    - 0.99
+    description: Efficiency factor for sector allocation blending and numerical damping
+    references:
+    - Crippa et al. (2020) DOI:10.1038/s41597-020-0462-2
+    dtype: float32
+    category: model_parameter
+    dimension: dimensionless
+    tags:
+    - allocation
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-26T00:00:00Z'
+  anthroposphere.emissions.conservation_tolerance:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: dimensionless
+    bounds:
+    - 1.0e-09
+    - 0.0001
+    description: Tolerance for sector allocation conservation checks
+    references:
+    - Seinfeld and Pandis (2016)
+    dtype: float64
+    category: model_parameter
+    dimension: dimensionless
+    tags:
+    - conservation
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-26T00:00:00Z'
+  anthroposphere.emissions.spatial_resolution:
+    value: 0.1
+    default: 0.1
+    units: deg
+    bounds:
+    - 0.01
+    - 1.0
+    description: Nominal spatial resolution for sector allocation grids
+    references:
+    - Kurokawa et al. (2013) DOI:10.5194/acp-13-11019-2013
+    dtype: float32
+    category: model_parameter
+    dimension: angular
+    tags:
+    - resolution
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-26T00:00:00Z'
+  anthroposphere.emissions.base_efficiency:
+    value: 0.7
+    default: 0.7
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Baseline efficiency scalar for emissions modules
+    references:
+    - IPCC (2019)
+    dtype: float64
+    category: model_parameter
+    dimension: dimensionless
+    tags:
+    - efficiency
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-01-05T00:00:00Z'
+  anthroposphere.emissions.transport_efficiency:
+    value: 0.8
+    default: 0.8
+    units: dimensionless
+    bounds:
+    - 0.5
+    - 1.0
+    description: Efficiency factor for vertical transport coupling to the atmosphere
+    references:
+    - Seinfeld and Pandis (2016)
+    dtype: float64
+    category: model_parameter
+    dimension: dimensionless
+    tags:
+    - transport_efficiency
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-01-05T00:00:00Z'
+  anthroposphere.emissions.mixing_height:
+    value: 1000.0
+    default: 1000.0
+    units: m
+    bounds:
+    - 100.0
+    - 5000.0
+    description: Default boundary layer mixing height for emissions coupling
+    references:
+    - Stull (1988)
+    dtype: float32
+    category: meteorological_parameter
+    dimension: length
+    tags:
+    - mixing_height
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-01-05T00:00:00Z'
+  anthroposphere.emissions.allocation_time_step:
+    value: 3600.0
+    default: 3600.0
+    units: s
+    bounds:
+    - 60.0
+    - 86400.0
+    description: Time step used for sector allocation diagnostics
+    references:
+    - IPCC (2019)
+    dtype: float64
+    category: model_parameter
+    dimension: time
+    tags:
+    - timestep
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-26T00:00:00Z'
+  anthroposphere.emissions.inventory.temporal_profiles.diurnal_enabled:
+    value: true
+    default: true
+    units: dimensionless
+    description: Apply diurnal temporal profiles
+    dtype: bool
+    allowed_values:
+    - true
+    - false
+    bounds: null
+    category: temporal_flag
+    dimension: dimensionless
+    tags:
+    - diurnal_enabled
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+    references: *id002
+  anthroposphere.emissions.inventory.temporal_profiles.seasonal_enabled:
+    value: true
+    default: true
+    units: dimensionless
+    description: Apply seasonal temporal profiles
+    dtype: bool
+    allowed_values:
+    - true
+    - false
+    bounds: null
+    category: temporal_flag
+    dimension: dimensionless
+    tags:
+    - seasonal_enabled
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+    references: *id002
+  anthroposphere.emissions.inventory.temporal_profiles.weekly_enabled:
+    value: true
+    default: true
+    units: dimensionless
+    description: Apply day-of-week temporal profiles
+    dtype: bool
+    allowed_values:
+    - true
+    - false
+    bounds: null
+    category: temporal_flag
+    dimension: dimensionless
+    tags:
+    - weekly_enabled
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+    references: *id002
+  anthroposphere.emissions.molecular_weights.ALD2:
+    value: 44.053
+    default: 44.053
+    units: g mol-1
+    description: 'Molecular weight specification. A molar mass is positive and no molecular species is lighter than a hydrogen atom (1.008 g mol-1), so the lower bound is 1 g mol-1; lumped and particulate species have no upper limit, so the upper bound is open (inf).'
+    references:
+    - IUPAC 2021
+    dtype: float64
+    bounds:
+    - 1.0
+    - .inf
+    category: model_parameter
+    dimension: molar_mass
+    tags:
+    - ALD2
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  anthroposphere.emissions.molecular_weights.BC:
+    value: 12.0
+    default: 12.0
+    units: g mol-1
+    description: 'Molecular weight specification. A molar mass is positive and no molecular species is lighter than a hydrogen atom (1.008 g mol-1), so the lower bound is 1 g mol-1; lumped and particulate species have no upper limit, so the upper bound is open (inf).'
+    references:
+    - IUPAC 2021
+    dtype: float64
+    bounds:
+    - 1.0
+    - .inf
+    category: model_parameter
+    dimension: molar_mass
+    tags:
+    - BC
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  anthroposphere.emissions.molecular_weights.CH4:
+    value: 16.043
+    default: 16.043
+    units: g mol-1
+    description: 'Molecular weight specification. A molar mass is positive and no molecular species is lighter than a hydrogen atom (1.008 g mol-1), so the lower bound is 1 g mol-1; lumped and particulate species have no upper limit, so the upper bound is open (inf).'
+    references:
+    - IUPAC 2021
+    dtype: float64
+    bounds:
+    - 1.0
+    - .inf
+    category: model_parameter
+    dimension: molar_mass
+    tags:
+    - CH4
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  anthroposphere.emissions.molecular_weights.CO2:
+    value: 44.009
+    default: 44.009
+    units: g mol-1
+    description: 'Molecular weight specification. A molar mass is positive and no molecular species is lighter than a hydrogen atom (1.008 g mol-1), so the lower bound is 1 g mol-1; lumped and particulate species have no upper limit, so the upper bound is open (inf).'
+    references:
+    - IUPAC 2021
+    dtype: float64
+    bounds:
+    - 1.0
+    - .inf
+    category: model_parameter
+    dimension: molar_mass
+    tags:
+    - CO2
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  anthroposphere.emissions.molecular_weights.C2H6:
+    value: 30.07
+    default: 30.07
+    units: g mol-1
+    description: 'Molecular weight specification. A molar mass is positive and no molecular species is lighter than a hydrogen atom (1.008 g mol-1), so the lower bound is 1 g mol-1; lumped and particulate species have no upper limit, so the upper bound is open (inf).'
+    references:
+    - IUPAC 2021
+    dtype: float64
+    bounds:
+    - 1.0
+    - .inf
+    category: model_parameter
+    dimension: molar_mass
+    tags:
+    - C2H6
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-09T00:00:00Z'
+  anthroposphere.emissions.molecular_weights.C3H8:
+    value: 44.1
+    default: 44.1
+    units: g mol-1
+    description: 'Molecular weight specification. A molar mass is positive and no molecular species is lighter than a hydrogen atom (1.008 g mol-1), so the lower bound is 1 g mol-1; lumped and particulate species have no upper limit, so the upper bound is open (inf).'
+    references:
+    - IUPAC 2021
+    dtype: float64
+    bounds:
+    - 1.0
+    - .inf
+    category: model_parameter
+    dimension: molar_mass
+    tags:
+    - C3H8
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-09T00:00:00Z'
+  anthroposphere.emissions.molecular_weights.C2H4:
+    value: 28.05
+    default: 28.05
+    units: g mol-1
+    description: 'Molecular weight specification. A molar mass is positive and no molecular species is lighter than a hydrogen atom (1.008 g mol-1), so the lower bound is 1 g mol-1; lumped and particulate species have no upper limit, so the upper bound is open (inf).'
+    references:
+    - IUPAC 2021
+    dtype: float64
+    bounds:
+    - 1.0
+    - .inf
+    category: model_parameter
+    dimension: molar_mass
+    tags:
+    - C2H4
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-09T00:00:00Z'
+  anthroposphere.emissions.molecular_weights.C3H6:
+    value: 42.08
+    default: 42.08
+    units: g mol-1
+    description: 'Molecular weight specification. A molar mass is positive and no molecular species is lighter than a hydrogen atom (1.008 g mol-1), so the lower bound is 1 g mol-1; lumped and particulate species have no upper limit, so the upper bound is open (inf).'
+    references:
+    - IUPAC 2021
+    dtype: float64
+    bounds:
+    - 1.0
+    - .inf
+    category: model_parameter
+    dimension: molar_mass
+    tags:
+    - C3H6
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-09T00:00:00Z'
+  anthroposphere.emissions.molecular_weights.TERP:
+    value: 136.24
+    default: 136.24
+    units: g mol-1
+    description: 'Molecular weight specification for representative monoterpenes. A molar mass is positive and no molecular species is lighter than a hydrogen atom (1.008 g mol-1), so the lower bound is 1 g mol-1; lumped and particulate species have no upper limit, so the upper bound is open (inf).'
+    references:
+    - Seinfeld & Pandis (2016)
+    dtype: float64
+    bounds:
+    - 1.0
+    - .inf
+    category: model_parameter
+    dimension: molar_mass
+    tags:
+    - TERP
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-09T00:00:00Z'
+  anthroposphere.emissions.molecular_weights.N2O:
+    value: 44.013
+    default: 44.013
+    units: g mol-1
+    description: 'Molecular weight specification. A molar mass is positive and no molecular species is lighter than a hydrogen atom (1.008 g mol-1), so the lower bound is 1 g mol-1; lumped and particulate species have no upper limit, so the upper bound is open (inf).'
+    references:
+    - IUPAC 2021
+    dtype: float64
+    bounds:
+    - 1.0
+    - .inf
+    category: model_parameter
+    dimension: molar_mass
+    tags:
+    - N2O
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  anthroposphere.emissions.molecular_weights.NH3:
+    value: 17.031
+    default: 17.031
+    units: g mol-1
+    description: 'Molecular weight specification. A molar mass is positive and no molecular species is lighter than a hydrogen atom (1.008 g mol-1), so the lower bound is 1 g mol-1; lumped and particulate species have no upper limit, so the upper bound is open (inf).'
+    references:
+    - IUPAC 2021
+    dtype: float64
+    bounds:
+    - 1.0
+    - .inf
+    category: model_parameter
+    dimension: molar_mass
+    tags:
+    - NH3
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  anthroposphere.emissions.molecular_weights.NH4:
+    value: 18.038
+    default: 18.038
+    units: g mol-1
+    description: 'Molecular weight specification. A molar mass is positive and no molecular species is lighter than a hydrogen atom (1.008 g mol-1), so the lower bound is 1 g mol-1; lumped and particulate species have no upper limit, so the upper bound is open (inf).'
+    references:
+    - IUPAC 2021
+    dtype: float64
+    bounds:
+    - 1.0
+    - .inf
+    category: model_parameter
+    dimension: molar_mass
+    tags:
+    - NH4
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  anthroposphere.emissions.molecular_weights.NO:
+    value: 30.006
+    default: 30.006
+    units: g mol-1
+    description: 'Molecular weight specification. A molar mass is positive and no molecular species is lighter than a hydrogen atom (1.008 g mol-1), so the lower bound is 1 g mol-1; lumped and particulate species have no upper limit, so the upper bound is open (inf).'
+    references:
+    - IUPAC 2021
+    dtype: float64
+    bounds:
+    - 1.0
+    - .inf
+    category: model_parameter
+    dimension: molar_mass
+    tags:
+    - 'NO'
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  anthroposphere.emissions.molecular_weights.NO2:
+    value: 46.005
+    default: 46.005
+    units: g mol-1
+    description: 'Molecular weight specification. A molar mass is positive and no molecular species is lighter than a hydrogen atom (1.008 g mol-1), so the lower bound is 1 g mol-1; lumped and particulate species have no upper limit, so the upper bound is open (inf).'
+    references:
+    - IUPAC 2021
+    dtype: float64
+    bounds:
+    - 1.0
+    - .inf
+    category: model_parameter
+    dimension: molar_mass
+    tags:
+    - NO2
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  anthroposphere.emissions.molecular_weights.NO3:
+    value: 62.0049
+    default: 62.0049
+    units: g mol-1
+    description: 'Molecular weight specification. A molar mass is positive and no molecular species is lighter than a hydrogen atom (1.008 g mol-1), so the lower bound is 1 g mol-1; lumped and particulate species have no upper limit, so the upper bound is open (inf).'
+    references:
+    - IUPAC 2021
+    dtype: float64
+    bounds:
+    - 1.0
+    - .inf
+    category: model_parameter
+    dimension: molar_mass
+    tags:
+    - NO3
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  anthroposphere.emissions.molecular_weights.HNO3:
+    value: 63.012
+    default: 63.012
+    units: g mol-1
+    description: 'Molecular weight specification. A molar mass is positive and no molecular species is lighter than a hydrogen atom (1.008 g mol-1), so the lower bound is 1 g mol-1; lumped and particulate species have no upper limit, so the upper bound is open (inf).'
+    references:
+    - IUPAC 2021
+    dtype: float64
+    bounds:
+    - 1.0
+    - .inf
+    category: model_parameter
+    dimension: molar_mass
+    tags:
+    - HNO3
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  anthroposphere.emissions.molecular_weights.N2O5:
+    value: 108.01
+    default: 108.01
+    units: g mol-1
+    description: 'Molecular weight specification. A molar mass is positive and no molecular species is lighter than a hydrogen atom (1.008 g mol-1), so the lower bound is 1 g mol-1; lumped and particulate species have no upper limit, so the upper bound is open (inf).'
+    references:
+    - IUPAC 2021
+    dtype: float64
+    bounds:
+    - 1.0
+    - .inf
+    category: model_parameter
+    dimension: molar_mass
+    tags:
+    - N2O5
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  anthroposphere.emissions.molecular_weights.NOx:
+    value: 46.005
+    default: 46.005
+    units: g mol-1
+    description: 'Molecular weight specification. A molar mass is positive and no molecular species is lighter than a hydrogen atom (1.008 g mol-1), so the lower bound is 1 g mol-1; lumped and particulate species have no upper limit, so the upper bound is open (inf).'
+    references:
+    - IUPAC 2021
+    dtype: float64
+    bounds:
+    - 1.0
+    - .inf
+    category: model_parameter
+    dimension: molar_mass
+    tags:
+    - NOx
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  anthroposphere.emissions.molecular_weights.PAN:
+    value: 121.05
+    default: 121.05
+    units: g mol-1
+    description: 'Molecular weight specification. A molar mass is positive and no molecular species is lighter than a hydrogen atom (1.008 g mol-1), so the lower bound is 1 g mol-1; lumped and particulate species have no upper limit, so the upper bound is open (inf).'
+    references:
+    - IUPAC 2021
+    dtype: float64
+    bounds:
+    - 1.0
+    - .inf
+    category: model_parameter
+    dimension: molar_mass
+    tags:
+    - PAN
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  anthroposphere.emissions.molecular_weights.O3:
+    value: 47.998
+    default: 47.998
+    units: g mol-1
+    description: 'Molecular weight specification. A molar mass is positive and no molecular species is lighter than a hydrogen atom (1.008 g mol-1), so the lower bound is 1 g mol-1; lumped and particulate species have no upper limit, so the upper bound is open (inf).'
+    references:
+    - IUPAC 2021
+    dtype: float64
+    bounds:
+    - 1.0
+    - .inf
+    category: model_parameter
+    dimension: molar_mass
+    tags:
+    - O3
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  anthroposphere.emissions.molecular_weights.SO4:
+    value: 96.064
+    default: 96.064
+    units: g mol-1
+    description: 'Molecular weight specification. A molar mass is positive and no molecular species is lighter than a hydrogen atom (1.008 g mol-1), so the lower bound is 1 g mol-1; lumped and particulate species have no upper limit, so the upper bound is open (inf).'
+    references:
+    - IUPAC 2021
+    dtype: float64
+    bounds:
+    - 1.0
+    - .inf
+    category: model_parameter
+    dimension: molar_mass
+    tags:
+    - SO4
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-08T00:00:00Z'
+  anthroposphere.emissions.molecular_weights.H2SO4:
+    value: 98.079
+    default: 98.079
+    units: g mol-1
+    description: 'Molecular weight specification. A molar mass is positive and no molecular species is lighter than a hydrogen atom (1.008 g mol-1), so the lower bound is 1 g mol-1; lumped and particulate species have no upper limit, so the upper bound is open (inf).'
+    references:
+    - IUPAC 2021
+    dtype: float64
+    bounds:
+    - 1.0
+    - .inf
+    category: model_parameter
+    dimension: molar_mass
+    tags:
+    - H2SO4
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-08T00:00:00Z'
+  anthroposphere.emissions.molecular_weights.OC:
+    value: 16.0
+    default: 16.0
+    units: g mol-1
+    description: 'Molecular weight specification. A molar mass is positive and no molecular species is lighter than a hydrogen atom (1.008 g mol-1), so the lower bound is 1 g mol-1; lumped and particulate species have no upper limit, so the upper bound is open (inf).'
+    references:
+    - IUPAC 2021
+    dtype: float64
+    bounds:
+    - 1.0
+    - .inf
+    category: model_parameter
+    dimension: molar_mass
+    tags:
+    - OC
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  anthroposphere.emissions.molecular_weights.OLE:
+    value: 28.0
+    default: 28.0
+    units: g mol-1
+    description: 'Molecular weight specification. A molar mass is positive and no molecular species is lighter than a hydrogen atom (1.008 g mol-1), so the lower bound is 1 g mol-1; lumped and particulate species have no upper limit, so the upper bound is open (inf).'
+    references:
+    - IUPAC 2021
+    dtype: float64
+    bounds:
+    - 1.0
+    - .inf
+    category: model_parameter
+    dimension: molar_mass
+    tags:
+    - OLE
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  anthroposphere.emissions.molecular_weights.PAR:
+    value: 14.0
+    default: 14.0
+    units: g mol-1
+    description: 'Molecular weight specification. A molar mass is positive and no molecular species is lighter than a hydrogen atom (1.008 g mol-1), so the lower bound is 1 g mol-1; lumped and particulate species have no upper limit, so the upper bound is open (inf).'
+    references:
+    - IUPAC 2021
+    dtype: float64
+    bounds:
+    - 1.0
+    - .inf
+    category: model_parameter
+    dimension: molar_mass
+    tags:
+    - PAR
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  anthroposphere.emissions.molecular_weights.PM10:
+    value: 100.0
+    default: 100.0
+    units: g mol-1
+    description: 'Molecular weight specification. A molar mass is positive and no molecular species is lighter than a hydrogen atom (1.008 g mol-1), so the lower bound is 1 g mol-1; lumped and particulate species have no upper limit, so the upper bound is open (inf).'
+    references:
+    - IUPAC 2021
+    dtype: float64
+    bounds:
+    - 1.0
+    - .inf
+    category: model_parameter
+    dimension: molar_mass
+    tags:
+    - PM10
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  anthroposphere.emissions.molecular_weights.PM25:
+    value: 100.0
+    default: 100.0
+    units: g mol-1
+    description: 'Molecular weight specification. A molar mass is positive and no molecular species is lighter than a hydrogen atom (1.008 g mol-1), so the lower bound is 1 g mol-1; lumped and particulate species have no upper limit, so the upper bound is open (inf).'
+    references:
+    - IUPAC 2021
+    dtype: float64
+    bounds:
+    - 1.0
+    - .inf
+    category: model_parameter
+    dimension: molar_mass
+    tags:
+    - PM25
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  anthroposphere.emissions.molecular_weights.SO2:
+    value: 64.066
+    default: 64.066
+    units: g mol-1
+    description: 'Molecular weight specification. A molar mass is positive and no molecular species is lighter than a hydrogen atom (1.008 g mol-1), so the lower bound is 1 g mol-1; lumped and particulate species have no upper limit, so the upper bound is open (inf).'
+    references:
+    - IUPAC 2021
+    dtype: float64
+    bounds:
+    - 1.0
+    - .inf
+    category: model_parameter
+    dimension: molar_mass
+    tags:
+    - SO2
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  anthroposphere.emissions.molecular_weights.TOL:
+    value: 92.14
+    default: 92.14
+    units: g mol-1
+    description: 'Molecular weight specification. A molar mass is positive and no molecular species is lighter than a hydrogen atom (1.008 g mol-1), so the lower bound is 1 g mol-1; lumped and particulate species have no upper limit, so the upper bound is open (inf).'
+    references:
+    - IUPAC 2021
+    dtype: float64
+    bounds:
+    - 1.0
+    - .inf
+    category: model_parameter
+    dimension: molar_mass
+    tags:
+    - TOL
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  anthroposphere.emissions.molecular_weights.VOC:
+    value: 72.0
+    default: 72.0
+    units: g mol-1
+    description: 'Molecular weight specification. A molar mass is positive and no molecular species is lighter than a hydrogen atom (1.008 g mol-1), so the lower bound is 1 g mol-1; lumped and particulate species have no upper limit, so the upper bound is open (inf).'
+    references:
+    - IUPAC 2021
+    dtype: float64
+    bounds:
+    - 1.0
+    - .inf
+    category: model_parameter
+    dimension: molar_mass
+    tags:
+    - VOC
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  anthroposphere.emissions.molecular_weights.XYL:
+    value: 106.17
+    default: 106.17
+    units: g mol-1
+    description: 'Molecular weight specification. A molar mass is positive and no molecular species is lighter than a hydrogen atom (1.008 g mol-1), so the lower bound is 1 g mol-1; lumped and particulate species have no upper limit, so the upper bound is open (inf).'
+    references:
+    - IUPAC 2021
+    dtype: float64
+    bounds:
+    - 1.0
+    - .inf
+    category: model_parameter
+    dimension: molar_mass
+    tags:
+    - XYL
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  anthroposphere.emissions.partition_factors.no_fraction:
+    value: 0.9
+    default: 0.9
+    units: dimensionless
+    bounds:
+    - 0.5
+    - 1.0
+    description: Fraction of NOx NO2-equivalent mass assigned to emitted NO
+    references:
+    - US EPA emissions modeling guidance for NOx speciation
+    dtype: float64
+    category: weighting_parameter
+    dimension: dimensionless
+    tags:
+    - no_fraction
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-07-11T00:00:00Z'
+  anthroposphere.emissions.partition_factors.so2_fraction:
+    value: 0.995
+    default: 0.995
+    units: dimensionless
+    bounds:
+    - 0.8
+    - 1.0
+    description: Fraction of sulfur emissions treated as SO2
+    references:
+    - CMAQ Emission Processing
+    dtype: float64
+    category: weighting_parameter
+    dimension: dimensionless
+    tags:
+    - so2_fraction
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-08T00:00:00Z'
+  anthroposphere.emissions.pm_composition.industrial.bc_fraction:
+    value: 0.12
+    default: 0.12
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.3
+    category: composition_parameter
+    description: Industrial black carbon fraction of primary PM2.5
+    references:
+    - EPA AP-42 (2019)
+    tags:
+    - pm25
+    - sectoral_composition
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: emissions_team
+      last_modified: '2025-11-21T00:00:00Z'
+  anthroposphere.emissions.pm_composition.industrial.oc_fraction:
+    value: 0.18
+    default: 0.18
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.4
+    category: composition_parameter
+    description: Industrial organic carbon fraction of primary PM2.5
+    references:
+    - EPA AP-42 (2019)
+    tags:
+    - pm25
+    - sectoral_composition
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: emissions_team
+      last_modified: '2025-11-21T00:00:00Z'
+  anthroposphere.emissions.pm_composition.industrial.nitrate_fraction:
+    value: 0.15
+    default: 0.15
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.4
+    category: composition_parameter
+    description: Industrial nitrate fraction
+    references:
+    - EPA AP-42 (2019)
+    tags:
+    - pm25
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: emissions_team
+      last_modified: '2025-11-21T00:00:00Z'
+  anthroposphere.emissions.pm_composition.industrial.sulfate_fraction:
+    value: 0.25
+    default: 0.25
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.5
+    category: composition_parameter
+    description: Industrial sulfate fraction
+    references:
+    - EPA AP-42 (2019)
+    tags:
+    - pm25
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: emissions_team
+      last_modified: '2025-11-21T00:00:00Z'
+  anthroposphere.emissions.pm_composition.industrial.ammonium_fraction:
+    value: 0.05
+    default: 0.05
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.2
+    category: composition_parameter
+    description: Industrial ammonium fraction
+    references:
+    - EPA AP-42 (2019)
+    tags:
+    - pm25
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: emissions_team
+      last_modified: '2025-11-09T00:00:00Z'
+  anthroposphere.emissions.pm_composition.residential.bc_fraction:
+    value: 0.2
+    default: 0.2
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.5
+    category: composition_parameter
+    description: Residential black carbon fraction
+    references:
+    - EPA AP-42 (2019)
+    tags:
+    - pm25
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: emissions_team
+      last_modified: '2025-11-21T00:00:00Z'
+  anthroposphere.emissions.pm_composition.residential.oc_fraction:
+    value: 0.4
+    default: 0.4
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.7
+    category: composition_parameter
+    description: Residential organic carbon fraction
+    references:
+    - EPA AP-42 (2019)
+    tags:
+    - pm25
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: emissions_team
+      last_modified: '2025-11-21T00:00:00Z'
+  anthroposphere.emissions.pm_composition.residential.nitrate_fraction:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.3
+    category: composition_parameter
+    description: Residential nitrate fraction
+    references:
+    - EPA AP-42 (2019)
+    tags:
+    - pm25
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: emissions_team
+      last_modified: '2025-11-21T00:00:00Z'
+  anthroposphere.emissions.pm_composition.residential.sulfate_fraction:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.3
+    category: composition_parameter
+    description: Residential sulfate fraction
+    references:
+    - EPA AP-42 (2019)
+    tags:
+    - pm25
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: emissions_team
+      last_modified: '2025-11-21T00:00:00Z'
+  anthroposphere.emissions.pm_composition.residential.ammonium_fraction:
+    value: 0.05
+    default: 0.05
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.3
+    category: composition_parameter
+    description: Residential ammonium fraction
+    references:
+    - EPA AP-42 (2019)
+    tags:
+    - pm25
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: emissions_team
+      last_modified: '2025-11-09T00:00:00Z'
+  anthroposphere.emissions.pm_composition.transport.bc_fraction:
+    value: 0.25
+    default: 0.25
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 0.4
+    category: composition_parameter
+    description: Transport-sector black carbon fraction
+    references:
+    - EPA MOVES2014
+    tags:
+    - pm25
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: emissions_team
+      last_modified: '2025-11-21T00:00:00Z'
+  anthroposphere.emissions.pm_composition.transport.oc_fraction:
+    value: 0.3
+    default: 0.3
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 0.5
+    category: composition_parameter
+    description: Transport-sector organic carbon fraction
+    references:
+    - EPA MOVES2014
+    tags:
+    - pm25
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: emissions_team
+      last_modified: '2025-11-21T00:00:00Z'
+  anthroposphere.emissions.pm_composition.transport.nitrate_fraction:
+    value: 0.15
+    default: 0.15
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.4
+    category: composition_parameter
+    description: Transport-sector nitrate fraction
+    references:
+    - EPA MOVES2014
+    tags:
+    - pm25
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: emissions_team
+      last_modified: '2025-11-21T00:00:00Z'
+  anthroposphere.emissions.pm_composition.transport.sulfate_fraction:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.3
+    category: composition_parameter
+    description: Transport-sector sulfate fraction
+    references:
+    - EPA MOVES2014
+    tags:
+    - pm25
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: emissions_team
+      last_modified: '2025-11-21T00:00:00Z'
+  anthroposphere.emissions.pm_composition.transport.ammonium_fraction:
+    value: 0.05
+    default: 0.05
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.2
+    category: composition_parameter
+    description: Transport-sector ammonium fraction
+    references:
+    - EPA MOVES2014
+    tags:
+    - pm25
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: emissions_team
+      last_modified: '2025-11-09T00:00:00Z'
+  anthroposphere.emissions.pm_composition.power.bc_fraction:
+    value: 0.05
+    default: 0.05
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.2
+    category: composition_parameter
+    description: Power-generation BC fraction
+    references:
+    - EPA AP-42 (2019)
+    dimension: dimensionless
+    tags:
+    - pm25
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: emissions_team
+      last_modified: '2025-11-21T00:00:00Z'
+  anthroposphere.emissions.pm_composition.power.oc_fraction:
+    value: 0.05
+    default: 0.05
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.2
+    category: composition_parameter
+    description: Power-generation OC fraction
+    references:
+    - EPA AP-42 (2019)
+    tags:
+    - pm25
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: emissions_team
+      last_modified: '2025-11-21T00:00:00Z'
+  anthroposphere.emissions.pm_composition.power.nitrate_fraction:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.3
+    category: composition_parameter
+    description: Power-generation nitrate fraction
+    references:
+    - EPA AP-42 (2019)
+    tags:
+    - pm25
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: emissions_team
+      last_modified: '2025-11-21T00:00:00Z'
+  anthroposphere.emissions.pm_composition.power.sulfate_fraction:
+    value: 0.3
+    default: 0.3
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 0.6
+    category: composition_parameter
+    description: Power-generation sulfate fraction
+    references:
+    - EPA AP-42 (2019)
+    tags:
+    - pm25
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: emissions_team
+      last_modified: '2025-11-21T00:00:00Z'
+  anthroposphere.emissions.pm_composition.power.ammonium_fraction:
+    value: 0.05
+    default: 0.05
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.2
+    category: composition_parameter
+    description: Power-generation ammonium fraction
+    references:
+    - EPA AP-42 (2019)
+    tags:
+    - pm25
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: emissions_team
+      last_modified: '2025-11-09T00:00:00Z'
+  anthroposphere.emissions.pm_composition.agriculture.bc_fraction:
+    value: 0.05
+    default: 0.05
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.2
+    category: composition_parameter
+    description: Agriculture-sector BC fraction
+    references:
+    - FAO (2018)
+    tags:
+    - pm25
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: emissions_team
+      last_modified: '2025-11-21T00:00:00Z'
+  anthroposphere.emissions.pm_composition.agriculture.oc_fraction:
+    value: 0.3
+    default: 0.3
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.6
+    category: composition_parameter
+    description: Agriculture-sector OC fraction
+    references:
+    - FAO (2018)
+    tags:
+    - pm25
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: emissions_team
+      last_modified: '2025-11-21T00:00:00Z'
+  anthroposphere.emissions.pm_composition.agriculture.nitrate_fraction:
+    value: 0.2
+    default: 0.2
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.5
+    category: composition_parameter
+    description: Agriculture-sector nitrate fraction
+    references:
+    - FAO (2018)
+    tags:
+    - pm25
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: emissions_team
+      last_modified: '2025-11-21T00:00:00Z'
+  anthroposphere.emissions.pm_composition.agriculture.sulfate_fraction:
+    value: 0.15
+    default: 0.15
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.4
+    category: composition_parameter
+    description: Agriculture-sector sulfate fraction
+    references:
+    - FAO (2018)
+    tags:
+    - pm25
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: emissions_team
+      last_modified: '2025-11-21T00:00:00Z'
+  anthroposphere.emissions.pm_composition.agriculture.ammonium_fraction:
+    value: 0.05
+    default: 0.05
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.3
+    category: composition_parameter
+    description: Agriculture-sector ammonium fraction
+    references:
+    - FAO (2018)
+    tags:
+    - pm25
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: emissions_team
+      last_modified: '2025-11-09T00:00:00Z'
+  anthroposphere.emissions.emission_factors.default.CO2:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 1.5
+    category: emission_factor
+    description: Default CO2 emission scaling factor applied when sector-specific factors are unavailable
+    references:
+    - IPCC (2019) Guidelines for National Greenhouse Gas Inventories
+    - EMEP/EEA (2019) Air Pollutant Emission Inventory Guidebook
+    tags:
+    - emission_factor
+    - default
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.default.CH4:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 1.8
+    category: emission_factor
+    description: Default CH4 emission scaling factor
+    references:
+    - IPCC (2019) Guidelines for National Greenhouse Gas Inventories
+    - EMEP/EEA (2019) Air Pollutant Emission Inventory Guidebook
+    tags:
+    - emission_factor
+    - default
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.default.NOx:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 1.5
+    category: emission_factor
+    description: Default NOx emission scaling factor
+    references:
+    - IPCC (2019) Guidelines for National Greenhouse Gas Inventories
+    tags:
+    - emission_factor
+    - default
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.default.CO:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 1.6
+    category: emission_factor
+    description: Default CO emission scaling factor
+    references:
+    - IPCC (2019) Guidelines for National Greenhouse Gas Inventories
+    tags:
+    - emission_factor
+    - default
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.default.SO2:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 1.6
+    category: emission_factor
+    description: Default SO2 emission scaling factor
+    references:
+    - IPCC (2019) Guidelines for National Greenhouse Gas Inventories
+    tags:
+    - emission_factor
+    - default
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.default.VOC:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.4
+    - 1.8
+    category: emission_factor
+    description: Default VOC emission scaling factor
+    references:
+    - IPCC (2019) Guidelines for National Greenhouse Gas Inventories
+    tags:
+    - emission_factor
+    - default
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.default.NH3:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 1.8
+    category: emission_factor
+    description: Default NH3 emission scaling factor
+    references:
+    - IPCC (2019) Guidelines for National Greenhouse Gas Inventories
+    tags:
+    - emission_factor
+    - default
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.default.PM25:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.3
+    - 1.7
+    category: emission_factor
+    description: Default PM2.5 emission scaling factor
+    references:
+    - IPCC (2019) Guidelines for National Greenhouse Gas Inventories
+    tags:
+    - emission_factor
+    - default
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.default.PM10:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.3
+    - 1.7
+    category: emission_factor
+    description: Default PM10 emission scaling factor
+    references:
+    - IPCC (2019) Guidelines for National Greenhouse Gas Inventories
+    tags:
+    - emission_factor
+    - default
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.power.CO2:
+    value: 1.05
+    default: 1.05
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.7
+    - 1.3
+    category: emission_factor
+    description: Power sector CO2 emission scaling factor capturing stack control efficiency
+    references:
+    - IPCC (2019) Guidelines for National Greenhouse Gas Inventories
+    - U.S. EPA AP-42 (2019)
+    tags:
+    - emission_factor
+    - power
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.power.CH4:
+    value: 0.25
+    default: 0.25
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 0.6
+    category: emission_factor
+    description: Power sector methane emission scaling factor
+    references:
+    - IPCC (2019) Guidelines for National Greenhouse Gas Inventories
+    tags:
+    - emission_factor
+    - power
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.power.NOx:
+    value: 1.15
+    default: 1.15
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.8
+    - 1.4
+    category: emission_factor
+    description: Power sector NOx emission scaling factor representing selective catalytic reduction efficiency
+    references:
+    - IPCC (2019) Guidelines for National Greenhouse Gas Inventories
+    - U.S. EPA AP-42 (2019)
+    tags:
+    - emission_factor
+    - power
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.power.CO:
+    value: 0.4
+    default: 0.4
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 0.8
+    category: emission_factor
+    description: Power sector CO emission scaling factor
+    references:
+    - IPCC (2019) Guidelines for National Greenhouse Gas Inventories
+    tags:
+    - emission_factor
+    - power
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.power.SO2:
+    value: 1.25
+    default: 1.25
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.9
+    - 1.6
+    category: emission_factor
+    description: Power sector SO2 emission scaling factor reflecting flue-gas desulfurization performance
+    references:
+    - IPCC (2019) Guidelines for National Greenhouse Gas Inventories
+    tags:
+    - emission_factor
+    - power
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.power.VOC:
+    value: 0.7
+    default: 0.7
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.3
+    - 1.0
+    category: emission_factor
+    description: Power sector VOC emission scaling factor
+    references:
+    - IPCC (2019) Guidelines for National Greenhouse Gas Inventories
+    tags:
+    - emission_factor
+    - power
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.power.NH3:
+    value: 0.15
+    default: 0.15
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.05
+    - 0.4
+    category: emission_factor
+    description: Power sector ammonia slip scaling factor
+    references:
+    - IPCC (2019) Guidelines for National Greenhouse Gas Inventories
+    tags:
+    - emission_factor
+    - power
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.power.PM25:
+    value: 0.9
+    default: 0.9
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 1.2
+    category: emission_factor
+    description: Power sector PM2.5 emission scaling factor
+    references:
+    - IPCC (2019) Guidelines for National Greenhouse Gas Inventories
+    tags:
+    - emission_factor
+    - power
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.power.PM10:
+    value: 0.95
+    default: 0.95
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 1.3
+    category: emission_factor
+    description: Power sector PM10 emission scaling factor
+    references:
+    - IPCC (2019) Guidelines for National Greenhouse Gas Inventories
+    tags:
+    - emission_factor
+    - power
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.industry.CO2:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.7
+    - 1.4
+    category: emission_factor
+    description: Industrial sector CO2 emission scaling factor capturing process heat variability
+    references:
+    - Crippa et al. (2020) EDGAR v5.0
+    - IPCC (2019) Guidelines for National Greenhouse Gas Inventories
+    tags:
+    - emission_factor
+    - industry
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.industry.CH4:
+    value: 0.35
+    default: 0.35
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 0.8
+    category: emission_factor
+    description: Industrial methane emission scaling factor (fermentation, leaks)
+    references:
+    - Crippa et al. (2020) EDGAR v5.0
+    tags:
+    - emission_factor
+    - industry
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.industry.NOx:
+    value: 0.9
+    default: 0.9
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.6
+    - 1.2
+    category: emission_factor
+    description: Industrial NOx emission scaling factor incorporating burner retrofits
+    references:
+    - Crippa et al. (2020) EDGAR v5.0
+    tags:
+    - emission_factor
+    - industry
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.industry.CO:
+    value: 0.75
+    default: 0.75
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.4
+    - 1.2
+    category: emission_factor
+    description: Industrial CO emission scaling factor
+    references:
+    - Crippa et al. (2020) EDGAR v5.0
+    tags:
+    - emission_factor
+    - industry
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.industry.SO2:
+    value: 0.85
+    default: 0.85
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 1.2
+    category: emission_factor
+    description: Industrial SO2 emission scaling factor (scrubber efficiency)
+    references:
+    - Crippa et al. (2020) EDGAR v5.0
+    tags:
+    - emission_factor
+    - industry
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.industry.VOC:
+    value: 1.1
+    default: 1.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.7
+    - 1.6
+    category: emission_factor
+    description: Industrial VOC emission scaling factor capturing solvent emissions
+    references:
+    - Crippa et al. (2020) EDGAR v5.0
+    tags:
+    - emission_factor
+    - industry
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.industry.NH3:
+    value: 0.3
+    default: 0.3
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 0.7
+    category: emission_factor
+    description: Industrial ammonia emission scaling factor
+    references:
+    - Crippa et al. (2020) EDGAR v5.0
+    tags:
+    - emission_factor
+    - industry
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.industry.PM25:
+    value: 1.05
+    default: 1.05
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.7
+    - 1.5
+    category: emission_factor
+    description: Industrial PM2.5 emission scaling factor
+    references:
+    - Crippa et al. (2020) EDGAR v5.0
+    tags:
+    - emission_factor
+    - industry
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.industry.PM10:
+    value: 1.1
+    default: 1.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.7
+    - 1.6
+    category: emission_factor
+    description: Industrial PM10 emission scaling factor
+    references:
+    - Crippa et al. (2020) EDGAR v5.0
+    tags:
+    - emission_factor
+    - industry
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.transport.CO2:
+    value: 0.95
+    default: 0.95
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.6
+    - 1.3
+    category: emission_factor
+    description: Transport sector CO2 emission scaling factor reflecting fleet-average efficiency
+    references:
+    - IEA (2022) Tracking Transport
+    - IPCC (2019) Guidelines for National Greenhouse Gas Inventories
+    tags:
+    - emission_factor
+    - transport
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.transport.CH4:
+    value: 0.55
+    default: 0.55
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.2
+    - 1.0
+    category: emission_factor
+    description: Transport sector CH4 emission scaling factor (tailpipe + evaporative)
+    references:
+    - IEA (2022) Tracking Transport
+    tags:
+    - emission_factor
+    - transport
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.transport.NOx:
+    value: 1.2
+    default: 1.2
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.9
+    - 1.6
+    category: emission_factor
+    description: Transport sector NOx emission scaling factor capturing high-emitter vehicles
+    references:
+    - IEA (2022) Tracking Transport
+    tags:
+    - emission_factor
+    - transport
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.transport.CO:
+    value: 1.3
+    default: 1.3
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.9
+    - 1.8
+    category: emission_factor
+    description: Transport sector CO emission scaling factor
+    references:
+    - IEA (2022) Tracking Transport
+    tags:
+    - emission_factor
+    - transport
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.transport.SO2:
+    value: 0.45
+    default: 0.45
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.2
+    - 0.9
+    category: emission_factor
+    description: Transport sector SO2 emission scaling factor (low sulfur fuel adoption)
+    references:
+    - IEA (2022) Tracking Transport
+    tags:
+    - emission_factor
+    - transport
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.transport.VOC:
+    value: 1.35
+    default: 1.35
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.9
+    - 1.9
+    category: emission_factor
+    description: Transport sector VOC emission scaling factor (hot soak + exhaust)
+    references:
+    - IEA (2022) Tracking Transport
+    tags:
+    - emission_factor
+    - transport
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.transport.NH3:
+    value: 0.2
+    default: 0.2
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.05
+    - 0.5
+    category: emission_factor
+    description: Transport sector ammonia emission scaling factor
+    references:
+    - IEA (2022) Tracking Transport
+    tags:
+    - emission_factor
+    - transport
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.transport.PM25:
+    value: 0.85
+    default: 0.85
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 1.2
+    category: emission_factor
+    description: Transport sector PM2.5 emission scaling factor
+    references:
+    - IEA (2022) Tracking Transport
+    tags:
+    - emission_factor
+    - transport
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.transport.PM10:
+    value: 0.8
+    default: 0.8
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.4
+    - 1.3
+    category: emission_factor
+    description: Transport sector PM10 emission scaling factor
+    references:
+    - IEA (2022) Tracking Transport
+    tags:
+    - emission_factor
+    - transport
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.residential.CO2:
+    value: 0.7
+    default: 0.7
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.4
+    - 1.0
+    category: emission_factor
+    description: Residential sector CO2 emission scaling factor reflecting improved stove efficiency
+    references:
+    - EMEP/EEA (2019) Air Pollutant Emission Inventory Guidebook
+    tags:
+    - emission_factor
+    - residential
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.residential.CH4:
+    value: 1.3
+    default: 1.3
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.8
+    - 1.8
+    category: emission_factor
+    description: Residential sector CH4 emission scaling factor (biomass burning)
+    references:
+    - EMEP/EEA (2019) Air Pollutant Emission Inventory Guidebook
+    tags:
+    - emission_factor
+    - residential
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.residential.NOx:
+    value: 0.65
+    default: 0.65
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.3
+    - 1.0
+    category: emission_factor
+    description: Residential sector NOx emission scaling factor
+    references:
+    - EMEP/EEA (2019) Air Pollutant Emission Inventory Guidebook
+    tags:
+    - emission_factor
+    - residential
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.residential.CO:
+    value: 1.45
+    default: 1.45
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 2.0
+    category: emission_factor
+    description: Residential sector CO emission scaling factor
+    references:
+    - EMEP/EEA (2019) Air Pollutant Emission Inventory Guidebook
+    tags:
+    - emission_factor
+    - residential
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.residential.SO2:
+    value: 0.35
+    default: 0.35
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 0.8
+    category: emission_factor
+    description: Residential sector SO2 emission scaling factor
+    references:
+    - EMEP/EEA (2019) Air Pollutant Emission Inventory Guidebook
+    tags:
+    - emission_factor
+    - residential
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.residential.VOC:
+    value: 1.25
+    default: 1.25
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.8
+    - 1.8
+    category: emission_factor
+    description: Residential sector VOC emission scaling factor
+    references:
+    - EMEP/EEA (2019) Air Pollutant Emission Inventory Guidebook
+    tags:
+    - emission_factor
+    - residential
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.residential.NH3:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.2
+    - 1.0
+    category: emission_factor
+    description: Residential sector NH3 emission scaling factor (cooking/combustion)
+    references:
+    - EMEP/EEA (2019) Air Pollutant Emission Inventory Guidebook
+    tags:
+    - emission_factor
+    - residential
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.residential.PM25:
+    value: 1.2
+    default: 1.2
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.8
+    - 1.8
+    category: emission_factor
+    description: Residential sector PM2.5 emission scaling factor dominated by biomass stoves
+    references:
+    - EMEP/EEA (2019) Air Pollutant Emission Inventory Guidebook
+    tags:
+    - emission_factor
+    - residential
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.residential.PM10:
+    value: 1.15
+    default: 1.15
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.8
+    - 1.7
+    category: emission_factor
+    description: Residential sector PM10 emission scaling factor
+    references:
+    - EMEP/EEA (2019) Air Pollutant Emission Inventory Guidebook
+    tags:
+    - emission_factor
+    - residential
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.agriculture.CO2:
+    value: 0.45
+    default: 0.45
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.2
+    - 0.9
+    category: emission_factor
+    description: Agriculture sector CO2 emission scaling factor (fuel + field operations)
+    references:
+    - FAO (2022) FAOSTAT Emissions from Agriculture
+    tags:
+    - emission_factor
+    - agriculture
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.agriculture.CH4:
+    value: 1.45
+    default: 1.45
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 2.0
+    category: emission_factor
+    description: Agriculture sector CH4 emission scaling factor (enteric + rice)
+    references:
+    - FAO (2022) FAOSTAT Emissions from Agriculture
+    tags:
+    - emission_factor
+    - agriculture
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.agriculture.NOx:
+    value: 0.85
+    default: 0.85
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 1.2
+    category: emission_factor
+    description: Agriculture sector NOx emission scaling factor (fertilizer application)
+    references:
+    - FAO (2022) FAOSTAT Emissions from Agriculture
+    tags:
+    - emission_factor
+    - agriculture
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.agriculture.CO:
+    value: 0.55
+    default: 0.55
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.2
+    - 1.0
+    category: emission_factor
+    description: Agriculture sector CO emission scaling factor (field residue burning)
+    references:
+    - FAO (2022) FAOSTAT Emissions from Agriculture
+    tags:
+    - emission_factor
+    - agriculture
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.agriculture.SO2:
+    value: 0.2
+    default: 0.2
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.05
+    - 0.5
+    category: emission_factor
+    description: Agriculture sector SO2 emission scaling factor
+    references:
+    - FAO (2022) FAOSTAT Emissions from Agriculture
+    tags:
+    - emission_factor
+    - agriculture
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.agriculture.VOC:
+    value: 0.95
+    default: 0.95
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 1.4
+    category: emission_factor
+    description: Agriculture sector VOC emission scaling factor (pesticide/fertilizer use)
+    references:
+    - FAO (2022) FAOSTAT Emissions from Agriculture
+    tags:
+    - emission_factor
+    - agriculture
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.agriculture.NH3:
+    value: 1.4
+    default: 1.4
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 2.0
+    category: emission_factor
+    description: Agriculture sector NH3 emission scaling factor (fertilizer volatilization + manure)
+    references:
+    - FAO (2022) FAOSTAT Emissions from Agriculture
+    tags:
+    - emission_factor
+    - agriculture
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.agriculture.PM25:
+    value: 0.75
+    default: 0.75
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.4
+    - 1.2
+    category: emission_factor
+    description: Agriculture sector PM2.5 emission scaling factor
+    references:
+    - FAO (2022) FAOSTAT Emissions from Agriculture
+    tags:
+    - emission_factor
+    - agriculture
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.emission_factors.agriculture.PM10:
+    value: 0.7
+    default: 0.7
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.4
+    - 1.1
+    category: emission_factor
+    description: Agriculture sector PM10 emission scaling factor
+    references:
+    - FAO (2022) FAOSTAT Emissions from Agriculture
+    tags:
+    - emission_factor
+    - agriculture
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.quality_control.mass_balance_checks.enabled:
+    value: true
+    default: true
+    units: dimensionless
+    description: Enable mass balance verification
+    dtype: bool
+    allowed_values:
+    - true
+    - false
+    bounds: null
+    category: validation_parameter
+    dimension: dimensionless
+    tags:
+    - enabled
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+    references: *id002
+  anthroposphere.emissions.quality_control.mass_balance_checks.tolerance:
+    value: 0.001
+    default: 0.001
+    units: dimensionless
+    bounds:
+    - 1.0e-06
+    - 0.01
+    description: Mass balance check tolerance
+    dtype: float64
+    category: numerical_constraint
+    dimension: dimensionless
+    tags:
+    - tolerance
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+    references: *id002
+  anthroposphere.emissions.quality_control.unit_consistency.automatic_conversion:
+    value: true
+    default: true
+    units: dimensionless
+    description: Enable automatic unit conversions
+    dtype: bool
+    allowed_values:
+    - true
+    - false
+    bounds: null
+    category: validation_parameter
+    dimension: dimensionless
+    tags:
+    - automatic_conversion
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+    references: *id002
+  anthroposphere.emissions.quality_control.unit_consistency.enforce_cf_standards:
+    value: true
+    default: true
+    units: dimensionless
+    description: Enforce CF-1.8 convention compliance
+    references:
+    - CF-1.8 Conventions
+    dtype: bool
+    allowed_values:
+    - true
+    - false
+    bounds: null
+    category: validation_parameter
+    dimension: dimensionless
+    tags:
+    - enforce_cf_standards
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  anthroposphere.emissions.quality_control.validation.check_negative_values:
+    value: true
+    default: true
+    units: dimensionless
+    description: Flag negative emission values as errors
+    dtype: bool
+    allowed_values:
+    - true
+    - false
+    bounds: null
+    category: validation_parameter
+    dimension: dimensionless
+    tags:
+    - check_negative_values
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+    references: *id002
+  anthroposphere.emissions.quality_control.validation.max_emission_rate:
+    value: 0.001
+    default: 0.001
+    units: kg m-2 s-1
+    bounds:
+    - 1.0e-06
+    - 0.01
+    description: Maximum valid emission rate for sanity check
+    dtype: float64
+    category: validation_parameter
+    dimension: mass_flux
+    tags:
+    - max_emission_rate
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+    references: *id002
+  anthroposphere.emissions.quality_control.validation.min_emission_rate:
+    value: 0.0
+    default: 0.0
+    units: kg m-2 s-1
+    bounds:
+    - 0.0
+    - 1.0e-10
+    description: Minimum valid emission rate
+    dtype: float64
+    category: validation_parameter
+    dimension: mass_flux
+    tags:
+    - min_emission_rate
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+    references: *id002
+  anthroposphere.emissions.sector_fractions.agriculture:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    bounds:
+    - 0.05
+    - 0.25
+    description: Default fraction for agriculture sector
+    references:
+    - IPCC 2019
+    dtype: float64
+    category: weighting_parameter
+    dimension: dimensionless
+    tags:
+    - agriculture
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  anthroposphere.emissions.sector_fractions.buildings:
+    value: 0.15
+    default: 0.15
+    units: dimensionless
+    bounds:
+    - 0.05
+    - 0.3
+    description: Default fraction for buildings sector
+    references:
+    - IPCC 2019
+    dtype: float64
+    category: weighting_parameter
+    dimension: dimensionless
+    tags:
+    - buildings
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  anthroposphere.emissions.sector_fractions.default:
+    value: 0.2
+    default: 0.2
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Default sector fraction when specific allocation is unavailable
+    references:
+    - IPCC 2019
+    dtype: float64
+    category: weighting_parameter
+    dimension: dimensionless
+    tags:
+    - default
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  anthroposphere.emissions.sector_fractions.industry:
+    value: 0.2
+    default: 0.2
+    units: dimensionless
+    bounds:
+    - 0.1
+    - 0.4
+    description: Default fraction for industry sector
+    references:
+    - IPCC 2019
+    dtype: float64
+    category: weighting_parameter
+    dimension: dimensionless
+    tags:
+    - industry
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  anthroposphere.emissions.sector_fractions.power:
+    value: 0.25
+    default: 0.25
+    units: dimensionless
+    bounds:
+    - 0.1
+    - 0.5
+    description: Default fraction for power sector
+    references:
+    - IPCC 2019
+    dtype: float64
+    category: weighting_parameter
+    dimension: dimensionless
+    tags:
+    - power
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  anthroposphere.emissions.sector_fractions.transport:
+    value: 0.25
+    default: 0.25
+    units: dimensionless
+    bounds:
+    - 0.1
+    - 0.4
+    description: Default fraction for transport sector
+    references:
+    - IPCC 2019
+    dtype: float64
+    category: weighting_parameter
+    dimension: dimensionless
+    tags:
+    - transport
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  anthroposphere.emissions.sector_fractions.waste:
+    value: 0.05
+    default: 0.05
+    units: dimensionless
+    bounds:
+    - 0.01
+    - 0.15
+    description: Default fraction for waste sector
+    references:
+    - IPCC 2019
+    dtype: float64
+    category: weighting_parameter
+    dimension: dimensionless
+    tags:
+    - waste
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  anthroposphere.emissions.power_sector.species_fractions.co2:
+    value: 0.95
+    default: 0.95
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of CO2 mass within power-sector emissions used for downscaling
+    references:
+    - IPCC 2019 Refinement
+    dtype: float64
+    category: weighting_parameter
+    dimension: dimensionless
+    tags:
+    - species_fraction
+    - power_sector
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+  anthroposphere.emissions.power_sector.species_fractions.so2:
+    value: 0.85
+    default: 0.85
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of SO2 mass within power-sector emissions
+    references:
+    - IPCC 2019 Refinement
+    dtype: float64
+    category: weighting_parameter
+    dimension: dimensionless
+    tags:
+    - species_fraction
+    - power_sector
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+  anthroposphere.emissions.power_sector.species_fractions.nox:
+    value: 0.75
+    default: 0.75
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of NOx mass within power-sector emissions
+    references:
+    - IPCC 2019 Refinement
+    dtype: float64
+    category: weighting_parameter
+    dimension: dimensionless
+    tags:
+    - species_fraction
+    - power_sector
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+  anthroposphere.emissions.power_sector.species_fractions.pm25:
+    value: 0.6
+    default: 0.6
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of PM2.5 mass within power-sector emissions
+    references:
+    - IPCC 2019 Refinement
+    dtype: float64
+    category: weighting_parameter
+    dimension: dimensionless
+    tags:
+    - species_fraction
+    - power_sector
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+  anthroposphere.emissions.power_sector.land_use_mapping.urban:
+    value: 0.4
+    default: 0.4
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Weight applied to urban land-use proxy for power-sector allocation
+    references:
+    - IPCC 2019 Refinement
+    dtype: float64
+    category: weighting_parameter
+    dimension: dimensionless
+    tags:
+    - land_use_mapping
+    - power_sector
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+  anthroposphere.emissions.power_sector.land_use_mapping.industrial:
+    value: 0.6
+    default: 0.6
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Weight applied to industrial land-use proxy for power-sector allocation
+    references:
+    - IPCC 2019 Refinement
+    dtype: float64
+    category: weighting_parameter
+    dimension: dimensionless
+    tags:
+    - land_use_mapping
+    - power_sector
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+  anthroposphere.emissions.power_sector.seasonal_factors:
+    value:
+    - 1.2
+    - 1.1
+    - 1.0
+    - 0.9
+    - 0.8
+    - 0.7
+    - 0.7
+    - 0.8
+    - 0.9
+    - 1.0
+    - 1.1
+    - 1.2
+    default: null
+    units: dimensionless
+    description: Monthly scaling factors for power-sector seasonality
+    references:
+    - IPCC 2019 Refinement
+    dtype: list
+    category: seasonal_profile
+    dimension: dimensionless
+    tags:
+    - seasonal_profile
+    - power_sector
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+  anthroposphere.emissions.transport_sector.species_fractions.co2:
+    value: 0.85
+    default: 0.85
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of CO2 mass for transport-sector emissions
+    references:
+    - IPCC 2019 Refinement
+    dtype: float64
+    category: weighting_parameter
+    dimension: dimensionless
+    tags:
+    - species_fraction
+    - transport_sector
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+  anthroposphere.emissions.transport_sector.species_fractions.nox:
+    value: 0.9
+    default: 0.9
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of NOx mass for transport-sector emissions
+    references:
+    - IPCC 2019 Refinement
+    dtype: float64
+    category: weighting_parameter
+    dimension: dimensionless
+    tags:
+    - species_fraction
+    - transport_sector
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+  anthroposphere.emissions.transport_sector.species_fractions.co:
+    value: 0.95
+    default: 0.95
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of CO mass for transport-sector emissions
+    references:
+    - IPCC 2019 Refinement
+    dtype: float64
+    category: weighting_parameter
+    dimension: dimensionless
+    tags:
+    - species_fraction
+    - transport_sector
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+  anthroposphere.emissions.transport_sector.species_fractions.pm25:
+    value: 0.7
+    default: 0.7
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of PM2.5 mass for transport-sector emissions
+    references:
+    - IPCC 2019 Refinement
+    dtype: float64
+    category: weighting_parameter
+    dimension: dimensionless
+    tags:
+    - species_fraction
+    - transport_sector
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+  anthroposphere.emissions.transport_sector.land_use_mapping.urban:
+    value: 0.6
+    default: 0.6
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Weight for urban proxy in transport-sector allocation
+    references:
+    - IPCC 2019 Refinement
+    dtype: float64
+    category: weighting_parameter
+    dimension: dimensionless
+    tags:
+    - land_use_mapping
+    - transport_sector
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+  anthroposphere.emissions.transport_sector.land_use_mapping.road:
+    value: 0.4
+    default: 0.4
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Weight for road-density proxy in transport-sector allocation
+    references:
+    - IPCC 2019 Refinement
+    dtype: float64
+    category: weighting_parameter
+    dimension: dimensionless
+    tags:
+    - land_use_mapping
+    - transport_sector
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+  anthroposphere.emissions.transport_sector.seasonal_factors:
+    value:
+    - 1.0
+    - 1.0
+    - 1.0
+    - 1.0
+    - 1.0
+    - 1.0
+    - 1.0
+    - 1.0
+    - 1.0
+    - 1.0
+    - 1.0
+    - 1.0
+    default: null
+    units: dimensionless
+    description: Monthly factors for transport-sector emissions (assumed flat)
+    references:
+    - IPCC 2019 Refinement
+    dtype: list
+    category: seasonal_profile
+    dimension: dimensionless
+    tags:
+    - seasonal_profile
+    - transport_sector
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+  anthroposphere.emissions.industry_sector.species_fractions.co2:
+    value: 0.8
+    default: 0.8
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of CO2 mass for industry-sector emissions
+    references:
+    - IPCC 2019 Refinement
+    dtype: float64
+    category: weighting_parameter
+    dimension: dimensionless
+    tags:
+    - species_fraction
+    - industry_sector
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+  anthroposphere.emissions.industry_sector.species_fractions.so2:
+    value: 0.7
+    default: 0.7
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of SO2 mass for industry-sector emissions
+    references:
+    - IPCC 2019 Refinement
+    dtype: float64
+    category: weighting_parameter
+    dimension: dimensionless
+    tags:
+    - species_fraction
+    - industry_sector
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+  anthroposphere.emissions.industry_sector.species_fractions.nox:
+    value: 0.6
+    default: 0.6
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of NOx mass for industry-sector emissions
+    references:
+    - IPCC 2019 Refinement
+    dtype: float64
+    category: weighting_parameter
+    dimension: dimensionless
+    tags:
+    - species_fraction
+    - industry_sector
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+  anthroposphere.emissions.industry_sector.species_fractions.nmvoc:
+    value: 0.8
+    default: 0.8
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of NMVOC mass for industry-sector emissions
+    references:
+    - IPCC 2019 Refinement
+    dtype: float64
+    category: weighting_parameter
+    dimension: dimensionless
+    tags:
+    - species_fraction
+    - industry_sector
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+  anthroposphere.emissions.industry_sector.land_use_mapping.industrial:
+    value: 0.8
+    default: 0.8
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Weight for industrial land-use proxy in industry-sector allocation
+    references:
+    - IPCC 2019 Refinement
+    dtype: float64
+    category: weighting_parameter
+    dimension: dimensionless
+    tags:
+    - land_use_mapping
+    - industry_sector
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+  anthroposphere.emissions.industry_sector.land_use_mapping.urban:
+    value: 0.2
+    default: 0.2
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Weight for urban proxy in industry-sector allocation
+    references:
+    - IPCC 2019 Refinement
+    dtype: float64
+    category: weighting_parameter
+    dimension: dimensionless
+    tags:
+    - land_use_mapping
+    - industry_sector
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+  anthroposphere.emissions.industry_sector.seasonal_factors:
+    value:
+    - 1.1
+    - 1.0
+    - 1.1
+    - 1.0
+    - 1.0
+    - 0.9
+    - 0.8
+    - 0.8
+    - 1.0
+    - 1.1
+    - 1.1
+    - 1.0
+    default: null
+    units: dimensionless
+    description: Monthly factors for industry-sector activity
+    references:
+    - IPCC 2019 Refinement
+    dtype: list
+    category: seasonal_profile
+    dimension: dimensionless
+    tags:
+    - seasonal_profile
+    - industry_sector
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+  anthroposphere.emissions.buildings_sector.species_fractions.co2:
+    value: 0.9
+    default: 0.9
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of CO2 mass for buildings-sector emissions
+    references:
+    - IPCC 2019 Refinement
+    dtype: float64
+    category: weighting_parameter
+    dimension: dimensionless
+    tags:
+    - species_fraction
+    - buildings_sector
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+  anthroposphere.emissions.buildings_sector.species_fractions.ch4:
+    value: 0.8
+    default: 0.8
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of CH4 mass for buildings-sector emissions
+    references:
+    - IPCC 2019 Refinement
+    dtype: float64
+    category: weighting_parameter
+    dimension: dimensionless
+    tags:
+    - species_fraction
+    - buildings_sector
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+  anthroposphere.emissions.buildings_sector.species_fractions.nox:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of NOx mass for buildings-sector emissions
+    references:
+    - IPCC 2019 Refinement
+    dtype: float64
+    category: weighting_parameter
+    dimension: dimensionless
+    tags:
+    - species_fraction
+    - buildings_sector
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+  anthroposphere.emissions.buildings_sector.species_fractions.pm25:
+    value: 0.6
+    default: 0.6
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of PM2.5 mass for buildings-sector emissions
+    references:
+    - IPCC 2019 Refinement
+    dtype: float64
+    category: weighting_parameter
+    dimension: dimensionless
+    tags:
+    - species_fraction
+    - buildings_sector
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+  anthroposphere.emissions.buildings_sector.land_use_mapping.urban:
+    value: 0.7
+    default: 0.7
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Weight for urban proxy in buildings-sector allocation
+    references:
+    - IPCC 2019 Refinement
+    dtype: float64
+    category: weighting_parameter
+    dimension: dimensionless
+    tags:
+    - land_use_mapping
+    - buildings_sector
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+  anthroposphere.emissions.buildings_sector.land_use_mapping.residential:
+    value: 0.3
+    default: 0.3
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Weight for residential proxy in buildings-sector allocation
+    references:
+    - IPCC 2019 Refinement
+    dtype: float64
+    category: weighting_parameter
+    dimension: dimensionless
+    tags:
+    - land_use_mapping
+    - buildings_sector
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+  anthroposphere.emissions.buildings_sector.seasonal_factors:
+    value:
+    - 1.4
+    - 1.3
+    - 1.1
+    - 0.9
+    - 0.7
+    - 0.6
+    - 0.6
+    - 0.7
+    - 0.8
+    - 1.0
+    - 1.2
+    - 1.4
+    default: null
+    units: dimensionless
+    description: Monthly factors for buildings-sector emissions linked to heating/cooling demand
+    references:
+    - IPCC 2019 Refinement
+    dtype: list
+    category: seasonal_profile
+    dimension: dimensionless
+    tags:
+    - seasonal_profile
+    - buildings_sector
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+  anthroposphere.emissions.agriculture_sector.species_fractions.ch4:
+    value: 0.95
+    default: 0.95
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of CH4 mass for agriculture-sector emissions
+    references:
+    - IPCC 2019 Refinement
+    dtype: float64
+    category: weighting_parameter
+    dimension: dimensionless
+    tags:
+    - species_fraction
+    - agriculture_sector
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+  anthroposphere.emissions.agriculture_sector.species_fractions.n2o:
+    value: 0.9
+    default: 0.9
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of N2O mass for agriculture-sector emissions
+    references:
+    - IPCC 2019 Refinement
+    dtype: float64
+    category: weighting_parameter
+    dimension: dimensionless
+    tags:
+    - species_fraction
+    - agriculture_sector
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+  anthroposphere.emissions.agriculture_sector.species_fractions.nh3:
+    value: 0.95
+    default: 0.95
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of NH3 mass for agriculture-sector emissions
+    references:
+    - IPCC 2019 Refinement
+    dtype: float64
+    category: weighting_parameter
+    dimension: dimensionless
+    tags:
+    - species_fraction
+    - agriculture_sector
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+  anthroposphere.emissions.agriculture_sector.species_fractions.co2:
+    value: 0.3
+    default: 0.3
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of CO2 mass for agriculture-sector emissions
+    references:
+    - IPCC 2019 Refinement
+    dtype: float64
+    category: weighting_parameter
+    dimension: dimensionless
+    tags:
+    - species_fraction
+    - agriculture_sector
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+  anthroposphere.emissions.agriculture_sector.land_use_mapping.cropland:
+    value: 0.6
+    default: 0.6
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Weight for cropland proxy in agriculture-sector allocation
+    references:
+    - IPCC 2019 Refinement
+    dtype: float64
+    category: weighting_parameter
+    dimension: dimensionless
+    tags:
+    - land_use_mapping
+    - agriculture_sector
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+  anthroposphere.emissions.agriculture_sector.land_use_mapping.pasture:
+    value: 0.4
+    default: 0.4
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Weight for pasture proxy in agriculture-sector allocation
+    references:
+    - IPCC 2019 Refinement
+    dtype: float64
+    category: weighting_parameter
+    dimension: dimensionless
+    tags:
+    - land_use_mapping
+    - agriculture_sector
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+  anthroposphere.emissions.agriculture_sector.seasonal_factors:
+    value:
+    - 0.6
+    - 0.7
+    - 1.0
+    - 1.3
+    - 1.5
+    - 1.4
+    - 1.2
+    - 1.1
+    - 1.0
+    - 0.8
+    - 0.7
+    - 0.6
+    default: null
+    units: dimensionless
+    description: Monthly factors for agriculture-sector seasonality
+    references:
+    - IPCC 2019 Refinement
+    dtype: list
+    category: seasonal_profile
+    dimension: dimensionless
+    tags:
+    - seasonal_profile
+    - agriculture_sector
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+  anthroposphere.emissions.temporal_profiles.synthetic.diurnal.base:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 2.0
+    description: Baseline factor for synthetic diurnal profiles.
+    references:
+    - Crippa et al. (2020) DOI:10.1038/s41597-020-0462-2
+    dtype: float32
+    category: temporal_profile
+    dimension: dimensionless
+    tags:
+    - temporal_profile
+    - synthetic
+    - diurnal
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2026-01-27T00:00:00Z'
+  anthroposphere.emissions.temporal_profiles.synthetic.diurnal.min:
+    value: 0.0
+    default: 0.0
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 2.0
+    description: Minimum factor for synthetic diurnal profiles.
+    references:
+    - Crippa et al. (2020) DOI:10.1038/s41597-020-0462-2
+    dtype: float32
+    category: temporal_profile
+    dimension: dimensionless
+    tags:
+    - temporal_profile
+    - synthetic
+    - diurnal
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2026-01-27T00:00:00Z'
+  anthroposphere.emissions.temporal_profiles.synthetic.diurnal.max:
+    value: 2.0
+    default: 2.0
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 5.0
+    description: Maximum factor for synthetic diurnal profiles.
+    references:
+    - Crippa et al. (2020) DOI:10.1038/s41597-020-0462-2
+    dtype: float32
+    category: temporal_profile
+    dimension: dimensionless
+    tags:
+    - temporal_profile
+    - synthetic
+    - diurnal
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2026-01-27T00:00:00Z'
+  anthroposphere.emissions.temporal_profiles.synthetic.diurnal.phase.power:
+    value: 0.0
+    default: 0.0
+    units: rad
+    bounds:
+    - -6.2832
+    - 6.2832
+    description: Phase shift for power-sector diurnal profile.
+    references:
+    - Crippa et al. (2020) DOI:10.1038/s41597-020-0462-2
+    dtype: float32
+    category: temporal_profile
+    dimension: angular
+    tags:
+    - temporal_profile
+    - synthetic
+    - diurnal
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2026-01-27T00:00:00Z'
+  anthroposphere.emissions.temporal_profiles.synthetic.diurnal.phase.transport:
+    value: 1.57079632679
+    default: 1.57079632679
+    units: rad
+    bounds:
+    - -6.2832
+    - 6.2832
+    description: Phase shift for transport-sector diurnal profile.
+    references:
+    - Crippa et al. (2020) DOI:10.1038/s41597-020-0462-2
+    dtype: float32
+    category: temporal_profile
+    dimension: angular
+    tags:
+    - temporal_profile
+    - synthetic
+    - diurnal
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2026-01-27T00:00:00Z'
+  anthroposphere.emissions.temporal_profiles.synthetic.diurnal.phase.residential:
+    value: 3.14159265359
+    default: 3.14159265359
+    units: rad
+    bounds:
+    - -6.2832
+    - 6.2832
+    description: Phase shift for residential-sector diurnal profile.
+    references:
+    - Crippa et al. (2020) DOI:10.1038/s41597-020-0462-2
+    dtype: float32
+    category: temporal_profile
+    dimension: angular
+    tags:
+    - temporal_profile
+    - synthetic
+    - diurnal
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2026-01-27T00:00:00Z'
+  anthroposphere.emissions.temporal_profiles.synthetic.diurnal.phase.industry:
+    value: 4.71238898038
+    default: 4.71238898038
+    units: rad
+    bounds:
+    - -6.2832
+    - 6.2832
+    description: Phase shift for industry-sector diurnal profile.
+    references:
+    - Crippa et al. (2020) DOI:10.1038/s41597-020-0462-2
+    dtype: float32
+    category: temporal_profile
+    dimension: angular
+    tags:
+    - temporal_profile
+    - synthetic
+    - diurnal
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2026-01-27T00:00:00Z'
+  anthroposphere.emissions.temporal_profiles.synthetic.diurnal.phase.agriculture:
+    value: 1.0471975512
+    default: 1.0471975512
+    units: rad
+    bounds:
+    - -6.2832
+    - 6.2832
+    description: Phase shift for agriculture-sector diurnal profile.
+    references:
+    - Crippa et al. (2020) DOI:10.1038/s41597-020-0462-2
+    dtype: float32
+    category: temporal_profile
+    dimension: angular
+    tags:
+    - temporal_profile
+    - synthetic
+    - diurnal
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2026-01-27T00:00:00Z'
+  anthroposphere.emissions.temporal_profiles.synthetic.diurnal.phase.default:
+    value: 0.78539816339
+    default: 0.78539816339
+    units: rad
+    bounds:
+    - -6.2832
+    - 6.2832
+    description: Default phase shift for synthetic diurnal profile.
+    references:
+    - Crippa et al. (2020) DOI:10.1038/s41597-020-0462-2
+    dtype: float32
+    category: temporal_profile
+    dimension: angular
+    tags:
+    - temporal_profile
+    - synthetic
+    - diurnal
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2026-01-27T00:00:00Z'
+  anthroposphere.emissions.temporal_profiles.synthetic.diurnal.amplitude.power:
+    value: 0.16
+    default: 0.16
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Diurnal amplitude for power sector.
+    references:
+    - Crippa et al. (2020) DOI:10.1038/s41597-020-0462-2
+    dtype: float32
+    category: temporal_profile
+    dimension: dimensionless
+    tags:
+    - temporal_profile
+    - synthetic
+    - diurnal
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2026-01-27T00:00:00Z'
+  anthroposphere.emissions.temporal_profiles.synthetic.diurnal.amplitude.transport:
+    value: 0.18
+    default: 0.18
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Diurnal amplitude for transport sector.
+    references:
+    - Crippa et al. (2020) DOI:10.1038/s41597-020-0462-2
+    dtype: float32
+    category: temporal_profile
+    dimension: dimensionless
+    tags:
+    - temporal_profile
+    - synthetic
+    - diurnal
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2026-01-27T00:00:00Z'
+  anthroposphere.emissions.temporal_profiles.synthetic.diurnal.amplitude.residential:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Diurnal amplitude for residential sector.
+    references:
+    - Crippa et al. (2020) DOI:10.1038/s41597-020-0462-2
+    dtype: float32
+    category: temporal_profile
+    dimension: dimensionless
+    tags:
+    - temporal_profile
+    - synthetic
+    - diurnal
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2026-01-27T00:00:00Z'
+  anthroposphere.emissions.temporal_profiles.synthetic.diurnal.amplitude.industry:
+    value: 0.14
+    default: 0.14
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Diurnal amplitude for industry sector.
+    references:
+    - Crippa et al. (2020) DOI:10.1038/s41597-020-0462-2
+    dtype: float32
+    category: temporal_profile
+    dimension: dimensionless
+    tags:
+    - temporal_profile
+    - synthetic
+    - diurnal
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2026-01-27T00:00:00Z'
+  anthroposphere.emissions.temporal_profiles.synthetic.diurnal.amplitude.agriculture:
+    value: 0.12
+    default: 0.12
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Diurnal amplitude for agriculture sector.
+    references:
+    - Crippa et al. (2020) DOI:10.1038/s41597-020-0462-2
+    dtype: float32
+    category: temporal_profile
+    dimension: dimensionless
+    tags:
+    - temporal_profile
+    - synthetic
+    - diurnal
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2026-01-27T00:00:00Z'
+  anthroposphere.emissions.temporal_profiles.synthetic.diurnal.amplitude.default:
+    value: 0.12
+    default: 0.12
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Default diurnal amplitude for synthetic profiles.
+    references:
+    - Crippa et al. (2020) DOI:10.1038/s41597-020-0462-2
+    dtype: float32
+    category: temporal_profile
+    dimension: dimensionless
+    tags:
+    - temporal_profile
+    - synthetic
+    - diurnal
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2026-01-27T00:00:00Z'
+  anthroposphere.emissions.temporal_profiles.synthetic.hourly.base:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 2.0
+    description: Baseline factor for synthetic hourly profiles.
+    references:
+    - Crippa et al. (2020) DOI:10.1038/s41597-020-0462-2
+    dtype: float32
+    category: temporal_profile
+    dimension: dimensionless
+    tags:
+    - temporal_profile
+    - synthetic
+    - hourly
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2026-01-27T00:00:00Z'
+  anthroposphere.emissions.temporal_profiles.synthetic.hourly.min:
+    value: 0.0
+    default: 0.0
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 2.0
+    description: Minimum factor for synthetic hourly profiles.
+    references:
+    - Crippa et al. (2020) DOI:10.1038/s41597-020-0462-2
+    dtype: float32
+    category: temporal_profile
+    dimension: dimensionless
+    tags:
+    - temporal_profile
+    - synthetic
+    - hourly
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2026-01-27T00:00:00Z'
+  anthroposphere.emissions.temporal_profiles.synthetic.hourly.amplitude.transport:
+    value: 0.2
+    default: 0.2
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Hourly amplitude for transport sector.
+    references:
+    - Crippa et al. (2020) DOI:10.1038/s41597-020-0462-2
+    dtype: float32
+    category: temporal_profile
+    dimension: dimensionless
+    tags:
+    - temporal_profile
+    - synthetic
+    - hourly
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2026-01-27T00:00:00Z'
+  anthroposphere.emissions.temporal_profiles.synthetic.hourly.amplitude.default:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Default hourly amplitude for synthetic profiles.
+    references:
+    - Crippa et al. (2020) DOI:10.1038/s41597-020-0462-2
+    dtype: float32
+    category: temporal_profile
+    dimension: dimensionless
+    tags:
+    - temporal_profile
+    - synthetic
+    - hourly
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2026-01-27T00:00:00Z'
+  anthroposphere.emissions.temporal_profiles.synthetic.hourly.phase.power:
+    value: 0.0
+    default: 0.0
+    units: rad
+    bounds:
+    - -6.2832
+    - 6.2832
+    description: Phase shift for power-sector hourly profile.
+    references:
+    - Crippa et al. (2020) DOI:10.1038/s41597-020-0462-2
+    dtype: float32
+    category: temporal_profile
+    dimension: angular
+    tags:
+    - temporal_profile
+    - synthetic
+    - hourly
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2026-01-27T00:00:00Z'
+  anthroposphere.emissions.temporal_profiles.synthetic.hourly.phase.default:
+    value: 0.78539816339
+    default: 0.78539816339
+    units: rad
+    bounds:
+    - -6.2832
+    - 6.2832
+    description: Default phase shift for synthetic hourly profiles.
+    references:
+    - Crippa et al. (2020) DOI:10.1038/s41597-020-0462-2
+    dtype: float32
+    category: temporal_profile
+    dimension: angular
+    tags:
+    - temporal_profile
+    - synthetic
+    - hourly
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2026-01-27T00:00:00Z'
+  anthroposphere.emissions.temporal_profiles.synthetic.weekly.weekend_factor.transport:
+    value: 0.9
+    default: 0.9
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Weekend scaling factor for transport emissions.
+    references:
+    - EMEP/EEA guidebook 2019
+    dtype: float32
+    category: temporal_profile
+    dimension: dimensionless
+    tags:
+    - temporal_profile
+    - synthetic
+    - weekly
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2026-01-27T00:00:00Z'
+  anthroposphere.emissions.temporal_profiles.synthetic.weekly.weekend_factor.industry:
+    value: 0.6
+    default: 0.6
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Weekend scaling factor for industry emissions.
+    references:
+    - EMEP/EEA guidebook 2019
+    dtype: float32
+    category: temporal_profile
+    dimension: dimensionless
+    tags:
+    - temporal_profile
+    - synthetic
+    - weekly
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2026-01-27T00:00:00Z'
+  anthroposphere.emissions.temporal_profiles.synthetic.weekly.weekend_factor.default:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.5
+    description: Default weekend scaling factor for weekly profiles.
+    references:
+    - EMEP/EEA guidebook 2019
+    dtype: float32
+    category: temporal_profile
+    dimension: dimensionless
+    tags:
+    - temporal_profile
+    - synthetic
+    - weekly
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2026-01-27T00:00:00Z'
+  anthroposphere.emissions.temporal_profiles.synthetic.monthly.base:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 2.0
+    description: Baseline factor for synthetic monthly profiles.
+    references:
+    - Crippa et al. (2020) DOI:10.1038/s41597-020-0462-2
+    dtype: float32
+    category: temporal_profile
+    dimension: dimensionless
+    tags:
+    - temporal_profile
+    - synthetic
+    - monthly
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2026-01-27T00:00:00Z'
+  anthroposphere.emissions.temporal_profiles.synthetic.monthly.amplitude:
+    value: 0.15
+    default: 0.15
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Monthly amplitude for synthetic profiles.
+    references:
+    - Crippa et al. (2020) DOI:10.1038/s41597-020-0462-2
+    dtype: float32
+    category: temporal_profile
+    dimension: dimensionless
+    tags:
+    - temporal_profile
+    - synthetic
+    - monthly
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2026-01-27T00:00:00Z'
+  anthroposphere.emissions.temporal_profiles.synthetic.monthly.min:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 2.0
+    description: Minimum factor for synthetic monthly profiles.
+    references:
+    - Crippa et al. (2020) DOI:10.1038/s41597-020-0462-2
+    dtype: float32
+    category: temporal_profile
+    dimension: dimensionless
+    tags:
+    - temporal_profile
+    - synthetic
+    - monthly
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2026-01-27T00:00:00Z'
+  anthroposphere.emissions.temporal_profiles.synthetic.monthly.phase.residential:
+    value: 0.0
+    default: 0.0
+    units: rad
+    bounds:
+    - -6.2832
+    - 6.2832
+    description: Monthly phase shift for residential emissions (winter peak).
+    references:
+    - Crippa et al. (2020) DOI:10.1038/s41597-020-0462-2
+    dtype: float32
+    category: temporal_profile
+    dimension: angular
+    tags:
+    - temporal_profile
+    - synthetic
+    - monthly
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2026-01-27T00:00:00Z'
+  anthroposphere.emissions.temporal_profiles.synthetic.monthly.phase.agriculture:
+    value: -1.57079632679
+    default: -1.57079632679
+    units: rad
+    bounds:
+    - -6.2832
+    - 6.2832
+    description: Monthly phase shift for agriculture emissions (summer peak).
+    references:
+    - Crippa et al. (2020) DOI:10.1038/s41597-020-0462-2
+    dtype: float32
+    category: temporal_profile
+    dimension: angular
+    tags:
+    - temporal_profile
+    - synthetic
+    - monthly
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2026-01-27T00:00:00Z'
+  anthroposphere.emissions.temporal_profiles.synthetic.monthly.phase.default:
+    value: 1.57079632679
+    default: 1.57079632679
+    units: rad
+    bounds:
+    - -6.2832
+    - 6.2832
+    description: Default phase shift for synthetic monthly profiles.
+    references:
+    - Crippa et al. (2020) DOI:10.1038/s41597-020-0462-2
+    dtype: float32
+    category: temporal_profile
+    dimension: angular
+    tags:
+    - temporal_profile
+    - synthetic
+    - monthly
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2026-01-27T00:00:00Z'
+  anthroposphere.emissions.temporal_profiles.synthetic.seasonal.base:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 2.0
+    description: Baseline factor for synthetic seasonal profiles.
+    references:
+    - Crippa et al. (2020) DOI:10.1038/s41597-020-0462-2
+    dtype: float32
+    category: temporal_profile
+    dimension: dimensionless
+    tags:
+    - temporal_profile
+    - synthetic
+    - seasonal
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2026-01-27T00:00:00Z'
+  anthroposphere.emissions.temporal_profiles.synthetic.seasonal.amplitude:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Seasonal amplitude for synthetic profiles.
+    references:
+    - Crippa et al. (2020) DOI:10.1038/s41597-020-0462-2
+    dtype: float32
+    category: temporal_profile
+    dimension: dimensionless
+    tags:
+    - temporal_profile
+    - synthetic
+    - seasonal
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2026-01-27T00:00:00Z'
+  anthroposphere.emissions.temporal_profiles.synthetic.seasonal.phase_step:
+    value: 1.57079632679
+    default: 1.57079632679
+    units: rad
+    bounds:
+    - 0.0
+    - 6.2832
+    description: Phase step for synthetic seasonal profiles.
+    references:
+    - Crippa et al. (2020) DOI:10.1038/s41597-020-0462-2
+    dtype: float32
+    category: temporal_profile
+    dimension: angular
+    tags:
+    - temporal_profile
+    - synthetic
+    - seasonal
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2026-01-27T00:00:00Z'
+  anthroposphere.emissions.temporal_profiles.synthetic.seasonal.phase_shift:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 4.0
+    description: Phase offset applied to seasonal profiles.
+    references:
+    - Crippa et al. (2020) DOI:10.1038/s41597-020-0462-2
+    dtype: float32
+    category: temporal_profile
+    dimension: dimensionless
+    tags:
+    - temporal_profile
+    - synthetic
+    - seasonal
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2026-01-27T00:00:00Z'
+  anthroposphere.emissions.temporal_profiles.synthetic.seasonal.min:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 2.0
+    description: Minimum factor for synthetic seasonal profiles.
+    references:
+    - Crippa et al. (2020) DOI:10.1038/s41597-020-0462-2
+    dtype: float32
+    category: temporal_profile
+    dimension: dimensionless
+    tags:
+    - temporal_profile
+    - synthetic
+    - seasonal
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2026-01-27T00:00:00Z'
+  anthroposphere.emissions.temporal_profiles.synthetic.seasonal.max:
+    value: 2.0
+    default: 2.0
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 3.0
+    description: Maximum factor for synthetic seasonal profiles.
+    references:
+    - Crippa et al. (2020) DOI:10.1038/s41597-020-0462-2
+    dtype: float32
+    category: temporal_profile
+    dimension: dimensionless
+    tags:
+    - temporal_profile
+    - synthetic
+    - seasonal
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2026-01-27T00:00:00Z'
+  anthroposphere.emissions.temporal_profiles.power_demand.weekly_factors:
+    value:
+    - 0.9
+    - 1.1
+    - 1.1
+    - 1.1
+    - 1.1
+    - 1.0
+    - 0.8
+    default: null
+    units: dimensionless
+    description: Weekly weighting for power-demand profile
+    references:
+    - IEEE Task Force on Load Modeling (2019)
+    dtype: list
+    category: temporal_profile
+    dimension: dimensionless
+    tags:
+    - temporal_profile
+    - power_demand
+    - weekly
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+  anthroposphere.emissions.temporal_profiles.traffic.weekly_factors:
+    value:
+    - 1.2
+    - 1.2
+    - 1.2
+    - 1.2
+    - 1.2
+    - 0.9
+    - 0.6
+    default: null
+    units: dimensionless
+    description: Weekly scaling for traffic profile
+    references:
+    - EMEP/EEA guidebook 2019
+    dtype: list
+    category: temporal_profile
+    dimension: dimensionless
+    tags:
+    - temporal_profile
+    - traffic
+    - weekly
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+  anthroposphere.emissions.temporal_profiles.industrial.weekly_factors:
+    value:
+    - 1.0
+    - 1.0
+    - 1.0
+    - 1.0
+    - 1.0
+    - 0.5
+    - 0.3
+    default: null
+    units: dimensionless
+    description: Weekly weights for industrial activity
+    references:
+    - UNIDO global industrial energy outlook
+    dtype: list
+    category: temporal_profile
+    dimension: dimensionless
+    tags:
+    - temporal_profile
+    - industrial
+    - weekly
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+  anthroposphere.emissions.temporal_profiles.industrial.monthly_factors:
+    value:
+    - 1.1
+    - 1.0
+    - 1.1
+    - 1.0
+    - 1.0
+    - 0.9
+    - 0.8
+    - 0.8
+    - 1.0
+    - 1.1
+    - 1.1
+    - 1.0
+    default: null
+    units: dimensionless
+    description: Monthly industrial scaling factors
+    references:
+    - UNIDO global industrial energy outlook
+    dtype: list
+    category: temporal_profile
+    dimension: dimensionless
+    tags:
+    - temporal_profile
+    - industrial
+    - monthly
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+  anthroposphere.emissions.temporal_profiles.residential.weekly_factors:
+    value:
+    - 1.0
+    - 1.0
+    - 1.0
+    - 1.0
+    - 1.0
+    - 1.1
+    - 1.2
+    default: null
+    units: dimensionless
+    description: Weekly weights for residential profile
+    references:
+    - IEA residential energy report 2020
+    dtype: list
+    category: temporal_profile
+    dimension: dimensionless
+    tags:
+    - temporal_profile
+    - residential
+    - weekly
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+  anthroposphere.emissions.temporal_profiles.residential.monthly_factors:
+    value:
+    - 1.4
+    - 1.3
+    - 1.1
+    - 0.9
+    - 0.7
+    - 0.6
+    - 0.6
+    - 0.7
+    - 0.8
+    - 1.0
+    - 1.2
+    - 1.4
+    default: null
+    units: dimensionless
+    description: Monthly residential demand factors
+    references:
+    - IEA residential energy report 2020
+    dtype: list
+    category: temporal_profile
+    dimension: dimensionless
+    tags:
+    - temporal_profile
+    - residential
+    - monthly
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+  anthroposphere.emissions.temporal_profiles.agricultural.weekly_factors:
+    value:
+    - 1.0
+    - 1.0
+    - 1.0
+    - 1.0
+    - 1.0
+    - 1.0
+    - 1.0
+    default: null
+    units: dimensionless
+    description: Weekly agricultural factors (assumed flat)
+    references:
+    - FAO agricultural activity index
+    dtype: list
+    category: temporal_profile
+    dimension: dimensionless
+    tags:
+    - temporal_profile
+    - agricultural
+    - weekly
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+  anthroposphere.emissions.temporal_profiles.agricultural.monthly_factors:
+    value:
+    - 0.6
+    - 0.7
+    - 1.0
+    - 1.3
+    - 1.5
+    - 1.4
+    - 1.2
+    - 1.1
+    - 1.0
+    - 0.8
+    - 0.7
+    - 0.6
+    default: null
+    units: dimensionless
+    description: Monthly agricultural factors aligned with growing season
+    references:
+    - FAO agricultural activity index
+    dtype: list
+    category: temporal_profile
+    dimension: dimensionless
+    tags:
+    - temporal_profile
+    - agricultural
+    - monthly
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+  anthroposphere.emissions.temporal_profiles.flat.weekly_factors:
+    value:
+    - 1.0
+    - 1.0
+    - 1.0
+    - 1.0
+    - 1.0
+    - 1.0
+    - 1.0
+    default: null
+    units: dimensionless
+    description: Flat weekly profile for baseline allocation
+    references:
+    - Assumed uniform
+    dtype: list
+    category: temporal_profile
+    dimension: dimensionless
+    tags:
+    - temporal_profile
+    - flat
+    - weekly
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+  anthroposphere.emissions.temporal_profiles.flat.monthly_factors:
+    value:
+    - 1.0
+    - 1.0
+    - 1.0
+    - 1.0
+    - 1.0
+    - 1.0
+    - 1.0
+    - 1.0
+    - 1.0
+    - 1.0
+    - 1.0
+    - 1.0
+    default: null
+    units: dimensionless
+    description: Flat monthly profile for diagnostics
+    references:
+    - Assumed uniform
+    dtype: list
+    category: temporal_profile
+    dimension: dimensionless
+    tags:
+    - temporal_profile
+    - flat
+    - monthly
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+  anthroposphere.emissions.species_mapping.default_mechanism:
+    value: cb05
+    default: cb05
+    units: dimensionless
+    dtype: str
+    bounds: null
+    category: coupling_parameter
+    description: Default atmospheric chemistry mechanism used when none is specified
+    references:
+    - Yarwood et al. (2005) Updates to the CB05 chemical mechanism
+    tags:
+    - species_mapping
+    - mechanism
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+  anthroposphere.emissions.species_mapping.conversion_efficiency:
+    value: 0.98
+    default: 0.98
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.9
+    - 1.0
+    category: coupling_parameter
+    description: Efficiency factor applied when converting inventory species to mechanism species
+    references:
+    - Yarwood et al. (2005) Updates to the CB05 chemical mechanism
+    tags:
+    - species_mapping
+    - conversion
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-26T00:00:00Z'
+  anthroposphere.emissions.species_mapping.speciation_accuracy:
+    value: 0.85
+    default: 0.85
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.7
+    - 0.95
+    category: coupling_parameter
+    description: Expected accuracy for VOC speciation profiles
+    references:
+    - Yarwood et al. (2005) Updates to the CB05 chemical mechanism
+    tags:
+    - species_mapping
+    - accuracy
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-26T00:00:00Z'
+  anthroposphere.emissions.species_mapping.molecular_weight_precision:
+    value: 46.005
+    default: 46.005
+    units: g mol-1
+    dtype: float64
+    bounds:
+    - 1.0
+    - .inf
+    category: model_parameter
+    description: 'Reference molecular weight used to validate conversion routines. A molar mass is positive and no molecular species is lighter than a hydrogen atom (1.008 g mol-1), so the lower bound is 1 g mol-1; lumped and particulate species have no upper limit, so the upper bound is open (inf).'
+    references:
+    - IUPAC 2021
+    tags:
+    - species_mapping
+    - molecular_weight
+    dimension: molar_mass
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-26T00:00:00Z'
+  anthroposphere.emissions.species_mapping.mass_balance_tolerance:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 1.0e-09
+    - 0.0001
+    category: numerical_parameter
+    description: Tolerance for mass balance checks during speciation
+    references:
+    - CMAQ Technical Documentation
+    tags:
+    - species_mapping
+    - conservation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-26T00:00:00Z'
+  anthroposphere.emissions.allocation_parameters.default_flux_grid_size:
+    value:
+    - 10
+    - 10
+    default: null
+    units: dimensionless
+    description: Default target flux grid (x, y) resolution for allocation outputs
+    references:
+    - IPCC inventory downscaling workflows
+    dtype: list
+    category: numerical_parameter
+    dimension: dimensionless
+    tags:
+    - grid_size
+    requires_grad: false
+    bounds: null
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+  anthroposphere.emissions.allocation_parameters.transport_nox_factor:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    description: Empirical correction factor for transport NOx allocation during resolution changes
+    references:
+    - Crippa et al. (2020)
+    dtype: float64
+    category: scaling_factor
+    dimension: dimensionless
+    tags:
+    - transport
+    - scaling_factor
+    requires_grad: false
+    bounds:
+    - 0.0
+    - 1.0
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+  anthroposphere.emissions.allocation_parameters.transport_so2_factor:
+    value: 0.05
+    default: 0.05
+    units: dimensionless
+    description: Empirical correction factor for transport SO2 allocation during resolution changes
+    references:
+    - Crippa et al. (2020)
+    dtype: float64
+    category: scaling_factor
+    dimension: dimensionless
+    tags:
+    - transport
+    - scaling_factor
+    requires_grad: false
+    bounds:
+    - 0.0
+    - 1.0
+    provenance:
+      source: anthropogenic_temporal_profiles
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+  anthroposphere.emissions.spatial_allocation.high_resolution_grid_size:
+    value: 1000.0
+    default: 1000.0
+    units: m
+    bounds:
+    - 100
+    - 10000
+    description: High resolution grid size for urban areas
+    references:
+    - Urban emission inventories
+    dtype: float64
+    category: spatial_parameter
+    dimension: length
+    tags:
+    - high_resolution_grid_size
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  anthroposphere.emissions.spatial_allocation.point_source_decay_factor:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    bounds:
+    - 0.01
+    - 0.5
+    description: Decay factor for point source allocation
+    references:
+    - EPA Point Source Database
+    dtype: float64
+    category: spatial_parameter
+    dimension: dimensionless
+    tags:
+    - point_source_decay_factor
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  anthroposphere.emissions.spatial_allocation.road_network_decay_factor:
+    value: 0.8
+    default: 0.8
+    units: dimensionless
+    bounds:
+    - 0.3
+    - 1.0
+    description: Decay factor for road network-based allocation
+    references:
+    - OpenStreetMap
+    - EPA Mobile Sources
+    dtype: float64
+    category: spatial_parameter
+    dimension: dimensionless
+    tags:
+    - road_network_decay_factor
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  anthroposphere.emissions.spatial_allocation.smoothing.gaussian_sigma:
+    value: 1.5
+    default: 1.5
+    units: dimensionless
+    bounds:
+    - 0.5
+    - 5.0
+    description: Standard deviation for Gaussian smoothing
+    references:
+    - Image processing standards
+    dtype: float64
+    category: spatial_parameter
+    dimension: dimensionless
+    tags:
+    - gaussian_sigma
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  anthroposphere.emissions.spatial_allocation.smoothing.kernel_radius:
+    value: 3.0
+    default: 3.0
+    units: dimensionless
+    bounds:
+    - 1.0
+    - 10.0
+    description: Radius for spatial smoothing kernel
+    references:
+    - Spatial interpolation methods
+    dtype: float64
+    category: spatial_parameter
+    dimension: dimensionless
+    tags:
+    - kernel_radius
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  anthroposphere.emissions.speciation.cb05_enabled:
+    value: true
+    default: true
+    units: dimensionless
+    description: Use CB05 chemical mechanism for VOC speciation
+    references:
+    - Yarwood et al. 2005
+    dtype: bool
+    allowed_values:
+    - true
+    - false
+    bounds: null
+    category: constraint_flag
+    dimension: dimensionless
+    tags:
+    - cb05_enabled
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  anthroposphere.emissions.speciation.voc_split_fractions.power_plant.PAR:
+    value: 0.4
+    default: 0.4
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of power plant VOC emissions allocated to PAR
+    references:
+    - EPA SPECIATE Database v5.1
+    dtype: float64
+    category: stoichiometric_parameter
+    dimension: dimensionless
+    tags:
+    - power_plant
+    - voc_speciation
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-02-14T02:45:00Z'
+  anthroposphere.emissions.speciation.voc_split_fractions.power_plant.OLE:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of power plant VOC emissions allocated to OLE
+    references:
+    - EPA SPECIATE Database v5.1
+    dtype: float64
+    category: stoichiometric_parameter
+    dimension: dimensionless
+    tags:
+    - power_plant
+    - voc_speciation
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-02-14T02:45:00Z'
+  anthroposphere.emissions.speciation.voc_split_fractions.power_plant.TOL:
+    value: 0.2
+    default: 0.2
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of power plant VOC emissions allocated to TOL
+    references:
+    - EPA SPECIATE Database v5.1
+    dtype: float64
+    category: stoichiometric_parameter
+    dimension: dimensionless
+    tags:
+    - power_plant
+    - voc_speciation
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-02-14T02:45:00Z'
+  anthroposphere.emissions.speciation.voc_split_fractions.power_plant.XYL:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of power plant VOC emissions allocated to XYL
+    references:
+    - EPA SPECIATE Database v5.1
+    dtype: float64
+    category: stoichiometric_parameter
+    dimension: dimensionless
+    tags:
+    - power_plant
+    - voc_speciation
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-02-14T02:45:00Z'
+  anthroposphere.emissions.speciation.voc_split_fractions.power_plant.FORM:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of power plant VOC emissions allocated to FORM
+    references:
+    - EPA SPECIATE Database v5.1
+    dtype: float64
+    category: stoichiometric_parameter
+    dimension: dimensionless
+    tags:
+    - power_plant
+    - voc_speciation
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-02-14T02:45:00Z'
+  anthroposphere.emissions.speciation.voc_split_fractions.power_plant.ALD2:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of power plant VOC emissions allocated to ALD2
+    references:
+    - EPA SPECIATE Database v5.1
+    dtype: float64
+    category: stoichiometric_parameter
+    dimension: dimensionless
+    tags:
+    - power_plant
+    - voc_speciation
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-02-14T02:45:00Z'
+  anthroposphere.emissions.speciation.voc_split_fractions.industrial.PAR:
+    value: 0.35
+    default: 0.35
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of industrial VOC emissions allocated to PAR
+    references:
+    - EPA SPECIATE Database v5.1
+    dtype: float64
+    category: stoichiometric_parameter
+    dimension: dimensionless
+    tags:
+    - industrial
+    - voc_speciation
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-02-14T02:45:00Z'
+  anthroposphere.emissions.speciation.voc_split_fractions.industrial.OLE:
+    value: 0.15
+    default: 0.15
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of industrial VOC emissions allocated to OLE
+    references:
+    - EPA SPECIATE Database v5.1
+    dtype: float64
+    category: stoichiometric_parameter
+    dimension: dimensionless
+    tags:
+    - industrial
+    - voc_speciation
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-02-14T02:45:00Z'
+  anthroposphere.emissions.speciation.voc_split_fractions.industrial.TOL:
+    value: 0.25
+    default: 0.25
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of industrial VOC emissions allocated to TOL
+    references:
+    - EPA SPECIATE Database v5.1
+    dtype: float64
+    category: stoichiometric_parameter
+    dimension: dimensionless
+    tags:
+    - industrial
+    - voc_speciation
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-02-14T02:45:00Z'
+  anthroposphere.emissions.speciation.voc_split_fractions.industrial.XYL:
+    value: 0.15
+    default: 0.15
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of industrial VOC emissions allocated to XYL
+    references:
+    - EPA SPECIATE Database v5.1
+    dtype: float64
+    category: stoichiometric_parameter
+    dimension: dimensionless
+    tags:
+    - industrial
+    - voc_speciation
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-02-14T02:45:00Z'
+  anthroposphere.emissions.speciation.voc_split_fractions.industrial.FORM:
+    value: 0.05
+    default: 0.05
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of industrial VOC emissions allocated to FORM
+    references:
+    - EPA SPECIATE Database v5.1
+    dtype: float64
+    category: stoichiometric_parameter
+    dimension: dimensionless
+    tags:
+    - industrial
+    - voc_speciation
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-02-14T02:45:00Z'
+  anthroposphere.emissions.speciation.voc_split_fractions.industrial.ALD2:
+    value: 0.05
+    default: 0.05
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of industrial VOC emissions allocated to ALD2
+    references:
+    - EPA SPECIATE Database v5.1
+    dtype: float64
+    category: stoichiometric_parameter
+    dimension: dimensionless
+    tags:
+    - industrial
+    - voc_speciation
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-02-14T02:45:00Z'
+  anthroposphere.emissions.speciation.voc_split_fractions.transport.PAR:
+    value: 0.3
+    default: 0.3
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of transport VOC emissions allocated to PAR
+    references:
+    - EPA SPECIATE Database v5.1
+    dtype: float64
+    category: stoichiometric_parameter
+    dimension: dimensionless
+    tags:
+    - transport
+    - voc_speciation
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-02-14T02:45:00Z'
+  anthroposphere.emissions.speciation.voc_split_fractions.transport.OLE:
+    value: 0.2
+    default: 0.2
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of transport VOC emissions allocated to OLE
+    references:
+    - EPA SPECIATE Database v5.1
+    dtype: float64
+    category: stoichiometric_parameter
+    dimension: dimensionless
+    tags:
+    - transport
+    - voc_speciation
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-02-14T02:45:00Z'
+  anthroposphere.emissions.speciation.voc_split_fractions.transport.TOL:
+    value: 0.15
+    default: 0.15
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of transport VOC emissions allocated to TOL
+    references:
+    - EPA SPECIATE Database v5.1
+    dtype: float64
+    category: stoichiometric_parameter
+    dimension: dimensionless
+    tags:
+    - transport
+    - voc_speciation
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-02-14T02:45:00Z'
+  anthroposphere.emissions.speciation.voc_split_fractions.transport.XYL:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of transport VOC emissions allocated to XYL
+    references:
+    - EPA SPECIATE Database v5.1
+    dtype: float64
+    category: stoichiometric_parameter
+    dimension: dimensionless
+    tags:
+    - transport
+    - voc_speciation
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-02-14T02:45:00Z'
+  anthroposphere.emissions.speciation.voc_split_fractions.transport.FORM:
+    value: 0.15
+    default: 0.15
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of transport VOC emissions allocated to FORM
+    references:
+    - EPA SPECIATE Database v5.1
+    dtype: float64
+    category: stoichiometric_parameter
+    dimension: dimensionless
+    tags:
+    - transport
+    - voc_speciation
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-02-14T02:45:00Z'
+  anthroposphere.emissions.speciation.voc_split_fractions.transport.ALD2:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of transport VOC emissions allocated to ALD2
+    references:
+    - EPA SPECIATE Database v5.1
+    dtype: float64
+    category: stoichiometric_parameter
+    dimension: dimensionless
+    tags:
+    - transport
+    - voc_speciation
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-02-14T02:45:00Z'
+  anthroposphere.emissions.speciation.voc_split_fractions.residential.PAR:
+    value: 0.45
+    default: 0.45
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of residential VOC emissions allocated to PAR
+    references:
+    - EPA SPECIATE Database v5.1
+    dtype: float64
+    category: stoichiometric_parameter
+    dimension: dimensionless
+    tags:
+    - residential
+    - voc_speciation
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-02-14T02:45:00Z'
+  anthroposphere.emissions.speciation.voc_split_fractions.residential.OLE:
+    value: 0.05
+    default: 0.05
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of residential VOC emissions allocated to OLE
+    references:
+    - EPA SPECIATE Database v5.1
+    dtype: float64
+    category: stoichiometric_parameter
+    dimension: dimensionless
+    tags:
+    - residential
+    - voc_speciation
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-02-14T02:45:00Z'
+  anthroposphere.emissions.speciation.voc_split_fractions.residential.TOL:
+    value: 0.15
+    default: 0.15
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of residential VOC emissions allocated to TOL
+    references:
+    - EPA SPECIATE Database v5.1
+    dtype: float64
+    category: stoichiometric_parameter
+    dimension: dimensionless
+    tags:
+    - residential
+    - voc_speciation
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-02-14T02:45:00Z'
+  anthroposphere.emissions.speciation.voc_split_fractions.residential.XYL:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of residential VOC emissions allocated to XYL
+    references:
+    - EPA SPECIATE Database v5.1
+    dtype: float64
+    category: stoichiometric_parameter
+    dimension: dimensionless
+    tags:
+    - residential
+    - voc_speciation
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-02-14T02:45:00Z'
+  anthroposphere.emissions.speciation.voc_split_fractions.residential.FORM:
+    value: 0.15
+    default: 0.15
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of residential VOC emissions allocated to FORM
+    references:
+    - EPA SPECIATE Database v5.1
+    dtype: float64
+    category: stoichiometric_parameter
+    dimension: dimensionless
+    tags:
+    - residential
+    - voc_speciation
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-02-14T02:45:00Z'
+  anthroposphere.emissions.speciation.voc_split_fractions.residential.ALD2:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of residential VOC emissions allocated to ALD2
+    references:
+    - EPA SPECIATE Database v5.1
+    dtype: float64
+    category: stoichiometric_parameter
+    dimension: dimensionless
+    tags:
+    - residential
+    - voc_speciation
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-02-14T02:45:00Z'
+  anthroposphere.emissions.speciation.voc_split_fractions.agriculture.PAR:
+    value: 0.38
+    default: 0.38
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of agricultural VOC emissions allocated to PAR
+    references:
+    - EPA SPECIATE Database v5.1
+    - IPCC (2019) Refinement to the 2006 Guidelines
+    dtype: float64
+    category: stoichiometric_parameter
+    dimension: dimensionless
+    tags:
+    - agriculture
+    - voc_speciation
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-08T00:00:00Z'
+  anthroposphere.emissions.speciation.voc_split_fractions.agriculture.OLE:
+    value: 0.07
+    default: 0.07
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of agricultural VOC emissions allocated to OLE
+    references:
+    - EPA SPECIATE Database v5.1
+    - IPCC (2019) Refinement to the 2006 Guidelines
+    dtype: float64
+    category: stoichiometric_parameter
+    dimension: dimensionless
+    tags:
+    - agriculture
+    - voc_speciation
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-08T00:00:00Z'
+  anthroposphere.emissions.speciation.voc_split_fractions.agriculture.TOL:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of agricultural VOC emissions allocated to TOL
+    references:
+    - EPA SPECIATE Database v5.1
+    - IPCC (2019) Refinement to the 2006 Guidelines
+    dtype: float64
+    category: stoichiometric_parameter
+    dimension: dimensionless
+    tags:
+    - agriculture
+    - voc_speciation
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-08T00:00:00Z'
+  anthroposphere.emissions.speciation.voc_split_fractions.agriculture.XYL:
+    value: 0.05
+    default: 0.05
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of agricultural VOC emissions allocated to XYL
+    references:
+    - EPA SPECIATE Database v5.1
+    - IPCC (2019) Refinement to the 2006 Guidelines
+    dtype: float64
+    category: stoichiometric_parameter
+    dimension: dimensionless
+    tags:
+    - agriculture
+    - voc_speciation
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-08T00:00:00Z'
+  anthroposphere.emissions.speciation.voc_split_fractions.agriculture.FORM:
+    value: 0.25
+    default: 0.25
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of agricultural VOC emissions allocated to FORM
+    references:
+    - EPA SPECIATE Database v5.1
+    - IPCC (2019) Refinement to the 2006 Guidelines
+    dtype: float64
+    category: stoichiometric_parameter
+    dimension: dimensionless
+    tags:
+    - agriculture
+    - voc_speciation
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-08T00:00:00Z'
+  anthroposphere.emissions.speciation.voc_split_fractions.agriculture.ALD2:
+    value: 0.15
+    default: 0.15
+    units: dimensionless
+    bounds:
+    - 0.0
+    - 1.0
+    description: Fraction of agricultural VOC emissions allocated to ALD2
+    references:
+    - EPA SPECIATE Database v5.1
+    - IPCC (2019) Refinement to the 2006 Guidelines
+    dtype: float64
+    category: stoichiometric_parameter
+    dimension: dimensionless
+    tags:
+    - agriculture
+    - voc_speciation
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-08T00:00:00Z'
+  anthroposphere.emissions.stack_heights.residential:
+    value: 10.0
+    default: 10.0
+    units: m
+    bounds:
+    - 2
+    - 20
+    description: Typical residential emission height
+    references:
+    - EPA AP-42 Compilation
+    dtype: float64
+    category: spatial_parameter
+    dimension: length
+    tags:
+    - residential
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  anthroposphere.emissions.uncertainty.factor:
+    value: 1.5
+    default: 1.5
+    units: dimensionless
+    bounds:
+    - 1.0
+    - 3.0
+    description: Emission uncertainty factor
+    references:
+    - IPCC 2019 Uncertainty Guidelines
+    dtype: float64
+    category: validation_parameter
+    dimension: dimensionless
+    tags:
+    - factor
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  anthroposphere.emissions.vertical_distribution.mixing_height:
+    value: 1000.0
+    default: 1000.0
+    units: m
+    dtype: float32
+    bounds:
+    - 100.0
+    - 3000.0
+    category: meteorological_parameter
+    description: Default planetary boundary layer mixing height
+    references:
+    - Stull (1988)
+    tags:
+    - mixing_height
+    - vertical_distribution
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.vertical_distribution.layer_thickness:
+    value: 50.0
+    default: 50.0
+    units: m
+    dtype: float32
+    bounds:
+    - 10.0
+    - 200.0
+    category: meteorological_parameter
+    description: Default vertical layer thickness for emissions injection
+    references:
+    - WRF/CMAQ Defaults
+    tags:
+    - layer_thickness
+    - vertical_distribution
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: anthroposphere_emissions_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-24T00:00:00Z'
+  anthroposphere.emissions.sector_allocation.proxy_floor:
+    value: 1.0e-6
+    default: 1.0e-6
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 1.0e-12
+    - 0.01
+    category: numerical_parameter
+    description: Positive numerical support applied after proxy normalization to keep the sector weight denominator defined.
+    references:
+    - CMAQ User Guide (2019), SMOKE spatial surrogate quality assurance
+    tags:
+    - sector_allocation
+    - proxy_regularization
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC sector allocation numerical policy
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-07-12T00:00:00Z'
+  anthroposphere.emissions.sector_allocation.cropland_class_index:
+    value: 2
+    default: 2
+    units: dimensionless
+    dtype: int64
+    bounds:
+    - 0
+    - 20
+    category: numerical_parameter
+    description: Zero-based land-use class index used as the agriculture allocation proxy.
+    references:
+    - RELIC land-use class ordering contract
+    tags:
+    - sector_allocation
+    - land_use
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC land-use mapping convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-07-12T00:00:00Z'
+

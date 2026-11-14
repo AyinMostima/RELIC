@@ -1,0 +1,189 @@
+certificate_version: '1.0'
+process_id: relic.scientific.transport.diffusion.FickianDiffusion
+module_name: fickian_diffusion
+canonical_role: transport
+iphs_level: 3
+iphs_level_evidence:
+  classification: IPHS-structured transport process certificate
+  compatible_basis: Process declares composition-safe IPHS or DEC structure
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: DEC/IPHS transport operator with conservative flux routing
+  structural_contribution: Cochain, Hodge, flux, and port structures are declared for assembly audit
+  assembly_participation: Certificate participates in Phase 8 inventory and GraphIR structural audit
+  level_3_limit: Typed form, Hodge, port, or related structure is declared, but no runtime-linked IPHSStructureSpec contribution and executable level 4 or 5 certificate binding is present.
+theory_document: docs\source\theory\transport_fickian_diffusion.md
+theory_document_status: updated
+legacy_formula: dc/dt = div(K * grad(c)) + S
+literature_formula: Fickian diffusion in conservative form with flux J = -D grad(c) and storage tendency dc/dt = -div(J) + S.
+iphs_formula: c_dot = -D_h q_h + G_h u_h; q_h = -star_K d_h c_h; star_K = star_K.T >= 0.
+legacy_expression: dc/dt = div(K * grad(c)) + S
+iphs_expression: c_dot = -D_h q_h + G_h u_h; q_h = -star_K X_h; X_h = d_h c_h; H_h = 0.5 * c_h.T c_h; sigma = X_h.T star_K X_h >= 0; dH/dt = -sigma + e_h.T G_h u_h - P_boundary.
+input_variables:
+- tracer_concentration
+- source_term
+- tracer_concentration_boundary_state
+output_variables:
+- tracer_concentration
+- tracer_concentration_diffusive_boundary_flux
+- diagnostics.diffusion_stability
+- diagnostics.conservation_error
+parameter_keys:
+- transport.diffusion.diffusivity
+- transport.diffusion.grid_spacing
+- transport.diffusion.temperature_exponent
+- transport.numerical.conservation_tolerance
+- transport.numerical.enforce_non_negative
+- transport.numerical.track_conservation
+- transport.numerical.cfl_diffusion_max
+- transport.numerical.default_boundary_type
+- transport.numerical.implicit_midpoint_max_iter
+- transport.numerical.implicit_midpoint_tolerance
+composition_ports:
+- diffusive_boundary_flux
+references:
+- Crank, J. (1975). The Mathematics of Diffusion. Oxford University Press.
+- Bird, R.B., Stewart, W.E., and Lightfoot, E.N. (2007). Transport Phenomena. Wiley.
+- LeVeque, R.J. (2007). Finite Difference Methods for Ordinary and Partial Differential Equations. SIAM.
+- Hirani, A.N. (2003). Discrete Exterior Calculus.
+baseline_tests:
+- test\transport\transport_phase8_iphs_contract.test.py
+- test\transport\transport_output_contract.spec.py
+- test\transport\transport_yaml_metadata_consistency.spec.py
+- test\transport\test_transport_l1.py
+- test\transport\test_diffusion_l1.py
+- test\unit\transport\test_fickian_diffusion_comprehensive.py
+- test\unit\computation\test_diffusion_conservative.py
+- test\unit\test_gradient_flow.py
+- test\scientific\transport_validation_benchmark_test.py
+validation_tests:
+- test\transport\transport_phase8_iphs_contract.test.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  tracer_concentration: state cochain c_h
+  source_term: optional volumetric source contribution integrated exactly once
+  tracer_concentration_boundary_state: explicit external Dirichlet boundary state
+  tracer_concentration_diffusive_boundary_flux: conditional outward-positive oriented boundary-face flux cochain
+  diagnostics.diffusion_stability: diffusion CFL audit
+  diagnostics.conservation_error: mass conservation residual
+parameter_map:
+  transport.diffusion.diffusivity: D in star_K [m2 s-1]
+  transport.diffusion.grid_spacing: metric spacing dx [m]
+  transport.diffusion.temperature_exponent: temperature scaling exponent [dimensionless]
+  transport.numerical.conservation_tolerance: mass conservation tolerance [dimensionless]
+  transport.numerical.enforce_non_negative: positivity-domain enforcement flag [bool]
+  transport.numerical.track_conservation: conservation diagnostic flag [bool]
+  transport.numerical.cfl_diffusion_max: maximum diffusion stability number [dimensionless]
+  transport.numerical.default_boundary_type: default finite-volume boundary closure [categorical]
+  transport.numerical.implicit_midpoint_max_iter: implicit midpoint iteration limit [count]
+  transport.numerical.implicit_midpoint_tolerance: implicit midpoint convergence tolerance [dimensionless]
+operator_map:
+  D_h: canonical finite-volume divergence in OperatorFactory transport.diffusion
+  d_h: canonical cell-to-face finite-volume gradient
+  star_K: runtime harmonic finite-volume face coefficients; the HodgeStarSpec is a local material diagonal and is not the global face/volume generator
+  boundary_operator: explicit periodic, zero, neumann, open, dirichlet, or extrapolate finite-volume closure
+unit_map:
+  tracer_concentration: kg m-3
+  source_term: kg m-3 s-1
+  tracer_concentration_boundary_state: kg m-3
+  tracer_concentration_diffusive_boundary_flux: kg m-2 s-1
+  diagnostics.diffusion_stability: dimensionless
+  diagnostics.conservation_error: dimensionless
+input_output_map:
+  tracer_concentration: integrated state increment is emitted as UpdateItem ACCUMULATE with per_timestep true
+  source_term: optional source rate is integrated exactly once by the canonical finite-volume operator
+  tracer_concentration_boundary_state: required only for dirichlet and rejected for closures that do not consume it
+  tracer_concentration_diffusive_boundary_flux: conditional UpdateItem REPLACE with outward-positive face orientation
+  diagnostics.diffusion_stability: always reports max dt sum_k K_k over dx_k squared
+  diagnostics.conservation_error: emitted only when conservation tracking is enabled
+interface_map:
+  forward_signature: forward(self, state, time, dt, **kwargs)
+  bridge_class: TransportMechanismFunctor
+  abstraction_contract: TransportMechanism
+  state_write_mode: UpdateItem ACCUMULATE with per_timestep true
+  legacy_inputs:
+  - tracer_concentration
+  - source_term
+  - tracer_concentration_boundary_state
+  iphs_inputs:
+  - tracer_concentration
+  - source_term
+  - tracer_concentration_boundary_state
+  legacy_outputs:
+  - tracer_concentration
+  - tracer_concentration_diffusive_boundary_flux
+  - diagnostics.diffusion_stability
+  - diagnostics.conservation_error
+  iphs_outputs:
+  - tracer_concentration
+  - tracer_concentration_diffusive_boundary_flux
+  - diagnostics.diffusion_stability
+  - diagnostics.conservation_error
+  optional_inputs:
+  - source_term
+  - tracer_concentration_boundary_state
+  optional_outputs:
+  - tracer_concentration_diffusive_boundary_flux
+  - diagnostics.conservation_error
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward -> OperatorFactory transport.diffusion -> apply_diffusion
+  preserved_numerics: The unified conservative finite-volume operator realizes div(K grad(c)) plus one explicit source and routed boundary flux.
+  no_legacy_mode: No runtime flag exposes a separate pre-Phase 8 diffusion branch.
+state_advancement_map:
+  potential_basis: tracer concentration cochain c_h
+  effort_variable: storage effort e_h = c_h and transport force X_h = d_h c_h
+  state_advancer: c_dot = -D_h q_h + G_h u_h with q_h = -star_K d_h c_h
+  runtime_usage: forward calls the single OperatorFactory diffusion path and emits one integrated UpdateItem ACCUMULATE; energy_terms and entropy_terms remain structural level 3 audit hooks only.
+parameter_management_map:
+  transport.diffusion.diffusivity:
+    source: ParameterManager YAML
+  transport.diffusion.grid_spacing:
+    source: ParameterManager YAML
+  transport.diffusion.temperature_exponent:
+    source: ParameterManager YAML
+  transport.numerical.conservation_tolerance:
+    source: ParameterManager YAML
+  transport.numerical.enforce_non_negative:
+    source: ParameterManager YAML
+  transport.numerical.track_conservation:
+    source: ParameterManager YAML
+  transport.numerical.cfl_diffusion_max:
+    source: ParameterManager YAML
+  transport.numerical.default_boundary_type:
+    source: ParameterManager YAML
+  transport.numerical.implicit_midpoint_max_iter:
+    source: ParameterManager YAML
+  transport.numerical.implicit_midpoint_tolerance:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares transport role and state interface
+  structural_protocol: declared_forms, required_parameters, build_hodge_terms, dissipative_structure, ports
+  state_contract: existing TransportMechanismFunctor.wrap_update and StateManager path
+  ports:
+  - diffusive_boundary_flux
+dependency_interconnection_map:
+  dependencies: get_dependencies returns the existing dependency list
+  direct_functor_calls: none; concentration and boundary state are ports and only the canonical OperatorFactory is invoked
+  chain_maps:
+  - tracer_concentration state cochain to the canonical tracer_concentration increment
+  - explicit boundary state to outward-positive diffusive_boundary_flux port
+overflow_routing_map:
+  non_negative_projection: disabled; a negative candidate state fails fast without clipping
+  boundary_exchange: dirichlet and extrapolate exchange is routed through tracer_concentration_diffusive_boundary_flux
+  conservation_residual: diagnostics.conservation_error receives mass residual when tracking is enabled
+  discarded_residuals: negative candidates fail without projection, Dirichlet or extrapolate exchange is retained in tracer_concentration_diffusive_boundary_flux, and enabled tracking emits diagnostics.conservation_error
+conservation_map:
+  conserved_quantity: mass
+  balance_expression: Delta M - dt integral(S dV) + dt sum_f(j_out,f A_f) = 0
+  local_check: scale-stable float64 ledger residual normalized by old, new, and routed mass scales
+  functor_law: FunctorMetadata.conservation_laws includes mass
+entropy_audit:
+  dissipative_operator: star_K and M_h are symmetric positive definite for positive diffusivity
+  storage_functional: H_h(c_h) = 0.5 * c_h.T c_h
+  effort_definition: e_h = c_h
+  sigma_expression: sigma = X_h.T star_K X_h >= 0
+  dH_balance: semi-discrete norm relation dH/dt = -sigma + sum_i(c_i*S_i) - P_boundary; outward P_boundary = sum_faces(c_face*j_out/dx_axis), including physical half-cell boundary distances
+  units_and_scope: H is an unweighted concentration norm [kg2 m-6]; sigma is norm dissipation [kg2 m-6 s-1], not thermodynamic entropy production
+  validation_hook: build_hodge_contract(strict=True), dissipative_structure eigenvalue checks, energy_terms, and entropy_terms; no strict runtime Hamiltonian or GENERIC evidence is claimed
+equivalence_type: port_equivalent

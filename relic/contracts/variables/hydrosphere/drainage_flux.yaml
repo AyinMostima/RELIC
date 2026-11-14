@@ -1,0 +1,58 @@
+variable: drainage_flux
+title: "Soil Column Bottom Drainage Flux"
+description: "Water mass flux leaving the bottom of the soil column [kg m-2 s-1] per ground area of the grid cell, a non-negative downward magnitude written by the selected soil water model (bucket_soil_moisture, richards_soil_moisture or vertical_percolation_transport). Readers: subsurface_runoff and groundwater_dynamics (the drained water), nitrogen_leaching (the water flux q = F / rho_w of the nitrate export J = q C f) and pedosphere_interface_mapper (the leaching_flux port). The former reader-side name drainage_input was this quantity and is merged into it."
+kind: flux
+dimension:
+  udunits: "kg m-2 s-1"
+  cf_standard_name: null
+support:
+  spatial_kind: grid_cell
+  area_basis: ground_area
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+numerics:
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "bucket_soil_moisture"
+      module: "relic.scientific.hydrosphere.soil_moisture.bucket"
+      provides: ["drainage_flux"]
+      unit: "kg m-2 s-1"
+    - name: "richards_soil_moisture"
+      module: "relic.scientific.hydrosphere.soil_moisture.richards"
+      provides: ["drainage_flux"]
+      unit: "kg m-2 s-1"
+    - name: "vertical_percolation_transport"
+      module: "relic.scientific.hydrosphere.transport.vertical_percolation"
+      provides: ["drainage_flux"]
+      unit: "kg m-2 s-1"
+flux_contract:
+  allowed_in:
+    - "bucket_soil_moisture"
+    - "richards_soil_moisture"
+    - "vertical_percolation_transport"
+  allowed_out:
+    - "groundwater_dynamics"
+    - "subsurface_runoff"
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/hydrosphere/transport/vertical_percolation.py"
+  runtime_role: "mutually_exclusive_soil_column_bottom_drainage"
+  runtime_writers:
+    - "bucket_soil_moisture"
+    - "richards_soil_moisture"
+    - "vertical_percolation_transport"

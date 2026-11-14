@@ -1,0 +1,337 @@
+certificate_version: '1.0'
+process_id: relic.scientific.pedosphere.decomposition.microbial_enzyme.MicrobialEnzymeDecomposition
+module_name: MicrobialEnzymeDecomposition
+canonical_role: reaction
+iphs_level: 2
+iphs_level_evidence:
+  classification: IPHS-wrapped reaction process certificate
+  compatible_basis: Reaction process is expressed through conserved or open stoichiometric ledgers
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: N_h r_h reaction-network state advance
+  level_2_limit: The canonical runtime wrapper is declared, but no executable typed-cochain or IPHS structural contribution is bound; strict level 4 or 5 evidence is not claimed.
+theory_document: docs\source\theory\decomposition.md
+theory_document_status: updated
+legacy_formula: V = (MIC * Vmax(T,theta) * [S]) / (Km(T) + MIC)
+literature_formula: V = (MIC * Vmax(T,theta) * [S]) / (Km(T) + MIC)
+iphs_formula: x_dot = N_h r_h with ParameterManager-backed process rates r_h and declared stoichiometric/output map N_h
+legacy_expression: V = (MIC * Vmax(T,theta) * [S]) / (Km(T) + MIC)
+iphs_expression: x_dot = N_h r_h with ParameterManager-backed process rates r_h and declared stoichiometric/output map N_h
+input_variables:
+- metabolic_litter_c
+- structural_litter_c
+- microbial_biomass_c
+- soil_temperature
+- soil_moisture
+- available_som_c
+output_variables:
+- metabolic_litter_c
+- structural_litter_c
+- available_som_c
+- microbial_biomass_c
+- heterotrophic_respiration
+- diagnostics.microbial_enzyme.microbial_growth_rate
+- diagnostics.microbial_enzyme.microbial_death_rate
+- diagnostics.microbial_enzyme.microbial_respiration
+- diagnostics.microbial_enzyme.growth_respiration
+- diagnostics.microbial_enzyme.maintenance_respiration
+- diagnostics.microbial_enzyme.metabolic_consumption
+- diagnostics.microbial_enzyme.structural_consumption
+- diagnostics.microbial_enzyme.som_consumption
+- diagnostics.microbial_enzyme.metabolic_litter.vmax
+- diagnostics.microbial_enzyme.metabolic_litter.km
+- diagnostics.microbial_enzyme.metabolic_litter.activity
+- diagnostics.microbial_enzyme.structural_litter.vmax
+- diagnostics.microbial_enzyme.structural_litter.km
+- diagnostics.microbial_enzyme.structural_litter.activity
+- diagnostics.microbial_enzyme.som.vmax
+- diagnostics.microbial_enzyme.som.km
+- diagnostics.microbial_enzyme.som.activity
+- diagnostics.microbial_enzyme.moisture_response
+- diagnostics.microbial_enzyme.temperature_celsius
+- diagnostics.microbial_enzyme.microbial_biomass_content
+- diagnostics.microbial_enzyme.total_substrate_consumed
+- diagnostics.microbial_enzyme.carbon_use_efficiency_realized
+- diagnostics.microbial_enzyme.carbon_balance_residual
+- diagnostics.microbial_enzyme.step_seconds
+parameter_keys:
+- pedosphere.decomposition.microbial_enzyme.ea_vmax
+- pedosphere.decomposition.microbial_enzyme.ea_km
+- pedosphere.decomposition.microbial_enzyme.moisture_optimum
+- pedosphere.decomposition.microbial_enzyme.moisture_power
+- pedosphere.decomposition.microbial_enzyme.vmax_clamp_min_factor
+- pedosphere.decomposition.microbial_enzyme.vmax_clamp_max_factor
+- pedosphere.decomposition.microbial_enzyme.km_clamp_min_factor
+- pedosphere.decomposition.microbial_enzyme.km_clamp_max_factor
+- pedosphere.decomposition.microbial_enzyme.kinetics.metabolic.vmax_ref
+- pedosphere.decomposition.microbial_enzyme.kinetics.metabolic.km_ref
+- pedosphere.decomposition.microbial_enzyme.kinetics.structural.vmax_ref
+- pedosphere.decomposition.microbial_enzyme.kinetics.structural.km_ref
+- pedosphere.decomposition.microbial_enzyme.kinetics.som.vmax_ref
+- pedosphere.decomposition.microbial_enzyme.kinetics.som.km_ref
+- pedosphere.decomposition.microbial_enzyme.microbial.carbon_use_efficiency
+- pedosphere.decomposition.microbial_enzyme.microbial.turnover_rate
+- pedosphere.decomposition.microbial_enzyme.microbial.max_biomass
+- pedosphere.decomposition.microbial_enzyme.microbial.min_biomass
+- pedosphere.decomposition.microbial_enzyme.microbial.maintenance_rate
+- pedosphere.decomposition.temp_factor
+- pedosphere.numerical.epsilon_concentration
+- pedosphere.numerical.moisture_response_clamp_min
+- pedosphere.numerical.clamp_max
+- pedosphere.numerical.temp_response_clamp_min
+- pedosphere.numerical.temp_response_clamp_max
+composition_ports:
+- heterotrophic_respiration
+references:
+- Allison, S.D. et al. (2010). Microbial abundance and composition influence
+- Sulman, B.N. et al. (2014). Microbe-driven turnover in elevated CO2
+baseline_tests:
+- test\pedosphere\decomposition\test_microbial_enzyme.py
+- test\audit\phase8_scientific_inventory.test.py
+validation_tests:
+- test\core\simulator_registration_and_step_guards.test.py
+- test\audit\state_single_owner_budget_closure.test.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  metabolic_litter_c: metabolic_litter_c mapped to canonical Phase 8 cochain basis
+  structural_litter_c: structural_litter_c mapped to canonical Phase 8 cochain basis
+  microbial_biomass_c: microbial_biomass_c mapped to canonical Phase 8 cochain basis
+  soil_temperature: soil_temperature mapped to canonical Phase 8 cochain basis
+  soil_moisture: soil_moisture mapped to canonical Phase 8 cochain basis
+  available_som_c: available_som_c mapped to canonical Phase 8 cochain basis
+parameter_map:
+  pedosphere.decomposition.microbial_enzyme.ea_vmax: Vmax activation energy from ParameterManager
+  pedosphere.decomposition.microbial_enzyme.ea_km: Km activation energy from ParameterManager
+  pedosphere.decomposition.microbial_enzyme.moisture_optimum: moisture optimum from ParameterManager
+  pedosphere.decomposition.microbial_enzyme.moisture_power: moisture response exponent from ParameterManager
+  pedosphere.decomposition.microbial_enzyme.vmax_clamp_min_factor: Vmax lower response bound from ParameterManager
+  pedosphere.decomposition.microbial_enzyme.vmax_clamp_max_factor: Vmax upper response bound from ParameterManager
+  pedosphere.decomposition.microbial_enzyme.km_clamp_min_factor: Km lower response bound from ParameterManager
+  pedosphere.decomposition.microbial_enzyme.km_clamp_max_factor: Km upper response bound from ParameterManager
+  pedosphere.decomposition.microbial_enzyme.kinetics.metabolic.vmax_ref: metabolic litter reference Vmax from ParameterManager
+  pedosphere.decomposition.microbial_enzyme.kinetics.metabolic.km_ref: metabolic litter reference Km from ParameterManager
+  pedosphere.decomposition.microbial_enzyme.kinetics.structural.vmax_ref: structural litter reference Vmax from ParameterManager
+  pedosphere.decomposition.microbial_enzyme.kinetics.structural.km_ref: structural litter reference Km from ParameterManager
+  pedosphere.decomposition.microbial_enzyme.kinetics.som.vmax_ref: available SOM reference Vmax from ParameterManager
+  pedosphere.decomposition.microbial_enzyme.kinetics.som.km_ref: available SOM reference Km from ParameterManager
+  pedosphere.decomposition.microbial_enzyme.microbial.carbon_use_efficiency: carbon use efficiency from ParameterManager
+  pedosphere.decomposition.microbial_enzyme.microbial.turnover_rate: microbial turnover rate from ParameterManager
+  pedosphere.decomposition.microbial_enzyme.microbial.max_biomass: maximum supported microbial biomass from ParameterManager
+  pedosphere.decomposition.microbial_enzyme.microbial.min_biomass: minimum supported microbial biomass from ParameterManager
+  pedosphere.decomposition.microbial_enzyme.microbial.maintenance_rate: microbial maintenance rate from ParameterManager
+  pedosphere.decomposition.temp_factor: maintenance Q10 base from ParameterManager
+  pedosphere.numerical.epsilon_concentration: denominator tolerance from ParameterManager
+  pedosphere.numerical.moisture_response_clamp_min: minimum moisture response from ParameterManager
+  pedosphere.numerical.clamp_max: maximum moisture response from ParameterManager
+  pedosphere.numerical.temp_response_clamp_min: minimum maintenance temperature response from ParameterManager
+  pedosphere.numerical.temp_response_clamp_max: maximum maintenance temperature response from ParameterManager
+operator_map:
+  N_h: explicit five-row four-column carbon incidence map for three uptake channels and microbial turnover
+  r_h: ParameterManager-backed metabolic, structural, available-SOM, and microbial-turnover rate vector
+  C_h: carbon ledger [1,1,1,1,1] validates C_h N_h = 0 at runtime
+unit_map:
+  metabolic_litter_c: g C m-2
+  structural_litter_c: g C m-2
+  available_som_c: g C m-2
+  microbial_biomass_c: g C m-2
+  heterotrophic_respiration: g C m-2 s-1
+  diagnostics.microbial_enzyme.microbial_growth_rate: g C m-2 s-1
+  diagnostics.microbial_enzyme.microbial_death_rate: g C m-2 s-1
+  diagnostics.microbial_enzyme.microbial_respiration: g C m-2 s-1
+  diagnostics.microbial_enzyme.growth_respiration: g C m-2 s-1
+  diagnostics.microbial_enzyme.maintenance_respiration: g C m-2 s-1
+  diagnostics.microbial_enzyme.metabolic_consumption: g C m-2 s-1
+  diagnostics.microbial_enzyme.structural_consumption: g C m-2 s-1
+  diagnostics.microbial_enzyme.som_consumption: g C m-2 s-1
+  diagnostics.microbial_enzyme.metabolic_litter.vmax: s-1
+  diagnostics.microbial_enzyme.metabolic_litter.km: g C m-2
+  diagnostics.microbial_enzyme.metabolic_litter.activity: s-1
+  diagnostics.microbial_enzyme.structural_litter.vmax: s-1
+  diagnostics.microbial_enzyme.structural_litter.km: g C m-2
+  diagnostics.microbial_enzyme.structural_litter.activity: s-1
+  diagnostics.microbial_enzyme.som.vmax: s-1
+  diagnostics.microbial_enzyme.som.km: g C m-2
+  diagnostics.microbial_enzyme.som.activity: s-1
+  diagnostics.microbial_enzyme.moisture_response: dimensionless
+  diagnostics.microbial_enzyme.temperature_celsius: degC
+  diagnostics.microbial_enzyme.microbial_biomass_content: g C m-2
+  diagnostics.microbial_enzyme.total_substrate_consumed: g C m-2 s-1
+  diagnostics.microbial_enzyme.carbon_use_efficiency_realized: dimensionless
+  diagnostics.microbial_enzyme.carbon_balance_residual: g C m-2
+  diagnostics.microbial_enzyme.step_seconds: s
+input_output_map:
+  metabolic_litter_c: required stock input and per-step ACCUMULATE output
+  structural_litter_c: required stock input and per-step ACCUMULATE output
+  available_som_c: required stock input and per-step ACCUMULATE output
+  microbial_biomass_c: required stock input and per-step ACCUMULATE output
+  soil_temperature: required finite enzyme-temperature driver
+  soil_moisture: required finite volumetric moisture driver in [0,1]
+  heterotrophic_respiration: canonical atmosphere-facing REPLACE carbon flux
+  diagnostics.microbial_enzyme.microbial_growth_rate: microbial assimilation observation
+  diagnostics.microbial_enzyme.microbial_death_rate: microbial turnover observation
+  diagnostics.microbial_enzyme.microbial_respiration: observation only; not a state or flux writer
+  diagnostics.microbial_enzyme.growth_respiration: substrate carbon not assimilated by CUE
+  diagnostics.microbial_enzyme.maintenance_respiration: turnover carbon routed to respiration
+  diagnostics.microbial_enzyme.metabolic_consumption: metabolic substrate uptake rate
+  diagnostics.microbial_enzyme.structural_consumption: structural substrate uptake rate
+  diagnostics.microbial_enzyme.som_consumption: available SOM uptake rate
+  diagnostics.microbial_enzyme.metabolic_litter.vmax: metabolic effective Vmax observation
+  diagnostics.microbial_enzyme.metabolic_litter.km: metabolic effective Km observation
+  diagnostics.microbial_enzyme.metabolic_litter.activity: metabolic uptake per substrate stock
+  diagnostics.microbial_enzyme.structural_litter.vmax: structural effective Vmax observation
+  diagnostics.microbial_enzyme.structural_litter.km: structural effective Km observation
+  diagnostics.microbial_enzyme.structural_litter.activity: structural uptake per substrate stock
+  diagnostics.microbial_enzyme.som.vmax: available SOM effective Vmax observation
+  diagnostics.microbial_enzyme.som.km: available SOM effective Km observation
+  diagnostics.microbial_enzyme.som.activity: available SOM uptake per substrate stock
+  diagnostics.microbial_enzyme.moisture_response: moisture response observation
+  diagnostics.microbial_enzyme.temperature_celsius: temperature observation in degC
+  diagnostics.microbial_enzyme.microbial_biomass_content: post-step microbial biomass observation
+  diagnostics.microbial_enzyme.total_substrate_consumed: total substrate uptake rate
+  diagnostics.microbial_enzyme.carbon_use_efficiency_realized: realized assimilation fraction
+  diagnostics.microbial_enzyme.carbon_balance_residual: closed per-step carbon-ledger residual
+  diagnostics.microbial_enzyme.step_seconds: declared step length of the returned per-step proposal, read by the public ledger
+interface_map:
+  forward_signature: forward(self, state, time, dt)
+  bridge_class: BiologicalProcessFunctor
+  abstraction_contract: BiologicalProcess
+  state_write_mode: explicit ACCUMULATE per-step pool increments and REPLACE flux or diagnostic outputs
+  legacy_inputs:
+  - metabolic_litter_c
+  - structural_litter_c
+  - microbial_biomass_c
+  - soil_temperature
+  - soil_moisture
+  - available_som_c
+  iphs_inputs:
+  - metabolic_litter_c
+  - structural_litter_c
+  - microbial_biomass_c
+  - soil_temperature
+  - soil_moisture
+  - available_som_c
+  legacy_outputs:
+  - metabolic_litter_c
+  - structural_litter_c
+  - available_som_c
+  - microbial_biomass_c
+  - heterotrophic_respiration
+  - diagnostics.microbial_enzyme.microbial_growth_rate
+  - diagnostics.microbial_enzyme.microbial_death_rate
+  - diagnostics.microbial_enzyme.microbial_respiration
+  - diagnostics.microbial_enzyme.growth_respiration
+  - diagnostics.microbial_enzyme.maintenance_respiration
+  - diagnostics.microbial_enzyme.metabolic_consumption
+  - diagnostics.microbial_enzyme.structural_consumption
+  - diagnostics.microbial_enzyme.som_consumption
+  - diagnostics.microbial_enzyme.metabolic_litter.vmax
+  - diagnostics.microbial_enzyme.metabolic_litter.km
+  - diagnostics.microbial_enzyme.metabolic_litter.activity
+  - diagnostics.microbial_enzyme.structural_litter.vmax
+  - diagnostics.microbial_enzyme.structural_litter.km
+  - diagnostics.microbial_enzyme.structural_litter.activity
+  - diagnostics.microbial_enzyme.som.vmax
+  - diagnostics.microbial_enzyme.som.km
+  - diagnostics.microbial_enzyme.som.activity
+  - diagnostics.microbial_enzyme.moisture_response
+  - diagnostics.microbial_enzyme.temperature_celsius
+  - diagnostics.microbial_enzyme.microbial_biomass_content
+  - diagnostics.microbial_enzyme.total_substrate_consumed
+  - diagnostics.microbial_enzyme.carbon_use_efficiency_realized
+  - diagnostics.microbial_enzyme.carbon_balance_residual
+  - diagnostics.microbial_enzyme.step_seconds
+  iphs_outputs:
+  - metabolic_litter_c
+  - structural_litter_c
+  - available_som_c
+  - microbial_biomass_c
+  - heterotrophic_respiration
+  - diagnostics.microbial_enzyme.microbial_growth_rate
+  - diagnostics.microbial_enzyme.microbial_death_rate
+  - diagnostics.microbial_enzyme.microbial_respiration
+  - diagnostics.microbial_enzyme.growth_respiration
+  - diagnostics.microbial_enzyme.maintenance_respiration
+  - diagnostics.microbial_enzyme.metabolic_consumption
+  - diagnostics.microbial_enzyme.structural_consumption
+  - diagnostics.microbial_enzyme.som_consumption
+  - diagnostics.microbial_enzyme.metabolic_litter.vmax
+  - diagnostics.microbial_enzyme.metabolic_litter.km
+  - diagnostics.microbial_enzyme.metabolic_litter.activity
+  - diagnostics.microbial_enzyme.structural_litter.vmax
+  - diagnostics.microbial_enzyme.structural_litter.km
+  - diagnostics.microbial_enzyme.structural_litter.activity
+  - diagnostics.microbial_enzyme.som.vmax
+  - diagnostics.microbial_enzyme.som.km
+  - diagnostics.microbial_enzyme.som.activity
+  - diagnostics.microbial_enzyme.moisture_response
+  - diagnostics.microbial_enzyme.temperature_celsius
+  - diagnostics.microbial_enzyme.microbial_biomass_content
+  - diagnostics.microbial_enzyme.total_substrate_consumed
+  - diagnostics.microbial_enzyme.carbon_use_efficiency_realized
+  - diagnostics.microbial_enzyme.carbon_balance_residual
+  - diagnostics.microbial_enzyme.step_seconds
+  historical_aliases_removed: fast/slow/passive SOM basis fallback, ParameterManager state defaults, unnamespaced diagnostics, dynamic enzyme output names, identity reaction map, biomass clipping, and mutable forward statistics
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: Existing ParameterManager-backed calculations define canonical IPHS operator coefficients, rates, ports, or observations.
+  no_legacy_mode: No selectable legacy runtime branch is exposed for Phase 8 completion.
+state_advancement_map:
+  potential_basis: three substrate stocks, microbial biomass, and the atmosphere-facing respiration port
+  effort_variable: empirical temperature, moisture, and substrate controls; no Hamiltonian effort is claimed
+  state_advancer: x_dot = N_h r_h with the explicit five-row four-column carbon incidence map
+  runtime_usage: MicrobialEnzymeDecomposition.forward evaluates three reverse Michaelis-Menten uptake rates and one microbial-turnover rate exactly once through advance_reaction_network.
+  explicit_stoichiometric_usage: C_h=[1,1,1,1,1] validates C_h N_h=0 before the StateManager-ready increments and respiration flux are emitted.
+parameter_management_map:
+  pedosphere.decomposition.microbial_enzyme.ea_vmax: ParameterManager YAML
+  pedosphere.decomposition.microbial_enzyme.ea_km: ParameterManager YAML
+  pedosphere.decomposition.microbial_enzyme.moisture_optimum: ParameterManager YAML
+  pedosphere.decomposition.microbial_enzyme.moisture_power: ParameterManager YAML
+  pedosphere.decomposition.microbial_enzyme.vmax_clamp_min_factor: ParameterManager YAML
+  pedosphere.decomposition.microbial_enzyme.vmax_clamp_max_factor: ParameterManager YAML
+  pedosphere.decomposition.microbial_enzyme.km_clamp_min_factor: ParameterManager YAML
+  pedosphere.decomposition.microbial_enzyme.km_clamp_max_factor: ParameterManager YAML
+  pedosphere.decomposition.microbial_enzyme.kinetics.metabolic.vmax_ref: ParameterManager YAML
+  pedosphere.decomposition.microbial_enzyme.kinetics.metabolic.km_ref: ParameterManager YAML
+  pedosphere.decomposition.microbial_enzyme.kinetics.structural.vmax_ref: ParameterManager YAML
+  pedosphere.decomposition.microbial_enzyme.kinetics.structural.km_ref: ParameterManager YAML
+  pedosphere.decomposition.microbial_enzyme.kinetics.som.vmax_ref: ParameterManager YAML
+  pedosphere.decomposition.microbial_enzyme.kinetics.som.km_ref: ParameterManager YAML
+  pedosphere.decomposition.microbial_enzyme.microbial.carbon_use_efficiency: ParameterManager YAML
+  pedosphere.decomposition.microbial_enzyme.microbial.turnover_rate: ParameterManager YAML
+  pedosphere.decomposition.microbial_enzyme.microbial.max_biomass: ParameterManager YAML
+  pedosphere.decomposition.microbial_enzyme.microbial.min_biomass: ParameterManager YAML
+  pedosphere.decomposition.microbial_enzyme.microbial.maintenance_rate: ParameterManager YAML
+  pedosphere.decomposition.temp_factor: ParameterManager YAML
+  pedosphere.numerical.epsilon_concentration: ParameterManager YAML
+  pedosphere.numerical.moisture_response_clamp_min: ParameterManager YAML
+  pedosphere.numerical.clamp_max: ParameterManager YAML
+  pedosphere.numerical.temp_response_clamp_min: ParameterManager YAML
+  pedosphere.numerical.temp_response_clamp_max: ParameterManager YAML
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares interfaces, execution phase, and conservation semantics
+  state_contract: explicit UpdateItem values route four stock increments through StateManager only when this closure is selected
+  validation_rule: phase8 scientific inventory and equivalence certificate checks
+dependency_interconnection_map:
+  dependencies: none; all six required drivers and stocks enter through declared state ports
+  model_selection: mutually exclusive with PoolsMatrix and FirstOrderDecomposition
+  direct_functor_calls: none; all stocks and drivers enter through state ports and alternative decomposition owners are mutually exclusive
+overflow_routing_map:
+  diagnostic_residuals: diagnostics.microbial_enzyme.carbon_balance_residual exposes the exact per-step ledger
+  invalid_state_route: missing, non-tensor, non-finite, negative, out-of-range, overdraw-producing, or invalid-dt inputs fail before state advance
+  clipping_policy: no stock, flux, or carbon residual is clipped or silently discarded
+  discarded_residuals: Vmax, Km, moisture, and temperature bounds define kinetic coefficients rather than stock disposal, invalid or overdraw steps are rejected, and diagnostics.microbial_enzyme.carbon_balance_residual is explicit
+conservation_map:
+  conserved_quantities: carbon|mass
+  balance_expression: Delta C_met + Delta C_str + Delta C_som + Delta MIC + R_microbial*dt = 0
+  reaction_constraint: C_h N_h = 0 with C_h=[1,1,1,1,1]
+  open_system_routes: heterotrophic_respiration is the atmosphere-facing carbon port
+entropy_audit:
+  operator_sign: stocks, kinetic coefficients, uptake rates, turnover rates, and respiration are non-negative or fail validation
+  sigma_expression: no strict entropy-production or GENERIC degeneracy claim is made at level 2
+equivalence_type: reaction_network
+physical_constant_ssot:
+  celsius_to_kelvin: get_physical_constant("celsius_to_kelvin")
+  q10_interval: get_physical_constant("relic.physical.constants.temperature.q10_interval")
+  reference_temperature: get_physical_constant("reference_temperature")
+  gas_constant: get_physical_constant("gas_constant")

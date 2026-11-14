@@ -1,0 +1,190 @@
+certificate_version: '1.0'
+process_id: relic.scientific.transport.advection_diffusion.AdvectionDiffusion
+module_name: advection_diffusion
+canonical_role: transport
+iphs_level: 3
+iphs_level_evidence:
+  classification: IPHS-structured transport process certificate
+  compatible_basis: Process declares composition-safe IPHS or DEC structure
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: DEC/IPHS transport operator with conservative flux routing
+  structural_contribution: Cochain, Hodge, flux, and port structures are declared for assembly audit
+  assembly_participation: Certificate participates in Phase 8 inventory and GraphIR structural audit
+  level_3_limit: Typed form, Hodge, port, or related structure is declared, but no runtime-linked IPHSStructureSpec contribution and executable level 4 or 5 certificate binding is present.
+theory_document: docs\source\theory\transport_advection_diffusion.md
+theory_document_status: updated
+legacy_formula: dc/dt = -div(v * c) + div(K * grad(c)) + S
+literature_formula: Advection-diffusion in conservative form with q_adv = v c, q_diff = -K grad(c), and dc/dt = -div(q_adv + q_diff) + S.
+iphs_formula: c_dot = -D_h(q_adv_h + q_diff_h) + G_h u_h; q_adv_h = i_v c_h; q_diff_h = -star_K d_h c_h.
+legacy_expression: dc/dt = -div(v * c) + div(K * grad(c)) + S
+iphs_expression: c_dot = -D_h(q_adv_h + q_diff_h) + G_h u_h; q_adv_h = i_v c_h; q_diff_h = -star_K d_h c_h.
+input_variables:
+- tracer_concentration
+- source_term
+- velocity_field
+- tracer_concentration_boundary_state
+output_variables:
+- tracer_concentration
+- tracer_concentration_advection_diffusion_boundary_flux
+- diagnostics.cfl_number
+- diagnostics.diffusion_stability
+- diagnostics.peclet_number
+- diagnostics.conservation_error
+parameter_keys:
+- transport.advection.default_velocity_magnitude
+- transport.diffusion.diffusivity
+- transport.advection_diffusion.grid_spacing
+- transport.advection_diffusion.splitting_method
+- transport.numerical.enforce_non_negative
+- transport.numerical.track_conservation
+- transport.numerical.default_boundary_type
+- transport.numerical.cfl_advection_max
+- transport.numerical.cfl_diffusion_max
+composition_ports:
+- advection_diffusion_boundary_flux
+references:
+- Hundsdorfer, W. and Verwer, J.G. (2003). Numerical Solution of Time-Dependent Advection-Diffusion-Reaction Equations.
+- LeVeque, R.J. (2007). Finite Difference Methods for Ordinary and Partial Differential Equations.
+- Strang, G. (1968). On the construction and comparison of difference schemes.
+- Hirani, A.N. (2003). Discrete Exterior Calculus.
+- Patankar, S.V. (1980). Numerical Heat Transfer and Fluid Flow.
+- LeVeque, R.J. (2002). Finite Volume Methods for Hyperbolic Problems.
+baseline_tests:
+- test\transport\transport_phase8_iphs_contract.test.py
+- test\transport\transport_output_contract.spec.py
+- test\transport\transport_yaml_metadata_consistency.spec.py
+- test\transport\transport_refactoring_validation_test.py
+validation_tests:
+- test\transport\transport_phase8_iphs_contract.test.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  tracer_concentration: state cochain c_h
+  source_term: open source-control contribution in G_h u_h
+  velocity_field: advective vector field v_h
+  tracer_concentration_boundary_state: conditional external face effort for Dirichlet and open advection
+  tracer_concentration_advection_diffusion_boundary_flux: outward-positive total boundary dual cochain
+parameter_map:
+  transport.advection.default_velocity_magnitude: structural Hodge audit speed [m s-1]
+  transport.diffusion.diffusivity: D in diffusion star_K [m2 s-1]
+  transport.advection_diffusion.grid_spacing: metric spacing dx [m]
+  transport.advection_diffusion.splitting_method: canonical operator splitting choice [dimensionless]
+  transport.numerical.enforce_non_negative: non-negative state-domain fail-fast guard [bool]
+  transport.numerical.track_conservation: conservation diagnostic flag [bool]
+  transport.numerical.default_boundary_type: ParameterManager default boundary method; explicit experiment configuration may override it [dimensionless]
+  transport.numerical.cfl_advection_max: maximum advection CFL [dimensionless]
+  transport.numerical.cfl_diffusion_max: maximum diffusion stability number [dimensionless]
+operator_map:
+  D_h: existing canonical finite-volume advection_diffusion divergence stencil
+  i_v: AdvectionDiffusion advective HodgeStarSpec and functional flux operator
+  star_K: AdvectionDiffusion diffusive HodgeStarSpec and functional flux operator
+  splitting: existing splitting_method in the unified advection_diffusion operator
+unit_map:
+  tracer_concentration: kg m-3
+  source_term: kg m-3 s-1
+  velocity_field: m s-1
+  tracer_concentration_boundary_state: kg m-3
+  tracer_concentration_advection_diffusion_boundary_flux: kg m-2 s-1
+  diagnostics.cfl_number: dimensionless
+  diagnostics.diffusion_stability: dimensionless
+  diagnostics.peclet_number: dimensionless
+  diagnostics.conservation_error: dimensionless
+input_output_map:
+  tracer_concentration: same tracer state key is read and written once through an explicit ACCUMULATE UpdateItem
+  source_term: optional volumetric source; absence is the explicit S_h = 0 closure
+  velocity_field: required canonical vector field from state or explicit fixed configuration
+  tracer_concentration_boundary_state: conditional external face state required by Dirichlet and open advection
+  tracer_concentration_advection_diffusion_boundary_flux: batch-preserving [batch,total_face_dofs] packing of the total outward-positive operator ledger in x/y/z min/max order
+interface_map:
+  forward_signature: forward(self, state, time, dt)
+  bridge_class: TransportMechanismFunctor
+  abstraction_contract: TransportMechanism
+  state_write_mode: integrated tracer increment uses UpdateItem ACCUMULATE with per_timestep true
+  optional_inputs:
+  - source_term
+  - tracer_concentration_boundary_state
+  optional_outputs:
+  - tracer_concentration_advection_diffusion_boundary_flux
+  - diagnostics.peclet_number
+  - diagnostics.conservation_error
+  legacy_inputs:
+  - tracer_concentration
+  - source_term
+  - velocity_field
+  - tracer_concentration_boundary_state
+  iphs_inputs:
+  - tracer_concentration
+  - source_term
+  - velocity_field
+  - tracer_concentration_boundary_state
+  legacy_outputs:
+  - tracer_concentration
+  - tracer_concentration_advection_diffusion_boundary_flux
+  - diagnostics.cfl_number
+  - diagnostics.diffusion_stability
+  - diagnostics.peclet_number
+  - diagnostics.conservation_error
+  iphs_outputs:
+  - tracer_concentration
+  - tracer_concentration_advection_diffusion_boundary_flux
+  - diagnostics.cfl_number
+  - diagnostics.diffusion_stability
+  - diagnostics.peclet_number
+  - diagnostics.conservation_error
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: _compute_iphs_advection_diffusion_update
+  preserved_numerics: The existing unified advection_diffusion operator realizes c_dot = -D_h(q_adv_h + q_diff_h) + G_h u_h with source_term as an open input contribution.
+  no_legacy_mode: Production forward is the only executable formula path; mutable velocity and diffusivity setters are absent; missing or nonfinite canonical inputs, invalid timesteps, incomplete velocity dimensions, undeclared velocity aliases, missing conditional boundary states, and unsupported boundary methods fail fast.
+state_advancement_map:
+  potential_basis: tracer concentration cochain c_h
+  effort_variable: combined transport flux q_h = q_adv_h + q_diff_h
+  state_advancer: c_dot = -D_h(q_adv_h + q_diff_h) + G_h u_h with q_adv_h = i_v c_h and q_diff_h = -star_K d_h c_h
+  runtime_usage: _compute_iphs_advection_diffusion_update returns the canonical integrated operator state, and forward emits its single delta through an explicit ACCUMULATE UpdateItem.
+parameter_management_map:
+  transport.advection.default_velocity_magnitude:
+    source: ParameterManager YAML
+  transport.diffusion.diffusivity:
+    source: ParameterManager YAML
+  transport.advection_diffusion.grid_spacing:
+    source: ParameterManager YAML
+  transport.advection_diffusion.splitting_method:
+    source: ParameterManager YAML
+  transport.numerical.enforce_non_negative:
+    source: ParameterManager YAML
+  transport.numerical.track_conservation:
+    source: ParameterManager YAML
+  transport.numerical.default_boundary_type:
+    source: ParameterManager YAML
+  transport.numerical.cfl_advection_max:
+    source: ParameterManager YAML
+  transport.numerical.cfl_diffusion_max:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares transport role and state interface
+  structural_protocol: AdvectionDiffusion declares its own typed forms, Hodge terms, J, M, and total boundary port without child Functors
+  state_contract: existing FunctorBase wrap_update and StateManager path
+  ports:
+  - advection_diffusion_boundary_flux
+dependency_interconnection_map:
+  dependencies: velocity_field and conditional boundary state are scheduler-visible ports; no component Functors are owned
+  direct_functor_calls: none; concentration, velocity, source, and conditional boundary state are ports and no component Functor is owned or invoked
+  chain_maps:
+  - tracer_concentration state cochain to tracer_concentration increment
+  - canonical operator total face ledger to tracer_concentration_advection_diffusion_boundary_flux
+overflow_routing_map:
+  non_negative_projection: none; invalid initial or proposed negative states fail fast
+  conservation_residual: diagnostics.conservation_error receives the source-aware mass residual only when tracking is enabled for the closed periodic route
+  nonperiodic_boundary_route: tracer_concentration_advection_diffusion_boundary_flux retains the total outward-positive face ledger; exchange is not mislabeled as closed-domain conservation error
+  missing_velocity_route: fail-fast because velocity_field is a required advective port
+  discarded_residuals: negative candidates and missing velocity are rejected, total nonperiodic exchange remains in tracer_concentration_advection_diffusion_boundary_flux, and closed-periodic tracking emits source-aware conservation_error
+conservation_map:
+  conserved_quantity: mass
+  balance_expression: Delta M - dt integral(S dV) + dt sum_f(j_out,f A_f) = 0; periodic closure has an empty boundary ledger
+  local_check: existing operator conservation diagnostic is evaluated only for the periodic closed-domain route
+  functor_law: FunctorMetadata.conservation_laws includes mass
+entropy_audit:
+  dissipative_operator: diffusion component M_h is PSD; conservative advection M_h is zero
+  sigma_expression: sigma = X_h.T M_diff_h X_h >= 0
+  validation_hook: component build_hodge_terms and dissipative_structure eigenvalue checks
+equivalence_type: port_equivalent

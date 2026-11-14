@@ -1,0 +1,44 @@
+variable: tracer_concentration_advective_boundary_flux
+title: "Tracer Concentration Advective Boundary Flux"
+kind: flux
+dimension:
+  udunits: "kg m-2 s-1"
+  cf_standard_name: null
+owner: "linear_advection"
+aliases: []
+incrementable: false
+accumulates: null
+numerics:
+  lower_bound: null
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "linear_advection"
+      module: "relic.scientific.transport.advection"
+      provides: ["tracer_concentration_advective_boundary_flux"]
+      unit: "kg m-2 s-1"
+flux_contract:
+  allowed_in: []
+  allowed_out:
+    - "linear_advection"
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/transport/advection.py"
+  runtime_role: "signed_outward_positive_advective_boundary_face_cochain"
+  runtime_writer: "linear_advection"
+  sign_convention: "positive_outflow_negative_inflow"
+  layout: "batch_by_oriented_face_dofs"
+  face_order:
+    - "x_min"
+    - "x_max"
+    - "y_min"
+    - "y_max"
+    - "z_min"
+    - "z_max"

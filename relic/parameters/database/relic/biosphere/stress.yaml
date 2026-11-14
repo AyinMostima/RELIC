@@ -1,0 +1,856 @@
+schema_version: 2.0.0
+tier: relic
+namespace: biosphere.stress
+description: Stress response parameters for water, thermal, nutrient, ozone, and light stress
+metadata:
+  created_by: RELIC Parameter System
+  last_modified: '2026-01-07T14:20:26Z'
+  schema_url: https://github.com/relic/parameter-schema/v2.0.0
+  version: 1.0.0
+functor_metadata:
+  spatial_scale: patch
+  variable_kind: diagnostic
+  input_variables:
+  - soil_water_potential
+  - air_temperature
+  - leaf_temperature
+  - nitrogen_concentration
+  - phosphorus_concentration
+  - o3_mixing_ratio
+  - stomatal_conductance
+  output_variables:
+  - water_stress_factor
+  - temperature_stress_factor
+  - heat_stress_factor
+  - cold_stress_factor
+  - nutrient_stress_factor
+  - diagnostics.nutrient_stress.nitrogen_factor
+  - diagnostics.nutrient_stress.phosphorus_factor
+  - ozone_stress_factor
+  - ozone_uptake
+  - antioxidant_depletion
+  conservation_laws: []
+  references:
+  - Boyer (1982)
+  - Berry and Bjorkman (1980)
+  - Chapin (1991)
+  - Emberson et al. (2000)
+parameters:
+  global.factor_min:
+    value: 0.0
+    default: 0.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.1
+    category: computational
+    description: Global minimum stress factor for clamping (applies to all stress types)
+    references:
+    - Numerical constraint
+    tags:
+    - numerical_stability
+    - lower_bound
+    - global
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_implementation
+      schema_version: 2.0.0
+      created_by: Phase 3.2.5 Parameter Consolidation
+      last_modified: '2025-10-09T00:00:00Z'
+      note: Replaces 8 redundant per-module min/max definitions
+  global.factor_max:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.9
+    - 1.0
+    category: computational
+    description: Global maximum stress factor for clamping (applies to all stress types)
+    references:
+    - Numerical constraint
+    tags:
+    - numerical_stability
+    - upper_bound
+    - global
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_implementation
+      schema_version: 2.0.0
+      created_by: Phase 3.2.5 Parameter Consolidation
+      last_modified: '2025-10-09T00:00:00Z'
+      note: Replaces 8 redundant per-module min/max definitions
+  water.wilting_point_potential:
+    value: -1.5
+    default: -1.5
+    units: MPa
+    dtype: float32
+    bounds:
+    - -2.0
+    - -1.0
+    category: biological_parameter
+    description: Water potential at permanent wilting point
+    references:
+    - Boyer (1982)
+    - Hsiao (1973)
+    tags:
+    - water_stress
+    - threshold
+    dimension: pressure
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-02T00:00:00Z'
+  water.field_capacity_potential:
+    value: -0.033
+    default: -0.033
+    units: MPa
+    dtype: float32
+    bounds:
+    - -0.1
+    - -0.01
+    category: biological_parameter
+    description: Water potential at field capacity
+    references:
+    - Boyer (1982)
+    - Jones (2007)
+    tags:
+    - water_stress
+    - threshold
+    dimension: pressure
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-02T00:00:00Z'
+  thermal.optimal_temperature:
+    value: 298.15
+    default: 298.15
+    units: K
+    dtype: float32
+    bounds:
+    - 293.15
+    - 303.15
+    category: biological_parameter
+    description: Optimal temperature for plant processes (25 degrees C)
+    references:
+    - Berry & Bjorkman (1980)
+    - Salvucci & Crafts-Brandner (2004)
+    tags:
+    - thermal_stress
+    - optimal_temperature
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-02T00:00:00Z'
+  thermal.heat_stress_threshold:
+    value: 308.15
+    default: 308.15
+    units: K
+    dtype: float32
+    bounds:
+    - 303.15
+    - 313.15
+    category: biological_parameter
+    description: Temperature threshold for heat stress (35 degrees C)
+    references:
+    - Hatfield & Prueger (2015)
+    tags:
+    - thermal_stress
+    - heat_stress
+    - threshold
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-02T00:00:00Z'
+  thermal.critical_high_temperature:
+    value: 318.15
+    default: 318.15
+    units: K
+    dtype: float32
+    bounds:
+    - 313.15
+    - 323.15
+    category: biological_parameter
+    description: Critical high temperature causing severe damage (45 degrees C)
+    references:
+    - Wahid et al. (2007)
+    tags:
+    - thermal_stress
+    - heat_stress
+    - critical_threshold
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-02T00:00:00Z'
+  thermal.cold_stress_threshold:
+    value: 278.15
+    default: 278.15
+    units: K
+    dtype: float32
+    bounds:
+    - 273.15
+    - 283.15
+    category: biological_parameter
+    description: Temperature threshold for cold stress (5 degrees C)
+    references:
+    - Chinnusamy et al. (2007)
+    tags:
+    - thermal_stress
+    - cold_stress
+    - threshold
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-02T00:00:00Z'
+  thermal.freezing_damage_threshold:
+    value: 271.15
+    default: 271.15
+    units: K
+    dtype: float32
+    bounds:
+    - 268.15
+    - 273.15
+    category: biological_parameter
+    description: Temperature causing freezing damage (-2 degrees C)
+    references:
+    - Pearce (2001)
+    tags:
+    - thermal_stress
+    - cold_stress
+    - freezing
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-02T00:00:00Z'
+  thermal.temperature_tolerance_width:
+    value: 10.0
+    default: 10.0
+    units: K
+    dtype: float32
+    bounds:
+    - 5.0
+    - 20.0
+    category: biological_parameter
+    description: Temperature tolerance width for Gaussian response function
+    references:
+    - Berry & Bjorkman (1980)
+    tags:
+    - thermal_stress
+    - tolerance_range
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-02T00:00:00Z'
+  thermal.heat_stress_coefficient:
+    value: -0.1
+    default: -0.1
+    units: K-1
+    dtype: float32
+    bounds:
+    - -0.2
+    - -0.05
+    category: biological_parameter
+    description: Coefficient for heat stress response function
+    references:
+    - Hatfield & Prueger (2015)
+    tags:
+    - thermal_stress
+    - heat_stress
+    - response_coefficient
+    dimension: inverse_temperature
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-02T00:00:00Z'
+  thermal.cold_stress_coefficient:
+    value: -0.15
+    default: -0.15
+    units: K-1
+    dtype: float32
+    bounds:
+    - -0.3
+    - -0.08
+    category: biological_parameter
+    description: Coefficient for cold stress response function
+    references:
+    - Chinnusamy et al. (2007)
+    tags:
+    - thermal_stress
+    - cold_stress
+    - response_coefficient
+    dimension: inverse_temperature
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-02T00:00:00Z'
+  nutrient.n_critical_concentration:
+    value: 0.025
+    default: 0.025
+    units: kg N kg-1 DM
+    dtype: float32
+    bounds:
+    - 0.015
+    - 0.035
+    category: biological_parameter
+    description: Calibratable critical nitrogen mass fraction in plant dry matter for the phenomenological stress diagnostic
+    references:
+    - Greenwood et al. (1990), critical nitrogen dilution context only
+    tags:
+    - nutrient_stress
+    - nitrogen
+    - critical_concentration
+    - calibratable
+    - phenomenological
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: phenomenological_calibration_prior
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-07-18T00:00:00Z'
+      note: Fixed threshold is not the Greenwood critical nitrogen dilution equation
+  nutrient.n_minimum_concentration:
+    value: 0.005
+    default: 0.005
+    units: kg N kg-1 DM
+    dtype: float32
+    bounds:
+    - 0.003
+    - 0.008
+    category: biological_parameter
+    description: Calibratable lower nitrogen mass-fraction threshold for the phenomenological stress diagnostic
+    references:
+    - Aerts and Chapin (2000), plant nutrient status context
+    tags:
+    - nutrient_stress
+    - nitrogen
+    - minimum_concentration
+    - calibratable
+    - phenomenological
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: phenomenological_calibration_prior
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-07-18T00:00:00Z'
+      note: Value is a calibration prior and not a universal survival threshold
+  nutrient.p_critical_concentration:
+    value: 0.003
+    default: 0.003
+    units: kg P kg-1 DM
+    dtype: float32
+    bounds:
+    - 0.002
+    - 0.005
+    category: biological_parameter
+    description: Calibratable critical phosphorus mass fraction in plant dry matter for the phenomenological stress diagnostic
+    references:
+    - Aerts and Chapin (2000), plant phosphorus limitation context
+    tags:
+    - nutrient_stress
+    - phosphorus
+    - critical_concentration
+    - calibratable
+    - phenomenological
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: phenomenological_calibration_prior
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-07-18T00:00:00Z'
+      note: Value requires process-specific calibration and is not a universal phosphorus threshold
+  nutrient.p_minimum_concentration:
+    value: 0.001
+    default: 0.001
+    units: kg P kg-1 DM
+    dtype: float32
+    bounds:
+    - 0.0005
+    - 0.002
+    category: biological_parameter
+    description: Calibratable lower phosphorus mass-fraction threshold for the phenomenological stress diagnostic
+    references:
+    - Aerts and Chapin (2000), plant phosphorus limitation context
+    tags:
+    - nutrient_stress
+    - phosphorus
+    - minimum_concentration
+    - calibratable
+    - phenomenological
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: phenomenological_calibration_prior
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-07-18T00:00:00Z'
+      note: Value is a calibration prior and not a universal survival threshold
+  nutrient.nutrient_stress_exponent:
+    value: 1.5
+    default: 1.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 2.5
+    category: biological_parameter
+    description: Calibratable dimensionless exponent in the phenomenological nutrient stress response
+    references:
+    - Agren et al. (2012), nutrient limitation context only
+    tags:
+    - nutrient_stress
+    - response_function
+    - calibratable
+    - phenomenological
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: phenomenological_calibration_prior
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-07-18T00:00:00Z'
+      note: No cited source establishes the fixed exponent as a universal law
+  ozone.ozone_threshold:
+    value: 4.0e-08
+    default: 4.0e-08
+    units: mol mol-1
+    dtype: float32
+    bounds:
+    - 2.0e-08
+    - 8.0e-08
+    category: biological_parameter
+    description: Ozone concentration threshold for stress calculations
+    references:
+    - Mills et al. (2007)
+    tags:
+    - ozone_stress
+    - threshold
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-02T00:00:00Z'
+  ozone.flux_threshold:
+    value: 1.6
+    default: 1.6
+    units: nmol O3 m-2 s-1
+    dtype: float32
+    bounds:
+    - 1.0
+    - 2.5
+    category: biological_parameter
+    description: Stomatal flux threshold for POD calculations
+    references:
+    - Mills et al. (2011)
+    tags:
+    - ozone_stress
+    - flux_threshold
+    dimension: molar_flux
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-02T00:00:00Z'
+  ozone.ozone_uptake_rate:
+    value: 0.8
+    default: 0.8
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.6
+    - 1.0
+    category: biological_parameter
+    description: Fraction of ozone flux that is actually taken up
+    references:
+    - Emberson et al. (2000)
+    tags:
+    - ozone_stress
+    - uptake_fraction
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-02T00:00:00Z'
+  ozone.ozone_detox_capacity:
+    value: 2.0e-09
+    default: 2.0e-09
+    units: mol O3 m-2 s-1
+    dtype: float32
+    bounds:
+    - 1.0e-09
+    - 5.0e-09
+    category: biological_parameter
+    description: Plant ozone detoxification capacity
+    references:
+    - Emberson et al. (2000)
+    tags:
+    - ozone_stress
+    - detoxification
+    dimension: molar_flux
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-02T00:00:00Z'
+  ozone.max_flux_ratio:
+    value: 0.9
+    default: 0.9
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 1.0
+    category: biological_parameter
+    description: Maximum normalized ozone flux ratio used when converting uptake to stress factor
+    references:
+    - Emberson et al. (2000)
+    - Mills et al. (2011)
+    tags:
+    - ozone_stress
+    - stress_response
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-02-12T00:00:00Z'
+  ozone.antioxidant_capacity:
+    value: 1.0e-08
+    default: 1.0e-08
+    units: mol O3 m-2
+    dtype: float32
+    bounds:
+    - 5.0e-09
+    - 2.0e-08
+    category: biological_parameter
+    description: Plant antioxidant capacity for ozone defense
+    references:
+    - Kangasjarvi et al. (2005)
+    tags:
+    - ozone_stress
+    - antioxidant
+    dimension: molar_areal_density
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-02T00:00:00Z'
+  ozone.pody_critical_wheat:
+    value: 0.006
+    default: 0.006
+    units: mol m-2
+    dtype: float32
+    bounds:
+    - 0.004
+    - 0.008
+    category: biological_parameter
+    description: Critical POD_Y for wheat
+    references:
+    - Mills et al. (2011)
+    tags:
+    - ozone_stress
+    - critical_level
+    - wheat
+    dimension: molar_areal_density
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-02T00:00:00Z'
+  ozone.aot40_critical_wheat:
+    value: 3000.0
+    default: 3000.0
+    units: ppb h
+    dtype: float32
+    bounds:
+    - 2000.0
+    - 4000.0
+    category: biological_parameter
+    description: Critical AOT40 for 5% yield loss in wheat
+    references:
+    - Mills et al. (2007)
+    tags:
+    - ozone_stress
+    - critical_level
+    - wheat
+    dimension: exposure
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-02T00:00:00Z'
+  light.light_compensation_point:
+    value: 10.0
+    default: 10.0
+    units: umol photons m-2 s-1
+    dtype: float32
+    bounds:
+    - 5.0
+    - 20.0
+    category: biological_parameter
+    description: Light compensation point for photosynthesis
+    references:
+    - Lambers et al. (2008)
+    tags:
+    - light_stress
+    - compensation_point
+    dimension: photon_flux_density
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-02T00:00:00Z'
+  light.light_saturation_point:
+    value: 1500.0
+    default: 1500.0
+    units: umol photons m-2 s-1
+    dtype: float32
+    bounds:
+    - 1000.0
+    - 2000.0
+    category: biological_parameter
+    description: Light saturation point for photosynthesis
+    references:
+    - Lambers et al. (2008)
+    tags:
+    - light_stress
+    - saturation_point
+    dimension: photon_flux_density
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-02T00:00:00Z'
+  light.shade_tolerance_threshold:
+    value: 0.2
+    default: 0.2
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 0.4
+    category: biological_parameter
+    description: Relative light level threshold for shade stress
+    references:
+    - Valladares & Niinemets (2008)
+    tags:
+    - light_stress
+    - shade_tolerance
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-02T00:00:00Z'
+  interactions.multiplicative_model:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: computational
+    description: Use multiplicative model for combining stress factors (1.0 = true, 0.0 = false)
+    references:
+    - Sinclair & Muchow (1999)
+    tags:
+    - stress_interaction
+    - model_configuration
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_configuration
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-02T00:00:00Z'
+  interactions.recovery_time_constant:
+    value: 86400.0
+    default: 86400.0
+    units: s
+    dtype: float32
+    bounds:
+    - 3600.0
+    - 259200.0
+    category: biological_parameter
+    description: Time constant for stress recovery (1 day)
+    references:
+    - Zhu et al. (2007)
+    tags:
+    - stress_interaction
+    - recovery
+    dimension: time
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-02T00:00:00Z'
+  interactions.maximum_recovery_rate:
+    value: 0.1
+    default: 0.1
+    units: day-1
+    dtype: float32
+    bounds:
+    - 0.05
+    - 0.2
+    category: biological_parameter
+    description: Maximum rate of recovery from stress
+    references:
+    - Zhu et al. (2007)
+    tags:
+    - stress_interaction
+    - recovery
+    dimension: frequency
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-02T00:00:00Z'
+  memory.acclimation_time_constant:
+    value: 604800.0
+    default: 604800.0
+    units: s
+    dtype: float32
+    bounds:
+    - 86400.0
+    - 2592000.0
+    category: biological_parameter
+    description: Time constant for stress acclimation (7 days)
+    references:
+    - Atkinson & Urwin (2012)
+    tags:
+    - stress_memory
+    - acclimation
+    dimension: time
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-02T00:00:00Z'
+  memory.acclimation_factor:
+    value: 0.8
+    default: 0.8
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 0.9
+    category: biological_parameter
+    description: Maximum reduction in stress sensitivity through acclimation
+    references:
+    - Atkinson & Urwin (2012)
+    tags:
+    - stress_memory
+    - acclimation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-02T00:00:00Z'
+  memory.priming_duration:
+    value: 259200.0
+    default: 259200.0
+    units: s
+    dtype: float32
+    bounds:
+    - 86400.0
+    - 604800.0
+    category: biological_parameter
+    description: Duration of stress priming effects (3 days)
+    references:
+    - Conrath et al. (2006)
+    tags:
+    - stress_memory
+    - priming
+    dimension: time
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-02T00:00:00Z'
+  memory.priming_strength:
+    value: 0.2
+    default: 0.2
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 0.4
+    category: biological_parameter
+    description: Strength of priming effects on stress tolerance
+    references:
+    - Conrath et al. (2006)
+    tags:
+    - stress_memory
+    - priming
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-02T00:00:00Z'
+creation_info:
+  created_by: Yuchong Long
+  created_at: '2025-10-02T00:00:00Z'
+  schema_version: 1.0.0
+  tier: relic
+quality_control:
+  validated_by: Scientific Review Panel
+  validation_date: '2025-10-02T00:00:00Z'
+  validation_criteria:
+  - Literature consistency check
+  - Physical bounds verification
+  - Unit dimensional analysis
+  - Cross-parameter relationship validation

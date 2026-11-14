@@ -1,0 +1,353 @@
+schema_version: 2.0.0
+tier: relic
+namespace: optimization.uncertainty
+description: Monte Carlo sample-size controls of the ensemble and bootstrap uncertainty quantifiers
+  (relic.optimization.uncertainty)
+metadata:
+  version: 1.0.0
+  created_by: relic
+  last_modified: '2026-09-26T00:00:00Z'
+parameters:
+  optimization.uncertainty.ensemble.convergence_min_members:
+    value: 100
+    default: 100
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 2
+    - 1000000
+    category: numerical_parameter
+    description: Minimum number of ensemble members before EnsembleUQ._check_ensemble_convergence evaluates its running-mean
+      drift diagnostic r_k = |m_k - m_(k-1)| / |m_(k-1)| over the last three quarters of the members; below this count the
+      diagnostic reports not converged, so a short ensemble is never declared converged. Robert and Casella (2004) monitor
+      the running Monte Carlo average but give no member count; the value 100 is a RELIC convention value, and the
+      diagnostic remains a heuristic, not a proof of distributional convergence.
+    references:
+    - Robert, C.P. & Casella, G. (2004). Monte Carlo Statistical Methods, 2nd ed., Springer, ch. 12 (monitoring the running
+      Monte Carlo average)
+    - RELIC convention value (no literature member count; documented as an operational choice)
+    tags:
+    - optimization
+    - uncertainty
+    - ensemble
+    - convergence
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  optimization.uncertainty.ensemble.convergence_first_prefix_divisor:
+    value: 4
+    default: 4
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 1000
+    category: numerical_parameter
+    description: Divisor d_start of the first monitored prefix length N0 = N // d_start of the running-mean drift diagnostic
+      of EnsembleUQ._check_ensemble_convergence (N ensemble members; the prefix means m_k of the lengths N0, N0 + s, ...,
+      below N are compared). The value 4 (monitoring the last three quarters) is a RELIC convention value. It is not the
+      window of a published diagnostic -- Geweke (1992) compares the means of the first 10% and the last 50% of a chain,
+      and Gelman and Rubin (1992) discard the first half of each sequence -- and the running-mean heuristic is not either
+      of those tests.
+    references:
+    - Robert, C.P. & Casella, G. (2004). Monte Carlo Statistical Methods, 2nd ed., Springer, ch. 12 (monitoring the running
+      Monte Carlo average)
+    - Geweke, J. (1992). Evaluating the accuracy of sampling-based approaches to the calculation of posterior moments. In
+      Bayesian Statistics 4, Oxford University Press, 169-193 (first 10% / last 50% windows; not used here)
+    - Gelman, A. & Rubin, D.B. (1992). Inference from iterative simulation using multiple sequences. Statist. Sci. 7,
+      457-472 (first half discarded; not used here)
+    - RELIC convention value (no literature value for this heuristic; documented as an operational choice)
+    tags:
+    - optimization
+    - uncertainty
+    - ensemble
+    - convergence
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  optimization.uncertainty.ensemble.convergence_stride_divisor:
+    value: 10
+    default: 10
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 1000
+    category: numerical_parameter
+    description: Divisor d_stride of the checkpoint stride s = max(1, (N // d_start) // d_stride) of the running-mean drift
+      diagnostic of EnsembleUQ._check_ensemble_convergence, so that the prefix means are compared about every N / 40
+      members (about 30 checkpoints over the last three quarters with the default d_start = 4). The value 10 is a RELIC
+      convention value; no published diagnostic prescribes this spacing.
+    references:
+    - Robert, C.P. & Casella, G. (2004). Monte Carlo Statistical Methods, 2nd ed., Springer, ch. 12 (monitoring the running
+      Monte Carlo average)
+    - RELIC convention value (no literature value for this heuristic; documented as an operational choice)
+    tags:
+    - optimization
+    - uncertainty
+    - ensemble
+    - convergence
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  optimization.uncertainty.bootstrap.parametric_sample_size_floor:
+    value: 100
+    default: 100
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 1000000
+    category: numerical_parameter
+    description: Lower bound m_floor of the sample size m = max(m_floor, B // d) of the parametric bootstrap of BootstrapUQ,
+      where B is n_bootstrap and d is parametric_sample_size_replicate_divisor. The original sample and every one of the B
+      replicates draw m parameter sets, so each bootstrap sample has the size of the original sample (Efron and Tibshirani
+      1993, ch. 6). The number of replicates B follows the literature (about 25 to 200 for standard errors, 1000 for
+      confidence intervals); the size m of the synthetic original sample has no literature value, and 100 is a RELIC
+      convention value.
+    references:
+    - Efron, B. & Tibshirani, R.J. (1993). An Introduction to the Bootstrap. Chapman and Hall, ch. 6 (bootstrap sample of the
+      original size; Table 6.2, number of replicates B for standard errors)
+    - Hesterberg, T.C. (2015). What teachers should know about the bootstrap. Am. Stat. 69, 371-386, Sect. 3.6 (summary of
+      the Efron and Tibshirani recommendations for B)
+    - RELIC convention value (no literature value for the synthetic sample size; documented as an operational choice)
+    tags:
+    - optimization
+    - uncertainty
+    - bootstrap
+    - sample_size
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  optimization.uncertainty.bootstrap.parametric_sample_size_replicate_divisor:
+    value: 10
+    default: 10
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 1000000
+    category: numerical_parameter
+    description: Divisor d of the parametric bootstrap sample size m = max(m_floor, B // d) of BootstrapUQ (integer division
+      of the number of replicates B = n_bootstrap), so that m grows with B once B // d exceeds
+      parametric_sample_size_floor. The value 10 is a RELIC convention value; the literature gives no rule that couples the
+      synthetic sample size to B.
+    references:
+    - Efron, B. & Tibshirani, R.J. (1993). An Introduction to the Bootstrap. Chapman and Hall, ch. 6
+    - RELIC convention value (no literature value; documented as an operational choice)
+    tags:
+    - optimization
+    - uncertainty
+    - bootstrap
+    - sample_size
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  optimization.uncertainty.n_samples:
+    value: 1000
+    default: 1000
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 100000000
+    category: numerical_parameter
+    description: Monte Carlo sample size of UQConfig when the configuration gives none (EnsembleConfig replaces it by its
+      ensemble_size and BootstrapConfig by n_bootstrap). The value 1000 is a RELIC convention value.
+    references:
+    - RELIC convention value (documented as an operational choice)
+    tags:
+    - optimization
+    - uncertainty
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  optimization.uncertainty.bootstrap.n_bootstrap:
+    value: 1000
+    default: 1000
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 100000000
+    category: numerical_parameter
+    description: Number B of bootstrap replicates of BootstrapUQ when the configuration gives none. Efron and Tibshirani
+      (1993), as summarised by Hesterberg (2015, Sect. 3.6), take about 25-200 replicates as enough for standard errors and
+      B = 1000 as enough for confidence intervals, which BootstrapUQ reports.
+    references:
+    - Efron, B. & Tibshirani, R.J. (1993). An Introduction to the Bootstrap. Chapman and Hall
+    - Hesterberg, T.C. (2015). What teachers should know about the bootstrap. Am. Stat. 69, 371-386, Sect. 3.6
+    tags:
+    - optimization
+    - uncertainty
+    - bootstrap
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  optimization.uncertainty.ensemble.convergence_tolerance:
+    value: 0.05
+    default: 0.05
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 1.0e-12
+    - 1.0
+    category: numerical_parameter
+    description: Tolerance of the running-mean drift diagnostic of EnsembleUQ (converged when max_k |m_k - m_(k-1)| /
+      |m_(k-1)| <= tol over the monitored prefixes). The value 0.05 is a RELIC convention value.
+    references:
+    - Robert, C.P. & Casella, G. (2004). Monte Carlo Statistical Methods, 2nd ed., Springer, ch. 12 (running-mean
+      monitoring; not the source of the value)
+    - RELIC convention value (documented as an operational choice)
+    tags:
+    - optimization
+    - uncertainty
+    - ensemble
+    - convergence
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  optimization.uncertainty.ensemble.ensemble_size:
+    value: 1000
+    default: 1000
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 100000000
+    category: numerical_parameter
+    description: Number of ensemble members of EnsembleUQ when the configuration gives none. The value 1000 is a RELIC
+      convention value.
+    references:
+    - RELIC convention value (documented as an operational choice)
+    tags:
+    - optimization
+    - uncertainty
+    - ensemble
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  optimization.uncertainty.ensemble.inflation:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 1.0e-06
+    - 100.0
+    category: numerical_parameter
+    description: Spread inflation lambda of the EnsembleUQ parameter samples about their mean (theta_i <- mean + lambda
+      (theta_i - mean)); 1.0 leaves the samples unchanged. RELIC convention value.
+    references:
+    - RELIC convention value (documented as an operational choice)
+    tags:
+    - optimization
+    - uncertainty
+    - ensemble
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  optimization.uncertainty.confidence_levels:
+    value:
+    - 0.68
+    - 0.95
+    default:
+    - 0.68
+    - 0.95
+    units: dimensionless
+    dtype: list
+    bounds:
+    - 0.0
+    - 1.0
+    category: numerical_parameter
+    description: Two-sided central interval levels reported by the UQ quantifiers when UQConfig.confidence_levels is not
+      stated (each level c gives the interval between the (1 - c)/2 and (1 + c)/2 quantiles). 0.68 approximates
+      the one-standard-deviation coverage of a normal distribution (0.6827) and 0.95 is the conventional level;
+      a RELIC convention value.
+    references:
+    - RELIC convention value (documented as an operational choice)
+    tags:
+    - optimization
+    - uncertainty
+    - intervals
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  optimization.uncertainty.percentiles:
+    value:
+    - 5.0
+    - 25.0
+    - 50.0
+    - 75.0
+    - 95.0
+    default:
+    - 5.0
+    - 25.0
+    - 50.0
+    - 75.0
+    - 95.0
+    units: '%'
+    dtype: list
+    bounds:
+    - 0.0
+    - 100.0
+    category: numerical_parameter
+    description: Percentiles q (percent, numpy.percentile convention) of every output reported by the UQ quantifiers when
+      UQConfig.percentiles is not stated (the 5-95 range, the quartiles and the median). A RELIC convention value.
+    references:
+    - RELIC convention value (documented as an operational choice)
+    tags:
+    - optimization
+    - uncertainty
+    - percentiles
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'

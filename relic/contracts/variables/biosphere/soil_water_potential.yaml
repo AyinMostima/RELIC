@@ -1,0 +1,51 @@
+variable: soil_water_potential
+title: "Soil Water Potential"
+kind: diagnostic
+dimension:
+  udunits: "MPa"
+  cf_standard_name: null
+# One soil water potential per grid cell at the current time; an intensive
+# potential without area normalization, and no layer dimension
+# (water_stress.py reads it elementwise). It is the retention-curve image of
+# the soil_moisture of the effective soil layer (soil_water_retention) or an
+# externally supplied value.
+support:
+  spatial_kind: grid_cell
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: "soil_water_retention"
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "van Genuchten, M.T. (1980). Soil Sci. Soc. Am. J. 44, 892-898 (retention curve, m = 1 - 1/n)"
+  - "relic/scientific/biosphere/stress/water_stress.py: soil water potential [MPa]"
+  - "Taiz, L., Moller, I.M., Murphy, A. and Zeiger, E. (2022). Plant Physiology and Development, 7th ed., Ch. 5 (water potential relative to pure free water, negative under tension)"
+numerics:
+  lower_bound: -.inf
+  upper_bound: 0.0
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "soil_water_retention"
+      module: "relic.scientific.hydrosphere.soil_moisture.retention"
+      provides: ["soil_water_potential"]
+      unit: "MPa"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/hydrosphere/soil_moisture/retention.py"
+  runtime_role: "instantaneous_retention_curve_potential_of_the_effective_soil_layer"
+  runtime_writer: "soil_water_retention"
+  note: "Sign convention: potential relative to pure free water, non-positive, zero at saturation; no lower physical bound is declared. Written by soil_water_retention from soil_moisture; a graph without that process supplies it as initial state or forcing. Reader: water_stress."

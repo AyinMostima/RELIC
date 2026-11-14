@@ -1,0 +1,254 @@
+certificate_version: '1.0'
+process_id: relic.scientific.biosphere.bvoc.synthesis.monoterpene.MonoterpeneSynthesis
+module_name: MonoterpeneSynthesis
+canonical_role: reaction
+iphs_level: 2
+iphs_level_evidence:
+  classification: IPHS-wrapped reaction process certificate
+  compatible_basis: Reaction process is expressed through conserved or open stoichiometric ledgers
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: N_h r_h reaction-network state advance
+  level_2_limit: The canonical runtime wrapper is declared, but no executable typed-cochain or IPHS structural contribution is bound; strict level 4 or 5 evidence is not claimed.
+theory_document: docs\source\theory\bvoc_emissions.md
+theory_document_status: updated
+legacy_formula: >-
+  dP/dt = J_syn - J_emit - J_deg + J_boundary, with
+  F_alloc = f_carbon f_seasonal GPP,
+  J_syn = V_max(T) F_alloc / (K_GPP + F_alloc) (1 - P/P_max),
+  J_emit = k_25 exp(beta (T - T_25)) P, and
+  F_C,alloc = convert(J_syn 10^-6 MW_mono f_C, g C m-2 s-1,
+  kg C m-2 s-1), and
+  f_seasonal = 1 + A sin(2 pi t/year - phase_offset).
+literature_formula: >-
+  Stored-pool studies support separating synthesis from release and a strong
+  temperature response of release. The exact GPP saturation, Q10 synthesis,
+  capacity limiter, and degradation coefficients are calibratable
+  ParameterManager-backed phenomenological choices, not a universal source law.
+iphs_formula: x_dot = N_h r_h with ParameterManager-backed process rates r_h and declared stoichiometric/output map N_h
+legacy_expression: >-
+  The bounded stored-pool tendency is evaluated once from the phenomenological
+  synthesis, emission, degradation, and boundary-residual rates.
+iphs_expression: x_dot = N_h r_h with ParameterManager-backed process rates r_h and declared stoichiometric/output map N_h
+input_variables:
+- air_temperature
+- gross_photosynthesis
+- monoterpene_pool_concentration
+output_variables:
+- monoterpenes_emission
+- monoterpene_pool_concentration
+- diagnostics.bvoc.monoterpene.emission_rate_molar
+- diagnostics.bvoc.monoterpene.emission_rate_mass
+- diagnostics.bvoc.monoterpene.pool_tendency
+- diagnostics.bvoc.monoterpene.pool_delta
+- diagnostics.bvoc.monoterpene.pool_boundary_residual_rate
+- diagnostics.bvoc.monoterpene.storage_change
+- diagnostics.bvoc.monoterpene.synthesis_rate
+- diagnostics.bvoc.monoterpene.pool_capacity_utilization
+- diagnostics.bvoc.monoterpene.temperature_emission_factor
+- diagnostics.bvoc.monoterpene.carbon_flux_allocated
+- diagnostics.bvoc.monoterpene.degradation_rate
+- diagnostics.bvoc.monoterpene.seasonal_factor
+- bvoc_carbon_allocation_flux
+parameter_keys:
+- biosphere.bvoc.monoterpene.v_max_mts
+- biosphere.bvoc.monoterpene.k_gpp
+- biosphere.bvoc.monoterpene.q10_synthase
+- biosphere.bvoc.monoterpene.pool.capacity
+- biosphere.bvoc.monoterpene.pool_initial
+- biosphere.bvoc.monoterpene.pool.k_degradation
+- biosphere.bvoc.monoterpene.pool.k_emit_25
+- biosphere.bvoc.monoterpene.pool.beta_emission
+- biosphere.bvoc.photosynthetic_coupling.f_carbon_monoterpenes
+- biosphere.bvoc.molecular_weights.monoterpenes
+- biosphere.bvoc.carbon_fraction.monoterpenes
+- biosphere.bvoc.monoterpene.enable_seasonal_variation
+- biosphere.bvoc.monoterpene.seasonal.amplitude
+- biosphere.bvoc.monoterpene.seasonal.minimum_factor
+- biosphere.bvoc.monoterpene.seasonal.peak_day
+composition_ports:
+- monoterpenes_emission
+- bvoc_carbon_allocation_flux
+- monoterpene_pool_concentration
+references:
+- Tingey, D.T., et al. (1980). Influence of light and temperature on monoterpene emission rates from slash pine. Plant Physiology 65, 797-801.
+- Niinemets, U. & Reichstein, M. (2002). A model analysis of the effects of nonspecific monoterpenoid storage in leaf tissues on emission kinetics. Global Biogeochemical Cycles 16, 1110.
+- 'Niinemets, U., et al. (2014). Bidirectional exchange of biogenic volatiles with vegetation: emission sources, reactions, breakdown and deposition. Plant, Cell & Environment 37, 1790-1809.'
+- Keeling, C.I. & Bohlmann, J. (2006). Genes, enzymes and chemicals of terpenoid diversity in the constitutive and induced defence of conifers against insects and pathogens. New Phytologist 170, 657-675.
+- 'Dudareva, N., et al. (2006). Plant volatiles: recent advances and future perspectives. Critical Reviews in Plant Sciences 25, 417-440.'
+baseline_tests:
+- test\unit\biosphere\bvoc\test_monoterpene_synthesis_l1.py
+- test\audit\phase8_scientific_inventory.test.py
+validation_tests:
+- test\unit\biosphere\bvoc\test_monoterpene_synthesis_l1.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  air_temperature: Grid-cell emitting-foliage temperature proxy supplied through the canonical external forcing state
+  gross_photosynthesis: gross_photosynthesis mapped to canonical Phase 8 cochain basis
+  monoterpene_pool_concentration: StateManager-owned storage cochain used as the unique pool state
+parameter_map:
+  biosphere.bvoc.monoterpene.v_max_mts: Maximum rate in the calibratable monoterpene synthesis response [umol m-2 s-1]
+  biosphere.bvoc.monoterpene.k_gpp: Allocated photosynthetic-carbon half-saturation scale in the calibratable synthesis response [umol m-2 s-1]
+  biosphere.bvoc.monoterpene.q10_synthase: Q10 coefficient for the calibratable synthesis response [dimensionless]
+  biosphere.bvoc.monoterpene.pool.capacity: Maximum monoterpene storage pool capacity [umol m-2]
+  biosphere.bvoc.monoterpene.pool_initial: Initial monoterpene pool concentration [umol m-2]
+  biosphere.bvoc.monoterpene.pool.k_degradation: First-order degradation rate constant [s-1]
+  biosphere.bvoc.monoterpene.pool.k_emit_25: Emission rate constant at 25 degC (298.15 K) reference [s-1]
+  biosphere.bvoc.monoterpene.pool.beta_emission: Temperature sensitivity coefficient for emission [K-1]
+  biosphere.bvoc.photosynthetic_coupling.f_carbon_monoterpenes: Fraction of GPP allocated to monoterpene synthesis [dimensionless]
+  biosphere.bvoc.molecular_weights.monoterpenes: Average molecular weight of monoterpenes (C10H16) [g mol-1]
+  biosphere.bvoc.carbon_fraction.monoterpenes: Carbon mass fraction of monoterpenes (stoichiometric fraction of compound mass that is carbon) [dimensionless]
+  biosphere.bvoc.monoterpene.enable_seasonal_variation: Enable seasonal variation in synthesis rates [dimensionless]
+  biosphere.bvoc.monoterpene.seasonal.amplitude: Amplitude of seasonal modulation (peak deviation from unity) [dimensionless]
+  biosphere.bvoc.monoterpene.seasonal.minimum_factor: Minimum clamp applied to seasonal modulation factor [dimensionless]
+  biosphere.bvoc.monoterpene.seasonal.peak_day: Day-of-year when seasonal peak occurs (Northern Hemisphere default) [day]
+physical_constant_ssot:
+  reference_temperature: get_physical_constant("reference_temperature")
+  seconds_per_year: get_physical_constant("seconds_per_year")
+  seconds_per_day: get_physical_constant("seconds_per_day")
+operator_map:
+  N_h: declared stoichiometric or output incidence map for this reaction process
+  r_h: ParameterManager-backed process-rate vector evaluated by the production forward path
+unit_map:
+  monoterpenes_emission: mol m-2 s-1
+  monoterpene_pool_concentration: umol m-2
+  bvoc_carbon_allocation_flux: kg C m-2 s-1
+  diagnostics.bvoc.monoterpene.emission_rate_molar: umol m-2 s-1
+  diagnostics.bvoc.monoterpene.emission_rate_mass: ug m-2 s-1
+  diagnostics.bvoc.monoterpene.pool_tendency: umol m-2 s-1
+  diagnostics.bvoc.monoterpene.pool_delta: umol m-2
+  diagnostics.bvoc.monoterpene.pool_boundary_residual_rate: umol m-2 s-1
+  diagnostics.bvoc.monoterpene.storage_change: kg C m-2 s-1
+  diagnostics.bvoc.monoterpene.synthesis_rate: umol m-2 s-1
+  diagnostics.bvoc.monoterpene.pool_capacity_utilization: '1'
+  diagnostics.bvoc.monoterpene.temperature_emission_factor: '1'
+  diagnostics.bvoc.monoterpene.carbon_flux_allocated: umol CO2 m-2 s-1
+  diagnostics.bvoc.monoterpene.degradation_rate: umol m-2 s-1
+  diagnostics.bvoc.monoterpene.seasonal_factor: '1'
+input_output_map:
+  air_temperature: canonical emitting-foliage temperature proxy; no local temperature alias or leaf-energy fallback
+  bvoc_carbon_allocation_flux: positive plant-carbon allocation into stored-pool monoterpene synthesis; distinct from atmosphere-facing stored-pool release
+  diagnostics.bvoc.monoterpene.carbon_flux_allocated: photosynthetic allocation diagnostic
+  diagnostics.bvoc.monoterpene.degradation_rate: storage-pool degradation diagnostic
+  diagnostics.bvoc.monoterpene.emission_rate_mass: mass-basis emission diagnostic, not an alternative atmosphere port
+  diagnostics.bvoc.monoterpene.emission_rate_molar: species-resolved molar diagnostic emitted by the canonical IPHS runtime
+  gross_photosynthesis: same interface variable preserved between legacy and IPHS runtime contracts
+  monoterpene_pool_concentration: same interface variable preserved between legacy and IPHS runtime contracts
+  diagnostics.bvoc.monoterpene.pool_tendency: bounded pool tendency produced by the canonical reaction runtime
+  diagnostics.bvoc.monoterpene.pool_delta: exact per-step pool increment diagnostic
+  diagnostics.bvoc.monoterpene.pool_boundary_residual_rate: explicit signed routing of the bounded-update residual
+  diagnostics.bvoc.monoterpene.storage_change: carbon-mass storage tendency derived from the canonical pool tendency
+  diagnostics.bvoc.monoterpene.synthesis_rate: storage-pool synthesis diagnostic
+  monoterpenes_emission: same interface variable preserved between legacy and IPHS runtime contracts
+  diagnostics.bvoc.monoterpene.pool_capacity_utilization: bounded-pool utilization diagnostic
+  diagnostics.bvoc.monoterpene.temperature_emission_factor: temperature-dependent pool release diagnostic normalized at the physical-constant reference temperature
+  diagnostics.bvoc.monoterpene.seasonal_factor: seasonal response diagnostic
+interface_map:
+  forward_signature: forward(self, state, time, dt)
+  bridge_class: BiologicalProcessFunctor
+  abstraction_contract: BiologicalProcess
+  state_write_mode: existing RELIC simulator and StateManager update path
+  legacy_inputs:
+  - air_temperature
+  - gross_photosynthesis
+  - monoterpene_pool_concentration
+  iphs_inputs:
+  - air_temperature
+  - gross_photosynthesis
+  - monoterpene_pool_concentration
+  legacy_outputs:
+  - monoterpenes_emission
+  - monoterpene_pool_concentration
+  - diagnostics.bvoc.monoterpene.emission_rate_molar
+  - diagnostics.bvoc.monoterpene.emission_rate_mass
+  - diagnostics.bvoc.monoterpene.pool_tendency
+  - diagnostics.bvoc.monoterpene.pool_delta
+  - diagnostics.bvoc.monoterpene.pool_boundary_residual_rate
+  - diagnostics.bvoc.monoterpene.storage_change
+  - diagnostics.bvoc.monoterpene.synthesis_rate
+  - diagnostics.bvoc.monoterpene.pool_capacity_utilization
+  - diagnostics.bvoc.monoterpene.temperature_emission_factor
+  - diagnostics.bvoc.monoterpene.carbon_flux_allocated
+  - diagnostics.bvoc.monoterpene.degradation_rate
+  - diagnostics.bvoc.monoterpene.seasonal_factor
+  - bvoc_carbon_allocation_flux
+  iphs_outputs:
+  - monoterpenes_emission
+  - monoterpene_pool_concentration
+  - diagnostics.bvoc.monoterpene.emission_rate_molar
+  - diagnostics.bvoc.monoterpene.emission_rate_mass
+  - diagnostics.bvoc.monoterpene.pool_tendency
+  - diagnostics.bvoc.monoterpene.pool_delta
+  - diagnostics.bvoc.monoterpene.pool_boundary_residual_rate
+  - diagnostics.bvoc.monoterpene.storage_change
+  - diagnostics.bvoc.monoterpene.synthesis_rate
+  - diagnostics.bvoc.monoterpene.pool_capacity_utilization
+  - diagnostics.bvoc.monoterpene.temperature_emission_factor
+  - diagnostics.bvoc.monoterpene.carbon_flux_allocated
+  - diagnostics.bvoc.monoterpene.degradation_rate
+  - diagnostics.bvoc.monoterpene.seasonal_factor
+  - bvoc_carbon_allocation_flux
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: Existing ParameterManager-backed calculations define canonical IPHS operator coefficients, rates, ports, or observations.
+  no_legacy_mode: No selectable legacy runtime branch is exposed for Phase 8 completion.
+state_advancement_map:
+  potential_basis: declared RELIC state, port, or observation cochain basis
+  effort_variable: air temperature, gross photosynthesis, and pool concentration are empirical drivers; no thermodynamic effort is claimed
+  state_advancer: the bounded pool ledger is evaluated once, and its rate and port cochains are evaluated as x_dot = N_h r_h by advance_reaction_network with an explicit identity N_h
+  runtime_usage: MonoterpeneSynthesis.forward evaluates one bounded storage ledger, exposes its residual, and wraps the resulting rate and port cochains through the existing reaction-network runtime.
+  explicit_stoichiometric_usage: the identity N_h wrapper covers emission, synthesis, positive plant-carbon allocation, degradation, pool-tendency, storage-carbon, and boundary-residual cochains; this is level-2 wrapping rather than strict stoichiometric closure.
+parameter_management_map:
+  biosphere.bvoc.monoterpene.v_max_mts:
+    source: ParameterManager YAML
+  biosphere.bvoc.monoterpene.k_gpp:
+    source: ParameterManager YAML
+  biosphere.bvoc.monoterpene.q10_synthase:
+    source: ParameterManager YAML
+  biosphere.bvoc.monoterpene.pool.capacity:
+    source: ParameterManager YAML
+  biosphere.bvoc.monoterpene.pool_initial:
+    source: ParameterManager YAML
+  biosphere.bvoc.monoterpene.pool.k_degradation:
+    source: ParameterManager YAML
+  biosphere.bvoc.monoterpene.pool.k_emit_25:
+    source: ParameterManager YAML
+  biosphere.bvoc.monoterpene.pool.beta_emission:
+    source: ParameterManager YAML
+  biosphere.bvoc.photosynthetic_coupling.f_carbon_monoterpenes:
+    source: ParameterManager YAML
+  biosphere.bvoc.molecular_weights.monoterpenes:
+    source: ParameterManager YAML
+  biosphere.bvoc.carbon_fraction.monoterpenes:
+    source: ParameterManager YAML
+  biosphere.bvoc.monoterpene.enable_seasonal_variation:
+    source: ParameterManager YAML
+  biosphere.bvoc.monoterpene.seasonal.amplitude:
+    source: ParameterManager YAML
+  biosphere.bvoc.monoterpene.seasonal.minimum_factor:
+    source: ParameterManager YAML
+  biosphere.bvoc.monoterpene.seasonal.peak_day:
+    source: ParameterManager YAML
+  physical_constant_ssot:
+    source: reference_temperature, seconds_per_year, and seconds_per_day are read through get_physical_constant and are not ParameterManager parameter_keys
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares interfaces, execution phase, and conservation semantics
+  state_contract: existing simulator state update path is preserved
+  validation_rule: phase8 scientific inventory and equivalence certificate checks
+dependency_interconnection_map:
+  dependencies: farquhar_photosynthesis provides gross_photosynthesis; StateManager and the external forcing adapter provide the pool and air_temperature proxy
+  direct_functor_calls: none declared by certificate
+overflow_routing_map:
+  diagnostic_residuals: diagnostics.bvoc.monoterpene.pool_boundary_residual_rate closes the local bounded update exactly and its carbon equivalent enters the process-specific carbon_boundary ledger
+  discarded_residuals: the pool-boundary correction is exported exactly as diagnostics.bvoc.monoterpene.pool_boundary_residual_rate; bounded pool state, storage change, carbon allocation, degradation, and atmospheric emission are explicit outputs
+conservation_map:
+  conserved_quantities:
+  - carbon_boundary
+  balance_expression: R_C = F_C,alloc - F_C,emit - F_C,degradation + F_C,boundary - F_C,storage; carbon_boundary = ||R_C||_inf after the central UnitConverter maps every term to kg C m-2 s-1. The process remains open and no closed whole-plant carbon-stock balance is claimed.
+  local_check: check_conservation_laws requires the canonical allocation, emission, degradation, storage-change, and pool-boundary outputs, validates finite matching tensors, and reports the infinity norm of their open storage-ledger residual.
+  open_system_route: port
+entropy_audit:
+  operator_sign: empirical nonnegative rate constraints are validated where required; no thermodynamic mobility operator is declared
+  sigma_expression: entropy production is not evaluated at level 2, and no strict IPHS or GENERIC entropy claim is made
+equivalence_type: reaction_network

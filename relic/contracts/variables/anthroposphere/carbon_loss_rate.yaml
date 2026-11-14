@@ -1,0 +1,38 @@
+variable: carbon_loss_rate
+title: "Tillage Soil Carbon Loss Flux"
+description: "Tillage-induced soil carbon flush F_C = C_soil f_0 f_p I D f_T / S_day in the step of an executed operation, zero outside an operation step; the one tillage carbon export (Reicosky 1997). Enhanced decomposition after tillage is not represented."
+kind: flux
+dimension:
+  udunits: "kg C m-2 s-1"
+  cf_standard_name: null
+owner: "tillage_management"
+aliases: []
+incrementable: false
+accumulates: carbon.total
+numerics:
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-09
+writers:
+  increments: []
+  tendencies:
+    - name: "tillage_management"
+      module: "relic.scientific.anthroposphere.management.tillage"
+      provides:
+        - "carbon_loss_rate"
+      unit: "kg C m-2 s-1"
+flux_contract:
+  allowed_in: []
+  allowed_out:
+    - "tillage_management"
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/anthroposphere/management/tillage.py"
+  runtime_role: "managed_tillage_soil_carbon_export_flux"
+  runtime_writer: "tillage_management"
+  note: "Computed by _calculate_carbon_flush in the step of an executed operation and passed through _compute_rate_core; returned as UpdateItem(REPLACE, per_timestep=False, unit 'kg C m-2 s-1', element 'carbon'), which the domain carbon.total matches; the mass-balance check counts it once. soil_co2_flux is its CO2-mass form."

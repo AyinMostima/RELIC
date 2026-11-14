@@ -1,0 +1,21 @@
+schema_version: "1.0.0"
+strict: false
+init_specs:
+  parameters:
+    - key: "relic.physical.constants.time.seconds_per_day"
+      units: "s"
+      bounds: [0.0, 100000.0]
+      required: true
+  state_variables:
+    - name: "air_temperature"
+      units: "K"
+      bounds: [0.0, 400.0]
+  functors:
+    - name: "biosphere_photosynthesis_farquhar"
+      execution_phase: "main_processes"
+run_specs:
+  update_rules:
+    - variable: "soil_moisture"
+      mode: "accumulate"
+  default_mode: "replace"
+  strict: false

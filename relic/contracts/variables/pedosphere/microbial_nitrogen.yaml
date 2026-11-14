@@ -1,0 +1,37 @@
+variable: microbial_nitrogen
+title: "Microbial Nitrogen"
+kind: state
+dimension:
+  udunits: "g N m-2"
+  cf_standard_name: null
+owner: "mineralization"
+aliases: []
+incrementable: true
+accumulates: nitrogen.total
+numerics:
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments:
+    - name: "mineralization"
+      module: "relic.scientific.pedosphere.nutrient_cycling.mineralization"
+      provides:
+        - "microbial_nitrogen"
+      unit: "g N m-2"
+  tendencies: []
+flux_contract:
+  allowed_in:
+    - "mineralization"
+  allowed_out:
+    - "mineralization"
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/pedosphere/nutrient_cycling/mineralization.py"
+  runtime_role: "mineralization_reaction_state"
+  runtime_writer: "mineralization"

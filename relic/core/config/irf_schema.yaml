@@ -1,0 +1,54 @@
+description: "Schema for IRF InitSpecs/RunSpecs."
+required_top_level:
+  - schema_version
+  - init_specs
+  - run_specs
+init_specs:
+  parameters:
+    type: list
+    item_fields:
+      key:
+        type: string
+        required: true
+      units:
+        type: string
+      bounds:
+        type: list
+        length: 2
+      required:
+        type: boolean
+      requires_grad:
+        type: boolean
+  state_variables:
+    type: list
+    item_fields:
+      name:
+        type: string
+        required: true
+      units:
+        type: string
+      bounds:
+        type: list
+        length: 2
+  functors:
+    type: list
+    item_fields:
+      name:
+        type: string
+        required: true
+      execution_phase:
+        type: string
+run_specs:
+  update_rules:
+    type: list_or_dict
+    item_fields:
+      variable:
+        type: string
+      mode:
+        type: string
+        allowed: ["accumulate", "replace"]
+  default_mode:
+    type: string
+    allowed: ["accumulate", "replace"]
+  strict:
+    type: boolean

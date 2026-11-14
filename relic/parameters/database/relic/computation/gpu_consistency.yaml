@@ -1,0 +1,115 @@
+schema_version: 2.0.0
+tier: relic
+namespace: computation.gpu.consistency
+description: Tolerances of NumericalConsistencyChecker (relic.computation.gpu.accelerator) for comparing a
+  CPU baseline with a GPU result, |gpu - cpu| <= atol + rtol |cpu|, at full precision and under automatic mixed
+  precision (AMP); a checker that does not state a tolerance reads it here.
+metadata:
+  version: 1.0.0
+  created_by: relic
+  last_modified: '2026-09-26T00:00:00Z'
+parameters:
+  computation.gpu.consistency.rtol:
+    value: 1.0e-05
+    default: 1.0e-05
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 1.0e-15
+    - 1.0
+    category: numerical_parameter
+    description: Relative tolerance rtol of the full-precision CPU/GPU comparison |gpu - cpu| <= atol + rtol |cpu|. The value is
+      the numpy.allclose / torch.allclose default; a RELIC convention value, not a derived error bound.
+    references:
+    - 'NumPy documentation, numpy.allclose(a, b, rtol=1e-05, atol=1e-08): the comparison |a - b| <= atol + rtol |b|'
+    - RELIC convention value (documented as an operational choice)
+    tags:
+    - computation
+    - gpu
+    - consistency
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  computation.gpu.consistency.atol:
+    value: 1.0e-08
+    default: 1.0e-08
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 1.0e-15
+    - 1.0
+    category: numerical_parameter
+    description: Absolute tolerance atol of the full-precision CPU/GPU comparison |gpu - cpu| <= atol + rtol |cpu|, in the units
+      of the compared result. The value is the numpy.allclose / torch.allclose default; a RELIC convention value.
+    references:
+    - 'NumPy documentation, numpy.allclose(a, b, rtol=1e-05, atol=1e-08): the comparison |a - b| <= atol + rtol |b|'
+    - RELIC convention value (documented as an operational choice)
+    tags:
+    - computation
+    - gpu
+    - consistency
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  computation.gpu.consistency.amp_rtol:
+    value: 1.0e-03
+    default: 1.0e-03
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 1.0e-15
+    - 1.0
+    category: numerical_parameter
+    description: Relative tolerance rtol of the CPU/GPU comparison under automatic mixed precision (float16). The value is of
+      the order of the binary16 machine epsilon 2^-10 = 9.77e-4 (twice the unit roundoff 2^-11); a RELIC
+      convention value with that basis, not a derived error bound of the compared computation.
+    references:
+    - 'IEEE 754-2008 binary16: 11-bit significand, machine epsilon 2^-10 = 9.77e-4'
+    - Higham, N.J. (2002). Accuracy and Stability of Numerical Algorithms, 2nd ed. SIAM, ch. 2 (unit roundoff)
+    - Micikevicius, P. et al. (2018). Mixed Precision Training. ICLR 2018
+    - RELIC convention value (documented as an operational choice)
+    tags:
+    - computation
+    - gpu
+    - consistency
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  computation.gpu.consistency.amp_atol:
+    value: 1.0e-05
+    default: 1.0e-05
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 1.0e-15
+    - 1.0
+    category: numerical_parameter
+    description: Absolute tolerance atol of the CPU/GPU comparison under automatic mixed precision (float16), in the units of the
+      compared result; below the smallest normal binary16 number 6.1e-5. A RELIC convention value.
+    references:
+    - 'IEEE 754-2008 binary16: 11-bit significand, machine epsilon 2^-10 = 9.77e-4'
+    - Micikevicius, P. et al. (2018). Mixed Precision Training. ICLR 2018
+    - RELIC convention value (documented as an operational choice)
+    tags:
+    - computation
+    - gpu
+    - consistency
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'

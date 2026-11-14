@@ -1,0 +1,234 @@
+{
+  "certificate_version": "1.0",
+  "process_id": "relic.scientific.biosphere.photosynthesis.stomatal.MedlynStomatalConductance",
+  "module_name": "MedlynStomatalConductance",
+  "canonical_role": "observation",
+  "iphs_level": 1,
+  "iphs_level_evidence": {
+    "classification": "IPHS-compatible diagnostic or observation certificate",
+    "compatible_basis": "Read-only conditional diagnostic of supplied assimilation with declared interface and no prognostic state ownership"
+  },
+  "theory_document": "docs\\source\\theory\\photosynthesis.md",
+  "theory_document_status": "updated",
+  "legacy_formula": "L_eff = (1 - exp(-k LAI)) / k; A_leaf = A_ground / L_eff; D_eff = max(D_air, D_min); g_s = g0 + r_wc (1 + g1 / sqrt(D_eff_kPa)) A_leaf / C_air_ppm if ppfd > 0 and A_leaf > 0, else g_s = g0",
+  "literature_formula": "g_s = g0 + 1.6 (1 + g1 / sqrt(D_s)) A_n / C_s (Medlyn et al. 2011; CTSM technical note Eq. 2.9.1)",
+  "iphs_formula": "y_h = O_h x_h through the declared observation operator",
+  "legacy_expression": "L_eff = (1 - exp(-k LAI)) / k; A_leaf = A_ground / L_eff; D_eff = max(D_air, D_min); g_s = g0 + r_wc (1 + g1 / sqrt(D_eff_kPa)) A_leaf / C_air_ppm if ppfd > 0 and A_leaf > 0, else g_s = g0",
+  "iphs_expression": "y_h = O_h x_h through the declared observation operator",
+  "input_variables": [
+    "net_photosynthesis",
+    "leaf_area_index",
+    "ppfd",
+    "atmospheric_co2_ppm",
+    "vapor_pressure_deficit",
+    "air_temperature",
+    "atmospheric_pressure",
+    "air_temperature_max",
+    "air_temperature_min",
+    "latitude",
+    "day_of_year"
+  ],
+  "output_variables": [
+    "stomatal_conductance",
+    "diagnostics.medlyn.leaf_net_assimilation",
+    "diagnostics.medlyn.dark_residual",
+    "diagnostics.medlyn.nonpositive_assimilation_residual",
+    "diagnostics.medlyn.vpd_floor_active",
+    "canopy_conductance",
+    "diagnostics.medlyn.no_canopy",
+    "stomatal_conductance_daylight_samples",
+    "canopy_conductance_daylight_samples"
+  ],
+  "parameter_keys": [
+    "coupling.scales.biosphere_atmosphere.g0",
+    "coupling.scales.biosphere_atmosphere.g1",
+    "coupling.scales.biosphere_atmosphere.vpd_min_pa",
+    "biosphere.photosynthesis.canopy_light_extinction",
+    "relic.physical.constants.conversions.h2o_co2_diffusivity_ratio"
+  ],
+  "composition_ports": [
+    "net_photosynthesis",
+    "leaf_area_index",
+    "ppfd",
+    "atmospheric_co2_ppm",
+    "vapor_pressure_deficit",
+    "stomatal_conductance"
+  ],
+  "references": [
+    "Medlyn, B.E. et al. (2011). Global Change Biology 17, 2134-2144, doi:10.1111/j.1365-2486.2010.02375.x",
+    "CTSM Photosynthesis technical note, Eq. 2.9.1",
+    "CTSM PhotosynthesisMod.F90 at commit 7d1bc988a5a67660d2988c57a0bf195173c31017, lines 87-88 and 1856-1934",
+    "de Pury, D.G.G. and Farquhar, G.D. (1997). Plant, Cell and Environment 20, 537-557"
+  ],
+  "baseline_tests": [
+    "test\\unit\\biosphere\\photosynthesis\\medlynStomatalConductance.test.py"
+  ],
+  "validation_tests": [
+    "test\\unit\\biosphere\\photosynthesis\\medlynStomatalConductance.test.py",
+    "test\\core\\test_bridge_classes.py"
+  ],
+  "state_map": {
+    "net_photosynthesis": "required upstream StateManager port on ground support in umol CO2 m-2 s-1",
+    "leaf_area_index": "required StateManager port in m2 m-2",
+    "ppfd": "required StateManager port in umol m-2 s-1; selects only the light branch",
+    "atmospheric_co2_ppm": "required StateManager port in umol mol-1, substituted for leaf-surface CO2 by the declared condition",
+    "vapor_pressure_deficit": "required StateManager port in Pa, substituted for leaf-surface VPD by the declared condition",
+    "air_temperature": "air temperature of the canopy conductance conversion g_c = g_s L_eff R T / P, read only with canopy_conductance_upscaling",
+    "atmospheric_pressure": "air pressure of the canopy conductance conversion g_c = g_s L_eff R T / P, read only with canopy_conductance_upscaling",
+    "air_temperature_max": "daily maximum air temperature, read only with temporal_support daylight_gauss",
+    "air_temperature_min": "daily minimum air temperature, read only with temporal_support daylight_gauss",
+    "latitude": "latitude of the cell, read only with temporal_support daylight_gauss",
+    "day_of_year": "day of year, read only with temporal_support daylight_gauss"
+  },
+  "parameter_map": {
+    "coupling.scales.biosphere_atmosphere.g0": "Residual leaf water conductance [mol m-2 s-1]",
+    "coupling.scales.biosphere_atmosphere.g1": "Medlyn slope prior [kPa^0.5]",
+    "coupling.scales.biosphere_atmosphere.vpd_min_pa": "Declared VPD regularization floor [Pa]",
+    "biosphere.photosynthesis.canopy_light_extinction": "Farquhar canopy extinction [dimensionless]",
+    "relic.physical.constants.conversions.h2o_co2_diffusivity_ratio": "Water to CO2 diffusivity ratio [dimensionless]"
+  },
+  "operator_map": {
+    "O_h": "declared conditional Medlyn observation map with explicit residual branches",
+    "H_h": "diagnostic metric or identity Hodge map"
+  },
+  "unit_map": {
+    "net_photosynthesis": "umol m-2 s-1",
+    "leaf_area_index": "m2 m-2",
+    "ppfd": "umol m-2 s-1",
+    "atmospheric_co2_ppm": "ppm",
+    "vapor_pressure_deficit": "Pa",
+    "stomatal_conductance": "mol m-2 s-1",
+    "diagnostics.medlyn.leaf_net_assimilation": "umol m-2 s-1",
+    "diagnostics.medlyn.dark_residual": "1",
+    "diagnostics.medlyn.nonpositive_assimilation_residual": "1",
+    "diagnostics.medlyn.vpd_floor_active": "1",
+    "air_temperature": "K",
+    "atmospheric_pressure": "Pa",
+    "air_temperature_max": "K",
+    "air_temperature_min": "K",
+    "latitude": "degrees_north",
+    "day_of_year": "1",
+    "canopy_conductance": "m s-1",
+    "diagnostics.medlyn.no_canopy": "1",
+    "stomatal_conductance_daylight_samples": "mol m-2 s-1",
+    "canopy_conductance_daylight_samples": "m s-1"
+  },
+  "input_output_map": {
+    "net_photosynthesis": "canonical required signed ground-support input, inverted to leaf support with L_eff",
+    "stomatal_conductance": "canonical nonnegative leaf-support output, instantaneous REPLACE",
+    "diagnostics.medlyn.leaf_net_assimilation": "signed representative leaf assimilation, preserved without clipping",
+    "diagnostics.medlyn.dark_residual": "boolean selection of the dark residual branch g_s = g0",
+    "diagnostics.medlyn.nonpositive_assimilation_residual": "boolean selection of the illuminated nonpositive-assimilation residual branch g_s = g0",
+    "diagnostics.medlyn.vpd_floor_active": "boolean activation of D_eff = D_min",
+    "canopy_conductance": "bulk canopy conductance g_c = g_s L_eff R T / P, written only with canopy_conductance_upscaling",
+    "diagnostics.medlyn.no_canopy": "boolean LAI <= 0 of nonpositive_leaf_area no_canopy (g_s = g_c = 0)",
+    "stomatal_conductance_daylight_samples": "stomatal conductance at the daylight Gauss samples, written only with temporal_support daylight_gauss",
+    "canopy_conductance_daylight_samples": "canopy conductance at the daylight Gauss samples, written only with temporal_support daylight_gauss and canopy_conductance_upscaling"
+  },
+  "interface_map": {
+    "forward_signature": "forward(self, state, time, dt)",
+    "bridge_class": "BiologicalProcessFunctor",
+    "abstraction_contract": "BiologicalProcess",
+    "state_write_mode": "UpdateItem REPLACE with per_timestep false",
+    "legacy_inputs": [
+      "net_photosynthesis",
+      "leaf_area_index",
+      "ppfd",
+      "atmospheric_co2_ppm",
+      "vapor_pressure_deficit",
+      "air_temperature",
+      "atmospheric_pressure",
+      "air_temperature_max",
+      "air_temperature_min",
+      "latitude",
+      "day_of_year"
+    ],
+    "iphs_inputs": [
+      "net_photosynthesis",
+      "leaf_area_index",
+      "ppfd",
+      "atmospheric_co2_ppm",
+      "vapor_pressure_deficit",
+      "air_temperature",
+      "atmospheric_pressure",
+      "air_temperature_max",
+      "air_temperature_min",
+      "latitude",
+      "day_of_year"
+    ],
+    "legacy_outputs": [
+      "stomatal_conductance",
+      "diagnostics.medlyn.leaf_net_assimilation",
+      "diagnostics.medlyn.dark_residual",
+      "diagnostics.medlyn.nonpositive_assimilation_residual",
+      "diagnostics.medlyn.vpd_floor_active",
+      "canopy_conductance",
+      "diagnostics.medlyn.no_canopy",
+      "stomatal_conductance_daylight_samples",
+      "canopy_conductance_daylight_samples"
+    ],
+    "iphs_outputs": [
+      "stomatal_conductance",
+      "diagnostics.medlyn.leaf_net_assimilation",
+      "diagnostics.medlyn.dark_residual",
+      "diagnostics.medlyn.nonpositive_assimilation_residual",
+      "diagnostics.medlyn.vpd_floor_active",
+      "canopy_conductance",
+      "diagnostics.medlyn.no_canopy",
+      "stomatal_conductance_daylight_samples",
+      "canopy_conductance_daylight_samples"
+    ]
+  },
+  "runtime_replacement_map": {
+    "runtime_uses_iphs": false,
+    "legacy_removed": false,
+    "replacement_entrypoint": "forward",
+    "preserved_numerics": "Existing ParameterManager-backed calculations define canonical IPHS operator coefficients, rates, ports, or observations.",
+    "no_legacy_mode": "No selectable legacy runtime branch is exposed for Phase 8 completion."
+  },
+  "state_advancement_map": {
+    "potential_basis": "supplied net assimilation, LAI, PPFD, canopy-air CO2 and VPD observation inputs",
+    "effort_variable": "not applicable to this empirical level-1 observation",
+    "state_advancer": "y_h = O_h x_h through the declared observation operator",
+    "runtime_usage": "MedlynStomatalConductance.forward evaluates one conditional conductance and its branch diagnostics and emits stomatal_conductance without advancing any material pool."
+  },
+  "parameter_management_map": {
+    "coupling.scales.biosphere_atmosphere.g0": {
+      "source": "ParameterManager YAML"
+    },
+    "coupling.scales.biosphere_atmosphere.g1": {
+      "source": "ParameterManager YAML"
+    },
+    "coupling.scales.biosphere_atmosphere.vpd_min_pa": {
+      "source": "ParameterManager YAML"
+    },
+    "biosphere.photosynthesis.canopy_light_extinction": {
+      "source": "ParameterManager YAML"
+    },
+    "relic.physical.constants.conversions.h2o_co2_diffusivity_ratio": {
+      "source": "ParameterManager YAML"
+    }
+  },
+  "composition_management_map": {
+    "functor_metadata": "existing FunctorMetadata declares interfaces, execution phase, EXCLUSIVE conflict policy and no conservation law",
+    "state_contract": "StateManager receives one explicit REPLACE UpdateItem for stomatal_conductance",
+    "validation_rule": "phase8 scientific inventory and equivalence certificate checks"
+  },
+  "dependency_interconnection_map": {
+    "dependencies": "no direct Functor dependency; net_photosynthesis and the atmospheric ports are required StateManager ports",
+    "direct_functor_calls": "none declared by certificate"
+  },
+  "overflow_routing_map": {
+    "diagnostic_residuals": "dark and nonpositive-assimilation residual branches and the VPD floor are reported as diagnostics; nonfinite or out-of-domain inputs are refused, not clipped",
+    "discarded_residuals": "no material or energy residual"
+  },
+  "conservation_map": {
+    "conserved_quantities": "none; this Functor is read-only",
+    "balance_expression": "no water or carbon stock, flux, source, sink, or state advance"
+  },
+  "entropy_audit": {
+    "operator_sign": "conductance is nonnegative for nonnegative g0; positive assimilation raises conductance",
+    "sigma_expression": "not applicable to this non-strict empirical observation"
+  },
+  "equivalence_type": "diagnostic"
+}

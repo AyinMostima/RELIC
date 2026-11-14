@@ -1,0 +1,199 @@
+certificate_version: '1.0'
+process_id: relic.scientific.biosphere.respiration.maintenance_respiration.MaintenanceRespiration
+module_name: MaintenanceRespiration
+canonical_role: reaction
+iphs_level: 2
+iphs_level_evidence:
+  classification: IPHS-wrapped reaction process certificate
+  compatible_basis: Reaction process is expressed through conserved or open stoichiometric ledgers
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: N_h r_h reaction-network state advance
+  level_2_limit: The canonical runtime wrapper is declared, but no executable typed-cochain or IPHS structural contribution is bound; strict level 4 or 5 evidence is not claimed.
+theory_document: docs\source\theory\respiration.md
+theory_document_status: updated
+legacy_formula: R(T) = R_ref * Q10^((T-T_ref)/10)
+literature_formula: R(T) = R_ref * Q10^((T-T_ref)/10)
+iphs_formula: x_dot = N_h r_h with ParameterManager-backed process rates r_h and declared stoichiometric/output map N_h
+legacy_expression: R(T) = R_ref * Q10^((T-T_ref)/10)
+iphs_expression: x_dot = N_h r_h with ParameterManager-backed process rates r_h and declared stoichiometric/output map N_h
+input_variables:
+- air_temperature
+- biomass_leaf
+- biomass_stem
+- biomass_root
+- soluble_sugar
+- soil_water_potential
+- growing_temperature
+output_variables:
+- maintenance_respiration_total
+- diagnostics.maintenance_respiration.leaf_flux
+- diagnostics.maintenance_respiration.stem_flux
+- diagnostics.maintenance_respiration.root_flux
+- diagnostics.maintenance_respiration.leaf_rate_coefficient
+- diagnostics.maintenance_respiration.substrate_factor
+- diagnostics.maintenance_respiration.water_stress_factor
+- diagnostics.maintenance_respiration.growth_temperature
+parameter_keys:
+- biosphere.respiration.maintenance.rm_leaf_25
+- biosphere.respiration.maintenance.rm_stem_25
+- biosphere.respiration.maintenance.rm_root_25
+- biosphere.respiration.maintenance.q10_respiration
+- biosphere.respiration.maintenance.q10_leaf_factor
+- biosphere.respiration.maintenance.q10_stem_factor
+- biosphere.respiration.maintenance.q10_root_factor
+- biosphere.respiration.maintenance.acclimation_rate_coeff
+- biosphere.respiration.maintenance.km_substrate
+- biosphere.respiration.maintenance.water_stress_wilting_point
+- biosphere.respiration.maintenance.water_stress_field_capacity
+composition_ports: []
+references:
+- Ryan, M.G. (1991). Effects of climate change on plant respiration
+- Atkin & Tjoelker (2003). Thermal acclimation and dynamic response
+baseline_tests:
+- test\unit\biosphere\respiration\test_maintenance_respiration_l1.py
+- test\integration\biosphere\respiration\test_respiration_integration_l2.py
+- test\audit\phase8_scientific_inventory.test.py
+validation_tests:
+- test\unit\biosphere\respiration\test_maintenance_respiration_l1.py
+- test\integration\biosphere\respiration\test_autotrophic_integration.py
+- test\system\biosphere\respiration\test_respiration_system_l3.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  air_temperature: air_temperature mapped to canonical Phase 8 cochain basis
+  biomass_leaf: biomass_leaf mapped to canonical Phase 8 cochain basis
+  biomass_stem: biomass_stem mapped to canonical Phase 8 cochain basis
+  biomass_root: biomass_root mapped to canonical Phase 8 cochain basis
+  soluble_sugar: soluble_sugar mapped to canonical Phase 8 cochain basis
+  soil_water_potential: soil_water_potential mapped to canonical Phase 8 cochain basis
+  growing_temperature: optional acclimation observation mapped to the canonical Phase 8 basis
+parameter_map:
+  biosphere.respiration.maintenance.rm_leaf_25: Leaf maintenance respiration coefficient at 25 degC [s-1]
+  biosphere.respiration.maintenance.rm_stem_25: Stem maintenance respiration coefficient at 25 degC [s-1]
+  biosphere.respiration.maintenance.rm_root_25: Root maintenance respiration coefficient at 25 degC [s-1]
+  biosphere.respiration.maintenance.q10_respiration: Q10 of maintenance respiration [dimensionless]
+  biosphere.respiration.maintenance.q10_leaf_factor: Leaf-specific Q10 multiplier [dimensionless]
+  biosphere.respiration.maintenance.q10_stem_factor: Stem-specific Q10 multiplier [dimensionless]
+  biosphere.respiration.maintenance.q10_root_factor: Root-specific Q10 multiplier [dimensionless]
+  biosphere.respiration.maintenance.acclimation_rate_coeff: Thermal acclimation coefficient [K-1]
+  biosphere.respiration.maintenance.km_substrate: Soluble-carbon half-saturation pool [g C m-2]
+  biosphere.respiration.maintenance.water_stress_wilting_point: Water potential of zero respiration response [MPa]
+  biosphere.respiration.maintenance.water_stress_field_capacity: Water potential of full respiration response [MPa]
+operator_map:
+  N_h: declared stoichiometric or output incidence map for this reaction process
+  r_h: ParameterManager-backed process-rate vector evaluated by the production forward path
+unit_map:
+  maintenance_respiration_total: kg C m-2 s-1
+  diagnostics.maintenance_respiration.leaf_flux: kg C m-2 s-1
+  diagnostics.maintenance_respiration.stem_flux: kg C m-2 s-1
+  diagnostics.maintenance_respiration.root_flux: kg C m-2 s-1
+  diagnostics.maintenance_respiration.leaf_rate_coefficient: s-1
+  diagnostics.maintenance_respiration.substrate_factor: '1'
+  diagnostics.maintenance_respiration.water_stress_factor: '1'
+  diagnostics.maintenance_respiration.growth_temperature: K
+input_output_map:
+  air_temperature: canonical temperature driver used by the production runtime
+  biomass_leaf: same interface variable preserved between legacy and IPHS runtime contracts
+  biomass_root: same interface variable preserved between legacy and IPHS runtime contracts
+  biomass_stem: same interface variable preserved between legacy and IPHS runtime contracts
+  soluble_sugar: canonical substrate driver used by the production runtime
+  growing_temperature: optional canonical acclimation observation
+  diagnostics.maintenance_respiration.leaf_flux: leaf component observation of the total carbon export
+  diagnostics.maintenance_respiration.root_flux: root component observation of the total carbon export
+  diagnostics.maintenance_respiration.stem_flux: stem component observation of the total carbon export
+  diagnostics.maintenance_respiration.leaf_rate_coefficient: leaf Q10-adjusted coefficient observation
+  diagnostics.maintenance_respiration.substrate_factor: substrate limitation observation
+  diagnostics.maintenance_respiration.water_stress_factor: water limitation observation
+  diagnostics.maintenance_respiration.growth_temperature: acclimation-temperature observation
+  maintenance_respiration_total: same interface variable preserved between legacy and IPHS runtime contracts
+  soil_water_potential: same interface variable preserved between legacy and IPHS runtime contracts
+interface_map:
+  forward_signature: forward(self, state, time, dt)
+  bridge_class: BiologicalProcessFunctor
+  abstraction_contract: BiologicalProcess
+  state_write_mode: existing RELIC simulator and StateManager update path
+  legacy_inputs:
+  - air_temperature
+  - biomass_leaf
+  - biomass_stem
+  - biomass_root
+  - soluble_sugar
+  - soil_water_potential
+  - growing_temperature
+  iphs_inputs:
+  - air_temperature
+  - biomass_leaf
+  - biomass_stem
+  - biomass_root
+  - soluble_sugar
+  - soil_water_potential
+  - growing_temperature
+  legacy_outputs:
+  - maintenance_respiration_total
+  - diagnostics.maintenance_respiration.leaf_flux
+  - diagnostics.maintenance_respiration.stem_flux
+  - diagnostics.maintenance_respiration.root_flux
+  - diagnostics.maintenance_respiration.leaf_rate_coefficient
+  - diagnostics.maintenance_respiration.substrate_factor
+  - diagnostics.maintenance_respiration.water_stress_factor
+  - diagnostics.maintenance_respiration.growth_temperature
+  iphs_outputs:
+  - maintenance_respiration_total
+  - diagnostics.maintenance_respiration.leaf_flux
+  - diagnostics.maintenance_respiration.stem_flux
+  - diagnostics.maintenance_respiration.root_flux
+  - diagnostics.maintenance_respiration.leaf_rate_coefficient
+  - diagnostics.maintenance_respiration.substrate_factor
+  - diagnostics.maintenance_respiration.water_stress_factor
+  - diagnostics.maintenance_respiration.growth_temperature
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: Existing ParameterManager-backed calculations define canonical IPHS operator coefficients, rates, ports, or observations.
+  no_legacy_mode: No selectable legacy runtime branch is exposed for Phase 8 completion.
+state_advancement_map:
+  potential_basis: declared RELIC state, port, or observation cochain basis
+  effort_variable: ParameterManager-backed thermodynamic effort, driver, or diagnostic input used by the module
+  state_advancer: x_dot = N_h r_h with explicit stoichiometric_N and rates evaluated by advance_reaction_network
+  runtime_usage: MaintenanceRespiration.forward calls advance_reaction_network with declared stoichiometric_N and rates before emitting canonical outputs.
+  explicit_stoichiometric_usage: MaintenanceRespiration.forward materializes stoichiometric_N and rates, then lowers x_dot=N_h r_h through advance_reaction_network.
+parameter_management_map:
+  biosphere.respiration.maintenance.rm_leaf_25:
+    source: ParameterManager YAML
+  biosphere.respiration.maintenance.rm_stem_25:
+    source: ParameterManager YAML
+  biosphere.respiration.maintenance.rm_root_25:
+    source: ParameterManager YAML
+  biosphere.respiration.maintenance.q10_respiration:
+    source: ParameterManager YAML
+  biosphere.respiration.maintenance.q10_leaf_factor:
+    source: ParameterManager YAML
+  biosphere.respiration.maintenance.q10_stem_factor:
+    source: ParameterManager YAML
+  biosphere.respiration.maintenance.q10_root_factor:
+    source: ParameterManager YAML
+  biosphere.respiration.maintenance.acclimation_rate_coeff:
+    source: ParameterManager YAML
+  biosphere.respiration.maintenance.km_substrate:
+    source: ParameterManager YAML
+  biosphere.respiration.maintenance.water_stress_wilting_point:
+    source: ParameterManager YAML
+  biosphere.respiration.maintenance.water_stress_field_capacity:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares interfaces, execution phase, and conservation semantics
+  state_contract: existing simulator state update path is preserved
+  validation_rule: phase8 scientific inventory and equivalence certificate checks
+dependency_interconnection_map:
+  dependencies: none_no_functor_dependencies_all_inputs_are_statemanager_owned
+  direct_functor_calls: none declared by certificate
+overflow_routing_map:
+  diagnostic_residuals: none; the runtime applies no clipping floor or discarded carbon residual
+  discarded_residuals: no_carbon_residual_is_discarded; leaf_stem_and_root_fluxes_sum_exactly_to_the_total_open_carbon_export_and_dimensionless_response_factors_do_not_mutate_pools
+conservation_map:
+  conserved_quantities: carbon
+  balance_expression: maintenance_respiration_total equals the sum of leaf, stem, and root component fluxes and exits through the declared open carbon port
+entropy_audit:
+  operator_sign: rates, mobilities, or diagnostic maps are non-negative or checked by existing validation hooks where physically required
+  sigma_expression: canonical entropy production is non-negative for dissipative subexpressions
+equivalence_type: thermodynamic_embedding

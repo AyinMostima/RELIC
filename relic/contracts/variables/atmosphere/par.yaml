@@ -1,0 +1,47 @@
+variable: par
+title: "Photosynthetic Photon Flux Density (PAR)"
+description: "Photosynthetic photon flux density (PPFD, 400-700 nm) read under the name par as a photon flux in umol photons m-2 s-1 by the carbon-13 BVOC fractionation light dependence (Carbon13FractionationCalculator: par / (par + par_optimal); the C3 discrimination has no light multiplier since MA-21 12.3) and by the BVOCResponseIntegrator light factor. Non-negative. It is not PAR energy: incident PAR energy [W m-2] is par_total of atmospheric_radiation, and the canonical photon flux written by atmospheric_radiation is ppfd. No relic Functor writes par: it is supplied as forcing (the tutorial forcing loader sets par := ppfd)."
+kind: forcing
+dimension:
+  # Photon flux density: read by the carbon-13 BVOC fractionation light term
+  # (bvoc.par_optimal) and the BVOC light response as PPFD; PAR energy
+  # [W m-2] is the radiation output par_total.
+  udunits: "umol photons m-2 s-1"
+  cf_standard_name: null
+support:
+  spatial_kind: grid_cell
+  area_basis: ground_area
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Farquhar, G.D., Ehleringer, J.R. and Hubick, K.T. (1989). Carbon isotope discrimination and photosynthesis. Annu. Rev. Plant Physiol. Plant Mol. Biol. 40, 503-537"
+  - "Guenther, A.B. et al. (2012). The Model of Emissions of Gases and Aerosols from Nature version 2.1 (MEGAN2.1). Geosci. Model Dev. 5, 1471-1492"
+numerics:
+  # Sign convention: photon flux density magnitude, par >= 0; no upper limit
+  # is declared.
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies: []
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/isotopes/fractionation/carbon_13.py"
+  runtime_role: "external_photosynthetic_photon_flux_forcing"
+  runtime_writer: null
+  note: "No RELIC Functor writes par. Readers: Carbon13FractionationCalculator BVOC fractionation light dependence (carbon_13.py:967-973; bvoc.par_optimal [umol photons m-2 s-1] isotope_parameters.yaml:1834-1837); BVOCResponseIntegrator light factor (relic/scientific/biosphere/bvoc/responses.py:830-831,1007-1012; PAR/PPFD [umol m-2 s-1] :980). The radiation energy audit excludes par from the PAR energy ledger (relic/scientific/atmosphere/radiation_energy_conservation.py:426-427). No CF name: the readers use par as the leaf-incident light driver, not the CF surface_downwelling_photosynthetic_photon_flux_in_air (mol m-2 s-1); ppfd likewise declares none. Written outside relic by the tutorial forcing loader as par := ppfd (tutorial/case/utils/netcdf_loader.py:210-214)."

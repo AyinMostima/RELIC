@@ -1,0 +1,42 @@
+variable: diagnostics.stochastic_temperature.drift
+title: "Stochastic Temperature Drift"
+kind: diagnostic
+dimension:
+  udunits: "K day-1"
+  cf_standard_name: null
+support:
+  spatial_kind: grid_cell
+  area_basis: grid_area
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions:
+      - cell
+owner: "stochastic_air_temperature"
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Hasselmann, K. (1976). Tellus 28, 473-485"
+  - "Kloeden, P.E. & Platen, E. (1992). Numerical Solution of Stochastic Differential Equations, ch. 10"
+numerics:
+  lower_bound: null
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies: []
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-12
+      rtol: 1.0e-9
+provenance:
+  source_file: "relic/scientific/atmosphere/stochastic_temperature.py"
+  runtime_role: "continuous_sde_step_diagnostic"
+  runtime_writer: "stochastic_air_temperature"
+  note: "Drift -alpha X of the Ornstein-Uhlenbeck anomaly evaluated at the step start."

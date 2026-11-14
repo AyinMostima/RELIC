@@ -1,0 +1,54 @@
+variable: leaf_temperature_24h_mean
+title: "Leaf Temperature 24-Hour Running Mean"
+description: "Running mean T24 of the leaf temperature (leaf_temperature of leaf_energy_balance) that megan_bvoc_model reads with config temperature_source leaf_temperature, the leaf-temperature history that MEGAN2.1 defines, the average temperature of the past 24 h in the MEGAN2.1 optimum temperature and activity (Guenther et al. 2012 Eqs. 9-10, p. 1476). Declared state of the MEGANModel option temperature_history together with temperature_source leaf_temperature (air_temperature_24h_mean is the state of the default air-temperature source): megan_bvoc_model reads the committed value at the start of its call (the history through the previous step) and replaces it after the call with X_new = (1 - w) X + w T, w = min(dt / tau, 1), tau = 24 h (biosphere.bvoc.megan.history_time_scale_24h), the CLM4 running mean of MEGAN2.1 (Oleson et al. 2010). At dt = 86400 s the weight is 1, so the value read at step k is the daily mean temperature of step k - 1. The initial value is declared by the caller (for a spin-up, the first-step leaf temperature); a missing value raises ValueError."
+kind: state
+dimension:
+  udunits: "K"
+  cf_standard_name: null
+  cell_methods: "time: mean (comment: running mean over the past 24 h)"
+# A trailing (exponentially weighted) time mean of the big-leaf temperature
+# (leaf support, as leaf_temperature) over the past 24 h, stored as one value per cell at the end
+# of each call: an interval mean of an instantaneous field.
+support:
+  spatial_kind: leaf
+  area_basis: null
+  temporal_basis: interval_mean
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: "megan_bvoc_model"
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Guenther, A.B., et al. (2012). The Model of Emissions of Gases and Aerosols from Nature version 2.1 (MEGAN2.1). Geoscientific Model Development 5, 1471-1492, Eqs. (9)-(10), p. 1476"
+  - "Oleson, K.W., et al. (2010). Technical Description of version 4.0 of the Community Land Model (CLM). NCAR/TN-478+STR (running means of the MEGAN2.1 leaf temperature)"
+  - "CF-1.8 section 7.3: cell_methods time: mean with a comment in parentheses (section 7.3.2), which keeps the 24 h and 240 h means two distinct CF identities"
+# Sign convention: absolute temperature; the running mean relaxes towards the
+# temperature of each step and stays between its previous value and that
+# temperature.
+numerics:
+  lower_bound: 0.0
+  upper_bound: 500.0
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "megan_bvoc_model"
+      module: "relic.scientific.biosphere.bvoc.megan_model"
+      provides: ["leaf_temperature_24h_mean"]
+      unit: "K"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/biosphere/bvoc/megan_model.py"
+  runtime_role: "megan_leaf_temperature_history_24h_state"
+  runtime_writer: "megan_bvoc_model"
+  note: "Declared input and output of MEGANModel only when config temperature_history is true and temperature_source is leaf_temperature (LEAF_TEMPERATURE_HISTORY_STATES); read with _extract_tensor (a missing value raises ValueError), validated against the operational temperature range, used in megan_optimum_history and advanced by megan_temperature_history_update, written as UpdateItem(REPLACE, per_timestep=False) in K. No other relic Functor reads or writes it."

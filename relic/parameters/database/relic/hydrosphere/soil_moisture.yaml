@@ -1,0 +1,398 @@
+schema_version: 2.0.0
+tier: relic
+namespace: hydrosphere.soil_moisture
+description: Soil moisture model parameters for bucket and Richards equation approaches
+metadata:
+  created_by: RELIC Parameter System
+  last_modified: '2026-01-07T14:20:26Z'
+  schema_url: https://github.com/relic/parameter-schema/v2.0.0
+  version: 1.0.0
+parameters:
+  hydrosphere.soil_moisture.field_capacity:
+    value: 0.3
+    default: 0.3
+    units: m3 m-3
+    dtype: float32
+    bounds:
+    - 0.1
+    - 0.7
+    category: model_parameter
+    description: Soil field capacity (maximum water content at gravitational drainage threshold)
+    references:
+    - Manabe (1969) Mon. Wea. Rev. 97:739-774
+    - Cosby et al. (1984) Water Resour. Res. 20:682-690
+    - Balsamo et al. (2008) ECMWF Tech. Memo. 563, Table 2 (soil texture classes)
+    tags:
+    - water_retention
+    - soil_property
+    - calibratable
+    dimension: volume_fraction
+    requires_grad: true
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-10-11T00:00:00Z'
+  hydrosphere.soil_moisture.wilting_point:
+    value: 0.1
+    default: 0.1
+    units: m3 m-3
+    dtype: float32
+    bounds:
+    - 0.05
+    - 0.35
+    category: model_parameter
+    description: Soil wilting point (minimum plant-available water content)
+    references:
+    - Manabe (1969) Mon. Wea. Rev. 97:739-774
+    - Cosby et al. (1984) Water Resour. Res. 20:682-690
+    - Balsamo et al. (2008) ECMWF Tech. Memo. 563, Table 2 (soil texture classes)
+    tags:
+    - water_retention
+    - plant_available
+    - calibratable
+    dimension: volume_fraction
+    requires_grad: true
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-10-11T00:00:00Z'
+  hydrosphere.soil_moisture.porosity:
+    value: 0.45
+    default: 0.45
+    units: m3 m-3
+    dtype: float32
+    bounds:
+    - 0.3
+    - 0.8
+    category: model_parameter
+    description: Total soil porosity (saturated water content)
+    references:
+    - Clapp & Hornberger (1978) Water Resour. Res. 14:601-604
+    - Cosby et al. (1984) Water Resour. Res. 20:682-690
+    - Balsamo et al. (2008) ECMWF Tech. Memo. 563, Table 2 (soil texture classes)
+    tags:
+    - soil_property
+    - water_retention
+    - physical_property
+    dimension: volume_fraction
+    requires_grad: false
+    provenance:
+      source: soil_survey_data
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-10-11T00:00:00Z'
+  hydrosphere.soil_moisture.root_zone_depth:
+    value: 1.0
+    default: 1.0
+    units: m
+    dtype: float32
+    bounds:
+    - 0.1
+    - 5.0
+    category: biological_parameter
+    description: Effective rooting depth for water extraction
+    references:
+    - Canadell et al. (1996) Oecologia 108:583-595
+    - Jackson et al. (1996) Oecologia 108:389-411
+    tags:
+    - root_distribution
+    - vegetation_property
+    - calibratable
+    dimension: length
+    requires_grad: true
+    provenance:
+      source: vegetation_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-08-25T00:00:00Z'
+  hydrosphere.soil_moisture.soil_depth:
+    value: 1.0
+    default: 1.0
+    units: m
+    dtype: float32
+    bounds:
+    - 0.1
+    - 5.0
+    category: model_parameter
+    description: Effective soil layer depth for bucket model water balance
+    references:
+    - Manabe (1969) Mon. Wea. Rev. 97:739-774
+    - Huang et al. (1996) J. Geophys. Res. 101:19079-19093
+    tags:
+    - bucket_model
+    - soil_depth
+    - calibratable
+    dimension: length
+    requires_grad: true
+    provenance:
+      source: bucket_model_parameterization
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-09T00:00:00Z'
+  hydrosphere.soil_moisture.layer_count:
+    value: 10
+    default: 10
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 200
+    category: numerical_parameter
+    description: Number of discrete soil layers used in Richards equation solver
+    references:
+    - Celia et al. (1990) Water Resour. Res. 26:1483-1496
+    - Šimůnek et al. (2008) Vadose Zone J. 7:587-600
+    tags:
+    - discretization
+    - richards_solver
+    - numerical_resolution
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: richards_solver_configuration
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-03-06T00:00:00Z'
+  hydrosphere.soil_moisture.richards_enable_newton_raphson:
+    value: false
+    default: false
+    units: dimensionless
+    dtype: bool
+    bounds:
+    category: control_flag
+    description: Enables Newton-Raphson corrections inside the Richards equation framework.
+    references:
+    - Celia et al. (1990) Water Resour. Res. 26:1483-1496
+    - 艩im暖nek et al. (2008) Vadose Zone J. 7:587-600
+    tags:
+    - richards_solver
+    - newton_raphson
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Richards solver configuration
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-14T00:00:00Z'
+  hydrosphere.soil_moisture.richards_enable_mass_conservation_check:
+    value: true
+    default: true
+    units: dimensionless
+    dtype: bool
+    bounds:
+    category: control_flag
+    description: Controls enforcement of layer-by-layer mass conservation diagnostics for Richards solver.
+    references:
+    - Richards (1931) Journal of Applied Physics 1:318-333
+    - Celia et al. (1990) Water Resour. Res. 26:1483-1496
+    tags:
+    - richards_solver
+    - conservation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Richards solver configuration
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-14T00:00:00Z'
+  hydrosphere.soil_moisture.drainage_exponent:
+    value: 3.0
+    default: 3.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 10.0
+    category: model_parameter
+    description: Drainage curve exponent for bucket model (power law parameter)
+    references:
+    - Manabe (1969) Mon. Wea. Rev. 97:739-774
+    - Huang et al. (1996) J. Geophys. Res. 101:19079-19093
+    tags:
+    - bucket_model
+    - drainage
+    - calibratable
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: bucket_model_parameterization
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-09T00:00:00Z'
+  hydrosphere.soil_moisture.drainage_factor:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: model_parameter
+    description: Free-drainage factor f_d of the bucket gravity-drainage law, K_eff = f_d K_sat in D = K_eff (theta/theta_sat)^b above field capacity; a process-law parameter read every call (the value 1 applies K_sat unscaled)
+    references:
+    - Manabe (1969) Mon. Wea. Rev. 97:739-774
+    tags:
+    - bucket_model
+    - drainage
+    - scaling
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: bucket_model_parameterization
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-31T00:00:00Z'
+  hydrosphere.soil_moisture.water_input_source:
+    value: precipitation_flux
+    default: precipitation_flux
+    units: dimensionless
+    dtype: string
+    allowed_values:
+    - precipitation_flux
+    - rain_flux_plus_snow_melt_flux
+    bounds:
+    category: model_configuration
+    description: Declared water input of the bucket soil store. precipitation_flux reads the total precipitation (no snowpack Functor upstream); rain_flux_plus_snow_melt_flux reads the rain reaching the ground plus the snowmelt of the snowpack partition and declares the snowpack Functor (SCM owner of both fluxes) as a lagged provider whose committed outflow the bucket consumes. Exactly one representation is read; an instance config key of the same name overrides this value.
+    references:
+    - E3SM ELM SnowHydrologyMod, column without snow layers (qflx_top_soil = qflx_rain_grnd + qflx_snomelt)
+    - Oleson et al. (2013) Technical Description of version 4.5 of the Community Land Model (CLM), NCAR Technical Note NCAR/TN-503+STR
+    - Manabe (1969) Mon. Wea. Rev. 97:739-774
+    - Anderson (1976) NOAA Technical Report NWS 19
+    tags:
+    - bucket_model
+    - model_structure
+    - configuration
+    - snowpack_coupling
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_configuration
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-10-17T00:00:00Z'
+  hydrosphere.soil_moisture.alpha_vg:
+    value: 7.5
+    default: 7.5
+    units: m-1
+    dtype: float32
+    bounds:
+    - 0.1
+    - 15.0
+    category: model_parameter
+    description: Van Genuchten alpha parameter (inverse air entry pressure)
+    references:
+    - van Genuchten (1980) Soil Sci. Soc. Am. J. 44:892-898
+    - Carsel & Parrish (1988) Water Resour. Res. 24:755-769 (class means as tabulated in van Genuchten et al. 1991, EPA/600/2-91/065, Table 4)
+    - Balsamo et al. (2008) ECMWF Tech. Memo. 563, Table 1 (soil texture classes)
+    - Schaap et al. (2001) J. Hydrol. 251:163-176
+    tags:
+    - van_genuchten
+    - water_retention
+    - calibratable
+    dimension: inverse_length
+    requires_grad: true
+    provenance:
+      source: pedotransfer_functions
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-10-11T00:00:00Z'
+  hydrosphere.soil_moisture.n_vg:
+    value: 1.89
+    default: 1.89
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.1
+    - 10.0
+    category: model_parameter
+    description: Van Genuchten n parameter (pore size distribution index)
+    references:
+    - van Genuchten (1980) Soil Sci. Soc. Am. J. 44:892-898
+    - Carsel & Parrish (1988) Water Resour. Res. 24:755-769 (class means as tabulated in van Genuchten et al. 1991, EPA/600/2-91/065, Table 4)
+    - Schaap et al. (2001) J. Hydrol. 251:163-176
+    tags:
+    - van_genuchten
+    - pore_distribution
+    - calibratable
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: pedotransfer_functions
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-10-11T00:00:00Z'
+  hydrosphere.soil_moisture.residual_water_content:
+    value: 0.045
+    default: 0.045
+    units: m3 m-3
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.2
+    category: model_parameter
+    description: Residual water content (minimum water content at very high suction)
+    references:
+    - van Genuchten (1980) Soil Sci. Soc. Am. J. 44:892-898
+    - Schaap et al. (2001) J. Hydrol. 251:163-176
+    tags:
+    - van_genuchten
+    - water_retention
+    - bound_water
+    dimension: volume_fraction
+    requires_grad: false
+    provenance:
+      source: laboratory_measurements
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-10-11T00:00:00Z'
+  hydrosphere.soil_moisture.saturated_hydraulic_conductivity:
+    value: 1.0e-05
+    default: 1.0e-05
+    units: m s-1
+    dtype: float32
+    bounds:
+    - 1.0e-08
+    - 0.001
+    category: model_parameter
+    description: Saturated hydraulic conductivity for Richards equation
+    references:
+    - Clapp & Hornberger (1978) Water Resour. Res. 14:601-604
+    - Cosby et al. (1984) Water Resour. Res. 20:682-690
+    tags:
+    - hydraulic_property
+    - saturated_flow
+    - calibratable
+    dimension: velocity
+    requires_grad: true
+    provenance:
+      source: field_measurements
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-08-25T00:00:00Z'
+  hydrosphere.soil_moisture.tortuosity_parameter:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - -3.0
+    - 3.0
+    category: model_parameter
+    description: Mualem tortuosity parameter for relative hydraulic conductivity
+    references:
+    - Mualem (1976) Water Resour. Res. 12:513-522
+    - van Genuchten (1980) Soil Sci. Soc. Am. J. 44:892-898
+    - Balsamo et al. (2008) ECMWF Tech. Memo. 563, Table 1 (soil texture classes)
+    tags:
+    - mualem_model
+    - tortuosity
+    - hydraulic_conductivity
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: theoretical_constraint
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-10-11T00:00:00Z'

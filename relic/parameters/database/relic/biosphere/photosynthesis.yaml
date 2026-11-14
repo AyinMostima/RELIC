@@ -1,0 +1,1096 @@
+schema_version: 2.0.0
+tier: relic
+namespace: biosphere.photosynthesis
+description: Leaf-level photosynthesis parameters for Farquhar-von Caemmerer-Berry model
+metadata:
+  version: 1.0.0
+parameters:
+  biosphere.photosynthesis.vcmax25:
+    value: 60.0
+    default: 60.0
+    units: umol CO2 m-2 s-1
+    dtype: float32
+    bounds:
+    - 10.0
+    - 200.0
+    category: biological_parameter
+    description: Maximum carboxylation rate of Rubisco at 25degC reference temperature
+    references:
+    - doi:10.1071/PP9900137
+    - Farquhar et al. (1980) Planta 149:78-90
+    tags:
+    - learnable
+    - calibratable
+    - temperature_sensitive
+    - species_specific
+    dimension: molar_flux
+    requires_grad: true
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-01-01T00:00:00Z'
+  biosphere.photosynthesis.jmax25:
+    value: 120.0
+    default: 120.0
+    units: umol e- m-2 s-1
+    dtype: float32
+    bounds:
+    - 20.0
+    - 400.0
+    category: biological_parameter
+    description: Maximum electron transport rate at 25degC reference temperature
+    references:
+    - doi:10.1071/PP9900137
+    - Farquhar et al. (1980) Planta 149:78-90
+    tags:
+    - learnable
+    - calibratable
+    - temperature_sensitive
+    - species_specific
+    dimension: molar_flux
+    requires_grad: true
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-01-01T00:00:00Z'
+  biosphere.photosynthesis.kc25:
+    value: 404.0
+    default: 404.0
+    units: umol mol-1
+    dtype: float32
+    bounds:
+    - 300.0
+    - 500.0
+    category: biological_parameter
+    description: Michaelis-Menten constant for CO2 at 25degC
+    references:
+    - doi:10.1104/pp.125.4.1938
+    - Bernacchi et al. (2001) Plant Physiol 125:1938-1948
+    tags:
+    - biochemical_constant
+    - temperature_sensitive
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-01-01T00:00:00Z'
+  biosphere.photosynthesis.ko25:
+    value: 248.0
+    default: 248.0
+    units: mmol mol-1
+    dtype: float32
+    bounds:
+    - 200.0
+    - 300.0
+    category: biological_parameter
+    description: Michaelis-Menten constant for O2 at 25degC
+    references:
+    - doi:10.1104/pp.125.4.1938
+    - Bernacchi et al. (2001) Plant Physiol 125:1938-1948
+    tags:
+    - biochemical_constant
+    - temperature_sensitive
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-01-01T00:00:00Z'
+  biosphere.photosynthesis.ha_vcmax:
+    value: 65330.0
+    default: 65330.0
+    units: J mol-1
+    dtype: float32
+    bounds:
+    - 50000.0
+    - 80000.0
+    category: biological_parameter
+    description: Activation energy for Vcmax temperature response
+    references:
+    - doi:10.1104/pp.125.4.1938
+    - Bernacchi et al. (2001) Plant Physiol 125:1938-1948
+    tags:
+    - temperature_response
+    - activation_energy
+    dimension: energy_per_amount
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-01-01T00:00:00Z'
+  biosphere.photosynthesis.ha_jmax:
+    value: 43540.0
+    default: 43540.0
+    units: J mol-1
+    dtype: float32
+    bounds:
+    - 30000.0
+    - 60000.0
+    category: biological_parameter
+    description: Activation energy for Jmax temperature response
+    references:
+    - doi:10.1104/pp.125.4.1938
+    - Bernacchi et al. (2001) Plant Physiol 125:1938-1948
+    tags:
+    - temperature_response
+    - activation_energy
+    dimension: energy_per_amount
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-01-01T00:00:00Z'
+  biosphere.photosynthesis.pathway:
+    value: C3
+    default: C3
+    units: dimensionless
+    dtype: string
+    bounds:
+    - -Infinity
+    - Infinity
+    allowed_values:
+    - C3
+    - C4
+    category: biological_parameter
+    description: Photosynthetic pathway type (C3 or C4)
+    references:
+    - Farquhar et al. (1980) Planta 149:78-90
+    tags:
+    - pathway_type
+    - species_specific
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: biological_classification
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-01-01T00:00:00Z'
+  biosphere.photosynthesis.rd25:
+    value: 1.2
+    default: 1.2
+    units: umol CO2 m-2 s-1
+    dtype: float32
+    bounds:
+    - 0.1
+    - 5.0
+    category: biological_parameter
+    description: Dark respiration rate at 25degC
+    references:
+    - Bernacchi et al. (2001) Plant Physiol 125:1938-1948
+    tags:
+    - respiration
+    - temperature_sensitive
+    dimension: molar_flux
+    requires_grad: true
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-01-01T00:00:00Z'
+  biosphere.photosynthesis.rd_q10:
+    value: 2.0
+    default: 2.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.5
+    - 3.0
+    category: biological_parameter
+    description: Q10 temperature coefficient for dark respiration
+    references:
+    - Atkin et al. (2005) New Phytol 165:351
+    - Lloyd & Taylor (1994)
+    tags:
+    - respiration
+    - temperature_response
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-03-08T00:00:00Z'
+  biosphere.photosynthesis.gamma_star25:
+    value: 42.75
+    default: 42.75
+    units: umol mol-1
+    dtype: float32
+    bounds:
+    - 30.0
+    - 60.0
+    category: biological_parameter
+    description: CO2 compensation point at 25degC
+    references:
+    - Bernacchi et al. (2001) Plant Physiol 125:1938-1948
+    tags:
+    - biochemical_constant
+    - temperature_sensitive
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-01-01T00:00:00Z'
+  biosphere.photosynthesis.hd_vcmax:
+    value: 149252.0
+    default: 149252.0
+    units: J mol-1
+    dtype: float32
+    bounds:
+    - 100000.0
+    - 200000.0
+    category: biological_parameter
+    description: Deactivation energy for Vcmax
+    references:
+    - Kattge & Knorr (2007) Plant Cell Environ 30:1176-1190
+    tags:
+    - temperature_response
+    - deactivation_energy
+    dimension: energy_per_amount
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-01-01T00:00:00Z'
+  biosphere.photosynthesis.s_vcmax:
+    value: 486.0
+    default: 486.0
+    units: J mol-1 K-1
+    dtype: float32
+    bounds:
+    - 400.0
+    - 600.0
+    category: biological_parameter
+    description: Entropy term for Vcmax temperature response
+    references:
+    - Kattge & Knorr (2007) Plant Cell Environ 30:1176-1190
+    tags:
+    - temperature_response
+    - entropy
+    dimension: entropy_per_amount
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-01-01T00:00:00Z'
+  biosphere.photosynthesis.hd_jmax:
+    value: 152044.0
+    default: 152044.0
+    units: J mol-1
+    dtype: float32
+    bounds:
+    - 100000.0
+    - 200000.0
+    category: biological_parameter
+    description: Deactivation energy for Jmax
+    references:
+    - Kattge & Knorr (2007) Plant Cell Environ 30:1176-1190
+    tags:
+    - temperature_response
+    - deactivation_energy
+    dimension: energy_per_amount
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-01-01T00:00:00Z'
+  biosphere.photosynthesis.s_jmax:
+    value: 495.0
+    default: 495.0
+    units: J mol-1 K-1
+    dtype: float32
+    bounds:
+    - 400.0
+    - 600.0
+    category: biological_parameter
+    description: Entropy term for Jmax temperature response
+    references:
+    - Kattge & Knorr (2007) Plant Cell Environ 30:1176-1190
+    tags:
+    - temperature_response
+    - entropy
+    dimension: entropy_per_amount
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-01-01T00:00:00Z'
+  biosphere.photosynthesis.ha_kc:
+    value: 79430.0
+    default: 79430.0
+    units: J mol-1
+    dtype: float32
+    bounds:
+    - 60000.0
+    - 100000.0
+    category: biological_parameter
+    description: Activation energy for Kc
+    references:
+    - Bernacchi et al. (2001) Plant Physiol 125:1938-1948
+    tags:
+    - temperature_response
+    - activation_energy
+    dimension: energy_per_amount
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-01-01T00:00:00Z'
+  biosphere.photosynthesis.ha_ko:
+    value: 36380.0
+    default: 36380.0
+    units: J mol-1
+    dtype: float32
+    bounds:
+    - 20000.0
+    - 50000.0
+    category: biological_parameter
+    description: Activation energy for Ko
+    references:
+    - Bernacchi et al. (2001) Plant Physiol 125:1938-1948
+    tags:
+    - temperature_response
+    - activation_energy
+    dimension: energy_per_amount
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-01-01T00:00:00Z'
+  biosphere.photosynthesis.ha_gamma_star:
+    value: 37830.0
+    default: 37830.0
+    units: J mol-1
+    dtype: float32
+    bounds:
+    - 20000.0
+    - 50000.0
+    category: biological_parameter
+    description: Activation energy for CO2 compensation point
+    references:
+    - Bernacchi et al. (2001) Plant Physiol 125:1938-1948
+    tags:
+    - temperature_response
+    - activation_energy
+    dimension: energy_per_amount
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-01-01T00:00:00Z'
+  biosphere.photosynthesis.alpha:
+    value: 0.24
+    default: 0.24
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 0.4
+    category: biological_parameter
+    description: Quantum efficiency of photosystem II
+    references:
+    - Long et al. (1993) Plant Cell Environ 16:185-194
+    tags:
+    - light_response
+    - quantum_efficiency
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-01-01T00:00:00Z'
+  biosphere.photosynthesis.theta:
+    value: 0.7
+    default: 0.7
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 0.95
+    category: biological_parameter
+    description: Curvature parameter for light response
+    references:
+    - Farquhar & Wong (1984) Aust J Plant Physiol 11:191-210
+    tags:
+    - light_response
+    - curvature
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-01-01T00:00:00Z'
+  biosphere.photosynthesis.o2_concentration:
+    value: 210.0
+    default: 210.0
+    units: mmol mol-1
+    dtype: float32
+    bounds:
+    - 200.0
+    - 220.0
+    category: environmental_variable
+    description: Atmospheric O2 concentration
+    references:
+    - Standard atmospheric composition
+    tags:
+    - atmospheric_constant
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: atmospheric_standard
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-01-01T00:00:00Z'
+  biosphere.photosynthesis.vpmax25:
+    value: 80.0
+    default: 80.0
+    units: umol CO2 m-2 s-1
+    dtype: float32
+    bounds:
+    - 20.0
+    - 150.0
+    category: biological_parameter
+    description: Maximum PEP carboxylation rate at 25degC (C4 plants)
+    references:
+    - von Caemmerer (2000) Biochemical Models of Leaf Photosynthesis
+    tags:
+    - c4_photosynthesis
+    - temperature_sensitive
+    dimension: molar_flux
+    requires_grad: true
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-01-01T00:00:00Z'
+  biosphere.photosynthesis.kp25:
+    value: 80.0
+    default: 80.0
+    units: umol mol-1
+    dtype: float32
+    bounds:
+    - 50.0
+    - 150.0
+    category: biological_parameter
+    description: Michaelis constant for PEP carboxylase at 25degC
+    references:
+    - von Caemmerer (2000) Biochemical Models of Leaf Photosynthesis
+    tags:
+    - c4_photosynthesis
+    - biochemical_constant
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-01-01T00:00:00Z'
+  biosphere.photosynthesis.phi:
+    value: 0.2
+    default: 0.2
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 0.4
+    category: biological_parameter
+    description: C4 bundle-sheath leakiness phi = L / Vp, the fraction of the PEP carboxylation rate that leaks back out of the bundle sheath (von Caemmerer 2000; 2021, Eq. 5); the C4 path uses Ap = Vp (1 - phi)
+    references:
+    - von Caemmerer (2000) Biochemical Models of Leaf Photosynthesis
+    tags:
+    - c4_photosynthesis
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-01-01T00:00:00Z'
+  biosphere.photosynthesis.ve_max25:
+    value: 60.0
+    default: 60.0
+    units: umol CO2 m-2 s-1
+    dtype: float32
+    bounds:
+    - 20.0
+    - 100.0
+    category: biological_parameter
+    description: Maximum Rubisco carboxylation capacity of the C4 bundle sheath at 25degC, the Rubisco-limited rate V_max of Collatz et al. (1992) and Vcmax of the von Caemmerer (2000) C4 model; the C4 path caps assimilation at Ae = Ve_max in A = min(Ap, Aj, Ae)
+    references:
+    - von Caemmerer (2000) Biochemical Models of Leaf Photosynthesis
+    tags:
+    - c4_photosynthesis
+    - temperature_sensitive
+    dimension: molar_flux
+    requires_grad: true
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-01-01T00:00:00Z'
+  biosphere.photosynthesis.ha_vpmax:
+    value: 70000.0
+    default: 70000.0
+    units: J mol-1
+    dtype: float32
+    bounds:
+    - 50000.0
+    - 90000.0
+    category: biological_parameter
+    description: Activation energy for Vpmax
+    references:
+    - Massad et al. (2007) Plant Cell Environ 30:1284-1298
+    tags:
+    - c4_photosynthesis
+    - temperature_response
+    dimension: energy_per_amount
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-01-01T00:00:00Z'
+  biosphere.photosynthesis.hd_vpmax:
+    value: 150000.0
+    default: 150000.0
+    units: J mol-1
+    dtype: float32
+    bounds:
+    - 100000.0
+    - 200000.0
+    category: biological_parameter
+    description: Deactivation energy for Vpmax
+    references:
+    - Massad et al. (2007) Plant Cell Environ 30:1284-1298
+    tags:
+    - c4_photosynthesis
+    - temperature_response
+    dimension: energy_per_amount
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-01-01T00:00:00Z'
+  biosphere.photosynthesis.s_vpmax:
+    value: 490.0
+    default: 490.0
+    units: J mol-1 K-1
+    dtype: float32
+    bounds:
+    - 400.0
+    - 600.0
+    category: biological_parameter
+    description: Entropy term for Vpmax
+    references:
+    - Massad et al. (2007) Plant Cell Environ 30:1284-1298
+    tags:
+    - c4_photosynthesis
+    - temperature_response
+    dimension: entropy_per_amount
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-01-01T00:00:00Z'
+  biosphere.photosynthesis.ha_kp:
+    value: 40000.0
+    default: 40000.0
+    units: J mol-1
+    dtype: float32
+    bounds:
+    - 20000.0
+    - 60000.0
+    category: biological_parameter
+    description: Activation energy for Kp
+    references:
+    - Massad et al. (2007) Plant Cell Environ 30:1284-1298
+    tags:
+    - c4_photosynthesis
+    - temperature_response
+    dimension: energy_per_amount
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-01-01T00:00:00Z'
+  biosphere.photosynthesis.ha_ve_max:
+    value: 50000.0
+    default: 50000.0
+    units: J mol-1
+    dtype: float32
+    bounds:
+    - 30000.0
+    - 70000.0
+    category: biological_parameter
+    description: Activation energy for Ve_max
+    references:
+    - Massad et al. (2007) Plant Cell Environ 30:1284-1298
+    tags:
+    - c4_photosynthesis
+    - temperature_response
+    dimension: energy_per_amount
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-01-01T00:00:00Z'
+  biosphere.photosynthesis.hd_ve_max:
+    value: 145000.0
+    default: 145000.0
+    units: J mol-1
+    dtype: float32
+    bounds:
+    - 100000.0
+    - 190000.0
+    category: biological_parameter
+    description: Deactivation energy for Ve_max
+    references:
+    - Massad et al. (2007) Plant Cell Environ 30:1284-1298
+    tags:
+    - c4_photosynthesis
+    - temperature_response
+    dimension: energy_per_amount
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-01-01T00:00:00Z'
+  biosphere.photosynthesis.s_ve_max:
+    value: 485.0
+    default: 485.0
+    units: J mol-1 K-1
+    dtype: float32
+    bounds:
+    - 400.0
+    - 570.0
+    category: biological_parameter
+    description: Entropy term for Ve_max
+    references:
+    - Massad et al. (2007) Plant Cell Environ 30:1284-1298
+    tags:
+    - c4_photosynthesis
+    - temperature_response
+    dimension: entropy_per_amount
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-01-01T00:00:00Z'
+  biosphere.photosynthesis.max_temperature:
+    value: 323.15
+    default: 323.15
+    units: K
+    dtype: float32
+    bounds:
+    - 313.15
+    - 333.15
+    category: computational
+    description: Maximum allowed temperature
+    references:
+    - Numerical stability requirement
+    tags:
+    - numerical_stability
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: numerical_implementation
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-01-01T00:00:00Z'
+  biosphere.photosynthesis.min_temperature:
+    value: 273.15
+    default: 273.15
+    units: K
+    dtype: float32
+    bounds:
+    - 253.15
+    - 283.15
+    category: computational
+    description: Minimum allowed temperature
+    references:
+    - Numerical stability requirement
+    tags:
+    - numerical_stability
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: numerical_implementation
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-01-01T00:00:00Z'
+  biosphere.photosynthesis.default_temperature:
+    value: 298.15
+    default: 298.15
+    units: K
+    dtype: float32
+    bounds:
+    - 273.15
+    - 313.15
+    category: computational
+    description: Reference leaf temperature used when observations are unavailable
+    references:
+    - Farquhar et al. (1980) Planta 149:78-90
+    - Medlyn et al. (2002) Plant Cell Environ 25:1167-1179
+    tags:
+    - numerical_stability
+    - surrogate
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-04T00:00:00Z'
+  biosphere.photosynthesis.rubisco_kinetic_factor1:
+    value: 4.0
+    default: 4.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 2.0
+    - 6.0
+    category: biological_parameter
+    description: Rubisco kinetic factor for CO2 specificity
+    references:
+    - Farquhar et al. (1980) Planta 149:78-90
+    tags:
+    - rubisco_kinetics
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-01-01T00:00:00Z'
+  biosphere.photosynthesis.rubisco_kinetic_factor2:
+    value: 2.0
+    default: 2.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 3.0
+    category: biological_parameter
+    description: Secondary Rubisco kinetic factor
+    references:
+    - Farquhar et al. (1980) Planta 149:78-90
+    tags:
+    - rubisco_kinetics
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-01-01T00:00:00Z'
+  biosphere.photosynthesis.c4_pathway_type:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: computational
+    description: Indicator variable for C4 pathway activation (1.0 for C4)
+    references:
+    - Model configuration
+    tags:
+    - pathway_control
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-01-01T00:00:00Z'
+  biosphere.photosynthesis.surrogate.max_gpp_rate:
+    value: 3.0e-07
+    default: 3.0e-07
+    units: kg C m-2 s-1
+    dtype: float32
+    bounds:
+    - 1.0e-08
+    - 1.0e-06
+    category: biological_parameter
+    description: Maximum gross primary productivity of the surrogate canopy model per unit leaf area index at saturating light and optimum temperature and soil moisture (3.0e-7 kg C m-2 s-1 is about 25 umol CO2 m-2 s-1); the ground-area rate is this value times the light, temperature and soil moisture factors and the leaf area index; the upper bound equals validation.conservation.plausibility.gross_primary_productivity_max
+    references:
+    - Monteith & Unsworth (2013) Principles of Environmental Physics
+    - Baldocchi (2003) Global Change Biology 9:479-492
+    tags:
+    - surrogate
+    - canopy_photosynthesis
+    dimension: mass_flux
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-10-11T00:00:00Z'
+      notes: Corrected 2026-10-11; the former value 2.5e-05 with bounds 1.0e-06 to 5.0e-04 was a molar magnitude (mol CO2 m-2 s-1) stored under the mass unit, about 83 times too large as kg C m-2 s-1
+  biosphere.photosynthesis.surrogate.ppfd_half_saturation:
+    value: 600.0
+    default: 600.0
+    units: umol photons m-2 s-1
+    dtype: float32
+    bounds:
+    - 100.0
+    - 1500.0
+    category: biological_parameter
+    description: Half-saturation PPFD for the surrogate rectangular-hyperbola light response
+    references:
+    - Baly & Morgan (1934) Nature 133:414
+    tags:
+    - surrogate
+    - light_response
+    dimension: photon_flux_density
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-02-13T00:00:00Z'
+  biosphere.photosynthesis.surrogate.temperature_optimum:
+    value: 298.15
+    default: 298.15
+    units: K
+    dtype: float32
+    bounds:
+    - 273.15
+    - 313.15
+    category: biological_parameter
+    description: Optimal canopy temperature for surrogate photosynthesis response
+    references:
+    - Monteith & Unsworth (2013) Principles of Environmental Physics
+    tags:
+    - surrogate
+    - temperature_response
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-02-13T00:00:00Z'
+  biosphere.photosynthesis.surrogate.temperature_width:
+    value: 12.0
+    default: 12.0
+    units: K
+    dtype: float32
+    bounds:
+    - 5.0
+    - 25.0
+    category: biological_parameter
+    description: Gaussian temperature response width for surrogate canopy model
+    references:
+    - Monteith & Unsworth (2013) Principles of Environmental Physics
+    tags:
+    - surrogate
+    - temperature_response
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-02-13T00:00:00Z'
+  biosphere.photosynthesis.surrogate.base_respiration_rate:
+    value: 4.8e-08
+    default: 4.8e-08
+    units: kg C m-2 s-1
+    dtype: float32
+    bounds:
+    - 1.0e-09
+    - 1.0e-06
+    category: biological_parameter
+    description: Ecosystem respiration rate of the surrogate module per unit leaf area index at the physical-constant reference temperature (4.8e-8 kg C m-2 s-1 is about 4 umol CO2 m-2 s-1); the ground-area rate is this value times the Q10 temperature factor and the leaf area index; the upper bound equals validation.conservation.plausibility.gross_primary_productivity_max
+    references:
+    - Mahecha et al. (2010) Science 329:838-840
+    - Baldocchi (2003) Global Change Biology 9:479-492
+    tags:
+    - surrogate
+    - respiration
+    dimension: mass_flux
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-10-11T00:00:00Z'
+      notes: Corrected 2026-10-11; the former value 4.0e-06 with bounds 1.0e-07 to 1.0e-04 was a molar magnitude (mol CO2 m-2 s-1) stored under the mass unit, about 83 times too large as kg C m-2 s-1
+  biosphere.photosynthesis.surrogate.respiration_q10:
+    value: 1.4
+    default: 1.4
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 3.0
+    category: biological_parameter
+    description: Q10 factor of the surrogate ecosystem respiration against air temperature (1.4 +/- 0.1 across 60 FLUXNET sites in Mahecha et al. 2010); the lower bound 1.0 is no temperature response and the upper bound admits apparent seasonal values
+    references:
+    - Mahecha et al. (2010) Science 329:838-840
+    tags:
+    - surrogate
+    - respiration
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-10-11T00:00:00Z'
+      notes: Corrected 2026-10-11 to the value in the abstract of the cited source; the former default 2.0 with bounds 1.5 to 3.0 excluded it
+  biosphere.photosynthesis.surrogate.soil_moisture_optimum:
+    value: 0.35
+    default: 0.35
+    units: m3 m-3
+    dtype: float32
+    bounds:
+    - 0.1
+    - 0.6
+    category: biological_parameter
+    description: Optimal volumetric soil moisture for surrogate photosynthesis response
+    references:
+    - Monteith & Unsworth (2013) Principles of Environmental Physics
+    tags:
+    - surrogate
+    - water_stress
+    dimension: volume_fraction
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-02-13T00:00:00Z'
+  biosphere.photosynthesis.surrogate.soil_moisture_width:
+    value: 0.15
+    default: 0.15
+    units: m3 m-3
+    dtype: float32
+    bounds:
+    - 0.05
+    - 0.4
+    category: biological_parameter
+    description: Soil moisture response width for surrogate canopy water stress function
+    references:
+    - Monteith & Unsworth (2013) Principles of Environmental Physics
+    tags:
+    - surrogate
+    - water_stress
+    dimension: volume_fraction
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-02-13T00:00:00Z'
+  biosphere.photosynthesis.canopy_light_extinction:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.2
+    - 0.9
+    category: biological_parameter
+    description: Beer-Lambert canopy light extinction coefficient for LAI scaling in canopy photosynthesis
+    references:
+    - Monsi and Saeki (1953) Japanese Journal of Botany 14:22-52
+    - Monteith and Unsworth (2013) Principles of Environmental Physics
+    tags:
+    - photosynthesis
+    - canopy
+    - leaf_area_index
+    - light_extinction
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Phase8 scientific audit
+      last_modified: '2026-05-31T00:00:00Z'
+  biosphere.photosynthesis.vcmax_min_scaling:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.01
+    - 1.0
+    category: biological_parameter
+    description: Minimum Vcmax scaling factor for numerical stability and biological realism in photosynthesis calculations
+    references:
+    - Farquhar et al. (1980) Planta 149:78-90
+    tags:
+    - photosynthesis
+    - vcmax
+    - scaling_factor
+    - validation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Farquhar model implementation
+      schema_version: 2.0.0
+      created_by: P0 Hardcode Fix
+      last_modified: '2025-10-04T00:00:00Z'
+  biosphere.photosynthesis.vcmax_max_scaling:
+    value: 3.0
+    default: 3.0
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 1.0
+    - 10.0
+    category: biological_parameter
+    description: Maximum Vcmax scaling factor for numerical stability and biological realism in photosynthesis calculations
+    references:
+    - Farquhar et al. (1980) Planta 149:78-90
+    tags:
+    - photosynthesis
+    - vcmax
+    - scaling_factor
+    - validation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Farquhar model implementation
+      schema_version: 2.0.0
+      created_by: Parameter Fix - Phase 7
+      last_modified: '2025-10-09T00:00:00Z'
+creation_info:
+  created_by: Yuchong Long
+  created_at: '2024-01-01T00:00:00Z'
+  schema_version: 1.0.0
+  tier: relic
+quality_control:
+  validated_by: Scientific Review Panel
+  validation_date: '2024-01-01T00:00:00Z'
+  validation_criteria:
+  - Literature consistency check
+  - Physical bounds verification
+  - Unit dimensional analysis
+  - Cross-parameter relationship validation

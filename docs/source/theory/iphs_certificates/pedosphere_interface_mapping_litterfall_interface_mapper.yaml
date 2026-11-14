@@ -1,0 +1,162 @@
+certificate_version: '1.0'
+process_id: relic.scientific.pedosphere.interface_mapping.LitterfallInterfaceMapper
+module_name: LitterfallInterfaceMapper
+canonical_role: scale_coupling
+iphs_level: 2
+iphs_level_evidence:
+  classification: IPHS-wrapped conservative plant-litter and grazing-dung port coupling
+  compatible_basis: The process declares one explicit C/N chain map with typed element ports and exact pointwise balance.
+  runtime_replacement: Production forward uses the canonical UnitConverter and ParameterManager-backed partition without a legacy mode.
+  canonical_operator: Conservative port chain map from phenology litterfall and dependency-selected grazing dung boundary rates to pedosphere input rates
+  level_2_limit: No executable Hamiltonian, effort, Poisson, dissipative, or GENERIC degeneracy structure is provided; strict level 4 or 5 is not claimed.
+theory_document: docs\source\theory\pedosphere_transport.md
+theory_document_status: updated
+legacy_formula: Phenology litterfall boundary outputs and decomposition litter inputs were previously disconnected and tested with independent synthetic forcing.
+literature_formula: Fresh non-woody plant litter uses a CENTURY-style quality partition; paired dung C/N uses a ParameterManager-backed conservative two-active-pool projection of the RothC FYM 49/49 active split.
+iphs_formula: y_h = C_h x_h with element-preserving unit projection and F_met + F_str = F_plant,C,g + F_dung,C,g, F_organic,N = F_plant,N,g + F_dung,N,g
+legacy_expression: No executable cross-domain state or port mapping connected the phenology boundary to pedosphere inputs.
+iphs_expression: A single ScaleCoupling forward maps four required plant element ports, one required quality input, and a dependency-selected indivisible pair of grazing dung element ports to three required g element m-2 s-1 target ports.
+input_variables:
+- leaf_litterfall_carbon
+- froot_litterfall_carbon
+- leaf_litterfall_nitrogen
+- froot_litterfall_nitrogen
+- lignin_n_ratio
+- dung_c_flux
+- dung_n_flux
+output_variables:
+- metabolic_litter_input
+- structural_litter_input
+- organic_nitrogen_input
+parameter_keys:
+- pedosphere.decomposition.lignin_n_threshold
+- pedosphere.decomposition.lignin_partitioning_coefficient
+- pedosphere.decomposition.min_metabolic_fraction
+- pedosphere.decomposition.max_metabolic_fraction
+- pedosphere.decomposition.manure_metabolic_fraction
+- pedosphere.numerical.clamp_min
+composition_ports:
+- phenology_litterfall_boundary
+- grazing_dung_boundary
+- pedosphere_litter_carbon_input
+- pedosphere_litter_nitrogen_input
+references:
+- Parton et al. (1987) Soil Science Society of America Journal 51, 1173-1179
+- Metherell et al. (1993) CENTURY Soil Organic Matter Model documentation
+- Thornton et al. (2002) Agricultural and Forest Meteorology 113, 185-222
+- Coleman and Jenkinson (1996) RothC-26.3 model guide
+baseline_tests:
+- test\unit\pedosphere\test_interface_mapping.py
+- test\integration\pedosphere\test_l2_pedosphere_integration.py
+- test\audit\state_single_owner_budget_closure.test.py
+- test\audit\phase8_scientific_inventory.test.py
+validation_tests:
+- test\unit\pedosphere\test_interface_mapping.py
+- test\integration\pedosphere\test_l2_pedosphere_integration.py
+- test\audit\state_single_owner_budget_closure.test.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  leaf_litterfall_carbon: required phenology leaf carbon boundary flux in kg C m-2 s-1
+  froot_litterfall_carbon: required phenology fine-root carbon boundary flux in kg C m-2 s-1
+  leaf_litterfall_nitrogen: required phenology leaf nitrogen boundary flux in kg N m-2 s-1
+  froot_litterfall_nitrogen: required phenology fine-root nitrogen boundary flux in kg N m-2 s-1
+  lignin_n_ratio: required dimensionless litter-quality control
+  dung_c_flux: required grazing carbon return flux in kg C m-2 s-1 when grazing_management is selected
+  dung_n_flux: required fecal organic nitrogen return flux in kg N m-2 s-1 when grazing_management is selected
+parameter_map:
+  pedosphere.decomposition.lignin_n_threshold: ParameterManager litter-quality threshold
+  pedosphere.decomposition.lignin_partitioning_coefficient: ParameterManager empirical exponential coefficient
+  pedosphere.decomposition.min_metabolic_fraction: ParameterManager lower metabolic-fraction bound
+  pedosphere.decomposition.max_metabolic_fraction: ParameterManager upper metabolic-fraction bound
+  pedosphere.decomposition.manure_metabolic_fraction: ParameterManager conservative manure-to-metabolic-litter projection fraction
+  pedosphere.numerical.clamp_min: ParameterManager lower quality-argument bound
+operator_map:
+  C_h: element-preserving sum, central kg-to-g unit projection, and conservative carbon partition
+  H_h: no thermodynamic metric is asserted for this level 2 boundary adapter
+unit_map:
+  metabolic_litter_input: g C m-2 s-1
+  structural_litter_input: g C m-2 s-1
+  organic_nitrogen_input: g N m-2 s-1
+input_output_map:
+  leaf_litterfall_carbon: contributes only to the converted total carbon boundary input
+  froot_litterfall_carbon: contributes only to the converted total carbon boundary input
+  leaf_litterfall_nitrogen: contributes only to organic_nitrogen_input
+  froot_litterfall_nitrogen: contributes only to organic_nitrogen_input
+  lignin_n_ratio: controls only the conservative metabolic-structural carbon split
+  dung_c_flux: contributes through the manure-specific two-pool fraction and never through the plant lignin-to-nitrogen formula
+  dung_n_flux: contributes completely to organic_nitrogen_input and excludes urine_n_flux
+  metabolic_litter_input: receives plant metabolic carbon plus the manure metabolic fraction
+  structural_litter_input: receives complementary plant and manure carbon fractions
+  organic_nitrogen_input: receives all converted plant litter and fecal organic nitrogen without retranslocation double counting
+interface_map:
+  forward_signature: forward(self, state, time, dt)
+  bridge_class: ScaleCouplingFunctor
+  abstraction_contract: ScaleCoupling
+  state_write_mode: all three instantaneous target ports use UpdateItem REPLACE with per_timestep=false
+  legacy_inputs:
+  - leaf_litterfall_carbon
+  - froot_litterfall_carbon
+  - leaf_litterfall_nitrogen
+  - froot_litterfall_nitrogen
+  - lignin_n_ratio
+  - dung_c_flux
+  - dung_n_flux
+  iphs_inputs:
+  - leaf_litterfall_carbon
+  - froot_litterfall_carbon
+  - leaf_litterfall_nitrogen
+  - froot_litterfall_nitrogen
+  - lignin_n_ratio
+  - dung_c_flux
+  - dung_n_flux
+  legacy_outputs:
+  - metabolic_litter_input
+  - structural_litter_input
+  - organic_nitrogen_input
+  iphs_outputs:
+  - metabolic_litter_input
+  - structural_litter_input
+  - organic_nitrogen_input
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: The ParameterManager-backed CENTURY-style plant partition and documented non-strict two-pool manure projection are each evaluated once by the chain-map owner.
+  no_legacy_mode: No alias, fallback, default-zero, or alternative production branch is exposed.
+state_advancement_map:
+  potential_basis: four required phenology element boundary fluxes, one dimensionless litter-quality control, and a dependency-selected grazing dung C/N pair
+  effort_variable: no thermodynamic effort is asserted for this level 2 port adapter
+  state_advancer: no stock is advanced; the runtime publishes three instantaneous target-side boundary ports
+  runtime_usage: LitterfallInterfaceMapper.forward requires finite non-negative tensors, makes the dung pair mandatory only when grazing_management is declared, rejects undeclared dung ports, delegates kg-to-g conversion to UnitConverter, and returns exactly three explicit REPLACE UpdateItems.
+parameter_management_map:
+  pedosphere.decomposition.lignin_n_threshold:
+    source: ParameterManager YAML
+  pedosphere.decomposition.lignin_partitioning_coefficient:
+    source: ParameterManager YAML
+  pedosphere.decomposition.min_metabolic_fraction:
+    source: ParameterManager YAML
+  pedosphere.decomposition.max_metabolic_fraction:
+    source: ParameterManager YAML
+  pedosphere.decomposition.manure_metabolic_fraction:
+    source: ParameterManager YAML
+  pedosphere.numerical.clamp_min:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: FunctorMetadata declares the exact source ports, target ports, execution phase, parameters, and C/N conservation semantics.
+  state_contract: Target fluxes use SCM-owned g element m-2 s-1 units, REPLACE semantics, and litterfall_interface_mapper provenance.
+  validation_rule: Phase 8 inventory, output scanner, owner audit, and real simulator port-provenance tests
+dependency_interconnection_map:
+  dependencies: The graph injects the selected phenology owner and, when enabled, grazing_management through the canonical dependencies list; no runtime alias or fallback branch exists.
+  downstream_routes: The selected decomposition closure consumes both carbon target ports, and MineralizationProcess consumes organic_nitrogen_input as its sole litter-N boundary term.
+  direct_functor_calls: none_no_direct_functor_calls
+overflow_routing_map:
+  diagnostic_residuals: none; the bounded fraction changes only partition and preserves the full carbon input exactly.
+  bridge_free_approximations: The ParameterManager-backed manure fraction is an explicit non-strict two-litter-pool projection of the RothC FYM active split; unit conversion still delegates to the single UnitConverter.
+  discarded_residuals: none; all dung carbon enters the two target litter ports and the unrepresented direct HUM fraction is absorbed into that conservative reduced-order projection.
+conservation_map:
+  conserved_quantities: carbon and nitrogen boundary mass fluxes
+  balance_expression: metabolic_litter_input + structural_litter_input = convert(leaf_litterfall_carbon + froot_litterfall_carbon + selected dung_c_flux); organic_nitrogen_input = convert(leaf_litterfall_nitrogen + froot_litterfall_nitrogen + selected dung_n_flux)
+entropy_audit:
+  operator_sign: all source fluxes are validated non-negative and the bounded partition fractions lie in [0,1]
+  sigma_expression: not applicable to this non-dissipative level 2 port adapter
+equivalence_type: port_equivalent

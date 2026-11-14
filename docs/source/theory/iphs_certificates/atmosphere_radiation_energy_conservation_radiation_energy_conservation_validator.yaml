@@ -1,0 +1,171 @@
+{
+  "certificate_version": "1.0",
+  "process_id": "relic.scientific.atmosphere.radiation_energy_conservation.RadiationEnergyConservationValidator",
+  "module_name": "RadiationEnergyConservationValidator",
+  "canonical_role": "observation",
+  "iphs_level": 1,
+  "iphs_level_evidence": {
+    "classification": "IPHS-compatible diagnostic or observation certificate",
+    "compatible_basis": "Read-only observation or diagnostic contract with declared interface and no state ownership"
+  },
+  "theory_document": "docs\\source\\theory\\radiation.md",
+  "theory_document_status": "updated",
+  "legacy_formula": "E_balance = |E_in - (SW_net + LW_net + SW_reflected + LW_up)| / max(E_in, eps)",
+  "literature_formula": "E_balance = |E_in - (SW_net + LW_net + SW_reflected + LW_up)| / max(E_in, eps)",
+  "iphs_formula": "y_h = O_h x_h through the declared observation operator",
+  "legacy_expression": "E_balance = |E_in - (SW_net + LW_net + SW_reflected + LW_up)| / max(E_in, eps)",
+  "iphs_expression": "y_h = O_h x_h through the declared observation operator",
+  "input_variables": [
+    "shortwave_down",
+    "shortwave_net",
+    "longwave_down",
+    "longwave_up",
+    "longwave_net",
+    "net_radiation",
+    "shortwave_reflected",
+    "surface_albedo",
+    "surface_emissivity",
+    "surface_temperature",
+    "air_temperature"
+  ],
+  "output_variables": [
+    "diagnostics.energy_conservation_report"
+  ],
+  "parameter_keys": [
+    "validation.conservation.radiation.*"
+  ],
+  "composition_ports": [
+    "phase8_runtime_port"
+  ],
+  "references": [
+    "Campbell & Norman (1998) Environmental Biophysics",
+    "Monteith & Unsworth (2013) Principles of Environmental Physics",
+    "Bonan (2019) Climate Change and Terrestrial Ecosystem Modeling",
+    "Nicodemus (1965), Applied Optics 4, 767-775, doi:10.1364/AO.4.000767",
+    "Noah-MP Technical Note, Eqs. 3.6.330 and 3.6.416-417"
+  ],
+  "baseline_tests": [
+    "test\\atmosphere\\test_radiation_conservation_l1.py",
+    "test\\audit\\phase8_scientific_inventory.test.py"
+  ],
+  "validation_tests": [
+    "test\\atmosphere\\test_radiation_conservation_l1.py",
+    "test\\audit\\phase8_scientific_inventory.test.py"
+  ],
+  "state_map": {
+    "shortwave_down": "shortwave_down mapped to canonical Phase 8 cochain basis",
+    "shortwave_net": "shortwave_net mapped to canonical Phase 8 cochain basis",
+    "longwave_down": "longwave_down mapped to canonical Phase 8 cochain basis",
+    "longwave_up": "total outgoing longwave observation, including emitted and reflected incident components",
+    "longwave_net": "longwave_net mapped to canonical Phase 8 cochain basis",
+    "net_radiation": "net_radiation optional input read from the state when present",
+    "shortwave_reflected": "shortwave_reflected optional input read from the state when present",
+    "surface_albedo": "surface_albedo optional input read from the state when present",
+    "surface_emissivity": "surface_emissivity optional input read from the state when present",
+    "surface_temperature": "surface_temperature optional input read from the state when present",
+    "air_temperature": "air_temperature optional input read from the state when present"
+  },
+  "parameter_map": {
+    "validation.conservation.radiation.*": "validation.conservation.radiation.* from ParameterManager"
+  },
+  "operator_map": {
+    "O_h": "declared observation map",
+    "H_h": "diagnostic metric or identity Hodge map"
+  },
+  "unit_map": {
+    "diagnostics.energy_conservation_report": "non-quantity"
+  },
+  "input_output_map": {
+    "diagnostics.energy_conservation_report": "same interface variable preserved between legacy and IPHS runtime contracts",
+    "longwave_down": "same interface variable preserved between legacy and IPHS runtime contracts",
+    "longwave_net": "same interface variable preserved between legacy and IPHS runtime contracts",
+    "longwave_up": "explicit total outgoing observation is retained; direct point-audit property inference uses epsilon*sigma*T_sfc^4+(1-epsilon)*LW_down and reports partial observation coverage",
+    "shortwave_down": "same interface variable preserved between legacy and IPHS runtime contracts",
+    "shortwave_net": "same interface variable preserved between legacy and IPHS runtime contracts",
+    "net_radiation": "optional input of the state channel, read when present",
+    "shortwave_reflected": "optional input of the state channel, read when present",
+    "surface_albedo": "optional input of the state channel, read when present",
+    "surface_emissivity": "optional input of the state channel, read when present",
+    "surface_temperature": "optional input of the state channel, read when present",
+    "air_temperature": "optional input of the state channel, read when present"
+  },
+  "interface_map": {
+    "forward_signature": "forward(self, state, time, dt)",
+    "bridge_class": "PhysicalField",
+    "abstraction_contract": "PhysicalField",
+    "state_write_mode": "existing RELIC simulator and StateManager update path",
+    "legacy_inputs": [
+      "shortwave_down",
+      "shortwave_net",
+      "longwave_down",
+      "longwave_up",
+      "longwave_net",
+      "net_radiation",
+      "shortwave_reflected",
+      "surface_albedo",
+      "surface_emissivity",
+      "surface_temperature",
+      "air_temperature"
+    ],
+    "iphs_inputs": [
+      "shortwave_down",
+      "shortwave_net",
+      "longwave_down",
+      "longwave_up",
+      "longwave_net",
+      "net_radiation",
+      "shortwave_reflected",
+      "surface_albedo",
+      "surface_emissivity",
+      "surface_temperature",
+      "air_temperature"
+    ],
+    "legacy_outputs": [
+      "diagnostics.energy_conservation_report"
+    ],
+    "iphs_outputs": [
+      "diagnostics.energy_conservation_report"
+    ]
+  },
+  "runtime_replacement_map": {
+    "runtime_uses_iphs": false,
+    "legacy_removed": false,
+    "replacement_entrypoint": "forward",
+    "preserved_numerics": "Existing ParameterManager-backed calculations define canonical IPHS operator coefficients, rates, ports, or observations.",
+    "no_legacy_mode": "No selectable legacy runtime branch is exposed for Phase 8 completion."
+  },
+  "state_advancement_map": {
+    "potential_basis": "declared RELIC state, port, or observation cochain basis",
+    "effort_variable": "ParameterManager-backed thermodynamic effort, driver, or diagnostic input used by the module",
+    "state_advancer": "y_h = O_h x_h through the declared observation operator",
+    "runtime_usage": "RadiationEnergyConservationValidator.forward applies the canonical observation or diagnostic operator and emits validation diagnostics through the production output path."
+  },
+  "parameter_management_map": {
+    "validation.conservation.radiation.*": {
+      "source": "ParameterManager YAML"
+    }
+  },
+  "composition_management_map": {
+    "functor_metadata": "existing FunctorMetadata declares interfaces, execution phase, and conservation semantics",
+    "state_contract": "existing simulator state update path is preserved",
+    "validation_rule": "phase8 scientific inventory and equivalence certificate checks"
+  },
+  "dependency_interconnection_map": {
+    "dependencies": "declared through existing metadata or no external dependency",
+    "direct_functor_calls": "none declared by certificate"
+  },
+  "overflow_routing_map": {
+    "diagnostic_residuals": "existing diagnostics and conservation checks route clipping or residual terms",
+    "discarded_residuals": "the observer advances no reservoir; every evaluated energy mismatch is retained in the energy-conservation report and relative error is exported as diagnostics.energy_conservation_report, while missing flux inputs are rejected"
+  },
+  "conservation_map": {
+    "conserved_quantities": "energy",
+    "balance_expression": "existing local balance is represented by the canonical Phase 8 state advancement map"
+  },
+  "entropy_audit": {
+    "operator_sign": "rates, mobilities, or diagnostic maps are non-negative or checked by existing validation hooks where physically required",
+    "sigma_expression": "canonical entropy production is non-negative for dissipative subexpressions"
+  },
+  "equivalence_type": "diagnostic"
+}
+

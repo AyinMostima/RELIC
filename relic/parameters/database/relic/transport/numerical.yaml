@@ -1,0 +1,1013 @@
+﻿schema_version: 2.0.0
+tier: relic
+namespace: transport.numerical
+description: Numerical solver controls and stability parameters for transport modules
+metadata:
+  created_by: RELIC Parameter System
+  last_modified: '2026-01-07T14:20:26Z'
+  schema_url: https://github.com/relic/parameter-schema/v2.0.0
+  version: 1.0.0
+parameters:
+  transport.numerical.cfl_advection_max:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 1.0
+    category: numerical_stability
+    description: Maximum allowable CFL number for advection-dominated schemes
+    references:
+    - Courant et al. (1928)
+    tags:
+    - cfl
+    - advection
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.numerical.cfl_diffusion_max:
+    value: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.25
+    - 0.5
+    category: numerical_stability
+    description: Maximum allowable CFL number for diffusion (Von Neumann condition)
+    references:
+    - Von Neumann and Richtmyer (1950)
+    tags:
+    - cfl
+    - diffusion
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.numerical.cfl_safety_factor:
+    value: 0.8
+    default: 0.8
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 0.9
+    category: numerical_stability
+    description: Safety factor applied to CFL stability limits
+    references:
+    - Courant et al. (1928)
+    tags:
+    - cfl
+    - stability
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.numerical.min_timestep:
+    value: 1.0e-06
+    units: s
+    dtype: float32
+    bounds:
+    - 1.0e-09
+    - 0.001
+    category: numerical_parameter
+    description: Minimum allowable timestep to prevent underflow and numerical issues
+    references:
+    - Numerical stability requirement
+    tags:
+    - time_step
+    - stability
+    dimension: time
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.numerical.richards_tolerance:
+    value: 1.0e-06
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-08
+    - 0.0001
+    category: numerical_tolerance
+    description: Relative residual tolerance for the implicit Richards solver used in pedosphere transport
+    references:
+    - Celia et al. (1990) Water Resources Research 26:1483-1496
+    - Maxwell & Miller (2005) Advances in Water Resources 28:273-284
+    tags:
+    - richards_solver
+    - tolerance
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: pedosphere_transport_defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-18T00:00:00Z'
+  transport.numerical.max_richards_iterations:
+    value: 50
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 10
+    - 200
+    category: numerical_parameter
+    description: Maximum Newton iterations allowed per Richards solve before falling back to smaller timesteps
+    references:
+    - Celia et al. (1990) Water Resources Research 26:1483-1496
+    tags:
+    - richards_solver
+    - iterations
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: pedosphere_transport_defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-18T00:00:00Z'
+  transport.numerical.max_timestep:
+    value: 3600.0
+    default: 3600.0
+    units: s
+    dtype: float32
+    bounds:
+    - 60.0
+    - 86400.0
+    category: numerical_parameter
+    description: Maximum allowable timestep (default 1 hour) for stability and accuracy
+    references:
+    - Model configuration
+    tags:
+    - time_step
+    - configuration
+    dimension: time
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.numerical.adaptive_timestep_factor:
+    value: 1.2
+    default: 1.2
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 2.0
+    category: numerical_parameter
+    description: Factor applied when increasing timestep under stable conditions
+    references:
+    - Press et al. (2007)
+    tags:
+    - adaptive_timestep
+    - time_step
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.numerical.conservation_tolerance:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-12
+    - 0.02
+    category: numerical_tolerance
+    description: Relative tolerance for mass or energy conservation diagnostics
+    references:
+    - Machine precision and physical accuracy
+    tags:
+    - conservation
+    - tolerance
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.numerical.conservation_warning_threshold:
+    value: 1.0e-08
+    default: 1.0e-08
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-12
+    - 1.0e-06
+    category: numerical_tolerance
+    description: Threshold that triggers conservation warning messages
+    references:
+    - RELIC validation framework
+    tags:
+    - conservation
+    - monitoring
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.numerical.conservation_error_threshold:
+    value: 0.001
+    default: 0.001
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-06
+    - 0.01
+    category: numerical_tolerance
+    description: Threshold for flagging severe conservation violations
+    references:
+    - RELIC validation framework
+    tags:
+    - conservation
+    - monitoring
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.numerical.max_diffusion_stability:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 1.0
+    category: numerical_stability
+    description: Maximum allowable stability number (CFL) for diffusion processes
+    references:
+    - LeVeque (2007) Finite Difference Methods for Ordinary and Partial Differential Equations
+    tags:
+    - diffusion
+    - stability
+    - cfl
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-02T00:00:00Z'
+  transport.numerical.monin_obukhov_length_min:
+    value: -1000.0
+    default: -1000.0
+    units: m
+    dtype: float32
+    bounds:
+    - -5000.0
+    - -0.1
+    category: numerical_parameter
+    description: Minimum Monin-Obukhov length allowed in stability diagnostics
+    references:
+    - Stull (1988) Boundary Layer Meteorology
+    - Garratt (1992) The Atmospheric Boundary Layer
+    tags:
+    - most
+    - stability
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.numerical.monin_obukhov_length_max:
+    value: 1000.0
+    default: 1000.0
+    units: m
+    dtype: float32
+    bounds:
+    - 0.1
+    - 5000.0
+    category: numerical_parameter
+    description: Maximum Monin-Obukhov length allowed in stability diagnostics
+    references:
+    - Stull (1988) Boundary Layer Meteorology
+    - Garratt (1992) The Atmospheric Boundary Layer
+    tags:
+    - most
+    - stability
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.numerical.peclet_warning_threshold:
+    value: 2.0
+    default: 2.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 10.0
+    category: numerical_parameter
+    description: Peclet number threshold above which numerical diffusion may be significant
+    references:
+    - Patankar (1980) Numerical Heat Transfer
+    tags:
+    - peclet
+    - diagnostic
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.numerical.peclet_max_stable:
+    value: 10.0
+    default: 10.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 2.0
+    - 20.0
+    category: numerical_parameter
+    description: Maximum stable Peclet number for central differencing schemes
+    references:
+    - Roache (1998)
+    tags:
+    - peclet
+    - stability
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.numerical.upwind_limiter_beta:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 2.0
+    category: numerical_parameter
+    description: Flux limiter parameter (1=minmod, 2=superbee) controlling monotonicity
+    references:
+    - Sweby (1984)
+    tags:
+    - flux_limiter
+    - monotonicity
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.numerical.limiter_epsilon:
+    value: 1.0e-12
+    default: 1.0e-12
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-15
+    - 1.0e-06
+    category: numerical_parameter
+    description: Small positive constant preventing division by zero in flux limiters
+    references:
+    - Sweby (1984)
+    tags:
+    - flux_limiter
+    - stability
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.numerical.implicit_solver_tolerance:
+    value: 1.0e-08
+    default: 1.0e-08
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-12
+    - 1.0e-06
+    category: numerical_tolerance
+    description: Relative tolerance for iterative implicit solver convergence
+    references:
+    - GMRES/BiCGStab convergence literature
+    tags:
+    - implicit_solver
+    - tolerance
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.numerical.implicit_solver_max_iter:
+    value: 100
+    default: 100
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 10
+    - 1000
+    category: numerical_parameter
+    description: Maximum number of iterations allowed for implicit solver convergence
+    references:
+    - Solver configuration guidelines
+    tags:
+    - implicit_solver
+    - iteration_limit
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.numerical.time_integration_method:
+    value: euler
+    default: euler
+    units: dimensionless
+    dtype: string
+    allowed_values:
+    - euler
+    - implicit_midpoint
+    - crank_nicolson
+    bounds: null
+    category: numerical_scheme
+    description: Time integration method for transport operators
+    references:
+    - Hairer et al. (2006) Geometric Numerical Integration
+    - Crank and Nicolson (1947)
+    tags:
+    - time_stepping
+    - transport_operator
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-02-19T00:00:00Z'
+  transport.numerical.implicit_midpoint_max_iter:
+    value: 50
+    default: 50
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 100
+    category: numerical_parameter
+    description: 'Maximum fixed-point (Picard) iterations of the implicit midpoint and Crank-Nicolson transport steps (functional._integrate_rate_system); exhausting it raises RuntimeError and never returns an unconverged state. The map y <- y_n + dt f((y_n + y)/2) (theta = 1/2 for Crank-Nicolson) contracts with q = (dt/2) L, L being the infinity-norm Lipschitz constant of the semi-discrete rate, so about ln(tol)/ln(q) iterations reach the increment tolerance transport.numerical.implicit_midpoint_tolerance (1e-10). L = |u|/dx for central advection, 2|u|/dx for upwind and 4K/dx^2 for diffusion give q = C/2, C and 2 sigma (C = |u| dt/dx, sigma = K dt/dx^2). 50 covers q <= 0.6: central advection over the whole documented range C <= transport.numerical.cfl_advection_max = 1, upwind up to C = 0.6 and diffusion up to sigma = 0.3 (probe of 2026-09-23, 64-cell periodic step profile, both methods: at most 30 iterations for central at C = 1, 41 for upwind at C = 0.6 and for diffusion at sigma = 0.3). At q >= 1 (upwind at C = 1, diffusion at sigma = transport.numerical.cfl_diffusion_max = 0.5) the iteration cannot converge for any limit and the step raises; reduce dt. Changed from 4 on 2026-09-23: 4 converged only for q up to about 0.01 (for example central advection failed at C = 0.1, which needs 8 iterations); converged steps are unchanged because the iteration returns its first converged iterate. Distinct from computation.solvers.implicit_midpoint.max_iterations and computation.solvers.crank_nicolson.max_iterations, the solvers own defaults for callers that pass no configuration; the transport kernel always passes this value.'
+    references:
+    - Hairer et al. (2006) Geometric Numerical Integration
+    - Hairer, E. and Wanner, G. (1996) Solving Ordinary Differential Equations II, 2nd ed., Springer, Sec. IV.8 (fixed-point iteration of implicit Runge-Kutta equations)
+    tags:
+    - implicit_midpoint
+    - iteration_limit
+    - transport_operator
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-23T00:00:00Z'
+  transport.numerical.implicit_midpoint_tolerance:
+    value: 1.0e-10
+    default: 1.0e-10
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-15
+    - 1.0e-06
+    category: numerical_tolerance
+    description: 'Fixed-point convergence tolerance for implicit midpoint and Crank-Nicolson transport stepping, passed by the transport kernel as both rtol and atol of the successive-iterate criterion. Distinct from computation.solvers.implicit_midpoint.rtol/atol and computation.solvers.crank_nicolson.rtol/atol, the solvers own defaults for callers that pass no configuration.'
+    references:
+    - Hairer et al. (2006) Geometric Numerical Integration
+    tags:
+    - implicit_midpoint
+    - tolerance
+    - transport_operator
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-23T00:00:00Z'
+  transport.numerical.stability_check_frequency:
+    value: 10
+    default: 10
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 100
+    category: performance_parameter
+    description: Frequency, in time steps, for executing numerical stability diagnostics
+    references:
+    - Performance optimization guidance
+    tags:
+    - monitoring
+    - performance
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.numerical.auto_adjust_timestep:
+    value: true
+    default: true
+    units: dimensionless
+    dtype: bool
+    bounds:
+    - false
+    - true
+    category: model_option
+    description: Enable automatic timestep adjustment based on stability diagnostics
+    references:
+    - Adaptive time stepping techniques
+    tags:
+    - adaptive_timestep
+    - configuration
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.numerical.min_grid_spacing:
+    value: 0.001
+    default: 0.001
+    units: m
+    dtype: float32
+    bounds:
+    - 1.0e-06
+    - 1.0
+    category: discretization_parameter
+    description: Minimum allowable grid spacing to maintain numerical resolution
+    references:
+    - Numerical resolution requirements
+    tags:
+    - grid
+    - resolution
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.numerical.max_grid_aspect_ratio:
+    value: 10.0
+    default: 10.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 100.0
+    category: discretization_parameter
+    description: Maximum allowed grid cell aspect ratio to maintain numerical stability
+    references:
+    - Grid quality metric literature
+    tags:
+    - grid
+    - quality
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.numerical.boundary_layer_thickness:
+    value: 0.01
+    default: 0.01
+    units: m
+    dtype: float32
+    bounds:
+    - 1.0e-06
+    - 1.0
+    category: boundary_parameter
+    description: Default boundary layer thickness applied in flux calculations
+    references:
+    - Boundary layer theory
+    tags:
+    - boundary_condition
+    - diffusion
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.numerical.default_boundary_type:
+    value: neumann
+    default: neumann
+    units: dimensionless
+    dtype: string
+    bounds:
+    - dirichlet
+    - periodic
+    allowed_values:
+    - dirichlet
+    - neumann
+    - open
+    - periodic
+    category: boundary_parameter
+    description: Default boundary condition type supported by all canonical transport functors
+    references:
+    - Boundary condition specification
+    tags:
+    - boundary_condition
+    - configuration
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.numerical.default_boundary_value:
+    value: 0.0
+    default: 0.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - -1000.0
+    - 1000.0
+    category: boundary_parameter
+    description: Scalar boundary value applied when no explicit boundary condition value is provided
+    references:
+    - Boundary condition specification
+    tags:
+    - boundary_condition
+    - default
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.numerical.splitting_order_accuracy:
+    value: 2
+    default: 2
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 4
+    category: numerical_scheme
+    description: Order of accuracy for operator splitting (1=sequential, 2=symmetric)
+    references:
+    - Strang (1968)
+    tags:
+    - operator_splitting
+    - accuracy
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.numerical.splitting_subcycles:
+    value: 1
+    default: 1
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 10
+    category: numerical_scheme
+    description: Number of operator subcycles executed within each timestep
+    references:
+    - Stability enhancement practices
+    tags:
+    - operator_splitting
+    - stability
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.numerical.enforce_non_negative:
+    value: true
+    default: true
+    units: dimensionless
+    dtype: bool
+    bounds:
+    - false
+    - true
+    category: model_option
+    description: Enforce non-negative concentrations for transported scalars
+    references:
+    - Physical non-negativity constraint
+    tags:
+    - constraint
+    - stability
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.numerical.non_negative_min_value:
+    value: 0.0
+    default: 0.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0e-10
+    category: numerical_tolerance
+    description: 'Lower bound of the ''zero'' method of apply_non_negative_constraint (relic/computation/operators/functional.py), used when NonNegativeConstraint or a direct caller selects method ''zero'': values below it are raised to it (0 is plain non-negativity; at most 1e-10 as a round-off margin). It differs from computation.operators.diagnostics.small_value, the strictly positive floor of the ''clip'' method. Transport operators with enforce_non_negative do not read it: they raise on negative values instead of clamping.'
+    references:
+    - Physical lower bound for concentrations
+    tags:
+    - constraint
+    - stability
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.numerical.artificial_diffusion_factor:
+    value: 0.0
+    default: 0.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: numerical_parameter
+    description: Artificial diffusion coefficient added to mitigate oscillations
+    references:
+    - Numerical stabilization techniques
+    tags:
+    - stabilization
+    - diffusion
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.numerical.artificial_viscosity_coefficient:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: numerical_parameter
+    description: Artificial viscosity coefficient for Lax-Wendroff stabilization
+    references:
+    - Lax-Wendroff stabilization
+    tags:
+    - stabilization
+    - viscosity
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.numerical.numerical_diffusion_correction:
+    value: false
+    default: false
+    units: dimensionless
+    dtype: bool
+    bounds:
+    - false
+    - true
+    category: model_option
+    description: Apply higher-order correction to mitigate numerical diffusion
+    references:
+    - Higher-order advection schemes
+    tags:
+    - correction
+    - stabilization
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.numerical.steady_state_tolerance:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-12
+    - 0.001
+    category: numerical_tolerance
+    description: Relative change threshold used to declare steady-state convergence
+    references:
+    - Convergence criterion
+    tags:
+    - steady_state
+    - convergence
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.numerical.steady_state_min_iterations:
+    value: 100
+    default: 100
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 10
+    - 10000
+    category: numerical_parameter
+    description: Minimum number of iterations before steady-state checks are applied
+    references:
+    - Spin-up requirement
+    tags:
+    - steady_state
+    - convergence
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.numerical.vectorization_threshold:
+    value: 100
+    default: 100
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 10
+    - 10000
+    category: performance_parameter
+    description: Minimum array size required before enabling vectorized operations
+    references:
+    - Performance optimization
+    tags:
+    - performance
+    - vectorization
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.numerical.cache_boundary_conditions:
+    value: true
+    default: true
+    units: dimensionless
+    dtype: bool
+    bounds:
+    - false
+    - true
+    category: performance_parameter
+    description: Cache boundary condition calculations to reduce repeated work
+    references:
+    - Performance optimization
+    tags:
+    - performance
+    - caching
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.numerical.check_conservation:
+    value: true
+    default: true
+    units: dimensionless
+    dtype: bool
+    bounds:
+    - false
+    - true
+    category: diagnostic_parameter
+    description: Enable conservation check inside advection diffusion operator apply path
+    references:
+    - Finite volume transport conservation verification
+    - Operator level mass balance safeguard
+    tags:
+    - diagnostics
+    - conservation
+    - transport_operator
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-02-13T00:00:00Z'
+  transport.numerical.track_conservation:
+    value: true
+    default: true
+    units: dimensionless
+    dtype: bool
+    bounds:
+    - false
+    - true
+    category: diagnostic_parameter
+    description: Track mass and energy conservation statistics during simulation
+    references:
+    - Validation requirement
+    tags:
+    - diagnostics
+    - conservation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.numerical.track_peclet_number:
+    value: false
+    default: false
+    units: dimensionless
+    dtype: bool
+    bounds:
+    - false
+    - true
+    category: diagnostic_parameter
+    description: Track and report Peclet numbers for diagnostic purposes
+    references:
+    - Diagnostic output
+    tags:
+    - diagnostics
+    - peclet
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.numerical.verbose_warnings:
+    value: false
+    default: false
+    units: dimensionless
+    dtype: bool
+    bounds:
+    - false
+    - true
+    category: diagnostic_parameter
+    description: Enable verbose warning messages for debugging numerical issues
+    references:
+    - Debug configuration
+    tags:
+    - diagnostics
+    - logging
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'

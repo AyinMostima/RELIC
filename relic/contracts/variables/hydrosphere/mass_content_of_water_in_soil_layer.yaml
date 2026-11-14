@@ -1,0 +1,59 @@
+variable: mass_content_of_water_in_soil_layer
+title: "Mass Content of Water in Soil Layer"
+description: "Mass of water per unit ground area in each soil layer (kg m-2, one value per layer, the layer dimension before the horizontal dimensions): WRF SMOIS and CESM H2OSOI (volumetric content times the layer thickness, declared source transform layered) and VIC OUT_SOIL_MOIST (water depth, declared source transform water_depth). It is not soil_moisture (volumetric content of one effective layer) nor soil_water_storage. Supplied as forcing by external adapters; no RELIC Functor reads it. CF v94 mass_content_of_water_in_soil_layer (kg m-2)."
+kind: forcing
+dimension:
+  udunits: "kg m-2"
+  cf_standard_name: "mass_content_of_water_in_soil_layer"
+support:
+  spatial_kind: grid_cell
+  area_basis: ground_area
+  temporal_basis: instantaneous
+  vertical_basis: layer_integral
+  shape:
+    dimensions: [soil_layer, cell]
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "CF Standard Name Table v94: mass_content_of_water_in_soil_layer (canonical units kg m-2)"
+  - "Chen and Dudhia (2001) Mon. Weather Rev. 129:569-585 (Noah LSM soil layers)"
+  - "Liang et al. (1994) J. Geophys. Res. 99(D7):14415-14428 (VIC soil layers)"
+# Sign convention: a storage amount per layer, >= 0.
+numerics:
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "CESMAdapter"
+      module: "relic.coupling.external.atmospheric_models.cesm_adapter"
+      provides: ["mass_content_of_water_in_soil_layer"]
+      unit: "kg m-2"
+    - name: "VICAdapter"
+      module: "relic.coupling.external.hydrological_models.vic_adapter"
+      provides: ["mass_content_of_water_in_soil_layer"]
+      unit: "kg m-2"
+    - name: "WRFAdapter"
+      module: "relic.coupling.external.atmospheric_models.wrf_adapter"
+      provides: ["mass_content_of_water_in_soil_layer"]
+      unit: "kg m-2"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "external_forcing_adapter"
+  runtime_role: "external_layer_soil_water_mass_forcing"
+  runtime_writer: null
+  adapter_writers:
+    - "CESMAdapter"
+    - "VICAdapter"
+    - "WRFAdapter"

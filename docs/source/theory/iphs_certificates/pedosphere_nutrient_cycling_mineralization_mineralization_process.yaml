@@ -1,0 +1,251 @@
+certificate_version: '1.0'
+process_id: relic.scientific.pedosphere.nutrient_cycling.mineralization.MineralizationProcess
+module_name: MineralizationProcess
+canonical_role: reaction
+iphs_level: 2
+iphs_level_evidence:
+  classification: IPHS-wrapped reaction process certificate
+  compatible_basis: Reaction process is expressed through conserved or open stoichiometric ledgers
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: N_h r_h reaction-network state advance
+  level_2_limit: The canonical runtime wrapper is declared, but no executable typed-cochain or IPHS structural contribution is bound; strict level 4 or 5 evidence is not claimed.
+theory_document: docs\source\theory\mineralization.md
+theory_document_status: updated
+legacy_formula: R_net = k_min N_org f_env - max((CUE DEC / CN_mic - DEC / CN_substrate) / eta_N, 0)
+literature_formula: R_net = min(k_min N_org f_env, N_org / dt) - min(CUE DEC / (CN_mic eta_N), N_NH4 / dt)
+iphs_formula: x_dot = N_h r_h + G_h u_organic with closed internal reactions and one explicit organic-material nitrogen boundary port
+legacy_expression: The retired runtime required an unowned organic_carbon input and evaluated a second DEC/CN_substrate nitrogen-release term.
+iphs_expression: x_dot = N_h r_h + G_h u_litter; C_h N_h = 0 and sum(Delta N) = u_litter dt
+input_variables:
+- organic_nitrogen
+- nh4_nitrogen
+- microbial_nitrogen
+- soil_temperature
+- soil_moisture
+- soil_ph
+- carbon_decomposition_rate
+- organic_nitrogen_input
+output_variables:
+- organic_nitrogen
+- nh4_nitrogen
+- microbial_nitrogen
+- mineralization_flux
+- gross_mineralization_flux
+- immobilization_flux
+- microbial_death_flux
+- diagnostics.mineralization.organic_nitrogen_boundary_input
+parameter_keys:
+- pedosphere.mineralization.temp_response_type
+- pedosphere.mineralization.q10_mineralization
+- pedosphere.mineralization.activation_energy
+- pedosphere.mineralization.moisture_optimum
+- pedosphere.mineralization.moisture_response_power
+- pedosphere.mineralization.k_mineralization
+- pedosphere.mineralization.cn_ratio_microbial
+- pedosphere.mineralization.n_assimilation_efficiency
+- pedosphere.mineralization.carbon_use_efficiency
+- pedosphere.physical.ph_optimum_decomposition
+- pedosphere.physical.ph_response_width
+- pedosphere.numerical.temperature_response_min
+- pedosphere.numerical.temperature_response_max
+- pedosphere.numerical.moisture_response_min
+- pedosphere.numerical.moisture_response_max
+- pedosphere.numerical.ph_response_min
+- pedosphere.numerical.ph_response_max
+- pedosphere.nutrient_cycling.k_microbial_death
+composition_ports:
+- carbon_decomposition_rate
+- organic_nitrogen_input
+references:
+- Manzoni, S. & Porporato, A. (2009). Substrate-decomposer stoichiometry
+- Grant, R.F. et al. (1993). Soil C and N transformations
+- Stanford, G. & Smith, S.J. (1972). N mineralization potentials
+- Jansson, S.L. & Persson, J. (1982). Mineralization and immobilization
+- Parton et al. (1987). SSSA Journal 51, 1173-1179
+- Lawrence et al. (2019). JAMES 11, 4245-4287
+baseline_tests:
+- test\unit\pedosphere\test_mineralization_process.py
+- test\pedosphere\nutrient_cycling\test_mineralization.py
+- test\integration\pedosphere\test_l2_nitrogen_cycling_integration.py
+- test\pedosphere\integration\test_conservation_laws.py
+- test\audit\phase8_scientific_inventory.test.py
+validation_tests:
+- test\pedosphere\integration\test_dependency_coupling.py
+- test\pedosphere\system\test_long_term_simulation.py
+- test\audit\state_single_owner_budget_closure.test.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  organic_nitrogen: organic_nitrogen mapped to canonical Phase 8 cochain basis
+  nh4_nitrogen: nh4_nitrogen mapped to canonical Phase 8 cochain basis
+  microbial_nitrogen: microbial_nitrogen mapped to canonical Phase 8 cochain basis
+  soil_temperature: soil_temperature mapped to canonical Phase 8 cochain basis
+  soil_moisture: soil_moisture mapped to canonical Phase 8 cochain basis
+  soil_ph: soil_ph mapped to canonical Phase 8 cochain basis
+  carbon_decomposition_rate: carbon_decomposition_rate mapped to canonical Phase 8 cochain basis
+  organic_nitrogen_input: mapper-owned plant-litter plus dependency-selected fecal organic nitrogen boundary port mapped through G_h
+parameter_map:
+  pedosphere.mineralization.temp_response_type: temperature response selector from ParameterManager
+  pedosphere.mineralization.q10_mineralization: Q10 coefficient from ParameterManager
+  pedosphere.mineralization.activation_energy: Arrhenius activation energy from ParameterManager
+  pedosphere.mineralization.moisture_optimum: moisture optimum from ParameterManager
+  pedosphere.mineralization.moisture_response_power: Gaussian moisture width from ParameterManager
+  pedosphere.mineralization.k_mineralization: configured annual mineralization rate from ParameterManager
+  pedosphere.mineralization.cn_ratio_microbial: microbial carbon-to-nitrogen ratio from ParameterManager
+  pedosphere.mineralization.n_assimilation_efficiency: nitrogen assimilation efficiency from ParameterManager
+  pedosphere.mineralization.carbon_use_efficiency: microbial carbon-use efficiency from ParameterManager
+  pedosphere.physical.ph_optimum_decomposition: decomposition pH optimum from ParameterManager
+  pedosphere.physical.ph_response_width: Gaussian pH width from ParameterManager
+  pedosphere.numerical.temperature_response_min: minimum temperature response from ParameterManager
+  pedosphere.numerical.temperature_response_max: maximum temperature response from ParameterManager
+  pedosphere.numerical.moisture_response_min: pedosphere.numerical.moisture_response_min from ParameterManager
+  pedosphere.numerical.moisture_response_max: pedosphere.numerical.moisture_response_max from ParameterManager
+  pedosphere.numerical.ph_response_min: pedosphere.numerical.ph_response_min from ParameterManager
+  pedosphere.numerical.ph_response_max: pedosphere.numerical.ph_response_max from ParameterManager
+  pedosphere.nutrient_cycling.k_microbial_death: Schimel-Weintraub linked C-N turnover baseline of 0.012 d-1, stored by ParameterManager as 1.388888888888889e-7 s-1
+operator_map:
+  N_h: declared stoichiometric or output incidence map for this reaction process
+  r_h: ParameterManager-backed process-rate vector evaluated by the production forward path
+  G_h: organic-material nitrogen boundary incidence vector [1, 0, 0]^T
+  u_organic: organic_nitrogen_input supplied by LitterfallInterfaceMapper
+unit_map:
+  organic_nitrogen: g N m-2
+  nh4_nitrogen: g N m-2
+  microbial_nitrogen: g N m-2
+  mineralization_flux: g N m-2 s-1
+  gross_mineralization_flux: g N m-2 s-1
+  immobilization_flux: g N m-2 s-1
+  microbial_death_flux: g N m-2 s-1
+  organic_nitrogen_input: g N m-2 s-1
+  diagnostics.mineralization.organic_nitrogen_boundary_input: g N m-2
+input_output_map:
+  carbon_decomposition_rate: required canonical carbon-rate input with no alias or default fallback
+  organic_nitrogen_input: required non-negative mapper-owned plant-litter plus selected fecal organic nitrogen boundary flux
+  soil_temperature: required canonical environmental driver
+  soil_moisture: required canonical environmental driver
+  soil_ph: required canonical environmental driver
+  organic_nitrogen: required canonical state input and per-step StateManager increment
+  nh4_nitrogen: required canonical state input and per-step StateManager increment
+  microbial_nitrogen: required canonical state input and per-step StateManager increment
+  mineralization_flux: canonical net mineralization rate
+  gross_mineralization_flux: canonical gross mineralization rate
+  immobilization_flux: canonical immobilization rate
+  microbial_death_flux: canonical microbial nitrogen turnover rate
+  diagnostics.mineralization.organic_nitrogen_boundary_input: exact integrated organic-material nitrogen boundary amount
+interface_map:
+  forward_signature: forward(self, state, time, dt)
+  bridge_class: BiologicalProcessFunctor
+  abstraction_contract: BiologicalProcess
+  state_write_mode: existing RELIC simulator and StateManager update path
+  legacy_inputs:
+  - organic_nitrogen
+  - nh4_nitrogen
+  - microbial_nitrogen
+  - soil_temperature
+  - soil_moisture
+  - soil_ph
+  - carbon_decomposition_rate
+  - organic_nitrogen_input
+  iphs_inputs:
+  - organic_nitrogen
+  - nh4_nitrogen
+  - microbial_nitrogen
+  - soil_temperature
+  - soil_moisture
+  - soil_ph
+  - carbon_decomposition_rate
+  - organic_nitrogen_input
+  legacy_outputs:
+  - organic_nitrogen
+  - nh4_nitrogen
+  - microbial_nitrogen
+  - mineralization_flux
+  - gross_mineralization_flux
+  - immobilization_flux
+  - microbial_death_flux
+  - diagnostics.mineralization.organic_nitrogen_boundary_input
+  iphs_outputs:
+  - organic_nitrogen
+  - nh4_nitrogen
+  - microbial_nitrogen
+  - mineralization_flux
+  - gross_mineralization_flux
+  - immobilization_flux
+  - microbial_death_flux
+  - diagnostics.mineralization.organic_nitrogen_boundary_input
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: ParameterManager-backed gross mineralization, carbon-driven mineral-N demand, current-step donor bounds, and microbial turnover define the canonical reaction rates.
+  no_legacy_mode: No selectable legacy runtime branch is exposed for Phase 8 completion.
+state_advancement_map:
+  potential_basis: declared RELIC state, port, or observation cochain basis
+  effort_variable: Empirical environmental and stoichiometric drivers; no strict thermodynamic effort is claimed at level 2.
+  state_advancer: x_dot = N_h r_h + G_h u_organic; advance_reaction_network owns the closed reaction term and the explicit port supplies the boundary term
+  runtime_usage: MineralizationProcess.forward validates C_h N_h = 0 through advance_reaction_network, then adds organic_nitrogen_input dt once to organic_nitrogen.
+  explicit_stoichiometric_usage: MineralizationProcess.forward materializes stoichiometric_N and rates for N_h r_h and keeps G_h u_litter as the declared open port.
+parameter_management_map:
+  pedosphere.mineralization.temp_response_type:
+    source: ParameterManager YAML
+  pedosphere.mineralization.q10_mineralization:
+    source: ParameterManager YAML
+  pedosphere.mineralization.activation_energy:
+    source: ParameterManager YAML
+  pedosphere.mineralization.moisture_optimum:
+    source: ParameterManager YAML
+  pedosphere.mineralization.moisture_response_power:
+    source: ParameterManager YAML
+  pedosphere.mineralization.k_mineralization:
+    source: ParameterManager YAML
+  pedosphere.mineralization.cn_ratio_microbial:
+    source: ParameterManager YAML
+  pedosphere.mineralization.n_assimilation_efficiency:
+    source: ParameterManager YAML
+  pedosphere.mineralization.carbon_use_efficiency:
+    source: ParameterManager YAML
+  pedosphere.physical.ph_optimum_decomposition:
+    source: ParameterManager YAML
+  pedosphere.physical.ph_response_width:
+    source: ParameterManager YAML
+  pedosphere.numerical.temperature_response_min:
+    source: ParameterManager YAML
+  pedosphere.numerical.temperature_response_max:
+    source: ParameterManager YAML
+  pedosphere.numerical.moisture_response_min:
+    source: ParameterManager YAML
+  pedosphere.numerical.moisture_response_max:
+    source: ParameterManager YAML
+  pedosphere.numerical.ph_response_min:
+    source: ParameterManager YAML
+  pedosphere.numerical.ph_response_max:
+    source: ParameterManager YAML
+  pedosphere.nutrient_cycling.k_microbial_death:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares interfaces, execution phase, and conservation semantics
+  state_contract: existing simulator state update path is preserved
+  validation_rule: phase8 scientific inventory and equivalence certificate checks
+dependency_interconnection_map:
+  dependencies: carbon_decomposition_rate and organic_nitrogen_input are required canonical ports; all eight metadata inputs are required state tensors
+  current_owner_rule: first_order_decomposition and pools_matrix are mutually exclusive formal writers of carbon_decomposition_rate; graph construction selects exactly one
+  organic_boundary_owner_rule: litterfall_interface_mapper is the sole writer of organic_nitrogen_input for selected plant litter and fecal organic N routes
+  alternative_owner_rule: a microbial_enzyme_decomposition graph cannot include Mineralization until that alternative closure declares the same canonical carbon rate
+  direct_functor_calls: none; carbon_decomposition_rate and organic_nitrogen_input are canonical ports from graph-selected owners
+overflow_routing_map:
+  availability_limits: gross mineralization is bounded by organic N, immobilization by NH4, and microbial death by microbial N over the current dt before r_h assembly
+  invalid_carbon_route: missing, non-finite, or negative carbon_decomposition_rate fails before state advance
+  invalid_organic_route: missing, non-finite, negative, or non-broadcastable organic_nitrogen_input fails before state advance
+  carbon_route: upstream carbon decomposition is already settled; this N-only process emits no carbon state, respiration, or overflow port
+  discarded_residuals: gross mineralization, immobilization, and death are capped by available organic nitrogen, ammonium, and microbial nitrogen so unconsumed substrate remains in state; invalid inputs reject and the nitrogen ledger includes the organic boundary input
+conservation_map:
+  conserved_quantities: nitrogen|mass
+  balance_expression: Delta N_org + Delta N_NH4 + Delta N_microbial = organic_nitrogen_input * dt
+  conservation_matrix: C_h = [1, 1, 1] and C_h N_h = 0 is validated by advance_reaction_network
+  system_route: closed three-pool reaction ledger plus explicit organic-material nitrogen boundary port G_h u_organic
+entropy_audit:
+  operator_sign: rates, mobilities, or diagnostic maps are non-negative or checked by existing validation hooks where physically required
+  sigma_expression: no strict entropy-production or GENERIC degeneracy claim is made at level 2
+equivalence_type: thermodynamic_embedding
+physical_constant_ssot:
+  reference_temperature: get_physical_constant("t_ref")
+  seconds_per_year: get_physical_constant("seconds_per_year")

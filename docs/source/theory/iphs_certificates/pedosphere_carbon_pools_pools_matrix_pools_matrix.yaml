@@ -1,0 +1,288 @@
+certificate_version: '1.0'
+process_id: relic.scientific.pedosphere.carbon_pools.pools_matrix.PoolsMatrix
+module_name: PoolsMatrix
+canonical_role: reaction
+iphs_level: 2
+iphs_level_evidence:
+  classification: IPHS-wrapped reaction process certificate
+  compatible_basis: Reaction process is expressed through conserved or open stoichiometric ledgers
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: N_h r_h reaction-network state advance
+  level_2_limit: The canonical runtime wrapper is declared, but no executable typed-cochain or IPHS structural contribution is bound; strict level 4 or 5 evidence is not claimed.
+theory_document: docs\source\theory\decomposition.md
+theory_document_status: updated
+legacy_formula: dC/dt = I + T*K*C - diag(K)*C with mass balance
+literature_formula: dC/dt = I + T*K*C - diag(K)*C with mass balance
+iphs_formula: x_dot = N_h r_h with ParameterManager-backed process rates r_h and declared stoichiometric/output map N_h
+legacy_expression: dC/dt = I + T*K*C - diag(K)*C with mass balance
+iphs_expression: x_dot = N_h r_h with ParameterManager-backed process rates r_h and declared stoichiometric/output map N_h
+input_variables:
+- metabolic_litter_c
+- structural_litter_c
+- fast_som_c
+- slow_som_c
+- passive_som_c
+- environmental_modifier
+- metabolic_litter_input
+- structural_litter_input
+- fast_som_input
+- slow_som_input
+- passive_som_input
+output_variables:
+- metabolic_litter_c
+- structural_litter_c
+- fast_som_c
+- slow_som_c
+- passive_som_c
+- carbon_decomposition_rate
+- heterotrophic_respiration
+- diagnostics.pools_matrix.total_respiration_step
+- diagnostics.pools_matrix.total_transfer_step
+- diagnostics.pools_matrix.net_carbon_change_step
+- diagnostics.pools_matrix.total_carbon_stock
+- diagnostics.pools_matrix.total_litter_carbon_stock
+- diagnostics.pools_matrix.total_som_carbon_stock
+- diagnostics.pools_matrix.carbon_balance_residual
+- diagnostics.pools_matrix.carbon_balance_relative_residual
+- diagnostics.pools_matrix.carbon_balance_ok
+parameter_keys:
+- pedosphere.decomposition.pool_names
+- pedosphere.numerical.mass_balance_tolerance
+- pedosphere.numerical.epsilon
+- pedosphere.numerical.max_pool_size
+- pedosphere.decomposition.t_met_fast
+- pedosphere.decomposition.t_met_slow
+- pedosphere.decomposition.t_str_fast
+- pedosphere.decomposition.t_str_slow
+- pedosphere.decomposition.t_fast_slow
+- pedosphere.decomposition.t_fast_passive
+- pedosphere.decomposition.t_slow_fast
+- pedosphere.decomposition.t_slow_passive
+- pedosphere.carbon_pools.turnover_rate_metabolic
+- pedosphere.carbon_pools.turnover_rate_structural
+- pedosphere.carbon_pools.turnover_rate_fast_som
+- pedosphere.carbon_pools.turnover_rate_slow_som
+- pedosphere.carbon_pools.turnover_rate_passive_som
+- pedosphere.numerical.default_environmental_modifier
+composition_ports:
+- metabolic_litter_input
+- structural_litter_input
+- fast_som_input
+- slow_som_input
+- passive_som_input
+- heterotrophic_respiration
+references:
+- Sierra, C.A. et al. (2012). SoilR decomposition framework
+- Coleman, K. & Jenkinson, D.S. (1996). RothC transfer matrix
+- Parton, W.J. et al. (1987). CENTURY pool structure
+- Luo, Y. & Weng, E. (2011). Dynamic disequilibrium
+baseline_tests:
+- test\unit\pedosphere\test_pools_matrix.py
+- test\integration\pedosphere\test_l2_pedosphere_integration.py
+- test\test_pedosphere_comprehensive.py
+- test\audit\phase8_scientific_inventory.test.py
+validation_tests:
+- test\core\simulator_registration_and_step_guards.test.py
+- test\unit\pedosphere\carbon_pools\test_carbon_pools_functor_l1.py
+- test\validation\l1_unit\test_scientific_pedosphere.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  metabolic_litter_c: metabolic_litter_c mapped to canonical Phase 8 cochain basis
+  structural_litter_c: structural_litter_c mapped to canonical Phase 8 cochain basis
+  fast_som_c: fast_som_c mapped to canonical Phase 8 cochain basis
+  slow_som_c: slow_som_c mapped to canonical Phase 8 cochain basis
+  passive_som_c: passive_som_c mapped to canonical Phase 8 cochain basis
+  environmental_modifier: required finite non-negative external rate modifier
+  metabolic_litter_input: required open-system metabolic litter boundary flux
+  structural_litter_input: required open-system structural litter boundary flux
+  fast_som_input: required open-system fast SOM boundary flux
+  slow_som_input: required open-system slow SOM boundary flux
+  passive_som_input: required open-system passive SOM boundary flux
+parameter_map:
+  pedosphere.decomposition.pool_names: canonical pool ordering from ParameterManager
+  pedosphere.numerical.mass_balance_tolerance: relative carbon-ledger tolerance from ParameterManager
+  pedosphere.numerical.epsilon: numerical denominator guard from ParameterManager
+  pedosphere.numerical.max_pool_size: maximum accepted pool stock from ParameterManager
+  pedosphere.decomposition.t_met_fast: metabolic-to-fast transfer fraction from ParameterManager
+  pedosphere.decomposition.t_met_slow: metabolic-to-slow transfer fraction from ParameterManager
+  pedosphere.decomposition.t_str_fast: structural-to-fast transfer fraction from ParameterManager
+  pedosphere.decomposition.t_str_slow: structural-to-slow transfer fraction from ParameterManager
+  pedosphere.decomposition.t_fast_slow: fast-to-slow transfer fraction from ParameterManager
+  pedosphere.decomposition.t_fast_passive: fast-to-passive transfer fraction from ParameterManager
+  pedosphere.decomposition.t_slow_fast: slow-to-fast transfer fraction from ParameterManager
+  pedosphere.decomposition.t_slow_passive: slow-to-passive transfer fraction from ParameterManager
+  pedosphere.carbon_pools.turnover_rate_metabolic: metabolic turnover coefficient from ParameterManager
+  pedosphere.carbon_pools.turnover_rate_structural: structural turnover coefficient from ParameterManager
+  pedosphere.carbon_pools.turnover_rate_fast_som: fast SOM turnover coefficient from ParameterManager
+  pedosphere.carbon_pools.turnover_rate_slow_som: slow SOM turnover coefficient from ParameterManager
+  pedosphere.carbon_pools.turnover_rate_passive_som: passive SOM turnover coefficient from ParameterManager
+  pedosphere.numerical.default_environmental_modifier: turnover-reporting reference modifier from ParameterManager
+operator_map:
+  N_h: explicit five-pool compartment incidence map plus the open heterotrophic export; this level-2 wrapper is not strict stoichiometric evidence
+  r_h: ParameterManager-backed gross decay, transfer, boundary-input, and respiration rate vector evaluated by the production forward path
+  boundary_route: five declared pool input ports supply carbon and heterotrophic_respiration exports carbon
+unit_map:
+  metabolic_litter_c: g C m-2
+  structural_litter_c: g C m-2
+  fast_som_c: g C m-2
+  slow_som_c: g C m-2
+  passive_som_c: g C m-2
+  environmental_modifier: dimensionless
+  metabolic_litter_input: g C m-2 s-1
+  structural_litter_input: g C m-2 s-1
+  fast_som_input: g C m-2 s-1
+  slow_som_input: g C m-2 s-1
+  passive_som_input: g C m-2 s-1
+  carbon_decomposition_rate: g C m-2 s-1
+  heterotrophic_respiration: g C m-2 s-1
+  diagnostics.pools_matrix.total_respiration_step: g C m-2
+  diagnostics.pools_matrix.total_transfer_step: g C m-2
+  diagnostics.pools_matrix.net_carbon_change_step: g C m-2
+  diagnostics.pools_matrix.total_carbon_stock: g C m-2
+  diagnostics.pools_matrix.total_litter_carbon_stock: g C m-2
+  diagnostics.pools_matrix.total_som_carbon_stock: g C m-2
+  diagnostics.pools_matrix.carbon_balance_residual: g C m-2
+  diagnostics.pools_matrix.carbon_balance_relative_residual: dimensionless
+  diagnostics.pools_matrix.carbon_balance_ok: dimensionless
+input_output_map:
+  metabolic_litter_c: required stock input and per-step ACCUMULATE output
+  structural_litter_c: required stock input and per-step ACCUMULATE output
+  fast_som_c: required stock input and per-step ACCUMULATE output
+  slow_som_c: required stock input and per-step ACCUMULATE output
+  passive_som_c: required stock input and per-step ACCUMULATE output
+  environmental_modifier: required finite non-negative external turnover modifier
+  metabolic_litter_input: required metabolic litter boundary flux
+  structural_litter_input: required structural litter boundary flux
+  fast_som_input: required fast SOM boundary flux
+  slow_som_input: required slow SOM boundary flux
+  passive_som_input: required passive SOM boundary flux
+  carbon_decomposition_rate: canonical gross five-pool decay rate
+  heterotrophic_respiration: canonical atmosphere-facing carbon export rate
+  diagnostics.pools_matrix.total_respiration_step: integrated respiration observation
+  diagnostics.pools_matrix.total_transfer_step: integrated internal transfer observation
+  diagnostics.pools_matrix.net_carbon_change_step: integrated net pool change observation
+  diagnostics.pools_matrix.total_carbon_stock: post-step total stock observation
+  diagnostics.pools_matrix.total_litter_carbon_stock: post-step litter stock observation
+  diagnostics.pools_matrix.total_som_carbon_stock: post-step SOM stock observation
+  diagnostics.pools_matrix.carbon_balance_residual: open carbon-ledger residual
+  diagnostics.pools_matrix.carbon_balance_relative_residual: normalized open carbon-ledger residual
+  diagnostics.pools_matrix.carbon_balance_ok: carbon-ledger tolerance observation
+interface_map:
+  forward_signature: forward(self, state, time, dt)
+  bridge_class: BiologicalProcessFunctor
+  abstraction_contract: BiologicalProcess
+  state_write_mode: explicit ACCUMULATE per-step pool increments and REPLACE rate or diagnostic outputs
+  legacy_inputs:
+  - metabolic_litter_c
+  - structural_litter_c
+  - fast_som_c
+  - slow_som_c
+  - passive_som_c
+  - environmental_modifier
+  - metabolic_litter_input
+  - structural_litter_input
+  - fast_som_input
+  - slow_som_input
+  - passive_som_input
+  iphs_inputs:
+  - metabolic_litter_c
+  - structural_litter_c
+  - fast_som_c
+  - slow_som_c
+  - passive_som_c
+  - environmental_modifier
+  - metabolic_litter_input
+  - structural_litter_input
+  - fast_som_input
+  - slow_som_input
+  - passive_som_input
+  legacy_outputs:
+  - metabolic_litter_c
+  - structural_litter_c
+  - fast_som_c
+  - slow_som_c
+  - passive_som_c
+  - carbon_decomposition_rate
+  - heterotrophic_respiration
+  - diagnostics.pools_matrix.total_respiration_step
+  - diagnostics.pools_matrix.total_transfer_step
+  - diagnostics.pools_matrix.net_carbon_change_step
+  - diagnostics.pools_matrix.total_carbon_stock
+  - diagnostics.pools_matrix.total_litter_carbon_stock
+  - diagnostics.pools_matrix.total_som_carbon_stock
+  - diagnostics.pools_matrix.carbon_balance_residual
+  - diagnostics.pools_matrix.carbon_balance_relative_residual
+  - diagnostics.pools_matrix.carbon_balance_ok
+  iphs_outputs:
+  - metabolic_litter_c
+  - structural_litter_c
+  - fast_som_c
+  - slow_som_c
+  - passive_som_c
+  - carbon_decomposition_rate
+  - heterotrophic_respiration
+  - diagnostics.pools_matrix.total_respiration_step
+  - diagnostics.pools_matrix.total_transfer_step
+  - diagnostics.pools_matrix.net_carbon_change_step
+  - diagnostics.pools_matrix.total_carbon_stock
+  - diagnostics.pools_matrix.total_litter_carbon_stock
+  - diagnostics.pools_matrix.total_som_carbon_stock
+  - diagnostics.pools_matrix.carbon_balance_residual
+  - diagnostics.pools_matrix.carbon_balance_relative_residual
+  - diagnostics.pools_matrix.carbon_balance_ok
+  historical_aliases_removed: unnamespaced diagnostics, direct apply_transfers state advance, ParameterManager-backed initial pools, and runtime keyword overrides
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: Existing ParameterManager-backed calculations define canonical IPHS operator coefficients, rates, ports, or observations.
+  no_legacy_mode: No selectable legacy runtime branch is exposed for Phase 8 completion.
+state_advancement_map:
+  potential_basis: declared RELIC state, port, or observation cochain basis
+  effort_variable: empirical external environmental modifier; no Hamiltonian effort is claimed
+  state_advancer: x_dot = N_h r_h with the compartment incidence matrix and rate vector evaluated by advance_reaction_network
+  runtime_usage: PoolsMatrix.forward evaluates the five net pool tendencies and open respiration export exactly once through advance_reaction_network, then uses the StateManager-representable increment (C + Delta_C_raw) - C for both UpdateItem values and the carbon ledger.
+  explicit_stoichiometric_usage: The compartment incidence map is explicit level-2 runtime structure and is not evidence for Hamiltonian or GENERIC closure.
+parameter_management_map:
+  pedosphere.decomposition.pool_names: ParameterManager YAML
+  pedosphere.numerical.mass_balance_tolerance: ParameterManager YAML
+  pedosphere.numerical.epsilon: ParameterManager YAML
+  pedosphere.numerical.max_pool_size: ParameterManager YAML
+  pedosphere.decomposition.t_met_fast: ParameterManager YAML
+  pedosphere.decomposition.t_met_slow: ParameterManager YAML
+  pedosphere.decomposition.t_str_fast: ParameterManager YAML
+  pedosphere.decomposition.t_str_slow: ParameterManager YAML
+  pedosphere.decomposition.t_fast_slow: ParameterManager YAML
+  pedosphere.decomposition.t_fast_passive: ParameterManager YAML
+  pedosphere.decomposition.t_slow_fast: ParameterManager YAML
+  pedosphere.decomposition.t_slow_passive: ParameterManager YAML
+  pedosphere.carbon_pools.turnover_rate_metabolic: ParameterManager YAML
+  pedosphere.carbon_pools.turnover_rate_structural: ParameterManager YAML
+  pedosphere.carbon_pools.turnover_rate_fast_som: ParameterManager YAML
+  pedosphere.carbon_pools.turnover_rate_slow_som: ParameterManager YAML
+  pedosphere.carbon_pools.turnover_rate_passive_som: ParameterManager YAML
+  pedosphere.numerical.default_environmental_modifier: ParameterManager YAML
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares interfaces, execution phase, and conservation semantics
+  state_contract: existing simulator StateManager and SCM candidate-writer contracts apply this model's pool increments only when it is the selected variant
+  validation_rule: phase8 scientific inventory and equivalence certificate checks
+dependency_interconnection_map:
+  dependencies: none; the environmental modifier, pool stocks, and boundary inputs enter through declared ports
+  model_selection: mutually exclusive with FirstOrderDecomposition and MicrobialEnzymeDecomposition
+  direct_functor_calls: none; pool stocks, modifiers, and boundary inputs are ports and alternative decomposition owners are mutually exclusive graph choices
+overflow_routing_map:
+  diagnostic_residuals: the exact open carbon ledger is emitted as namespaced residual diagnostics
+  invalid_state_route: missing, non-tensor, non-finite, negative, shape-inconsistent, or overdraw-producing inputs fail before state advance
+  clipping_policy: no carbon stock, flux, or residual is clipped or silently discarded
+  discarded_residuals: invalid, negative, shape-inconsistent, non-finite, or overdraw-producing states are rejected, and carbon_balance_residual plus relative_residual are explicit outputs; no carbon flux is clipped
+conservation_map:
+  conserved_quantities: carbon|mass
+  balance_expression: sum_i(Delta C_i) + R_hetero*dt - sum_i(I_i)*dt = 0
+  transfer_constraint: for every source pool, 0 <= T_ji and sum_j(T_ji) <= 1; the remainder is heterotrophic respiration
+  open_system_routes: five boundary input ports supply carbon and heterotrophic_respiration is the atmosphere-facing export
+entropy_audit:
+  operator_sign: turnover rates, environmental modifiers, transfer fractions, stocks, and boundary inputs are non-negative or fail validation
+  sigma_expression: no strict entropy-production or GENERIC degeneracy claim is made at level 2
+equivalence_type: thermodynamic_embedding
+physical_constant_ssot:
+  seconds_per_year: get_physical_constant("seconds_per_year") for turnover-time reporting only

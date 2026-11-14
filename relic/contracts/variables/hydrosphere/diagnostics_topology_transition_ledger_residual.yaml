@@ -1,0 +1,45 @@
+variable: diagnostics.topology_transition.ledger_residual
+title: "Topology Transition Ledger Residual"
+kind: diagnostic
+dimension:
+  udunits: "mm"
+  cf_standard_name: null
+support:
+  spatial_kind: grid_cell
+  area_basis: grid_area
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions:
+      - cell
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Horton, R.E. (1933). Trans. Am. Geophys. Union 14, 446-460"
+  - "Beven, K.J. (2012). Rainfall-Runoff Modelling, The Primer, 2nd ed., Wiley"
+  - "Dooge, J.C.I. (1973). Linear Theory of Hydrologic Systems, USDA Tech. Bull. 1468"
+  - "Goebel, R., Sanfelice, R.G. and Teel, A.R. (2012). Hybrid Dynamical Systems, Princeton"
+# Audit residual C x+ - C x- - Pi: either sign, never clipped.
+numerics:
+  lower_bound: null
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies: []
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-12
+      rtol: 1.0e-9
+provenance:
+  source_file: "relic/scientific/hydrosphere/runoff/surface_ponding.py"
+  runtime_role: "topology_transition_audit"
+  runtime_writer: "topology_transition"
+  note: "Residual of the declared water ledger across one committed topology transition remap (after minus before minus declared change)."

@@ -1,0 +1,35 @@
+variable: n2o_concentration
+title: "N2O Concentration"
+kind: state
+dimension:
+  udunits: "g N m-3"
+  cf_standard_name: null
+owner: "GasDiffusion1D"
+aliases: []
+incrementable: true
+accumulates: nitrogen.total
+numerics:
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments:
+    - name: "GasDiffusion1D"
+      module: "relic.scientific.pedosphere.transport.gas_diffusion"
+      provides:
+        - "n2o_concentration"
+      unit: "g N m-3"
+  tendencies: []
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/pedosphere/transport/gas_diffusion.py"
+  runtime_role: "conservative_soil_n2o_concentration_increment"
+  runtime_writer: "GasDiffusion1D"

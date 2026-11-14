@@ -1,0 +1,479 @@
+schema_version: 2.0.0
+tier: relic
+namespace: coupling.scales.water_carbon
+description: Parameters describing water stress impacts on carbon fluxes
+metadata:
+  version: 1.0.0
+parameters:
+  coupling.scales.water_carbon.stress_function_type:
+    value: logistic
+    default: logistic
+    units: dimensionless
+    dtype: string
+    bounds: null
+    allowed_values:
+    - linear
+    - logistic
+    - piecewise
+    - beta
+    category: model_option
+    description: Functional form used for water stress response
+    references:
+    - RELIC coupling audit 2025-12-02
+    tags:
+    - water_stress
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.water_carbon.wilting_point_volumetric:
+    value: 0.05
+    default: 0.05
+    units: m3 m-3
+    dtype: float32
+    bounds:
+    - 0.02
+    - 0.15
+    category: physical_limit
+    description: Volumetric soil moisture at permanent wilting point
+    references:
+    - Clapp & Hornberger (1978)
+    tags:
+    - water_stress
+    dimension: volume_fraction
+    requires_grad: false
+    provenance:
+      source: soil_physics_literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.water_carbon.field_capacity_volumetric:
+    value: 0.35
+    default: 0.35
+    units: m3 m-3
+    dtype: float32
+    bounds:
+    - 0.2
+    - 0.6
+    category: physical_limit
+    description: Volumetric soil moisture at field capacity
+    references:
+    - Clapp & Hornberger (1978)
+    tags:
+    - water_stress
+    dimension: volume_fraction
+    requires_grad: false
+    provenance:
+      source: soil_physics_literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.water_carbon.optimal_moisture:
+    value: 0.25
+    default: 0.25
+    units: m3 m-3
+    dtype: float32
+    bounds:
+    - 0.15
+    - 0.4
+    category: process_parameter
+    description: Optimal soil moisture for carbon processes
+    references:
+    - Moyano et al. (2013)
+    tags:
+    - water_stress
+    dimension: volume_fraction
+    requires_grad: false
+    provenance:
+      source: model_calibration
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.water_carbon.stress_onset_threshold:
+    value: 0.15
+    default: 0.15
+    units: m3 m-3
+    dtype: float32
+    bounds:
+    - 0.1
+    - 0.25
+    category: physical_limit
+    description: Soil moisture threshold where stress begins
+    references:
+    - RELIC coupling audit 2025-12-02
+    tags:
+    - water_stress
+    dimension: volume_fraction
+    requires_grad: false
+    provenance:
+      source: model_calibration
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.water_carbon.logistic_steepness:
+    value: 10.0
+    default: 10.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 2.0
+    - 20.0
+    category: process_parameter
+    description: Steepness parameter for logistic water stress response
+    references:
+    - RELIC coupling audit 2025-12-02
+    tags:
+    - water_stress
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_calibration
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.water_carbon.minimum_stress_factor:
+    value: 0.01
+    default: 0.01
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.001
+    - 0.1
+    category: numerical_threshold
+    description: Lower bound on water stress factor to avoid zero fluxes
+    references:
+    - RELIC coupling audit 2025-12-02
+    tags:
+    - water_stress
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_stability
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.water_carbon.piecewise_partial_factor:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.2
+    - 0.8
+    category: process_parameter
+    description: Partial stress factor used in piecewise linear formulation
+    references:
+    - RELIC coupling audit 2025-12-02
+    tags:
+    - water_stress
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_calibration
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.water_carbon.optimal_moisture_fraction:
+    value: 0.6
+    default: 0.6
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.4
+    - 0.8
+    category: moisture_response
+    description: Fraction of field capacity with maximum respiration
+    references:
+    - Moyano et al. (2013)
+    tags:
+    - respiration
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_calibration
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.water_carbon.moisture_shape_parameter:
+    value: 2.0
+    default: 2.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 5.0
+    category: moisture_response
+    description: Shape parameter controlling curvature of respiration response
+    references:
+    - Sierra et al. (2015)
+    tags:
+    - respiration
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_calibration
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.water_carbon.anaerobic_threshold:
+    value: 0.8
+    default: 0.8
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.7
+    - 0.95
+    category: moisture_response
+    description: Fraction of saturation where anaerobic limitations begin
+    references:
+    - RELIC coupling audit 2025-12-02
+    tags:
+    - respiration
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_calibration
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.water_carbon.drought_threshold:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.05
+    - 0.2
+    category: moisture_response
+    description: Fraction of field capacity below which respiration sharply declines
+    references:
+    - RELIC coupling audit 2025-12-02
+    tags:
+    - respiration
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_calibration
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.water_carbon.maximum_moisture_factor:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.8
+    - 1.2
+    category: moisture_response
+    description: Maximum multiplier applied to respiration due to moisture
+    references:
+    - RELIC coupling audit 2025-12-02
+    tags:
+    - respiration
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_calibration
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.water_carbon.minimum_moisture_factor:
+    value: 0.02
+    default: 0.02
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.01
+    - 0.1
+    category: moisture_response
+    description: Minimum multiplier applied to respiration under drought
+    references:
+    - RELIC coupling audit 2025-12-02
+    tags:
+    - respiration
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_calibration
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.water_carbon.reference_temperature_celsius:
+    value: 10.0
+    default: 10.0
+    units: degC
+    dtype: float32
+    bounds:
+    - -50.0
+    - 50.0
+    category: temperature_response
+    description: Reference temperature (°C) for Q10 calculations
+    references:
+    - RELIC coupling audit 2025-12-02
+    tags:
+    - temperature_response
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: temperature_response_literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.water_carbon.temperature_response_min_bound:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.01
+    - 0.5
+    category: numerical_threshold
+    description: Lower bound applied to temperature response factor
+    references:
+    - RELIC coupling audit 2025-12-02
+    tags:
+    - temperature_response
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_stability
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.water_carbon.temperature_response_max_bound:
+    value: 10.0
+    default: 10.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 2.0
+    - 20.0
+    category: numerical_threshold
+    description: Upper bound applied to temperature response factor
+    references:
+    - RELIC coupling audit 2025-12-02
+    tags:
+    - temperature_response
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_stability
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.water_carbon.high_temperature_warning_threshold:
+    value: 5.0
+    default: 5.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 2.0
+    - 10.0
+    category: numerical_threshold
+    description: Threshold above which temperature response warnings are emitted
+    references:
+    - RELIC coupling audit 2025-12-02
+    tags:
+    - temperature_response
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_stability
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.water_carbon.vpd_half_saturation:
+    value: 1000.0
+    default: 1000.0
+    units: Pa
+    dtype: float32
+    bounds:
+    - 500.0
+    - 3000.0
+    category: process_parameter
+    description: D_0 of the hyperbolic VPD multiplier f_vpd = 1 / (1 + D / D_0) (Lohammar et al. 1980;
+      the humidity factor of Leuning 1995), the deficit at which the multiplier is 1/2; an empirical
+      parameter fitted by least squares
+    references:
+    - Lohammar, T., Larsson, S., Linder, S. and Falk, S.O. (1980). Ecological Bulletins 32, 505-523
+    - Leuning, R. (1995). Plant, Cell and Environment 18, 339-357
+    - Oren, R. et al. (1999). Plant, Cell and Environment 22, 1515-1526 (review of the multiplier)
+    tags:
+    - vpd_response
+    dimension: pressure
+    requires_grad: false
+    provenance:
+      source: stomatal_response_literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.water_carbon.q10_soil:
+    value: 2.0
+    default: 2.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.5
+    - 3.5
+    category: temperature_response
+    description: Q10 temperature coefficient for soil processes
+    references:
+    - Lloyd & Taylor (1994)
+    tags:
+    - temperature_response
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: temperature_response_literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.water_carbon.q10_reference_normalized:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 2.0
+    category: temperature_response
+    description: Normalized Q10 reference parameter at 25C
+    references:
+    - Davidson et al. (2012) DAMM model
+    - Lloyd & Taylor (1994) soil respiration
+    tags:
+    - temperature_response
+    - q10
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: temperature_response_literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-11-30T00:00:00Z'
+  coupling.scales.water_carbon.temperature_response_cap:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 5.0
+    category: numerical_threshold
+    description: Upper clamp for normalized temperature response factor
+    references:
+    - Soil respiration normalization practices
+    tags:
+    - temperature_response
+    - clamping
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_stability
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-11-30T00:00:00Z'

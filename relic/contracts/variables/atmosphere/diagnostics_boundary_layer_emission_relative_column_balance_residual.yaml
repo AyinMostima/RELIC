@@ -1,0 +1,36 @@
+variable: diagnostics.boundary_layer_emission.relative_column_balance_residual
+title: "Relative Column Molar Balance Residual of the Boundary-Layer Emission Source"
+description: "r = (Delta chi h n - F dt) / (F dt), the column molar burden gained by the well-mixed boundary layer minus the molar amount crossing its lower boundary, relative to that amount; 0 where F = 0. Read by the local conservation hook of boundary_layer_emission_source."
+kind: diagnostic
+dimension:
+  udunits: "1"
+  cf_standard_name: null
+owner: "boundary_layer_emission_source"
+aliases: []
+incrementable: false
+accumulates: null
+numerics:
+  lower_bound: null
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "boundary_layer_emission_source"
+      module: "relic.scientific.atmosphere.transport.boundary_layer_emission_source"
+      provides:
+        - "diagnostics.boundary_layer_emission.relative_column_balance_residual"
+      unit: "1"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/atmosphere/transport/boundary_layer_emission_source.py"
+  runtime_role: "boundary_layer_emission_column_molar_ledger_diagnostic"
+  runtime_writer: "boundary_layer_emission_source"

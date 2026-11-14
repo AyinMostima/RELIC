@@ -1,0 +1,187 @@
+certificate_version: '1.0'
+process_id: relic.scientific.anthroposphere.land_use.transitions.LandUseTransitions
+module_name: land_use_transitions
+canonical_role: scale_coupling
+iphs_level: 3
+iphs_level_evidence:
+  classification: IPHS-structured scale coupling process certificate
+  compatible_basis: Process declares composition-safe DEC forms, a PSD Hodge audit, and typed scale morphisms.
+  runtime_replacement: Production forward uses one CTMC matrix-exponential path; strict IPHS runtime replacement is not claimed.
+  canonical_operator: Typed land-use CTMC and externally bound scale chain maps.
+  structural_contribution: Declared forms, Hodge contract, and one management port are structurally auditable.
+  assembly_participation: Certificate participates in Phase 8 inventory and GraphIR structural audit.
+  level_3_limit: No runtime-linked IPHSStructureSpec, Hamiltonian effort, port-power balance, or level 4/5 evidence is present.
+theory_document: docs\source\theory\anthroposphere_land_use_transitions.md
+theory_document_status: updated
+legacy_formula: Historical implementations mixed aggregate, spatial-area, modifier, and hidden-state branches.
+literature_formula: A row-sum-zero continuous-time Markov generator preserves total land-use fraction under its matrix exponential.
+iphs_formula: p_dot = p Q(theta); p(t+dt) = p exp(Q(theta) dt_years); Q 1 = 0.
+legacy_expression: Historical public aliases and area/modifier outputs are retained only as equivalence evidence, not runtime ports.
+iphs_expression: The single CTMC transition path uses H_Q = diag(sum_{j != i} Q_ij) as a non-negative mobility audit metric.
+input_variables:
+- land_use_fraction
+- time_index
+- gdp_per_capita
+- population_density
+- market_accessibility
+- policy_intensity
+output_variables:
+- land_use_fraction
+- diagnostics.land_use_transitions.delta_fraction
+- diagnostics.land_use_transitions.dominant_type_index
+- diagnostics.land_use_transitions.maximum_fraction
+- diagnostics.land_use_transitions.soil_carbon_input_rate_change
+- diagnostics.land_use_transitions.canonical_iphs_runtime
+parameter_keys:
+- anthroposphere.land_use.transition_rates.*
+- anthroposphere.land_use.transition_channels.*
+- anthroposphere.land_use.numerical.*
+- anthroposphere.land_use.soil.*
+- validation.conservation.conservation_tolerance
+composition_ports:
+- land_use_transition_area_fraction_port
+references:
+- Hurtt, G.C. et al. (2020). Harmonization of global land-use change and management for LUH2.
+- Hurtt, G.C. et al. (2011). Harmonization of land-use scenarios for 1500-2100.
+- Verburg, P.H. et al. (2009). Combining top-down and bottom-up dynamics in land-use modeling.
+- Anderson, W.J. (1991). Continuous-Time Markov Chains.
+- Ramirez, H. and Le Gorrec, Y. (2022). Irreversible port-Hamiltonian systems.
+baseline_tests:
+- test\anthroposphere\test_land_use_transitions_l1.py
+- test\anthroposphere\land_use\test_transitions_l1.py
+- test\scientific\anthroposphere\land_use\transitions_no_inplace_mutation.test.py
+- test\anthroposphere\land_use\transitions_phase8.test.py
+validation_tests:
+- test\anthroposphere\test_land_use_transitions_l1.py
+- test\anthroposphere\land_use\test_transitions_l1.py
+- test\audit\land_use_zero_dt_contract.test.py
+- test\anthroposphere\test_anthroposphere_system_l3.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  land_use_fraction: Canonical nine-class full-state area fraction on each independent support [1].
+  land_use_fraction_state: DEC cochain support for p [1].
+  land_use_transition_flux: DEC cochain support for p Q(theta) [yr^-1].
+  fine_scale_land_use_cochain: Explicitly supplied fine support for R_h.
+  coarse_scale_land_use_cochain: Explicitly supplied coarse support for P_h.
+  diagnostics.land_use_transitions.delta_fraction: Per-step observation p(t+dt) - p(t) [1].
+parameter_map:
+  anthroposphere.land_use.transition_rates.*: Base LUH2-class transition rates [yr^-1].
+  anthroposphere.land_use.transition_channels.*: Non-negative channel fractions that each sum to one [1].
+  anthroposphere.land_use.numerical.*: Calibratable phenomenological driver-scaling coefficients [1].
+  anthroposphere.land_use.soil.*: Class-specific soil-carbon input rates [kg C m-2 yr-1].
+  validation.conservation.conservation_tolerance: Fraction closure tolerance [1].
+operator_map:
+  Q: Row-sum-zero CTMC generator built by _build_ctmc_generator and _compute_transition_matrix.
+  exp_Q_dt: torch.matrix_exp(Q * dt_years) transition map.
+  H_Q: Positive exit-rate Hodge from build_hodge_contract.
+  R_h: Externally bound fine-to-coarse typed chain map.
+  P_h: Externally bound coarse-to-fine typed chain map.
+  O_h: Namespaced observation outputs.
+unit_map:
+  land_use_fraction: '1'
+  diagnostics.land_use_transitions.delta_fraction: '1'
+  diagnostics.land_use_transitions.dominant_type_index: '1'
+  diagnostics.land_use_transitions.maximum_fraction: '1'
+  diagnostics.land_use_transitions.soil_carbon_input_rate_change: kg C m-2 s-1
+  diagnostics.land_use_transitions.canonical_iphs_runtime: '1'
+input_output_map:
+  fraction_to_transition: p enters p exp(Q dt_years) and returns the complete canonical state plus a namespaced delta observation.
+  driver_scaling: Optional finite external driver tensors parameterize one global generator scale without creating a second state-advance law.
+  soil_observation: Class-fraction changes weight ParameterManager soil input rates and are converted with seconds_per_year.
+  diagnostics: Dominant class, maximum fraction, delta, and runtime flag are observation-only outputs.
+interface_map:
+  forward_signature: forward(self, state, time, dt)
+  upscale_signature: upscale(fine_data)
+  downscale_signature: downscale(coarse_data)
+  resolution_converter_signature: resolution_converter(data, source_resolution, target_resolution, method)
+  scale_bridge_binding: Upscale and downscale bridges are bound callables from the existing scale or regridding owner.
+  bridge_class: ScaleCouplingFunctor
+  abstraction_contract: ScaleCoupling
+  state_write_mode: All six outputs use explicit UpdateItem(REPLACE, per_timestep=false) with units and source_functor.
+  legacy_inputs:
+  - land_use_fraction
+  - time_index
+  - gdp_per_capita
+  - population_density
+  - market_accessibility
+  - policy_intensity
+  iphs_inputs:
+  - land_use_fraction
+  - time_index
+  - gdp_per_capita
+  - population_density
+  - market_accessibility
+  - policy_intensity
+  legacy_outputs:
+  - land_use_fraction
+  - diagnostics.land_use_transitions.delta_fraction
+  - diagnostics.land_use_transitions.dominant_type_index
+  - diagnostics.land_use_transitions.maximum_fraction
+  - diagnostics.land_use_transitions.soil_carbon_input_rate_change
+  - diagnostics.land_use_transitions.canonical_iphs_runtime
+  iphs_outputs:
+  - land_use_fraction
+  - diagnostics.land_use_transitions.delta_fraction
+  - diagnostics.land_use_transitions.dominant_type_index
+  - diagnostics.land_use_transitions.maximum_fraction
+  - diagnostics.land_use_transitions.soil_carbon_input_rate_change
+  - diagnostics.land_use_transitions.canonical_iphs_runtime
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: The CTMC generator and matrix-exponential update form the single canonical non-strict land-use transition path.
+  no_legacy_mode: No alias input, hidden state, area branch, modifier branch, normalization fallback, or selectable transition law remains.
+state_advancement_map:
+  potential_basis: Land-use fraction state cochain p_h.
+  effort_variable: CTMC generator Q_h and mobility audit H_Q.
+  state_advancer: p(t + dt) = p(t) exp(Q_h dt_years).
+  runtime_usage: forward evaluates one matrix exponential and returns one full-state replacement.
+parameter_management_map:
+  anthroposphere.land_use.transition_rates.*:
+    source: ParameterManager YAML
+  anthroposphere.land_use.transition_channels.*:
+    source: ParameterManager YAML
+  anthroposphere.land_use.numerical.*:
+    source: ParameterManager YAML
+  anthroposphere.land_use.soil.*:
+    source: ParameterManager YAML
+  validation.conservation.conservation_tolerance:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: Existing FunctorMetadata declares mapping, biosphere, and pedosphere coupling interfaces.
+  structural_protocol: declared_forms, build_hodge_contract, build_hodge_terms, reversible_structure, dissipative_structure, ports.
+  scale_operator_owner: Bound existing ScaleManager or spatial regridder callable; no local manager, registry, or regridder is created.
+  physical_constant_ssot: seconds_per_year is resolved only through get_physical_constant.
+  ports:
+  - land_use_transition_area_fraction_port
+dependency_interconnection_map:
+  dependencies: Canonical state and external drivers are supplied through StateManager; discrete events use the local declared control list.
+  direct_functor_calls: none_no_direct_functor_calls
+  chain_maps:
+  - p enters p exp(Q dt_years).
+  - The namespaced delta leaves through land_use_transition_area_fraction_port.
+  - Explicit R_h and P_h perform only bound scale conversion.
+overflow_routing_map:
+  missing_land_use_fraction: Missing canonical state raises KeyError.
+  invalid_fraction: Non-Tensor, non-finite, negative, wrong-class-count, or non-closing fractions raise a blocking error.
+  invalid_driver_tensor: Non-Tensor, non-finite, negative, or out-of-range bounded drivers raise a blocking error.
+  invalid_time_index: Non-scalar, non-finite, negative, or non-integer time index raises a blocking error.
+  invalid_generator: Non-finite or negative off-diagonal rates raise a blocking error; they are not clamped.
+  conservation_residual: Fraction and delta closure residuals are checked by _check_conservation_laws and _enforce_conservation_policy.
+  missing_scale_chain_map: Missing upscale_bridge or downscale_bridge raises RuntimeError for unequal resolutions.
+  discarded_residuals: none_no_discarded_residuals
+conservation_map:
+  conserved_quantity: Total land-use area fraction on each independent support.
+  balance_expression: sum_i p_i = 1, Q 1 = 0, and sum_i Delta p_i = 0.
+  local_check: check_conservation_laws validates full-state and increment closure using the declared class axis.
+  excluded_open_outputs: The soil-carbon-input-rate change is an observation and is not applied to a carbon stock.
+  port_balance: land_use_transition_area_fraction_port carries the declared fraction flow without a hidden source or sink.
+  scale_map_conservation: Scale-conversion evidence belongs to the explicitly bound R_h or P_h operator.
+entropy_audit:
+  dissipative_operator: H_Q is diagonal positive semidefinite for non-negative CTMC exit rates.
+  sigma_expression: sigma = z.T H_Q z >= 0.
+  validation_hook: build_hodge_contract(strict=true).
+equivalence_type: exact
+physical_constant_ssot:
+  seconds_per_year: get_physical_constant("seconds_per_year")

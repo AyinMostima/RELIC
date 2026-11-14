@@ -1,0 +1,55 @@
+variable: specific_humidity
+title: "Near-Surface Specific Humidity"
+description: "Specific humidity q (mass of water vapour per mass of moist air) near the surface (2 m): WRF Q2 converted from the 2 m water vapour mixing ratio w by q = w / (1 + w) (declared source transform mixing_ratio) and CMIP6 huss. Supplied as forcing by external adapters; read by ChemistryFunctor (open mechanism) as a required input of the O(1D) + H2O OH source. CF v94 specific_humidity (canonical units 1, stored as kg kg-1)."
+kind: forcing
+dimension:
+  udunits: "kg kg-1"
+  cf_standard_name: "specific_humidity"
+support:
+  spatial_kind: grid_cell
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: height_level
+  shape:
+    dimensions: [cell]
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "CF Standard Name Table v94: specific_humidity (canonical units 1)"
+  - "CMIP6 data request, variable huss: near-surface specific humidity at height 2 m"
+  - "WRF module_sf_sfclay: Q2 diagnostic 2 m mixing ratio (kg/kg)"
+# Sign convention: a mass fraction, 0 <= q < 1.
+numerics:
+  lower_bound: 0.0
+  upper_bound: 1.0
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "CMIP6Adapter"
+      module: "relic.coupling.external.climate_models.cmip6_adapter"
+      provides: ["specific_humidity"]
+      unit: "kg kg-1"
+    - name: "WRFAdapter"
+      module: "relic.coupling.external.atmospheric_models.wrf_adapter"
+      provides: ["specific_humidity"]
+      unit: "kg kg-1"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "external_forcing_adapter"
+  runtime_role: "external_near_surface_specific_humidity_forcing"
+  runtime_writer: null
+  adapter_writers:
+    - "CMIP6Adapter"
+    - "WRFAdapter"
+  note: "Reader: atmospheric_chemistry required input (ChemistryFunctor metadata input_variables; not in optional_input_variables). _primary_oh_production raises ValueError when it is missing or outside 0 <= q < 1 and derives the water-vapour mole fraction x_w = (q/M_w) / (q/M_w + (1-q)/M_d) of the O(1D) + H2O fraction f; no humidity is substituted."

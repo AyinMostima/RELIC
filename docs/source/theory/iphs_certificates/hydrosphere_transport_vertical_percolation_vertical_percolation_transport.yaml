@@ -1,0 +1,224 @@
+certificate_version: '1.0'
+process_id: relic.scientific.hydrosphere.transport.vertical_percolation.VerticalPercolationTransport
+module_name: vertical_percolation_transport
+canonical_role: transport
+iphs_level: 3
+iphs_level_evidence:
+  classification: IPHS-structured transport process certificate
+  compatible_basis: Process declares composition-safe IPHS or DEC structure
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: DEC/IPHS transport operator with conservative flux routing
+  structural_contribution: Cochain, Hodge, flux, and port structures are declared for assembly audit
+  assembly_participation: Certificate participates in Phase 8 inventory and GraphIR structural audit
+  level_3_limit: Typed form, Hodge, port, or related structure is declared, but no runtime-linked IPHSStructureSpec contribution and executable level 4 or 5 certificate binding is present.
+theory_document: docs\source\theory\hydrosphere_vertical_percolation.md
+theory_document_status: updated
+legacy_formula: F_drain = max(0, theta - theta_fc) * (K/Ks) * rho_w * dz / tau_drain.
+literature_formula: Darcy-Buckingham transport with van Genuchten-Mualem hydraulic conductivity; the field-capacity time-constant law is an explicitly reduced-order boundary closure, not an exact Richards solver.
+iphs_formula: q_h = star_K g_h; star_K = diag(rho_w * Ks) >= 0; the empirical storage-depth rate is exported through the drainage boundary port.
+legacy_expression: F_drain = max(0, theta - theta_fc) * (K/Ks) * rho_w * dz / tau_drain.
+iphs_expression: theta_dot = -D_h q_h + s_h; q_h = star_K g_h; sigma = g_h.T star_K g_h >= 0.
+input_variables:
+- soil_moisture
+- soil_temperature
+output_variables:
+- drainage_flux
+- diagnostics.vertical_percolation.effective_saturation
+- diagnostics.vertical_percolation.hydraulic_conductivity
+- diagnostics.vertical_percolation.relative_hydraulic_conductivity
+- diagnostics.vertical_percolation.field_capacity_excess
+- diagnostics.vertical_percolation.water_balance_residual
+parameter_keys:
+- hydrosphere.transport.vertical_percolation.enable_temperature_effects
+- hydrosphere.transport.vertical_percolation.hydraulic_model
+- hydrosphere.soil_moisture.porosity
+- hydrosphere.physical.viscosity_temperature_factor
+- hydrosphere.soil_moisture.saturated_hydraulic_conductivity
+- hydrosphere.soil_moisture.residual_water_content
+- hydrosphere.soil_moisture.field_capacity
+- hydrosphere.soil_moisture.wilting_point
+- hydrosphere.soil_moisture.alpha_vg
+- hydrosphere.soil_moisture.n_vg
+- hydrosphere.soil_moisture.root_zone_depth
+- hydrosphere.transport.vg_l
+- hydrosphere.transport.bc_lambda
+- hydrosphere.transport.ch_b_parameter
+- hydrosphere.transport.drainage_time_constant
+- hydrosphere.transport.soil_layer_thickness
+- hydrosphere.numerical.temperature_bounds
+- hydrosphere.numerical.saturation_epsilon
+- hydrosphere.numerical.effective_saturation_bounds
+composition_ports:
+- vertical_drainage_boundary_flux
+references:
+- Darcy, H. (1856). Les Fontaines publiques de la ville de Dijon.
+- Buckingham, E. (1907). Studies on the movement of soil moisture. USDA Bureau of Soils Bulletin 38.
+- Richards, L.A. (1931). Capillary conduction of liquids through porous mediums. Physics, 1, 318-333.
+- van Genuchten, M.T. (1980). A closed-form equation for predicting hydraulic conductivity. Soil Sci. Soc. Am. J., 44, 892-898.
+- Mualem, Y. (1976). A new model for predicting hydraulic conductivity. Water Resources Research, 12, 513-522.
+baseline_tests:
+- test\scientific\hydrosphere\transport\vertical_percolation_compute_flux.test.py
+- test\scientific\hydrosphere\transport\vertical_percolation_parameter_update.test.py
+- test\transport\vertical_percolation_test.py
+validation_tests:
+- test\scientific\hydrosphere\transport\vertical_percolation_compute_flux.test.py
+- test\scientific\hydrosphere\metadata_completeness.test.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  soil_moisture: required storage cochain theta_h [m3 m-3], read only
+  soil_temperature: required thermal modifier state [K], read only
+  drainage_flux: downward open-boundary matter flux q_h [kg m-2 s-1]
+  diagnostics.vertical_percolation.effective_saturation: dimensionless observation
+  diagnostics.vertical_percolation.hydraulic_conductivity: K(theta,T) [m s-1]
+  diagnostics.vertical_percolation.relative_hydraulic_conductivity: K/Ks [dimensionless]
+  diagnostics.vertical_percolation.field_capacity_excess: max(theta - theta_fc, 0) [m3 m-3]
+  diagnostics.vertical_percolation.water_balance_residual: computed minus exported boundary flux [kg m-2 s-1]
+parameter_map:
+  hydrosphere.transport.vertical_percolation.enable_temperature_effects: temperature correction flag
+  hydrosphere.transport.vertical_percolation.hydraulic_model: conductivity closure selector
+  hydrosphere.soil_moisture.porosity: theta_s, the soil porosity [m3 m-3]
+  hydrosphere.physical.viscosity_temperature_factor: temperature factor [K-1]
+  hydrosphere.soil_moisture.saturated_hydraulic_conductivity: Ks [m s-1]
+  hydrosphere.soil_moisture.residual_water_content: theta_r [m3 m-3]
+  hydrosphere.soil_moisture.field_capacity: theta_fc [m3 m-3]
+  hydrosphere.soil_moisture.wilting_point: theta_wp [m3 m-3]
+  hydrosphere.soil_moisture.alpha_vg: van Genuchten alpha [m-1]
+  hydrosphere.soil_moisture.n_vg: van Genuchten n [dimensionless]
+  hydrosphere.soil_moisture.root_zone_depth: root-zone depth [m]
+  hydrosphere.transport.vg_l: Mualem tortuosity exponent [dimensionless]
+  hydrosphere.transport.bc_lambda: Brooks-Corey lambda [dimensionless]
+  hydrosphere.transport.ch_b_parameter: Clapp-Hornberger b [dimensionless]
+  hydrosphere.transport.drainage_time_constant: tau_drain [s]
+  hydrosphere.transport.soil_layer_thickness: dz [m]
+  hydrosphere.numerical.temperature_bounds: temperature bounds [K]
+  hydrosphere.numerical.saturation_epsilon: effective saturation epsilon
+  hydrosphere.numerical.effective_saturation_bounds: Se bounds [dimensionless]
+operator_map:
+  G_drain: vertical_drainage_boundary_flux port incidence
+  star_K: build_hodge_contract and build_hodge_terms HodgeStarSpec
+  hydraulic_conductivity: _calculate_hydraulic_conductivity
+  drainage_flux: _calculate_drainage_flux
+unit_map:
+  soil_moisture: m3 m-3
+  soil_temperature: K
+  drainage_flux: kg m-2 s-1
+  diagnostics.vertical_percolation.effective_saturation: '1'
+  diagnostics.vertical_percolation.hydraulic_conductivity: m s-1
+  diagnostics.vertical_percolation.relative_hydraulic_conductivity: '1'
+  diagnostics.vertical_percolation.field_capacity_excess: m3 m-3
+  diagnostics.vertical_percolation.water_balance_residual: kg m-2 s-1
+input_output_map:
+  soil_moisture: required canonical read-only theta input; no storage echo or state update
+  soil_temperature: required canonical input modifies conductivity when temperature correction is enabled
+  drainage_flux: canonical boundary mass flux emitted as UpdateItem(REPLACE, per_timestep=False)
+  diagnostics.vertical_percolation.water_balance_residual: computed boundary flux minus exported boundary flux
+interface_map:
+  forward_signature: forward(self, state, time, dt, **kwargs)
+  bridge_class: TransportMechanismFunctor
+  abstraction_contract: TransportMechanism
+  state_write_mode: drainage_flux and diagnostics use UpdateItem(REPLACE, per_timestep=False); soil moisture is never written
+  legacy_inputs:
+  - soil_moisture
+  - soil_temperature
+  iphs_inputs:
+  - soil_moisture
+  - soil_temperature
+  legacy_outputs:
+  - drainage_flux
+  - diagnostics.vertical_percolation.effective_saturation
+  - diagnostics.vertical_percolation.hydraulic_conductivity
+  - diagnostics.vertical_percolation.relative_hydraulic_conductivity
+  - diagnostics.vertical_percolation.field_capacity_excess
+  - diagnostics.vertical_percolation.water_balance_residual
+  iphs_outputs:
+  - drainage_flux
+  - diagnostics.vertical_percolation.effective_saturation
+  - diagnostics.vertical_percolation.hydraulic_conductivity
+  - diagnostics.vertical_percolation.relative_hydraulic_conductivity
+  - diagnostics.vertical_percolation.field_capacity_excess
+  - diagnostics.vertical_percolation.water_balance_residual
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: The reduced-order field-capacity law with selected hydraulic conductivity is the sole canonical drainage calculation.
+  no_legacy_mode: No runtime flag exposes a pre-Phase 8 formula, lateral split, state-advance branch, or zero-output mode.
+state_advancement_map:
+  potential_basis: read-only soil_moisture cochain theta_h
+  effort_variable: downward hydraulic gradient g_h with positive mobility star_K
+  state_advancer: none in this Functor; q_h is exported through the bottom-drainage boundary port
+  runtime_usage: forward evaluates the canonical reduced-order boundary flux without advancing shared soil-water storage.
+parameter_management_map:
+  hydrosphere.transport.vertical_percolation.enable_temperature_effects:
+    source: ParameterManager YAML
+  hydrosphere.transport.vertical_percolation.hydraulic_model:
+    source: ParameterManager YAML
+  hydrosphere.soil_moisture.porosity:
+    source: ParameterManager YAML
+  hydrosphere.physical.viscosity_temperature_factor:
+    source: ParameterManager YAML
+  hydrosphere.soil_moisture.saturated_hydraulic_conductivity:
+    source: ParameterManager YAML
+  hydrosphere.soil_moisture.residual_water_content:
+    source: ParameterManager YAML
+  hydrosphere.soil_moisture.field_capacity:
+    source: ParameterManager YAML
+  hydrosphere.soil_moisture.wilting_point:
+    source: ParameterManager YAML
+  hydrosphere.soil_moisture.alpha_vg:
+    source: ParameterManager YAML
+  hydrosphere.soil_moisture.n_vg:
+    source: ParameterManager YAML
+  hydrosphere.soil_moisture.root_zone_depth:
+    source: ParameterManager YAML
+  hydrosphere.transport.vg_l:
+    source: ParameterManager YAML
+  hydrosphere.transport.bc_lambda:
+    source: ParameterManager YAML
+  hydrosphere.transport.ch_b_parameter:
+    source: ParameterManager YAML
+  hydrosphere.transport.drainage_time_constant:
+    source: ParameterManager YAML
+  hydrosphere.transport.soil_layer_thickness:
+    source: ParameterManager YAML
+  hydrosphere.numerical.temperature_bounds:
+    source: ParameterManager YAML
+  hydrosphere.numerical.saturation_epsilon:
+    source: ParameterManager YAML
+  hydrosphere.numerical.effective_saturation_bounds:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares hydrosphere transport role and coupling interfaces
+  structural_protocol: declared_forms, required_parameters, build_hodge_terms, dissipative_structure, ports
+  state_contract: existing TransportMechanismFunctor and StateManager UpdateItem path
+  ports:
+  - vertical_drainage_boundary_flux
+dependency_interconnection_map:
+  dependencies: get_dependencies returns no process dependency; soil_moisture and soil_temperature are canonical StateManager inputs, while Bucket and Richards are alternative drainage closures
+  direct_functor_calls: none; soil moisture and temperature are canonical required StateManager inputs and alternative drainage closures are graph-selected
+  chain_maps:
+  - soil_moisture storage cochain to the vertical drainage constitutive relation
+  - drainage_flux boundary port to the selected soil-water and downstream subsurface-runoff graph
+  required_input_policy: soil_moisture and soil_temperature are canonical required non-empty floating Tensors; aliases, scalar coercion, defaults, integer tensors, and non-finite values are rejected
+overflow_routing_map:
+  conductivity_domain: effective saturation is evaluated within the validated residual-to-saturation input domain
+  drainage_projection: max(theta - theta_fc, 0) defines the physical no-drainage domain below field capacity
+  boundary_ledger: diagnostics.vertical_percolation.water_balance_residual equals computed minus exported drainage flux
+  storage_bounds: not applicable because this Functor never advances or clips soil-water storage
+  discarded_residuals: below-field-capacity zero drainage is the declared constitutive domain, invalid state is rejected, and water_balance_residual equals computed minus exported drainage
+conservation_map:
+  conserved_quantity: water mass
+  metadata_laws:
+  - vertical_drainage_boundary
+  balance_expression: F_computed - F_exported = 0 for this open bottom-drainage boundary
+  local_check: check_conservation_laws independently recomputes constitutive drainage, compares it with the exported drainage and finite namespaced diagnostic, and reports the maximum residual or diagnostic mismatch
+  storage_owner: the selected soil-water closure owns prognostic storage; this Functor owns only the open boundary ledger
+  open_system_route: drainage_flux boundary port
+physical_constant_ssot:
+  water_density: get_physical_constant("water_density") from relic physical constants YAML [kg m-3]
+  reference_temperature: get_physical_constant("reference_temperature") from relic physical constants YAML [K]
+entropy_audit:
+  dissipative_operator: star_K and M_h are symmetric positive semidefinite for positive rho_w and Ks
+  sigma_expression: sigma = g_h.T star_K g_h >= 0
+  validation_hook: build_hodge_contract(strict=True) and dissipative_structure eigenvalue checks
+equivalence_type: port_equivalent

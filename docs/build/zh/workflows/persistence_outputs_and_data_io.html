@@ -1,0 +1,1101 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>持久化、输出与 Data I/O &mdash; RELIC 1.0.0 Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=mono5" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=86952a2f"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/translations.js?v=beaddf03"></script>
+      <script src="../_static/language_switch.js?v=mono5"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="耦合工作流" href="coupling_workflows.html" />
+    <link rel="prev" title="Graph 验证与执行" href="graph_validation_and_execution.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            RELIC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">RELIC 指南</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../architecture.html">系统架构</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#scope-and-architectural-contract">范围与架构契约</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#architecture-capability-map">架构能力图</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#package-ownership-and-seven-layer-map">软件包职责归属与七层架构映射</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#four-scientific-abstractions">四类科学抽象</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#functor-lifecycle-and-metadata">Functor lifecycle 与 metadata</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#variable-roles-and-state-ownership">变量角色与状态归属</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#parameters-constants-units-and-time">参数、常量、单位与时间</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#simulator-execution-rates-and-device-policy">Simulator、执行频率与 device policy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#structural-scientific-layer">结构化科学层</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#end-to-end-assembly-and-execution">端到端装配与执行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#connection-and-conservation-rules">连接与守恒规则</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/index.html">科学理论与控制方程</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../theory/foundations.html">数学基础、状态、单位与守恒</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#architectural-contract-and-notation">架构契约与符号约定</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#four-scientific-abstractions-and-functor-lifecycle">四类科学抽象与 Functor 生命周期</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#spatial-quantity-basis-and-temporal-overlap-laws">空间物理量基准与时间重叠守恒律</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#universal-conservation-and-balance-laws">普适守恒与平衡定律</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#transactional-statemanager-governance-i1-i7">事务型 StateManager 状态治理（<code class="docutils literal notranslate"><span class="pre">I1</span></code>--<code class="docutils literal notranslate"><span class="pre">I7</span></code>）</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#centralized-parametermanager-and-physical-constant-ssot">集中式 ParameterManager 与物理常数单点事实源</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#piecewise-smooth-discrete-adjoint-differentiation-and-device-policy">分段光滑离散伴随微分与设备策略</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#bounded-mathematical-contracts-and-runtime-boundary-i-vs-n">有界数学契约与运行时边界（<code class="docutils literal notranslate"><span class="pre">[I]</span></code> 与 <code class="docutils literal notranslate"><span class="pre">[N]</span></code>）</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/dec_iphs_generic.html">DEC、IPHS、GENERIC、端口与反应结构</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/dec_iphs_generic.html#structural-governance-lifecycle">结构治理生命周期</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/dec_iphs_generic.html#discrete-exterior-calculus-relic-computation-operators-dec">离散外微分（<code class="docutils literal notranslate"><span class="pre">relic.computation.operators.dec</span></code>）</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/dec_iphs_generic.html#irreversible-port-hamiltonian-and-generic-lowering">不可逆端口哈密顿与 GENERIC 降阶</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/dec_iphs_generic.html#equivalence-certificates-and-live-repository-inventory">等价性证书与现行代码库清单</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/dec_iphs_generic.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/numerics.html">数值积分、算子分裂、稳定性、尺度耦合与混杂事件</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#method-of-lines-formulation-and-solver-registry">线方法表述与求解器注册表</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#deterministic-time-stepping-linear-and-nonlinear-solvers">确定性时间步进、线性与非线性求解器</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#multi-rate-execution-operator-splitting-and-step-control">多速率执行、算子分裂与步长控制</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#transport-stability-and-nonlinear-richards-closure">输运稳定性与非线性 Richards 闭合</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#conservative-spatial-remapping-and-internal-cross-domain-couplers">空间守恒重映射与内部跨域耦合器</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#transverse-hybrid-events-and-saltation-matrix-sensitivities">横截混杂事件与跃变矩阵灵敏度</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#stochastic-memory-ale-dae-and-topology-transition-families">随机、记忆、任意拉格朗日-欧拉（Arbitrary Lagrangian-Eulerian, ALE）、DAE 与拓扑跃迁族</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/atmosphere.html">大气圈过程理论</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/atmosphere.html#scope-process-inventory-and-certificate-map">范围、过程清单与证书映射</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/atmosphere.html#solar-thermal-and-canopy-radiation">太阳短波、热长波与冠层辐射</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/atmosphere.html#surface-layer-turbulence-and-boundary-layer-tracer-transport">近地层湍流与边界层示踪物输运</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/atmosphere.html#gas-phase-chemistry-open-tropospheric-kinetics-and-closed-level-5-generic-point">气相化学：开放对流层动力学与封闭 Level-5 GENERIC 运行点</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/atmosphere.html#stochastic-atmospheric-forcing-and-replay-contracts">随机大气强迫与重放契约</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/atmosphere.html#atmospheric-observation-operators">大气观测算子</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/atmosphere.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/biosphere.html">生物圈过程理论</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/biosphere.html#scope-process-inventory-and-certificate-map">范围、过程清单与证书映射</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/biosphere.html#photosynthesis-and-stomatal-conductance">光合作用与气孔导度</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/biosphere.html#autotrophic-respiration-allocation-and-structural-growth">自养呼吸、分配与结构生长</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/biosphere.html#phenology-and-abiotic-stress-closures">物候与非生物胁迫闭合</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/biosphere.html#biogenic-volatile-organic-compound-bvoc-synthesis-and-emission">生物源挥发性有机化合物（BVOC）合成与排放</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/biosphere.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/hydrosphere.html">水圈过程理论</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/hydrosphere.html#scope-process-inventory-and-certificate-map">范围、过程清单与证书映射</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/hydrosphere.html#evapotranspiration-closures">蒸散发闭合格式</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/hydrosphere.html#snowpack-mass-energy-balance-and-snow-albedo">积雪质量-能量平衡与积雪反照率</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/hydrosphere.html#soil-water-retention-bucket-storage-and-richards-vadose-flow">土壤持水特征、单桶蓄水与 Richards 包气带渗流</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/hydrosphere.html#surface-runoff-and-hybrid-event-driven-hortonian-ponding">地表径流与混杂事件驱动的霍顿积水</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/hydrosphere.html#subsurface-stormflow-vadose-aquifer-exchange-and-groundwater">壤中暴雨流、包气带-含水层交换与地下水</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/hydrosphere.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/pedosphere.html">土壤圈过程理论</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/pedosphere.html#scope-process-inventory-and-certificate-map">范围、过程清单与证书映射</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/pedosphere.html#soil-organic-carbon-turnover-and-cross-sphere-interface-maps">土壤有机碳周转与跨圈层界面映射</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/pedosphere.html#soil-nitrogen-root-p-uptake-and-c-n-stoichiometry-boundaries">土壤氮循环、根系磷吸收与碳氮化学计量边界</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/pedosphere.html#wetland-methane-request-and-coupler-architecture">湿地甲烷请求-耦合器架构</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/pedosphere.html#porous-media-water-gas-solute-dae-ale-and-memory-transport">多孔介质水分、气体、溶质、DAE、ALE 与记忆核输运</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/pedosphere.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/anthroposphere.html">人类圈理论</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/anthroposphere.html#scope-process-inventory-and-fail-closed-boundary-status">范围、过程清单与故障封闭边界状态</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/anthroposphere.html#fail-closed-level-0-boundaries-vs-implemented-emission-operators">故障封闭 Level-0 边界与已实现排放算子</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/anthroposphere.html#continuous-time-markov-land-use-transitions-and-parameter-projection">连续时间马尔可夫土地利用转移与参数投影</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/anthroposphere.html#management-coordination-and-agricultural-water-nutrient-ports">管理协调与农业水肥端口</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/anthroposphere.html#managed-biomass-removal-livestock-grazing-fire-and-tillage">受管生物量移除、家畜放牧、火扰动与耕作</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/anthroposphere.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/isotopes_transport.html">稳定同位素与一般输运理论</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/isotopes_transport.html#scope-component-inventory-and-certificate-map">范围、组件清单与证书映射</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/isotopes_transport.html#stable-isotope-ratios-exact-binary-fractionation-and-fail-closed-ledger-status">稳定同位素比值、精确二元分馏与故障封闭账本状态</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/isotopes_transport.html#general-conservative-transport-functors">一般守恒输运 Functor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/isotopes_transport.html#references">参考文献</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../science/index.html">核心科学类参考</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../science/anthroposphere.html">人类圈科学类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#atmosphere-coupling">atmosphere_coupling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#sector-allocation">sector_allocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#species-mapping">species_mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#anthroposphere-interface-mapping">anthroposphere_interface_mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#emission-inventory">emission_inventory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#land-use-parameter-mapping">land_use_parameter_mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#land-use-transitions">land_use_transitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#management-coordinator">management_coordinator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#fertilization-management">fertilization_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#fire-management">fire_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#grazing-management">grazing_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#harvest-management">harvest_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#irrigationmanagement">IrrigationManagement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#tillagemanagement">TillageManagement</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/atmosphere.html">大气科学类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#chemistryfunctor">ChemistryFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#class-atmosphere-chemistry-chemistry-functor-closed-constant-volume">ChemistryFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#environmentalforcingfunctor">EnvironmentalForcingFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#radiationenergyconservationvalidator">RadiationEnergyConservationValidator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#radiationfield">RadiationField</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#radiationfunctor">RadiationFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#markedpoissonrainfallfunctor">MarkedPoissonRainfallFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#ornsteinuhlenbecktemperaturefunctor">OrnsteinUhlenbeckTemperatureFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#atmosphericadvectiondiffusionfunctor">AtmosphericAdvectionDiffusionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#drydepositionaggregator">DryDepositionAggregator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#eddydiffusionblmfunctor">EddyDiffusionBLMFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#turbulencefunctor">TurbulenceFunctor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/biosphere.html">生物圈科学类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#meganmodel">MEGANModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#isoprenesynthesis">IsopreneSynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#monoterpenesynthesis">MonoterpeneSynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#sesquiterpenestressmodel">SesquiterpeneStressModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#sesquiterpenesynthesis">SesquiterpeneSynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#biomassallocation">BiomassAllocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#phenologygrowth">PhenologyGrowth</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#structuralgrowth">StructuralGrowth</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#cropphenology">CropPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#gddphenology">GDDPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#gsiphenology">GSIPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#staticphenology">StaticPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#phenologyfunctor">PhenologyFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#farquharphotosynthesis">FarquharPhotosynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#medlynstomatalconductance">MedlynStomatalConductance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#autotrophicrespiration">AutotrophicRespiration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#growthrespiration">GrowthRespiration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#maintenancerespiration">MaintenanceRespiration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#nutrientstress">NutrientStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#ozonestress">OzoneStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#thermalstress">ThermalStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#waterstress">WaterStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#simplecanopyphotosynthesis">SimpleCanopyPhotosynthesis</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/hydrosphere.html">水圈科学类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#penman-monteith-et">penman_monteith_et</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#priestley-taylor-et">priestley_taylor_et</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#groundwater-dynamics">groundwater_dynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#subsurface-runoff">subsurface_runoff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#hortonianpondingeventfunctor">HortonianPondingEventFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#surfacepondingfunctor">SurfacePondingFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#surface-runoff">surface_runoff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#snow-albedo">snow_albedo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#snow-pack">snow_pack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#bucket-soil-moisture">bucket_soil_moisture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#soilwaterretention">SoilWaterRetention</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#richards-soil-moisture">richards_soil_moisture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#capillary-rise-transport">capillary_rise_transport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#vertical-percolation-transport">vertical_percolation_transport</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/pedosphere.html">土壤圈科学类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#carbonpoolsfunctor">CarbonPoolsFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#poolsmatrix">PoolsMatrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#firstorderdecomposition">FirstOrderDecomposition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#microbialenzymedecomposition">MicrobialEnzymeDecomposition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#litterfallinterfacemapper">LitterfallInterfaceMapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#pedosphereinterfacemapper">PedosphereInterfaceMapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methanebudgetcoupler">MethaneBudgetCoupler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methaneoxidationfunctor">MethaneOxidationFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methaneproductionfunctor">MethaneProductionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methanescalecouplingfunctor">MethaneScaleCouplingFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methanetransportfunctor">MethaneTransportFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#denitrification-process">denitrification_process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#mineralizationprocess">MineralizationProcess</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#nitrification-process">nitrification_process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#nitrogenleachingprocess">NitrogenLeachingProcess</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#nitrogencycling">NitrogenCycling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#rootnutrientuptake">RootNutrientUptake</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#stoichiometryconstraint">StoichiometryConstraint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#equilibriumsorptionfunctor">EquilibriumSorptionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#gasdiffusion1d">GasDiffusion1D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#movingdomaindiffusionfunctor">MovingDomainDiffusionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#soil-water-transport">soil_water_transport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#soluteadvectiondiffusion1d">SoluteAdvectionDiffusion1D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#tworegionmasstransferfunctor">TwoRegionMassTransferFunctor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/isotopes.html">稳定同位素科学类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/isotopes.html#isotopeheartbeatfunctor">IsotopeHeartbeatFunctor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/transport.html">通用 Transport 科学类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#advection-diffusion">advection_diffusion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#linear-advection">linear_advection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#fickian-diffusion">fickian_diffusion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#class-transport-diffusion-fickian-diffusion-strict-runtime-point">fickian_diffusion</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/index.html#complete-coverage-matrix">完整覆盖矩阵</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">RELIC 工作流</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#learning-tracks">学习路线</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#how-to-use-a-tutorial">如何使用教程</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="installation_and_imports.html">安装与导入</a></li>
+<li class="toctree-l3"><a class="reference internal" href="configuration_and_parameters.html">配置与参数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="state_functors_and_simulation.html">状态、Functors 与模拟</a></li>
+<li class="toctree-l3"><a class="reference internal" href="graph_validation_and_execution.html">Graph 验证与执行</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">持久化、输出与 Data I/O</a></li>
+<li class="toctree-l3"><a class="reference internal" href="coupling_workflows.html">耦合工作流</a></li>
+<li class="toctree-l3"><a class="reference internal" href="calibration_sensitivity_and_uq.html">校准、敏感性分析和不确定性量化</a></li>
+<li class="toctree-l3"><a class="reference internal" href="devices_and_distributed.html">设备与分布式执行</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cli_and_extensions.html">CLI 与扩展</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestration.html">Graph 编排</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#canonical-owners">canonical owners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#graphir">GraphIR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#portspec-and-the-contract-boundary">PortSpec 与契约边界</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#validation">验证</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#adapters">Adapter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#compilation-and-execution">编译与执行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#strict-iphs-dec-boundary">Strict IPHS/DEC 边界</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../operations.html">操作快速入门</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#select-a-workflow">选择 workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#environment-preflight">环境预检</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#first-successful-run">首次成功运行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#benchmark-style-acceptance-checklist">Benchmark 式验收清单</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#minimal-runtime-sequence">最小 runtime 流程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#troubleshooting-order">故障排查顺序</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#immediate-stop-conditions">必须立即停止的条件</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../extension_contracts.html">扩展契约</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#reuse-first-decision">复用优先决策</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#adding-a-scientific-functor">添加科学 Functor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#parameter-extension">参数扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#variable-contract-extension">Variable contract 扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#graph-and-adapter-extension">Graph 与 adapter 扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#external-extension-paths">外部扩展路径</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#scientific-structure-claims">科学结构声明</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#explicit-unavailable-scientific-boundaries">显式声明不可用的科学边界</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#anti-redundancy-boundary">Anti-redundancy boundary（防冗余边界）</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">核心 API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/index.html#coverage-contract">覆盖范围契约</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/core_runtime.html">Core Runtime API（核心运行时 API）</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/parameters_contracts.html">参数与参数契约</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/orchestration_validation.html">编排、Contract 与 Validation API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/scientific_structure_extensions.html">科学结构与扩展 API</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">RELIC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">RELIC 工作流</a></li>
+      <li class="breadcrumb-item active">持久化、输出与 Data I/O</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="persistence-outputs-and-data-i-o">
+<h1>持久化、输出与 Data I/O<a class="headerlink" href="#persistence-outputs-and-data-i-o" title="Link to this heading"></a></h1>
+<p>RELIC提供了三层持久性：</p>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">StateManager</span></code>快照用于内存事务恢复。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">RELICSimulator</span></code>阶段检查点用于runtime继续。</p></li>
+<li><p>数据和provenance写作者为持久科学输出。</p></li>
+</ol>
+<p>这些层有不同的契约，不能互换使用。</p>
+<section id="state-snapshots">
+<h2>状态推进快照<a class="headerlink" href="#state-snapshots" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">StateManager.checkpoint()</span></code>返回一个包含状态张量、计数器、diagnostics、历史记录、守恒记录和待处理起源事务数据的内存映射。<code class="docutils literal notranslate"><span class="pre">restore(snapshot)</span></code>仅接受由该状态管理合约生成的有效映射。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">relic.core.state</span><span class="w"> </span><span class="kn">import</span> <span class="n">StateManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">relic.core.state.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">StateVariableSpec</span><span class="p">,</span> <span class="n">UpdateItem</span><span class="p">,</span> <span class="n">UpdateMode</span>
+
+<span class="n">manager</span> <span class="o">=</span> <span class="n">StateManager</span><span class="p">(</span>
+    <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">StateVariableSpec</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;dimensionless&quot;</span><span class="p">)}</span>
+<span class="p">)</span>
+<span class="n">manager</span><span class="o">.</span><span class="n">initialize</span><span class="p">({</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)})</span>
+
+<span class="n">snapshot</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">checkpoint</span><span class="p">()</span>
+<span class="n">manager</span><span class="o">.</span><span class="n">apply_updates</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">UpdateItem</span><span class="p">(</span>
+            <span class="n">value</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>
+            <span class="n">mode</span><span class="o">=</span><span class="n">UpdateMode</span><span class="o">.</span><span class="n">ACCUMULATE</span><span class="p">,</span>
+            <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;dimensionless&quot;</span><span class="p">,</span>
+            <span class="n">per_timestep</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="p">},</span>
+    <span class="n">check_conservation</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">manager</span><span class="o">.</span><span class="n">restore</span><span class="p">(</span><span class="n">snapshot</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">manager</span><span class="o">.</span><span class="n">get_state</span><span class="p">()[</span><span class="s2">&quot;x&quot;</span><span class="p">]))</span>
+</pre></div>
+</div>
+<p>预期输出：</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>1.0
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">restore()</span></code> raises <code class="docutils literal notranslate"><span class="pre">TypeError</span></code> for a non-mapping snapshot and <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> when the required state mapping is absent. Use snapshots around local transactions； they are not a stable cross-version file format.</p>
+</section>
+<section id="simulator-checkpoints">
+<h2>Simulator断点<a class="headerlink" href="#simulator-checkpoints" title="Link to this heading"></a></h2>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>RELICSimulator.create_checkpoint(
+    checkpoint_path: str | os.PathLike[str],
+    *,
+    snapshot: Mapping[str, Any] | None = None,
+) -&gt; dict[str, Any]
+
+RELICSimulator.restore_checkpoint(
+    checkpoint_path: str | os.PathLike[str],
+    *,
+    compatibility_certificate: RestartCompatibilityCertificate | None = None,
+    migration_certificate: GraphMigrationCertificate | None = None,
+) -&gt; dict[str, Any]
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">relic\core\simulator\checkpoint.py</span></code> 是持久检查点格式的唯一所有者。未提供 <code class="docutils literal notranslate"><span class="pre">snapshot</span></code> 时，公开创建调用捕获当前状态，要求显式给出尚不存在的目标路径；目标文件已存在则抛出 <code class="docutils literal notranslate"><span class="pre">FileExistsError</span></code>。它会创建父目录，写入唯一命名的同级临时文件，再原子提交目标。<code class="docutils literal notranslate"><span class="pre">snapshot</span></code> 是在已接受时间步边界为检查点交付捕获的冻结载荷：按原样写入，绝不根据当前状态重建。只有已有目标经验证与该载荷相同时才会接受，并再次返回回执；文件内容不同则抛出 <code class="docutils literal notranslate"><span class="pre">FileExistsError</span></code>。该调用不选择隐式输出目录，也不覆盖已有检查点。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">relic.core.dependency_graph</span><span class="w"> </span><span class="kn">import</span> <span class="n">DependencyGraphResolver</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">relic.core.simulator</span><span class="w"> </span><span class="kn">import</span> <span class="n">RELICSimulator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">relic.core.state</span><span class="w"> </span><span class="kn">import</span> <span class="n">StateManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">relic.core.state.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">StateVariableSpec</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">relic.scientific.atmosphere.stochastic_temperature</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">OrnsteinUhlenbeckTemperatureFunctor</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">build_stochastic_simulator</span><span class="p">(</span><span class="n">seed</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RELICSimulator</span><span class="p">:</span>
+    <span class="n">state_mgr</span> <span class="o">=</span> <span class="n">StateManager</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;stochastic_air_temperature_anomaly&quot;</span><span class="p">:</span> <span class="n">StateVariableSpec</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;stochastic_air_temperature_anomaly&quot;</span><span class="p">,</span>
+                <span class="n">units</span><span class="o">=</span><span class="s2">&quot;K&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">},</span>
+        <span class="n">device</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cpu&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">state_mgr</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span>
+        <span class="p">{</span><span class="s2">&quot;stochastic_air_temperature_anomaly&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">0.5</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float64</span><span class="p">)}</span>
+    <span class="p">)</span>
+    <span class="n">sim</span> <span class="o">=</span> <span class="n">RELICSimulator</span><span class="p">(</span>
+        <span class="p">{</span><span class="s2">&quot;time_step&quot;</span><span class="p">:</span> <span class="mf">3600.0</span><span class="p">,</span> <span class="s2">&quot;device&quot;</span><span class="p">:</span> <span class="s2">&quot;cpu&quot;</span><span class="p">,</span> <span class="s2">&quot;conservation_checks&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}</span>
+    <span class="p">)</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">state_mgr</span><span class="p">,</span> <span class="n">DependencyGraphResolver</span><span class="p">())</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">register_functor</span><span class="p">(</span>
+        <span class="n">OrnsteinUhlenbeckTemperatureFunctor</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;seed&quot;</span><span class="p">:</span> <span class="n">seed</span><span class="p">}),</span>
+        <span class="n">execution_group</span><span class="o">=</span><span class="s2">&quot;fast&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">sim</span>
+
+
+<span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">tmpdir</span><span class="p">:</span>
+    <span class="n">checkpoint_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;restart&quot;</span> <span class="o">/</span> <span class="s2">&quot;step_000001.pt&quot;</span>
+    <span class="n">simulator</span> <span class="o">=</span> <span class="n">build_stochastic_simulator</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+    <span class="n">simulator</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="mf">3600.0</span><span class="p">)</span>
+    <span class="n">create_receipt</span> <span class="o">=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">create_checkpoint</span><span class="p">(</span><span class="n">checkpoint_path</span><span class="p">)</span>
+    <span class="n">simulator</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="mf">3600.0</span><span class="p">)</span>
+    <span class="n">continuous_val</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span>
+        <span class="n">simulator</span><span class="o">.</span><span class="n">get_state</span><span class="p">()[</span><span class="s2">&quot;stochastic_air_temperature_anomaly&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="n">restored_simulator</span> <span class="o">=</span> <span class="n">build_stochastic_simulator</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+    <span class="n">restore_receipt</span> <span class="o">=</span> <span class="n">restored_simulator</span><span class="o">.</span><span class="n">restore_checkpoint</span><span class="p">(</span><span class="n">checkpoint_path</span><span class="p">)</span>
+    <span class="n">restored_simulator</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="mf">3600.0</span><span class="p">)</span>
+    <span class="n">restarted_val</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span>
+        <span class="n">restored_simulator</span><span class="o">.</span><span class="n">get_state</span><span class="p">()[</span><span class="s2">&quot;stochastic_air_temperature_anomaly&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">create_receipt</span><span class="p">[</span><span class="s2">&quot;sha256&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">restore_receipt</span><span class="p">[</span><span class="s2">&quot;sha256&quot;</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">continuous_val</span> <span class="o">==</span> <span class="n">restarted_val</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>两个操作都返回 <code class="docutils literal notranslate"><span class="pre">path</span></code>、<code class="docutils literal notranslate"><span class="pre">format_version</span></code>、<code class="docutils literal notranslate"><span class="pre">size_bytes</span></code>、文件 <code class="docutils literal notranslate"><span class="pre">sha256</span></code>、canonical <code class="docutils literal notranslate"><span class="pre">payload_sha256</span></code> 和 <code class="docutils literal notranslate"><span class="pre">provider_epoch</span></code>。创建时 <code class="docutils literal notranslate"><span class="pre">provider_epoch=None</span></code>；成功恢复则报告新提交视图的 epoch。自动检查点的名称为 <code class="docutils literal notranslate"><span class="pre">checkpoint_directory/&lt;run_id&gt;/checkpoint_step_&lt;12-digit-step&gt;.pt</span></code>。<code class="docutils literal notranslate"><span class="pre">run_id</span></code> 属于 simulator，在重启后保留，并在 reset 时改变。</p>
+<p>格式 3 包含冻结的 <code class="docutils literal notranslate"><span class="pre">delivery_state</span></code>：已接受但尚待履行的义务、回执、作业定义和平铺的检查点节点引用。恢复检查点时，通过现有所有者协调已接受的通知与交付工作；不会重新捕获更新后的运行时输出，也不会在状态恢复过程中执行外部效果。重试保留每项工作的原始运行身份和目的地。交付语义为至少一次：每项义务均带有幂等键和回执，因此对幂等消费者的重复交付具有实际一次的效果。跨系统的恰好一次交付需要对端参与协议，本系统不作此声明。只有已写入持久检查点的义务才能在持久恢复中找回。</p>
+<p>版本化的 <code class="docutils literal notranslate"><span class="pre">relic.simulator.checkpoint</span></code> payload 包含：</p>
+<ul class="simple">
+<li><p>simulator 时间、计数器、与配置相关的 runtime 字段以及输出历史；</p></li>
+<li><p>一个经过验证的内存内 <code class="docutils literal notranslate"><span class="pre">StateManager.checkpoint()</span></code> snapshot；</p></li>
+<li><p>每个已注册 Functor 的 <code class="docutils literal notranslate"><span class="pre">{state_dict,</span> <span class="pre">parameter_bindings}</span></code> 条目：标准 PyTorch 模块状态（包括安全的 <code class="docutils literal notranslate"><span class="pre">get_extra_state()</span></code> 数据），以及按引用持有的管理器绑定的当前值，包含嵌套 Functor；</p></li>
+<li><p>Functor 拓扑、依赖顺序/分组、StateManager schema、科学配置/metadata/参数 contract、已解析的 device，以及 distributed rank/world-size 签名；</p></li>
+<li><p>Python、Torch CPU、可选旧版全局 NumPy 以及 CUDA 的随机数生成器（Random Number Generator, RNG）状态；</p></li>
+<li><p>规范载荷的 256 位安全散列算法（Secure Hash Algorithm 256-bit, SHA-256）完整性校验记录。</p></li>
+</ul>
+<p>恢复操作调用 <code class="docutils literal notranslate"><span class="pre">torch.load(...,</span> <span class="pre">map_location=&quot;cpu&quot;,</span> <span class="pre">weights_only=True)</span></code>，严格要求 <code class="docutils literal notranslate"><span class="pre">relic.simulator.checkpoint</span></code> 格式标识与 <code class="docutils literal notranslate"><span class="pre">format_version=3</span></code>，不设非安全反序列化回退路径。写出操作仅生成版本 3 格式。读取版本 2 检查点时会在内存中执行升级：按引用持有的参数绑定从模块状态迁移至 <code class="docutils literal notranslate"><span class="pre">parameter_bindings</span></code>，遇到未知状态条目则抛出 <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>；升级后的载荷将重新计算完整性摘要并完成校验，恢复回执中的 <code class="docutils literal notranslate"><span class="pre">format_upgrade</span></code> 字段记录 <code class="docutils literal notranslate"><span class="pre">from_format_version</span></code>、<code class="docutils literal notranslate"><span class="pre">to_format_version</span></code> 与 <code class="docutils literal notranslate"><span class="pre">moved_bindings</span></code>。参数绑定恢复要求键集合、张量形状与数据类型严格一致，并保留在线张量对象、梯度标志与所属设备。检查点中 CUDA RNG 状态的存在性及 CUDA 设备数量必须与当前解析出的运行时环境双向对称匹配；在具备 CUDA 的宿主机上将 <code class="docutils literal notranslate"><span class="pre">RELICSimulator</span></code> 固定为 <code class="docutils literal notranslate"><span class="pre">&quot;device&quot;:</span> <span class="pre">&quot;cpu&quot;</span></code> 时，若从外部构造 <code class="docutils literal notranslate"><span class="pre">StateManager</span></code>，需同步传入 <code class="docutils literal notranslate"><span class="pre">device=torch.device(&quot;cpu&quot;)</span></code> 以确保两处所有者对称解析为 CPU 张量。当活动分布式运行时的 <code class="docutils literal notranslate"><span class="pre">world_size</span> <span class="pre">&gt;</span> <span class="pre">1</span></code> 时，当前单文件检查点格式在创建与恢复阶段均执行封闭拒绝。</p>
+<p>恢复要求一个已准备好且兼容的 simulator。在应用重启之前，它会验证 payload 完整性、拓扑、科学 contract、device、distributed context、StateManager 状态、Functor state dictionary 以及 RNG 数据。在 provider 视图发布之前发生的失败会恢复恢复前的 runtime 字段、StateManager、Functor 状态、RNG、已接受的待处理工作以及注册 metadata。一旦新的 provider 视图发布，即使退役、清理或回执 I/O 失败，其 epoch 与科学状态仍保持已提交；该错误作为发布后失败报告，且不得回退读者可能已经观察到的世界。</p>
+<p>检查点不捕获外部服务或数据源的状态。外部适配器只保存其数据源和模型绑定（<code class="docutils literal notranslate"><span class="pre">get_extra_state()</span></code>）；将该绑定恢复到另一个数据源或模型的适配器时，会抛出 <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>。已打开的数据集不属于检查点；重启运行通过 <code class="docutils literal notranslate"><span class="pre">discover()</span></code> 和 <code class="docutils literal notranslate"><span class="pre">open()</span></code> 重新打开它们。适配器的 <code class="docutils literal notranslate"><span class="pre">forward(state,</span> <span class="pre">time,</span> <span class="pre">dt,</span> <span class="pre">*,</span> <span class="pre">calendar_type,</span> <span class="pre">time_origin)</span></code> 按声明的 <code class="docutils literal notranslate"><span class="pre">time_interpolation</span></code> 选择 <code class="docutils literal notranslate"><span class="pre">time_origin</span> <span class="pre">+</span> <span class="pre">time</span></code> 时刻的强迫，不持有另一个可变时间游标。显式绑定的强迫序列使用模拟器持有的游标，仅在时间步接受后推进，并由检查点恢复。</p>
+<p>默认恢复是精确恢复。同一 owner 接受 <code class="docutils literal notranslate"><span class="pre">RestartCompatibilityCertificate</span></code>，用于有界的已声明 contract/参数差异以及保持单位、shape 和 dtype 的状态重命名。它绑定实际的源与目标拓扑摘要；它不能豁免 kernel、实现、Functor 类型、执行顺序或 runtime 环境的变化。其 forcing 策略要么保留精确的 cursor，要么显式清除它。<code class="docutils literal notranslate"><span class="pre">GraphMigrationCertificate</span></code> 处理其受限 graph 族中已声明的重命名/添加/退役，包括历史要求与映射后的 owner。这两个证书参数互斥。二者都不提供任意代码等价、单位转换或 shape 迁移。</p>
+<p><code class="docutils literal notranslate"><span class="pre">StateManager.checkpoint()</span></code> 仅作为内存级事务原语使用，其快照数据嵌入在模拟器的持久化载荷内部，不构成独立文件格式，也不充当第二持久化所有者。同理，各 Functor 直接复用 <code class="docutils literal notranslate"><span class="pre">state_dict()</span></code>/<code class="docutils literal notranslate"><span class="pre">load_state_dict()</span></code> 与 PyTorch 的 <code class="docutils literal notranslate"><span class="pre">get_extra_state()</span></code>/<code class="docutils literal notranslate"><span class="pre">set_extra_state()</span></code> 接口，不另建平行的重启 API。基于 <code class="docutils literal notranslate"><span class="pre">FunctorSubstreamMixin</span></code> 构建的随机过程 Functor——包括 <code class="docutils literal notranslate"><span class="pre">OrnsteinUhlenbeckTemperatureFunctor</span></code>（<code class="docutils literal notranslate"><span class="pre">relic.scientific.atmosphere.stochastic_temperature</span></code>）与 <code class="docutils literal notranslate"><span class="pre">MarkedPoissonRainfallFunctor</span></code>（<code class="docutils literal notranslate"><span class="pre">relic.scientific.atmosphere.stochastic_rainfall</span></code>）——将其维纳过程（Wiener）或标记跳跃子流游标持久化在 <code class="docutils literal notranslate"><span class="pre">extra_state</span></code> 中，从而使已接受步回滚与 <code class="docutils literal notranslate"><span class="pre">restore_checkpoint()</span></code> 精确重放同一条随机样本轨道。按引用持有的参数管理器绑定位于模块状态字典之外，由同一检查点所有者通过 <code class="docutils literal notranslate"><span class="pre">parameter_bindings</span></code> 统一捕获并恢复。</p>
+<p>自动检查点默认禁用。启用它们需要以下全部三个 runtime 设置：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">relic.core.simulator</span><span class="w"> </span><span class="kn">import</span> <span class="n">RELICSimulator</span>
+
+<span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">tmpdir</span><span class="p">:</span>
+    <span class="n">simulator</span> <span class="o">=</span> <span class="n">RELICSimulator</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;enable_checkpointing&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s2">&quot;checkpoint_directory&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;automatic&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;checkpoint_frequency&quot;</span><span class="p">:</span> <span class="mf">3600.0</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">simulator</span><span class="o">.</span><span class="n">enable_checkpointing</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>频率必须为正。自动持久化仅在科学与 provenance step 提交被接受之后发生，使用显式目录下 <code class="docutils literal notranslate"><span class="pre">run_id</span></code> 子目录中的 <code class="docutils literal notranslate"><span class="pre">checkpoint_step_&lt;12-digit-step&gt;.pt</span></code>。文件错误会向上传播，且没有公开的检查点清理 API。</p>
+<p>不间断运行与拆分重启运行之间的逐位相等，仅对所测试的 graph、输入、固定步长协议、依赖栈和 device 环境构成强动态证据。它不承诺跨平台、跨版本、跨 device 或多 rank 的逐位一致。</p>
+</section>
+<section id="run-bundles">
+<h2>运行捆綁<a class="headerlink" href="#run-bundles" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">relic.orchestration</span><span class="w"> </span><span class="kn">import</span> <span class="n">GraphIR</span><span class="p">,</span> <span class="n">NodeRegistry</span><span class="p">,</span> <span class="n">SSOTCatalog</span><span class="p">,</span> <span class="n">compile_graph</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">relic.orchestration.compiler</span><span class="w"> </span><span class="kn">import</span> <span class="n">write_run_bundle</span>
+
+<span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">tmpdir</span><span class="p">:</span>
+    <span class="n">graph</span> <span class="o">=</span> <span class="n">GraphIR</span><span class="p">(</span>
+        <span class="n">schema_version</span><span class="o">=</span><span class="s2">&quot;1.0&quot;</span><span class="p">,</span>
+        <span class="n">nodes</span><span class="o">=</span><span class="p">{},</span>
+        <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;bundle_demo&quot;</span><span class="p">},</span>
+    <span class="p">)</span>
+    <span class="n">registry</span> <span class="o">=</span> <span class="n">NodeRegistry</span><span class="p">(</span><span class="n">SSOTCatalog</span><span class="o">.</span><span class="n">from_parameter_manager</span><span class="p">())</span>
+    <span class="n">plan</span> <span class="o">=</span> <span class="n">compile_graph</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">registry</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">artifacts</span> <span class="o">=</span> <span class="n">write_run_bundle</span><span class="p">(</span>
+        <span class="n">graph</span><span class="p">,</span>
+        <span class="n">plan</span><span class="p">,</span>
+        <span class="n">Path</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;run_bundle&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">artifacts</span><span class="p">),</span> <span class="s2">&quot;manifest&quot;</span> <span class="ow">in</span> <span class="n">artifacts</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>write_run_bundle(
+    graph: GraphIR,
+    plan: ExecutionPlan,
+    output_dir: pathlib.Path,
+    *,
+    run_id: str | None = None,
+    input_files: list[pathlib.Path] | None = None,
+    metadata: Mapping[str, Any] | None = None,
+) -&gt; dict[str, str]
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">write_run_bundle</span></code> 从 <code class="docutils literal notranslate"><span class="pre">relic.orchestration.compiler</span></code> 导入；<code class="docutils literal notranslate"><span class="pre">relic.orchestration</span></code> 包不导出它。<code class="docutils literal notranslate"><span class="pre">graph</span></code> 必须是编译 <code class="docutils literal notranslate"><span class="pre">plan</span></code> 所用的规范 <code class="docutils literal notranslate"><span class="pre">GraphIR</span></code>；类型不同会抛出 <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>，图不同会抛出 <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>。<code class="docutils literal notranslate"><span class="pre">run_id</span></code> 指定溯源运行名称（默认采用当前 UTC 时间，<code class="docutils literal notranslate"><span class="pre">YYYYMMDDTHHMMSSZ</span></code>）。<code class="docutils literal notranslate"><span class="pre">input_files</span></code> 列出要计算哈希的输入文件；省略时使用 <code class="docutils literal notranslate"><span class="pre">graph.metadata[&quot;input_files&quot;]</span></code>。<code class="docutils literal notranslate"><span class="pre">metadata</span></code> 向证据包元数据加入调用方条目；<code class="docutils literal notranslate"><span class="pre">schema_version</span></code> 和 <code class="docutils literal notranslate"><span class="pre">graph_metadata</span></code> 是保留键，使用时会抛出 <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>。</p>
+<p>溯源包记录声明式工作流定义、图编译结果、运行时日志目标、运行环境与代码仓库证据、已声明输入文件的校验和，以及 W3C 溯源数据模型（W3C Provenance Data Model, PROV）元数据。</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>artifact</p></th>
+<th class="head"><p>用途</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">workflow.json</span></code></p></td>
+<td><p>GraphIR</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">execution_plan.json</span></code></p></td>
+<td><p>序列化的执行步骤。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">compile_report.json</span></code></p></td>
+<td><p>验证、结构审计、适配器和编译metadata</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">runtime.log.jsonl</span></code></p></td>
+<td><p>Runtime事件流目标.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">env_snapshot.txt</span></code></p></td>
+<td><p>执行环境快照.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">git_status.json</span></code></p></td>
+<td><p>证据库状态</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">inputs_manifest.sha256</span></code></p></td>
+<td><p>声明文件的散列摘要manifest.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">prov.jsonld</span></code></p></td>
+<td><p>可机器读取的 provenance 图表.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">manifest.json</span></code></p></td>
+<td><p>运行身份、元数据，以及证据包中每个产物的路径。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">checksums.sha256</span></code></p></td>
+<td><p>证据包文件的哈希。</p></td>
+</tr>
+</tbody>
+</table>
+<p><code class="docutils literal notranslate"><span class="pre">write_run_bundle()</span></code> 创建目标目录，验证封装后的证据包，并返回规范化产物路径。溯源记录器未返回要求的映射时，抛出 <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>。</p>
+</section>
+<section id="conservation-diagnostic-output">
+<h2>Conservationdiagnostic输出<a class="headerlink" href="#conservation-diagnostic-output" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">relic.core.state</span><span class="w"> </span><span class="kn">import</span> <span class="n">StateManager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">relic.core.state.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">StateVariableSpec</span><span class="p">,</span> <span class="n">UpdateItem</span><span class="p">,</span> <span class="n">UpdateMode</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">relic.data.io.diagnostic_writer</span><span class="w"> </span><span class="kn">import</span> <span class="n">export_diagnostics_to_netcdf</span>
+
+<span class="n">state_manager</span> <span class="o">=</span> <span class="n">StateManager</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;carbon_pool&quot;</span><span class="p">:</span> <span class="n">StateVariableSpec</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;carbon_pool&quot;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s2">&quot;kg C m-2&quot;</span><span class="p">,</span>
+            <span class="n">conserved</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">accumulates</span><span class="o">=</span><span class="s2">&quot;carbon.total&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+<span class="n">state_manager</span><span class="o">.</span><span class="n">initialize</span><span class="p">({</span><span class="s2">&quot;carbon_pool&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)})</span>
+<span class="n">state_manager</span><span class="o">.</span><span class="n">apply_updates</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;carbon_pool&quot;</span><span class="p">:</span> <span class="n">UpdateItem</span><span class="p">(</span>
+            <span class="n">value</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span>
+            <span class="n">mode</span><span class="o">=</span><span class="n">UpdateMode</span><span class="o">.</span><span class="n">ACCUMULATE</span><span class="p">,</span>
+            <span class="n">unit</span><span class="o">=</span><span class="s2">&quot;kg C m-2&quot;</span><span class="p">,</span>
+            <span class="n">per_timestep</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">element</span><span class="o">=</span><span class="s2">&quot;carbon&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="p">},</span>
+    <span class="n">dt</span><span class="o">=</span><span class="mf">3600.0</span><span class="p">,</span>
+    <span class="n">check_conservation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">tmpdir</span><span class="p">:</span>
+    <span class="n">diag_result</span> <span class="o">=</span> <span class="n">export_diagnostics_to_netcdf</span><span class="p">(</span>
+        <span class="n">summaries</span><span class="o">=</span><span class="n">state_manager</span><span class="o">.</span><span class="n">conservation_history</span><span class="p">,</span>
+        <span class="n">time_coords</span><span class="o">=</span><span class="p">[</span><span class="mf">3600.0</span><span class="p">],</span>
+        <span class="n">output_path</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;diagnostics.nc&quot;</span><span class="p">,</span>
+        <span class="n">reference_date</span><span class="o">=</span><span class="s2">&quot;1850-01-01&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">diag_result</span><span class="o">.</span><span class="n">validation_passed</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>export_diagnostics_to_netcdf(
+    summaries: list[ConservationSummary],
+    time_coords: list[float],
+    output_path: pathlib.Path,
+    reference_date: str = &quot;1850-01-01&quot;,
+    *,
+    delivery_key: Optional[str] = None,
+    metadata_registry: Optional[dict[str, dict[str, Any]]] = None,
+) -&gt; WriteResult
+</pre></div>
+</div>
+<p>该写出器将守恒诊断摘要转换为 xarray 数据集，并将气候与预报（Climate and Forecast, CF）属性同步及文件落盘委托给 <code class="docutils literal notranslate"><span class="pre">DataWriter</span></code>，期间不附加时间边界变量。写出成功时返回 <code class="docutils literal notranslate"><span class="pre">WriteResult</span></code>，写出失败或输出校验未通过时抛出 <code class="docutils literal notranslate"><span class="pre">OSError</span></code>。<code class="docutils literal notranslate"><span class="pre">metadata_registry</span></code> 可替换默认的逐变量诊断元数据。<code class="docutils literal notranslate"><span class="pre">delivery_key</span></code> 作为全局属性 <code class="docutils literal notranslate"><span class="pre">relic_delivery_key</span></code> 持久化，确保使用相同交付键与配置重试写出时保留原始创建时间戳。<code class="docutils literal notranslate"><span class="pre">summaries</span></code> 与 <code class="docutils literal notranslate"><span class="pre">time_coords</span></code> 必须对应同一模拟步序列。</p>
+</section>
+<section id="dataio">
+<h2><code class="docutils literal notranslate"><span class="pre">DataIO</span></code><a class="headerlink" href="#dataio" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">relic.data.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataIO</span><span class="p">,</span> <span class="n">ReadConfig</span><span class="p">,</span> <span class="n">WriteConfig</span>
+
+<span class="n">io</span> <span class="o">=</span> <span class="n">DataIO</span><span class="p">(</span>
+    <span class="n">reader_config</span><span class="o">=</span><span class="n">ReadConfig</span><span class="p">(</span><span class="n">cf_validate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cf_standardize</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+    <span class="n">writer_config</span><span class="o">=</span><span class="n">WriteConfig</span><span class="p">(</span><span class="n">cf_sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">validate_output</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>DataIO(
+    reader_config: Optional[ReadConfig] = None,
+    writer_config: Optional[WriteConfig] = None,
+)
+</pre></div>
+</div>
+<section id="read-configuration">
+<h3>读取配置<a class="headerlink" href="#read-configuration" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p><code class="docutils literal notranslate"><span class="pre">ReadConfig</span></code>字段</p></th>
+<th class="head"><p>默认值</p></th>
+<th class="head"><p>含义</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">format</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">AUTO</span></code></p></td>
+<td><p>检测支持的源格式。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">chunks</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>xarray 分块映射选项</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">parallel</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+<td><p>启用支持的并行I/O行为。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">cache_size</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">128</span></code></p></td>
+<td><p>MB的读取器缓存大小</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">cf_validate</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+<td><p>使用 <code class="docutils literal notranslate"><span class="pre">CFConventions.validate_cf_compliance</span></code> 检查每个变量显式给出的 <code class="docutils literal notranslate"><span class="pre">standard_name</span></code> 和 <code class="docutils literal notranslate"><span class="pre">units</span></code>；该检查只在 <code class="docutils literal notranslate"><span class="pre">cf_standardize</span></code> 步骤内执行。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">cf_standardize</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+<td><p>运行显式元数据 CF 步骤。它不重命名变量、不推断属性，也不改变值或单位。启用 <code class="docutils literal notranslate"><span class="pre">cf_validate</span></code> 时，无效元数据将 <code class="docutils literal notranslate"><span class="pre">ReadResult.success</span></code> 和 <code class="docutils literal notranslate"><span class="pre">ReadResult.validation_passed</span></code> 设为 <code class="docutils literal notranslate"><span class="pre">False</span></code>；若同时设置 <code class="docutils literal notranslate"><span class="pre">strict_cf</span></code>，则抛出 <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>。该步骤始终添加一条警告，说明尚未评估数据集级 CF 合规性。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">strict_cf</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+<td><p>对元数据（CF 标准名称和单位）问题抛出异常；未启用时则记录问题，并将结果标为失败。其他所有失败（处理流水线、张量转换、写入、分块请求或文件关闭失败）在两种模式下都会抛出异常，不以原始或不完整数据代替结果。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">process_time</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+<td><p>处理时间坐标。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">time_bounds</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+<td><p>在支持的情况下计算缺失时间bounds。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">standard_calendar</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+<td><p>保留源日历。<code class="docutils literal notranslate"><span class="pre">True</span></code> 只接受 <code class="docutils literal notranslate"><span class="pre">gregorian</span></code>，其他日历都会报错，因为尚无跨日历转换。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">variables</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>变量包括；<code class="docutils literal notranslate"><span class="pre">None</span></code>表示全部。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">exclude_vars</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>需要排除的变量</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">standard_names_only</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+<td><p>仅返回具有 standard-name 支持的 variable。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">apply_unit_conversion</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+<td><p>将符合 CF 要求的变量转换为 <code class="docutils literal notranslate"><span class="pre">target_units</span></code>，或其 <code class="docutils literal notranslate"><span class="pre">standard_name</span></code> 的 CF 规范单位（见下文）。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">target_units</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>变量到目标单位的映射；每个单位都必须符合该变量 <code class="docutils literal notranslate"><span class="pre">standard_name</span></code> 的 CF 要求。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">file_path</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>读取器不读取此项；请把路径传给读取调用。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">validate_data</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+<td><p>运行数据验证。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fill_missing</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+<td><p>填充支持的缺失坐标数据。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">quality_flags</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+<td><p>接受但不使用；读取器不添加质量标志。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">to_torch</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+<td><p>返回张量映射以替代 xarray 数据集。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">torch_dtype</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">torch.float32</span></code></p></td>
+<td><p>Tensor 输出类型。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">torch_device</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;cpu&quot;</span></code></p></td>
+<td><p>Tensor输出设备。</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="unit-conversion-on-read">
+<h3>读取时的单位转换<a class="headerlink" href="#unit-conversion-on-read" title="Link to this heading"></a></h3>
+<p>启用 <code class="docutils literal notranslate"><span class="pre">apply_unit_conversion=True</span></code> 时，读取器转换同时具有 <code class="docutils literal notranslate"><span class="pre">units</span></code> 和 <code class="docutils literal notranslate"><span class="pre">standard_name</span></code> 属性的各个变量。给出 <code class="docutils literal notranslate"><span class="pre">target_units[name]</span></code> 时，以其为目标单位；否则使用 CF 表中该标准名称的规范单位。没有这些属性，或标准名称未定义规范单位的变量保持不变。源单位和目标单位都必须符合该标准名称的 CF 要求。</p>
+<p>数值仅通过共用的 <code class="docutils literal notranslate"><span class="pre">UnitConverter</span></code> 转换。存在显式转换规则时使用该规则；否则，通过 UDUNITS 转换量纲相同且仅相差比例因子的单位对，例如 <code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">m-2</span> <span class="pre">day-1</span></code> 到 <code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">m-2</span> <span class="pre">s-1</span></code>。没有规则的仿射单位对（如 <code class="docutils literal notranslate"><span class="pre">degF</span></code> 到 <code class="docutils literal notranslate"><span class="pre">K</span></code>）以及不同量纲的单位对仍需显式规则。读取器传入空的 <code class="docutils literal notranslate"><span class="pre">ConversionContext</span></code>，不提供温度、压力或密度，因此需要这些量的转换会失败。</p>
+<p>转换后的变量保留 <code class="docutils literal notranslate"><span class="pre">standard_name</span></code> 及其他属性，获得新的 <code class="docutils literal notranslate"><span class="pre">units</span></code>，并在 <code class="docutils literal notranslate"><span class="pre">original_units</span></code> 中记录原单位；<code class="docutils literal notranslate"><span class="pre">ReadResult.warnings</span></code> 中会加入说明。单位不符合 CF 要求或无法转换的变量保留原值与原单位，同时读取结果标为失败：<code class="docutils literal notranslate"><span class="pre">ReadResult.success</span></code> 和 <code class="docutils literal notranslate"><span class="pre">ReadResult.validation_passed</span></code> 变为 <code class="docutils literal notranslate"><span class="pre">False</span></code>，原因加入 <code class="docutils literal notranslate"><span class="pre">warnings</span></code>。启用 <code class="docutils literal notranslate"><span class="pre">strict_cf=True</span></code> 时，读取改为抛出 <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>。<code class="docutils literal notranslate"><span class="pre">DataIO.read()</span></code> 仅返回数据，因此应检查 <code class="docutils literal notranslate"><span class="pre">DataIO.reader.read_dataset(...)</span></code> 或 <code class="docutils literal notranslate"><span class="pre">convert_format(...)</span></code> 返回的 <code class="docutils literal notranslate"><span class="pre">ReadResult</span></code>，或设置 <code class="docutils literal notranslate"><span class="pre">strict_cf=True</span></code>。</p>
+<p>需要上下文的模型状态转换从 <code class="docutils literal notranslate"><span class="pre">UnitConverter.get_conversion_context(state,</span> <span class="pre">*,</span> <span class="pre">layer_thickness_variable=None,</span> <span class="pre">layer_thickness=None,</span> <span class="pre">temperature=None,</span> <span class="pre">pressure=None)</span></code> 获取上下文。层厚（上下文字段 <code class="docutils literal notranslate"><span class="pre">soil_depth</span></code>，单位 m）只来自待转换变量声明的层厚状态变量（变量契约中的 <code class="docutils literal notranslate"><span class="pre">layer_thickness_variable</span></code>，由输运桥读取），逐点读取；也可通过显式 <code class="docutils literal notranslate"><span class="pre">layer_thickness</span></code> 提供。两者同时提供会抛出 <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>；指定变量不在 <code class="docutils literal notranslate"><span class="pre">state</span></code> 中也会抛出该异常。不会查找 <code class="docutils literal notranslate"><span class="pre">soil_depth</span></code> 或 <code class="docutils literal notranslate"><span class="pre">root_zone_depth</span></code> 等固定状态名。温度只从 <code class="docutils literal notranslate"><span class="pre">air_temperature</span></code> 读取，压力只从 <code class="docutils literal notranslate"><span class="pre">atmospheric_pressure</span></code> 读取；别名 <code class="docutils literal notranslate"><span class="pre">air_pressure</span></code> 由上游 ContractRegistry 解析，不尝试其他名称。需要其他温度或压力（例如叶温或土温）的转换通过显式 <code class="docutils literal notranslate"><span class="pre">temperature</span></code> [K] 或 <code class="docutils literal notranslate"><span class="pre">pressure</span></code> [Pa] 参数接收，其优先级高于状态值。存在 <code class="docutils literal notranslate"><span class="pre">state</span></code> 时，从中读取 <code class="docutils literal notranslate"><span class="pre">water_density</span></code>。状态字段保持为张量。不填入默认值：某字段仍为 <code class="docutils literal notranslate"><span class="pre">None</span></code> 时，需要它的转换会报错。</p>
+</section>
+<section id="write-configuration">
+<h3>编写配置<a class="headerlink" href="#write-configuration" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p><code class="docutils literal notranslate"><span class="pre">WriteConfig</span></code>字段</p></th>
+<th class="head"><p>默认值</p></th>
+<th class="head"><p>含义</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">format</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">NETCDF4</span></code></p></td>
+<td><p>输出格式。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">compression</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ZSTD</span></code></p></td>
+<td><p>压缩方法。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">compression_level</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">4</span></code></p></td>
+<td><p>1 到 9 的压缩级别。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">chunks</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>显式切.chunk映射</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">auto_chunk</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+<td><p>选择块自动</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">chunk_time_first</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+<td><p>以时间为导向的片段优先</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">cf_sync</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+<td><p>同步CF属性</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">strict_cf</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+<td><p>对元数据（CF 标准名称和单位）问题抛出异常；未启用时则记录问题，并将结果标为失败。其他所有失败（处理流水线、张量转换、写入、分块请求或文件关闭失败）在两种模式下都会抛出异常，不以原始或不完整数据代替结果。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">add_bounds</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+<td><p>在支持时添加坐标bounds。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">update_history</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+<td><p>更新数据集历史属性</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">title</span></code>， <code class="docutils literal notranslate"><span class="pre">institution</span></code>， <code class="docutils literal notranslate"><span class="pre">source</span></code>， <code class="docutils literal notranslate"><span class="pre">comment</span></code>， <code class="docutils literal notranslate"><span class="pre">references</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>可选全局metadata.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">parallel</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+<td><p>顺序写入；<code class="docutils literal notranslate"><span class="pre">True</span></code> 会抛出 <code class="docutils literal notranslate"><span class="pre">NotImplementedError</span></code>。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">validate_output</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+<td><p>验证输出内容。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">create_dirs</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+<td><p>创建缺失的父目录.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="read-write-and-convert">
+<h2>读写转换<a class="headerlink" href="#read-write-and-convert" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">xarray</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">xr</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">relic.data.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataIO</span><span class="p">,</span> <span class="n">ReadConfig</span><span class="p">,</span> <span class="n">WriteConfig</span>
+
+<span class="n">io</span> <span class="o">=</span> <span class="n">DataIO</span><span class="p">(</span>
+    <span class="n">reader_config</span><span class="o">=</span><span class="n">ReadConfig</span><span class="p">(</span><span class="n">cf_validate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cf_standardize</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+    <span class="n">writer_config</span><span class="o">=</span><span class="n">WriteConfig</span><span class="p">(</span><span class="n">cf_sync</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">validate_output</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">source_dataset</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;air_temperature&quot;</span><span class="p">:</span> <span class="p">(</span>
+            <span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">,),</span>
+            <span class="p">[</span><span class="mf">288.15</span><span class="p">,</span> <span class="mf">289.15</span><span class="p">],</span>
+            <span class="p">{</span><span class="s2">&quot;standard_name&quot;</span><span class="p">:</span> <span class="s2">&quot;air_temperature&quot;</span><span class="p">,</span> <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;K&quot;</span><span class="p">},</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;precipitation_flux&quot;</span><span class="p">:</span> <span class="p">(</span>
+            <span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">,),</span>
+            <span class="p">[</span><span class="mf">1.0e-5</span><span class="p">,</span> <span class="mf">2.0e-5</span><span class="p">],</span>
+            <span class="p">{</span><span class="s2">&quot;standard_name&quot;</span><span class="p">:</span> <span class="s2">&quot;precipitation_flux&quot;</span><span class="p">,</span> <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;kg m-2 s-1&quot;</span><span class="p">},</span>
+        <span class="p">),</span>
+    <span class="p">},</span>
+    <span class="n">coords</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="p">(</span>
+            <span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">,),</span>
+            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">3600.0</span><span class="p">],</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;standard_name&quot;</span><span class="p">:</span> <span class="s2">&quot;time&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;seconds since 2000-01-01 00:00:00&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;calendar&quot;</span><span class="p">:</span> <span class="s2">&quot;noleap&quot;</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">)</span>
+    <span class="p">},</span>
+<span class="p">)</span>
+
+<span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">tmpdir</span><span class="p">:</span>
+    <span class="n">forcing_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;forcing.nc&quot;</span>
+    <span class="n">io</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">source_dataset</span><span class="p">,</span> <span class="n">forcing_path</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;netcdf4&quot;</span><span class="p">)</span>
+
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">read</span><span class="p">(</span>
+        <span class="n">forcing_path</span><span class="p">,</span>
+        <span class="n">variables</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;air_temperature&quot;</span><span class="p">,</span> <span class="s2">&quot;precipitation_flux&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
+    <span class="n">tensors</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">read</span><span class="p">(</span>
+        <span class="n">forcing_path</span><span class="p">,</span>
+        <span class="n">variables</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;air_temperature&quot;</span><span class="p">],</span>
+        <span class="n">to_torch</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">torch_device</span><span class="o">=</span><span class="s2">&quot;cpu&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">write_result</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+        <span class="n">dataset</span><span class="p">,</span>
+        <span class="n">Path</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;forcing_standardized.nc&quot;</span><span class="p">,</span>
+        <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;netcdf4&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">read_result</span><span class="p">,</span> <span class="n">conversion_result</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">convert_format</span><span class="p">(</span>
+        <span class="n">forcing_path</span><span class="p">,</span>
+        <span class="n">Path</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;forcing.zarr&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;zarr&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">tensors</span><span class="p">),</span> <span class="n">write_result</span><span class="o">.</span><span class="n">validation_passed</span><span class="p">,</span> <span class="n">conversion_result</span><span class="o">.</span><span class="n">validation_passed</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>方法</p></th>
+<th class="head"><p>返回值</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">read(source,</span> <span class="pre">**kwargs)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">xarray.Dataset</span></code> 或 <code class="docutils literal notranslate"><span class="pre">dict[str,</span> <span class="pre">Tensor]</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">read_variables(source,</span> <span class="pre">variables,</span> <span class="pre">**kwargs)</span></code></p></td>
+<td><p>变量映射</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">read_tensors(source,</span> <span class="pre">variables,</span> <span class="pre">device=&quot;cpu&quot;,</span> <span class="pre">dtype=torch.float32)</span></code></p></td>
+<td><p>Tensor 映射</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">write(data,</span> <span class="pre">output_path,</span> <span class="pre">**kwargs)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">WriteResult</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">write_tensors(tensors,</span> <span class="pre">output_path,</span> <span class="pre">coordinates=None,</span> <span class="pre">metadata=None,</span> <span class="pre">**kwargs)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">WriteResult</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">convert_format(source_path,</span> <span class="pre">target_path,</span> <span class="pre">target_format,</span> <span class="pre">**kwargs)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(ReadResult,</span> <span class="pre">WriteResult)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">get_file_info(file_path)</span></code></p></td>
+<td><p>文件元数据映射；无法读取元数据时直接报错，不返回含 <code class="docutils literal notranslate"><span class="pre">error</span></code> 条目的映射。</p></td>
+</tr>
+</tbody>
+</table>
+<p><code class="docutils literal notranslate"><span class="pre">ReadResult</span></code> 保留已加载的 data、metadata、CF 与 validation flag、warning、timing、file size、time-processing status 以及 standardized-variable mapping。<code class="docutils literal notranslate"><span class="pre">WriteResult</span></code> 报告 output path、size、timing、compression ratio、CF 与 validation flag、warning、variable、coordinate 以及计算得到的 bound。</p>
+<p>请按其声明范围解读每个 CF 结果。现有的 <code class="docutils literal notranslate"><span class="pre">CFConventions.validate_cf_compliance(...)</span></code> 检查单个变量的官方 standard name 与兼容单位；它报告的是 <code class="docutils literal notranslate"><span class="pre">single_variable_standard_name_and_units</span></code>，而非整个数据集的合规。<code class="docutils literal notranslate"><span class="pre">CFConventions.validate_dataset_conformance(...)</span></code> 评估 <code class="docutils literal notranslate"><span class="pre">declared_dataset_scope</span></code>：Conventions 声明、单位、官方名称、axis 取值、时间单位/calendar、coordinate 与 bounds 的引用/shape、缺失值一致性，以及 cell-method 语法/dimension。Grid mapping、离散采样几何、gathering 压缩、外部变量以及 group 层级都不在该范围内。Name Table v94 成员身份本身不能授权数据集的 Conventions 声明。</p>
+<p>外部的 <code class="docutils literal notranslate"><span class="pre">IOHandler.read(...)</span></code> 通过 <code class="docutils literal notranslate"><span class="pre">IOResult.cf_validation_scope</span></code>、<code class="docutils literal notranslate"><span class="pre">dataset_conformance_checked</span></code> 和 <code class="docutils literal notranslate"><span class="pre">cf_conformance_issues</span></code> 报告其数据集检查；<code class="docutils literal notranslate"><span class="pre">cf_compliant=True</span></code> 要求所声明的检查实际运行且未发现问题。其他 result 类型和未经检查的路径不得仅因一个名称相似的布尔字段而继承该声明。</p>
+<p>支持的读取格式包括NetCDF4，NetCDF3，HDF5，Zarr和CSV。支持的写入格式包括NetCDF4，NetCDF3，Zarr和CSV。缺失文件引发<code class="docutils literal notranslate"><span class="pre">FileNotFoundError</span></code>；不支持的数据或格式引发<code class="docutils literal notranslate"><span class="pre">ValueError</span></code>；严格的CF违规引发<code class="docutils literal notranslate"><span class="pre">ValueError</span></code>。</p>
+<p>对于转换覆盖，将只读选项前缀为<code class="docutils literal notranslate"><span class="pre">read_</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">xarray</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">xr</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">relic.data.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataIO</span>
+
+<span class="n">io</span> <span class="o">=</span> <span class="n">DataIO</span><span class="p">()</span>
+<span class="n">sample</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;air_temperature&quot;</span><span class="p">:</span> <span class="p">(</span>
+            <span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">,),</span>
+            <span class="p">[</span><span class="mf">288.15</span><span class="p">,</span> <span class="mf">289.15</span><span class="p">],</span>
+            <span class="p">{</span><span class="s2">&quot;standard_name&quot;</span><span class="p">:</span> <span class="s2">&quot;air_temperature&quot;</span><span class="p">,</span> <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;K&quot;</span><span class="p">},</span>
+        <span class="p">)</span>
+    <span class="p">},</span>
+    <span class="n">coords</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="p">(</span>
+            <span class="p">(</span><span class="s2">&quot;time&quot;</span><span class="p">,),</span>
+            <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">3600.0</span><span class="p">],</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;standard_name&quot;</span><span class="p">:</span> <span class="s2">&quot;time&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;seconds since 2000-01-01 00:00:00&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;calendar&quot;</span><span class="p">:</span> <span class="s2">&quot;noleap&quot;</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">)</span>
+    <span class="p">},</span>
+<span class="p">)</span>
+
+<span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">tmpdir</span><span class="p">:</span>
+    <span class="n">src</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;forcing.nc&quot;</span>
+    <span class="n">dst</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;forcing_subset.nc&quot;</span>
+    <span class="n">io</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;netcdf4&quot;</span><span class="p">)</span>
+    <span class="n">read_res</span><span class="p">,</span> <span class="n">conv_res</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">convert_format</span><span class="p">(</span>
+        <span class="n">src</span><span class="p">,</span>
+        <span class="n">dst</span><span class="p">,</span>
+        <span class="s2">&quot;netcdf4&quot;</span><span class="p">,</span>
+        <span class="n">read_variables</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;air_temperature&quot;</span><span class="p">],</span>
+        <span class="n">compression</span><span class="o">=</span><span class="s2">&quot;zstd&quot;</span><span class="p">,</span>
+        <span class="n">compression_level</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">read_res</span><span class="o">.</span><span class="n">success</span><span class="p">,</span> <span class="n">conv_res</span><span class="o">.</span><span class="n">validation_passed</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="experimental-data-quality-and-streaming-gates">
+<h2>实验性数据质量与流式处理门禁<a class="headerlink" href="#experimental-data-quality-and-streaming-gates" title="Link to this heading"></a></h2>
+<p>两个实验性数据模块受导入阶段检查的显式环境变量门禁保护：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">relic.data.quality</span></code>（包含 <code class="docutils literal notranslate"><span class="pre">QualityValidator</span></code>、<code class="docutils literal notranslate"><span class="pre">RangeRule</span></code>、<code class="docutils literal notranslate"><span class="pre">ValidationIssue</span></code>）要求在导入前设置 <code class="docutils literal notranslate"><span class="pre">RELIC_EXPERIMENTAL_DATA_QUALITY=1</span></code>，未设置时 <code class="docutils literal notranslate"><span class="pre">require_experimental_feature</span></code> 直接抛出 <code class="docutils literal notranslate"><span class="pre">RuntimeError</span></code>。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">relic.data.streaming</span></code> 要求在导入前设置 <code class="docutils literal notranslate"><span class="pre">RELIC_EXPERIMENTAL_STREAMING=1</span></code>，未设置时访问其导出符号会抛出 <code class="docutils literal notranslate"><span class="pre">StreamingDisabledError</span></code>（或 <code class="docutils literal notranslate"><span class="pre">RuntimeError</span></code>）。</p></li>
+</ul>
+<section id="streaming-windows">
+<h3>流式窗口<a class="headerlink" href="#streaming-windows" title="Link to this heading"></a></h3>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>StreamWindow(
+    size: timedelta,
+    step: Optional[timedelta] = None,
+    aggregation_method: str = &quot;mean&quot;,
+    quality_checks: bool = True,
+)
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>字段</p></th>
+<th class="head"><p>含义</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">size</span></code></p></td>
+<td><p>窗口长度；最新记录至少位于窗口起点之后 <code class="docutils literal notranslate"><span class="pre">size</span></code> 时，窗口才完整。归约输出的时间戳位于窗口中心。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">step</span></code></p></td>
+<td><p>窗口起点的推进量；<code class="docutils literal notranslate"><span class="pre">None</span></code> 使用 <code class="docutils literal notranslate"><span class="pre">size</span></code>。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">aggregation_method</span></code></p></td>
+<td><p>时间归约方式：<code class="docutils literal notranslate"><span class="pre">mean</span></code>、<code class="docutils literal notranslate"><span class="pre">sum</span></code>、<code class="docutils literal notranslate"><span class="pre">min</span></code> 或 <code class="docutils literal notranslate"><span class="pre">max</span></code>，以 <code class="docutils literal notranslate"><span class="pre">cell_methods</span> <span class="pre">=</span> <span class="pre">&quot;time:</span> <span class="pre">&lt;method&gt;&quot;</span></code> 指定。任何其他值（包括 <code class="docutils literal notranslate"><span class="pre">&quot;MEAN&quot;</span></code>）都会在构建窗口时引发 <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">quality_checks</span></code></p></td>
+<td><p>对每个窗口执行质量控制。</p></td>
+</tr>
+</tbody>
+</table>
+<p>窗口没有覆盖率或缺口字段；传入 <code class="docutils literal notranslate"><span class="pre">min_data_fraction</span></code> 或 <code class="docutils literal notranslate"><span class="pre">max_gap_duration</span></code> 会抛出 <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>。覆盖率与缺口限制来自质量控制参数 <code class="docutils literal notranslate"><span class="pre">coupling.scales.temporal.coverage_threshold</span></code> 和 <code class="docutils literal notranslate"><span class="pre">coupling.scales.temporal.quality_control.*</span></code>。</p>
+<p>启用 <code class="docutils literal notranslate"><span class="pre">quality_checks=True</span></code> 时，在归约前使用 <code class="docutils literal notranslate"><span class="pre">QualityController.validate_for_operation(series,</span> <span class="pre">time_coord,</span> <span class="pre">&quot;aggregation&quot;)</span></code> 检查每个变量的窗口时间序列。有效比例低于覆盖率阈值，或质量等级低于 <code class="docutils literal notranslate"><span class="pre">acceptable</span></code> 时，该序列失败；归约后的变量会获得属性 <code class="docutils literal notranslate"><span class="pre">quality_flags</span> <span class="pre">=</span> <span class="pre">&quot;validation_failed&quot;</span></code>。没有时间维的变量获得 <code class="docutils literal notranslate"><span class="pre">&quot;not_assessed&quot;</span></code>。数值时间轴需要 CF 的 <code class="docutils literal notranslate"><span class="pre">units</span></code> 和 <code class="docutils literal notranslate"><span class="pre">calendar</span></code> 属性；窗口数据没有 <code class="docutils literal notranslate"><span class="pre">time</span></code> 维时会报错。错误传递给流消费者，不会仅记录警告后丢弃失败窗口。</p>
+</section>
+</section>
+<section id="cf-attributes-after-scaling">
+<h2>尺度转换后的 CF 属性<a class="headerlink" href="#cf-attributes-after-scaling" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">relic.data.standards.cf_conventions</span></code> 中的 <code class="docutils literal notranslate"><span class="pre">CFAttributeSynchronizer</span></code> 在处理步骤中传递显式 CF 元数据。它不改变数据张量或转换其单位，也不推断单位、变量角色、网格或坐标。每个 <code class="docutils literal notranslate"><span class="pre">sync_after_*</span></code> 方法都通过 <code class="docutils literal notranslate"><span class="pre">CFConventions.sync_variable_attributes</span></code> 传递数据与元数据；后者从数据导出两个元数据值：<code class="docutils literal notranslate"><span class="pre">shape</span></code>（<code class="docutils literal notranslate"><span class="pre">list(data.shape)</span></code>），以及非空数据的 <code class="docutils literal notranslate"><span class="pre">actual_range</span></code>（<code class="docutils literal notranslate"><span class="pre">[float(data.min()),</span> <span class="pre">float(data.max())]</span></code>）。数据含 NaN 时，范围为 <code class="docutils literal notranslate"><span class="pre">[nan,</span> <span class="pre">nan]</span></code>。空数据不写入 <code class="docutils literal notranslate"><span class="pre">actual_range</span></code>，因此保留输入元数据中已有的值。下表的方法专属属性写在这两个字段之上。</p>
+<p><code class="docutils literal notranslate"><span class="pre">sync_variable_attributes</span></code> 首先检查输入元数据的标准名称和单位；即使 <code class="docutils literal notranslate"><span class="pre">strict_mode</span></code> 为 <code class="docutils literal notranslate"><span class="pre">False</span></code>，有问题时也会抛出 <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>。唯一例外是所有问题都属于该标准名称的单位契约未定义。启用 <code class="docutils literal notranslate"><span class="pre">strict_mode=True</span></code> 时，会再次检查更新后的元数据；这一有限范围的 CF 检查发现问题时，抛出 <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>。</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>方法</p></th>
+<th class="head"><p>行为</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sync_after_aggregation(data,</span> <span class="pre">metadata,</span> <span class="pre">aggregation_method,</span> <span class="pre">dimension=&quot;time&quot;,</span> <span class="pre">*,</span> <span class="pre">source_label,</span> <span class="pre">target_label)</span></code></p></td>
+<td><p>设置 <code class="docutils literal notranslate"><span class="pre">&lt;dimension&gt;:</span> <span class="pre">&lt;method&gt;</span></code> 单元方法，并向 <code class="docutils literal notranslate"><span class="pre">history</span></code> 追加 <code class="docutils literal notranslate"><span class="pre">Aggregated</span> <span class="pre">&lt;dimension&gt;</span> <span class="pre">from</span> <span class="pre">&lt;source_label&gt;</span> <span class="pre">to</span> <span class="pre">&lt;target_label&gt;</span> <span class="pre">(&lt;dimension&gt;:</span> <span class="pre">&lt;method&gt;)</span></code>。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sync_after_disaggregation(data,</span> <span class="pre">metadata,</span> <span class="pre">disaggregation_method,</span> <span class="pre">dimension=&quot;area&quot;,</span> <span class="pre">*,</span> <span class="pre">source_label,</span> <span class="pre">target_label)</span></code></p></td>
+<td><p>行为相同，但采用 <code class="docutils literal notranslate"><span class="pre">Disaggregated</span> <span class="pre">...</span></code> 条目。允许的单元方法取决于 <code class="docutils literal notranslate"><span class="pre">dimension</span></code>：<code class="docutils literal notranslate"><span class="pre">area</span></code> 允许 <code class="docutils literal notranslate"><span class="pre">sum</span></code>（每个细单元保存自身总量）或 <code class="docutils literal notranslate"><span class="pre">mean</span></code>（每个细单元保存均值）；<code class="docutils literal notranslate"><span class="pre">time</span></code> 允许 <code class="docutils literal notranslate"><span class="pre">sum</span></code>、<code class="docutils literal notranslate"><span class="pre">mean</span></code> 或 <code class="docutils literal notranslate"><span class="pre">point</span></code>（瞬时状态）。其他方法和其他维度均抛出 <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>。</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sync_after_regridding(data,</span> <span class="pre">metadata,</span> <span class="pre">regrid_method,</span> <span class="pre">source_grid,</span> <span class="pre">target_grid)</span></code></p></td>
+<td><p>要求两个网格都包含 <code class="docutils literal notranslate"><span class="pre">shape</span></code>，并且 <code class="docutils literal notranslate"><span class="pre">target_grid</span></code> 中 <code class="docutils literal notranslate"><span class="pre">CF_REGRID_TARGET_GRID_FIELDS</span></code> 列出的各名称（<code class="docutils literal notranslate"><span class="pre">grid_mapping</span></code>、<code class="docutils literal notranslate"><span class="pre">lat_name</span></code>、<code class="docutils literal notranslate"><span class="pre">lon_name</span></code>）都对应非空字符串；写入 <code class="docutils literal notranslate"><span class="pre">grid_mapping</span></code> 和 <code class="docutils literal notranslate"><span class="pre">coordinates</span></code>，并向 <code class="docutils literal notranslate"><span class="pre">history</span></code> 追加重网格化记录。</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sync_after_temporal_aggregation(data,</span> <span class="pre">metadata,</span> <span class="pre">time_coord,</span> <span class="pre">operation,</span> <span class="pre">method,</span> <span class="pre">coverage_stats,</span> <span class="pre">*,</span> <span class="pre">source_label,</span> <span class="pre">target_label)</span></code></p></td>
+<td><p>使用 <code class="docutils literal notranslate"><span class="pre">dimension=&quot;time&quot;</span></code> 调用 <code class="docutils literal notranslate"><span class="pre">sync_after_aggregation</span></code>（<code class="docutils literal notranslate"><span class="pre">operation=&quot;aggregation&quot;</span></code>）或 <code class="docutils literal notranslate"><span class="pre">sync_after_disaggregation</span></code>（<code class="docutils literal notranslate"><span class="pre">operation=&quot;disaggregation&quot;</span></code>）。变量保留 <code class="docutils literal notranslate"><span class="pre">standard_name</span></code>、<code class="docutils literal notranslate"><span class="pre">units</span></code> 和 <code class="docutils literal notranslate"><span class="pre">long_name</span></code>，获得 <code class="docutils literal notranslate"><span class="pre">time:</span> <span class="pre">&lt;method&gt;</span></code> 单元方法，并增加历史条目 <code class="docutils literal notranslate"><span class="pre">Aggregated</span> <span class="pre">time</span> <span class="pre">from</span> <span class="pre">&lt;source_label&gt;</span> <span class="pre">to</span> <span class="pre">&lt;target_label&gt;</span> <span class="pre">(time:</span> <span class="pre">&lt;method&gt;)</span></code>（或 <code class="docutils literal notranslate"><span class="pre">Disaggregated</span> <span class="pre">time</span> <span class="pre">...</span></code>）。覆盖率字段来自必需的 <code class="docutils literal notranslate"><span class="pre">coverage_stats</span></code>（<code class="docutils literal notranslate"><span class="pre">coverage_fraction</span></code>，或 <code class="docutils literal notranslate"><span class="pre">valid_points</span></code> 和 <code class="docutils literal notranslate"><span class="pre">total_points</span></code>）：<code class="docutils literal notranslate"><span class="pre">coverage_fraction</span></code>、从 <code class="docutils literal notranslate"><span class="pre">coupling.scales.temporal.coverage_threshold</span></code> 读取的 <code class="docutils literal notranslate"><span class="pre">coverage_threshold</span></code>，以及 <code class="docutils literal notranslate"><span class="pre">quality_state</span></code>（<code class="docutils literal notranslate"><span class="pre">good_data</span></code> 或 <code class="docutils literal notranslate"><span class="pre">insufficient_coverage</span></code>）。结果时间坐标的属性返回在 <code class="docutils literal notranslate"><span class="pre">time_coordinate</span></code> 中，仅当坐标带有边界时才包含 <code class="docutils literal notranslate"><span class="pre">bounds</span></code>；严格模式下仅对这些时间坐标属性执行时间检查。</p></td>
+</tr>
+</tbody>
+</table>
+<p>源标签和目标标签必须提供，且为非空尺度标签，例如 <code class="docutils literal notranslate"><span class="pre">&quot;hourly&quot;</span></code> 和 <code class="docutils literal notranslate"><span class="pre">&quot;daily&quot;</span></code>；标签缺失或为空会报错。</p>
+</section>
+<section id="data-i-o-command-checks">
+<h2>数据I/O命令检查<a class="headerlink" href="#data-i-o-command-checks" title="Link to this heading"></a></h2>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">-m</span> <span class="n">relic</span><span class="p">.</span><span class="n">interfaces</span><span class="p">.</span><span class="n">cli</span><span class="p">.</span><span class="n">main</span> <span class="n">data</span> <span class="n">io</span> <span class="n">check</span>
+<span class="n">python</span> <span class="n">-m</span> <span class="n">relic</span><span class="p">.</span><span class="n">interfaces</span><span class="p">.</span><span class="n">cli</span><span class="p">.</span><span class="n">main</span> <span class="n">data</span> <span class="n">io</span> <span class="n">read</span> <span class="n">data</span><span class="p">\</span><span class="n">forcing</span><span class="p">.</span><span class="n">nc</span>
+<span class="n">python</span> <span class="n">-m</span> <span class="n">relic</span><span class="p">.</span><span class="n">interfaces</span><span class="p">.</span><span class="n">cli</span><span class="p">.</span><span class="n">main</span> <span class="n">data</span> <span class="n">io</span> <span class="n">convert</span> <span class="n">data</span><span class="p">\</span><span class="n">forcing</span><span class="p">.</span><span class="n">nc</span> <span class="n">output</span><span class="p">\</span><span class="n">forcing</span><span class="p">.</span><span class="n">zarr</span> <span class="p">-</span><span class="n">-target-format</span> <span class="n">zarr</span>
+</pre></div>
+</div>
+<p>在选择子命令前使用<code class="docutils literal notranslate"><span class="pre">--help</span></code>因为特定格式的参数是命令特定的。</p>
+<p><code class="docutils literal notranslate"><span class="pre">data</span> <span class="pre">io</span> <span class="pre">check</span></code> 执行 I/O 健康检查。I/O 性能检查中的读取或写入基准失败时，结果为错误（内存基准失败会将健康结果降为警告）；实验性 <code class="docutils literal notranslate"><span class="pre">data</span> <span class="pre">stream</span> <span class="pre">check</span></code> 的流式吞吐检查在基准抛出异常时结果为错误。</p>
+</section>
+<section id="related-documentation">
+<h2>相关文档<a class="headerlink" href="#related-documentation" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="../architecture.html"><span class="std std-doc">架构</span></a></p></li>
+<li><p><a class="reference internal" href="state_functors_and_simulation.html"><span class="std std-doc">State、Functors 与模拟</span></a></p></li>
+<li><p><a class="reference internal" href="graph_validation_and_execution.html"><span class="std std-doc">Graph 验证与执行</span></a></p></li>
+<li><p><a class="reference internal" href="../orchestration.html"><span class="std std-doc">Orchestration（编排）</span></a></p></li>
+<li><p><a class="reference internal" href="../science/index.html"><span class="std std-doc">Science 索引</span></a></p></li>
+<li><p><a class="reference internal" href="../theory/index.html"><span class="std std-doc">Theory 索引</span></a></p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="graph_validation_and_execution.html" class="btn btn-neutral float-left" title="Graph 验证与执行" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="coupling_workflows.html" class="btn btn-neutral float-right" title="耦合工作流" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

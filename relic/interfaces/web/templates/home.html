@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} - RELIC{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>{{ title }}</h1>
+    <p class="page-description">
+        Welcome to the RELIC biogeochemical modeling system web interface.
+        Monitor system health, manage data, and access computational resources.
+    </p>
+</div>
+
+<div class="status-overview">
+    <div class="status-card">
+        <h2 class="status-title">System Status</h2>
+        <div class="status-indicator status-{{ health_status|lower }}">
+            <span class="status-dot"></span>
+            <span class="status-text">{{ health_status|title }}</span>
+        </div>
+    </div>
+</div>
+
+<div class="dashboard-grid">
+    <div class="dashboard-card">
+        <div class="card-header">
+            <h3>System Health</h3>
+            <a href="/health" class="card-link">View Details</a>
+        </div>
+        <div class="card-content">
+            <p>Monitor the health and performance of all RELIC subsystems.</p>
+            <div class="subsystem-summary">
+                {% for subsystem, status in subsystems.items() %}
+                <div class="subsystem-item">
+                    <span class="subsystem-name">{{ subsystem|title }}</span>
+                    <span class="subsystem-status status-{{ status.status|lower if status.status else 'unknown' }}">
+                        {{ status.status|title if status.status else 'Unknown' }}
+                    </span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-card">
+        <div class="card-header">
+            <h3>Data Management</h3>
+            <a href="/data" class="card-link">Manage Files</a>
+        </div>
+        <div class="card-content">
+            <p>Browse and convert data with bounded CF variable metadata checks.</p>
+            <div class="feature-list">
+                <div class="feature-item">Data file inspection</div>
+                <div class="feature-item">Format conversion</div>
+                <div class="feature-item">Quality validation</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-card">
+        <div class="card-header">
+            <h3>Computational Resources</h3>
+            <a href="/compute" class="card-link">View Performance</a>
+        </div>
+        <div class="card-content">
+            <p>Monitor computational performance and run benchmarks.</p>
+            <div class="feature-list">
+                <div class="feature-item">GPU acceleration status</div>
+                <div class="feature-item">Performance benchmarking</div>
+                <div class="feature-item">Distributed computing</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-card">
+        <div class="card-header">
+            <h3>Configuration</h3>
+            <a href="/config" class="card-link">View Config</a>
+        </div>
+        <div class="card-content">
+            <p>View and validate system configuration settings.</p>
+            <div class="feature-list">
+                <div class="feature-item">Current configuration</div>
+                <div class="feature-item">Validation status</div>
+                {% if experimental_enabled %}
+                <div class="feature-item">Advanced settings</div>
+                {% else %}
+                <div class="feature-item disabled">Advanced settings (experimental)</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="quick-actions">
+    <h2>Quick Actions</h2>
+    <div class="action-buttons">
+        <button class="btn btn-primary" onclick="refreshStatus()">Refresh Status</button>
+        <button class="btn btn-secondary" onclick="window.open('/api/docs', '_blank')">API Documentation</button>
+        <a href="/health" class="btn btn-secondary">Full Health Check</a>
+        {% if experimental_enabled %}
+        <button class="btn btn-accent" onclick="runBenchmark()">Run Benchmark</button>
+        {% endif %}
+    </div>
+</div>
+
+{% if not experimental_enabled %}
+<div class="info-banner">
+    <h3>Enable Experimental Features</h3>
+    <p>
+        Set <code>RELIC_EXPERIMENTAL_WEB=1</code> to enable advanced web features including
+        interactive data visualization, real-time monitoring, and enhanced configuration management.
+    </p>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+async function refreshStatus() {
+    const button = event.target;
+    const originalText = button.textContent;
+    button.textContent = 'Refreshing...';
+    button.disabled = true;
+    
+    try {
+        const response = await fetch('/status');
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            // Update status indicator
+            const statusIndicator = document.querySelector('.status-indicator');
+            const newStatus = data.data.overall_status.toLowerCase();
+            statusIndicator.className = `status-indicator status-${newStatus}`;
+            statusIndicator.querySelector('.status-text').textContent = data.data.overall_status;
+            
+            // Show success message
+            showMessage('Status refreshed successfully', 'success');
+        } else {
+            showMessage('Failed to refresh status', 'error');
+        }
+    } catch (error) {
+        showMessage('Error refreshing status: ' + error.message, 'error');
+    } finally {
+        button.textContent = originalText;
+        button.disabled = false;
+    }
+}
+
+async function runBenchmark() {
+    const button = event.target;
+    const originalText = button.textContent;
+    button.textContent = 'Running...';
+    button.disabled = true;
+    
+    try {
+        const response = await fetch('/api/health/benchmark', { method: 'POST' });
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            showMessage('Benchmark completed successfully', 'success');
+            // Could show results in a modal or redirect to results page
+        } else {
+            showMessage('Benchmark failed: ' + data.message, 'error');
+        }
+    } catch (error) {
+        showMessage('Error running benchmark: ' + error.message, 'error');
+    } finally {
+        button.textContent = originalText;
+        button.disabled = false;
+    }
+}
+
+function showMessage(message, type) {
+    // Simple message display - could be enhanced with proper notifications
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message message-${type}`;
+    messageDiv.textContent = message;
+    messageDiv.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 12px 24px;
+        border-radius: 4px;
+        color: white;
+        background-color: ${type === 'success' ? '#28a745' : '#dc3545'};
+        z-index: 1000;
+    `;
+    
+    document.body.appendChild(messageDiv);
+    
+    setTimeout(() => {
+        messageDiv.remove();
+    }, 3000);
+}
+</script>
+{% endblock %}

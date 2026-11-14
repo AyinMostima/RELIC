@@ -1,0 +1,45 @@
+variable: available_phosphorus
+title: "Available Phosphorus"
+kind: state
+dimension:
+  udunits: "g P m-2"
+  cf_standard_name: null
+owner: null
+aliases: []
+incrementable: true
+accumulates: phosphorus.total
+numerics:
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments:
+    - name: "fertilization_management"
+      module: "relic.scientific.anthroposphere.management.fertilization"
+      provides:
+        - "available_phosphorus"
+      unit: "g P m-2"
+    - name: "root_nutrient_uptake"
+      module: "relic.scientific.pedosphere.nutrient_cycling.root_nutrient_uptake"
+      provides:
+        - "available_phosphorus"
+      unit: "g P m-2"
+  tendencies: []
+flux_contract:
+  allowed_in:
+    - "fertilization_management"
+  allowed_out:
+    - "root_nutrient_uptake"
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/anthroposphere/management/fertilization.py"
+  runtime_role: "additive_available_phosphorus_state_ledger"
+  runtime_writer: null
+  runtime_writers:
+    - "fertilization_management"
+    - "root_nutrient_uptake"

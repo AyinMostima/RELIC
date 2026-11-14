@@ -1,0 +1,133 @@
+{
+  "certificate_version": "1.0",
+  "process_id": "relic.scientific.hydrosphere.soil_moisture.retention.SoilWaterRetention",
+  "module_name": "SoilWaterRetention",
+  "canonical_role": "observation",
+  "iphs_level": 1,
+  "iphs_level_evidence": {
+    "classification": "IPHS-compatible diagnostic or observation certificate",
+    "compatible_basis": "Read-only observation or diagnostic contract with declared interface and no state ownership"
+  },
+  "theory_document": "docs\\source\\theory\\hydrosphere_retention.md",
+  "theory_document_status": "updated",
+  "legacy_formula": "Se = (theta - theta_r) / (theta_s - theta_r); h = -(Se^(-1/m) - 1)^(1/n) / alpha, m = 1 - 1/n; psi = rho_w g h",
+  "literature_formula": "Se = (theta - theta_r) / (theta_s - theta_r); h = -(Se^(-1/m) - 1)^(1/n) / alpha, m = 1 - 1/n; psi = rho_w g h",
+  "iphs_formula": "y_h = O_h x_h through the declared observation operator",
+  "legacy_expression": "Se = (theta - theta_r) / (theta_s - theta_r); h = -(Se^(-1/m) - 1)^(1/n) / alpha, m = 1 - 1/n; psi = rho_w g h",
+  "iphs_expression": "y_h = O_h x_h through the declared observation operator",
+  "input_variables": [
+    "soil_moisture"
+  ],
+  "output_variables": [
+    "soil_water_potential"
+  ],
+  "parameter_keys": [
+    "hydrosphere.soil_moisture.alpha_vg",
+    "hydrosphere.soil_moisture.n_vg",
+    "hydrosphere.soil_moisture.residual_water_content",
+    "hydrosphere.soil_moisture.porosity"
+  ],
+  "composition_ports": [
+    "soil_moisture"
+  ],
+  "references": [
+    "van Genuchten, M.T. (1980). Soil Science Society of America Journal, 44, 892-898",
+    "Hillel, D. (1998). Environmental Soil Physics. Academic Press"
+  ],
+  "baseline_tests": [
+    "test\\scientific\\hydrosphere\\soil_moisture\\soil_water_retention.test.py"
+  ],
+  "validation_tests": [
+    "test\\scientific\\hydrosphere\\soil_moisture\\soil_water_retention.test.py",
+    "test\\orchestration\\process_publication_compile.test.py",
+    "test\\orchestration\\soil_water_stress_bvoc_composition.test.py"
+  ],
+  "state_map": {
+    "soil_moisture": "required external or upstream StateManager port in m3 m-3"
+  },
+  "parameter_map": {
+    "hydrosphere.soil_moisture.alpha_vg": "Van Genuchten alpha parameter [m-1]",
+    "hydrosphere.soil_moisture.n_vg": "Van Genuchten n parameter [dimensionless]",
+    "hydrosphere.soil_moisture.residual_water_content": "Residual water content [m3 m-3]",
+    "hydrosphere.soil_moisture.porosity": "Total soil porosity (saturated water content) [m3 m-3]"
+  },
+  "operator_map": {
+    "O_h": "declared observation map",
+    "H_h": "diagnostic metric or identity Hodge map"
+  },
+  "unit_map": {
+    "soil_moisture": "m3 m-3",
+    "soil_water_potential": "MPa"
+  },
+  "input_output_map": {
+    "soil_moisture": "canonical required input to the retention observation map",
+    "soil_water_potential": "canonical non-positive output from the retention observation map"
+  },
+  "interface_map": {
+    "forward_signature": "forward(self, state, time, dt)",
+    "bridge_class": "PhysicalFieldFunctor",
+    "abstraction_contract": "PhysicalField",
+    "state_write_mode": "UpdateItem REPLACE with per_timestep false",
+    "legacy_inputs": [
+      "soil_moisture"
+    ],
+    "iphs_inputs": [
+      "soil_moisture"
+    ],
+    "legacy_outputs": [
+      "soil_water_potential"
+    ],
+    "iphs_outputs": [
+      "soil_water_potential"
+    ]
+  },
+  "runtime_replacement_map": {
+    "runtime_uses_iphs": false,
+    "legacy_removed": false,
+    "replacement_entrypoint": "forward",
+    "preserved_numerics": "Existing ParameterManager-backed calculations define canonical IPHS operator coefficients, rates, ports, or observations.",
+    "no_legacy_mode": "No selectable legacy runtime branch is exposed for Phase 8 completion."
+  },
+  "state_advancement_map": {
+    "potential_basis": "soil_moisture observation input in m3 m-3",
+    "effort_variable": "not applicable to this empirical level-1 observation",
+    "state_advancer": "y_h = O_h x_h through the declared observation operator",
+    "runtime_usage": "SoilWaterRetention.forward evaluates the shared van Genuchten pressure head once and emits soil_water_potential without advancing water state."
+  },
+  "parameter_management_map": {
+    "hydrosphere.soil_moisture.alpha_vg": {
+      "source": "ParameterManager YAML"
+    },
+    "hydrosphere.soil_moisture.n_vg": {
+      "source": "ParameterManager YAML"
+    },
+    "hydrosphere.soil_moisture.residual_water_content": {
+      "source": "ParameterManager YAML"
+    },
+    "hydrosphere.soil_moisture.porosity": {
+      "source": "ParameterManager YAML"
+    }
+  },
+  "composition_management_map": {
+    "functor_metadata": "existing FunctorMetadata declares interfaces, execution phase, and conservation semantics",
+    "state_contract": "StateManager receives one explicit REPLACE UpdateItem",
+    "validation_rule": "phase8 scientific inventory and equivalence certificate checks"
+  },
+  "dependency_interconnection_map": {
+    "dependencies": "no direct Functor dependency; soil_moisture is a required StateManager port",
+    "direct_functor_calls": "none declared by certificate"
+  },
+  "overflow_routing_map": {
+    "diagnostic_residuals": "not applicable; a water content outside the retention domain is refused, not clipped",
+    "discarded_residuals": "no material or energy residual"
+  },
+  "conservation_map": {
+    "conserved_quantities": "none; this Functor is read-only",
+    "balance_expression": "no water stock, flux, source, sink, or state advance"
+  },
+  "entropy_audit": {
+    "operator_sign": "output is non-positive and zero at saturation",
+    "sigma_expression": "not applicable to this non-strict empirical observation"
+  },
+  "equivalence_type": "diagnostic"
+}

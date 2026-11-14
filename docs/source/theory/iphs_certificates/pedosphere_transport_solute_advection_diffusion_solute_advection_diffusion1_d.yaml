@@ -1,0 +1,245 @@
+certificate_version: '1.0'
+process_id: relic.scientific.pedosphere.transport.solute_advection_diffusion.SoluteAdvectionDiffusion1D
+module_name: SoluteAdvectionDiffusion1D
+canonical_role: transport
+iphs_level: 3
+iphs_level_evidence:
+  classification: IPHS-structured transport process certificate
+  compatible_basis: Process declares composition-safe IPHS or DEC structure
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: DEC/IPHS advection-diffusion transport operator with conservative flux routing
+  structural_contribution: SoluteAdvectionDiffusion1D declares NO3 and DOC cochains, a PSD dispersion Hodge, and surface/bottom matter ports
+  assembly_participation: Certificate participates in Phase 8 inventory and GraphIR structural audit
+  level_3_limit: Typed form, Hodge, port, or related structure is declared, but no runtime-linked IPHSStructureSpec contribution and executable level 4 or 5 certificate binding is present.
+theory_document: docs\source\theory\pedosphere_transport.md
+theory_document_status: updated
+legacy_formula: $\frac{\partial(B C)}{\partial t} = -\frac{\partial J}{\partial z}$, $B=\theta+\rho_bK_d$, $J=qC_{upwind}-K\frac{\partial C}{\partial z}$
+literature_formula: $\frac{\partial(B C)}{\partial t} = -\frac{\partial J}{\partial z}$, $B=\theta+\rho_bK_d$, $K=\alpha_L|q|+D_w(T)\theta^{10/3}/\phi^2$
+iphs_formula: B_h c_dot_h = -D_h J_h + G_h u_h with declared storage, solute flux, and top/bottom matter ports
+legacy_expression: $B_iC_i^{n+1}=B_iC_i^n-\Delta t(J_{i+1/2}-J_{i-1/2})/\Delta z_i$
+iphs_expression: B_h c_dot_h = -D_h J_h + G_h u_h with declared storage, solute flux, and top/bottom matter ports
+input_variables:
+- soil_water_content
+- darcy_flux
+- no3_concentration
+- doc_concentration
+- bulk_density
+- porosity
+- soil_temperature
+- surface_no3_concentration
+- surface_doc_concentration
+output_variables:
+- nitrogen_leaching_flux
+- carbon_leaching_flux
+- no3_concentration
+- doc_concentration
+- diagnostics.solute_transport.nitrogen_surface_input_flux
+- diagnostics.solute_transport.carbon_surface_input_flux
+- diagnostics.solute_transport.nitrogen_mass_balance_residual
+- diagnostics.solute_transport.carbon_mass_balance_residual
+parameter_keys:
+- pedosphere.grid.n_layers
+- pedosphere.grid.soil_depth
+- pedosphere.transport.cfl_number
+- pedosphere.transport.layer_thickness_ratio
+- pedosphere.transport.time_step_maximum
+- pedosphere.transport.default_molecular_diffusivity_water
+- pedosphere.transport.molecular_diffusivity_temperature_exponent
+- pedosphere.transport.nitrate_diffusivity_water
+- pedosphere.transport.doc_diffusivity_water
+- pedosphere.transport.nitrate_longitudinal_dispersivity
+- pedosphere.transport.doc_longitudinal_dispersivity
+- pedosphere.transport.nitrate_distribution_coefficient
+- pedosphere.transport.doc_distribution_coefficient
+- pedosphere.physical.millington_quirk_exponent_numerator
+- pedosphere.physical.millington_quirk_exponent_denominator
+composition_ports:
+- solute_surface_inflow
+- solute_bottom_leaching
+references:
+- Bear, J. (1972). Dynamics of Fluids in Porous Media
+- Millington, R.J. and Quirk, J.P. (1961), doi:10.1039/TF9615701200
+- Simunek, J. et al. (2008), doi:10.2136/vzj2007.0077
+- HYDRUS-1D version 4.16 technical manual
+- U.S. EPA IWEM 3.1 Technical Background Document, linear equilibrium sorption storage
+baseline_tests:
+- test\pedosphere\transport\test_solute_advection_diffusion.py
+- test\unit\pedosphere\test_solute_advection_diffusion.py
+- test\integration\pedosphere\test_soil_transport_integration.py
+- test\transport\test_increment_semantics_l2.py
+validation_tests:
+- test\pedosphere\transport\test_solute_advection_diffusion.py
+- test\unit\pedosphere\test_solute_advection_diffusion.py
+- test\integration\pedosphere\test_soil_transport_integration.py
+- test\transport\test_increment_semantics_l2.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  soil_water_content: soil_water_content mapped to canonical Phase 8 cochain basis
+  darcy_flux: darcy_flux mapped to canonical Phase 8 cochain basis, positive downward
+  no3_concentration: no3_concentration mapped to canonical Phase 8 cochain basis
+  doc_concentration: doc_concentration mapped to canonical Phase 8 cochain basis
+  bulk_density: bulk_density mapped to canonical Phase 8 cochain basis
+  porosity: porosity mapped to canonical Phase 8 cochain basis
+  soil_temperature: soil_temperature controls ParameterManager-backed molecular diffusivity scaling
+  surface_no3_concentration: surface_no3_concentration is the open top NO3 Cauchy boundary input
+  surface_doc_concentration: surface_doc_concentration is the open top DOC Cauchy boundary input
+parameter_map:
+  pedosphere.grid.n_layers: pedosphere.grid.n_layers from ParameterManager
+  pedosphere.grid.soil_depth: pedosphere.grid.soil_depth from ParameterManager
+  pedosphere.transport.cfl_number: pedosphere.transport.cfl_number from ParameterManager
+  pedosphere.transport.layer_thickness_ratio: pedosphere.transport.layer_thickness_ratio from ParameterManager
+  pedosphere.transport.time_step_maximum: pedosphere.transport.time_step_maximum from ParameterManager
+  pedosphere.transport.default_molecular_diffusivity_water: pedosphere.transport.default_molecular_diffusivity_water from ParameterManager
+  pedosphere.transport.molecular_diffusivity_temperature_exponent: pedosphere.transport.molecular_diffusivity_temperature_exponent from ParameterManager
+  pedosphere.transport.nitrate_diffusivity_water: pedosphere.transport.nitrate_diffusivity_water from ParameterManager
+  pedosphere.transport.doc_diffusivity_water: pedosphere.transport.doc_diffusivity_water from ParameterManager
+  pedosphere.transport.nitrate_longitudinal_dispersivity: pedosphere.transport.nitrate_longitudinal_dispersivity from ParameterManager
+  pedosphere.transport.doc_longitudinal_dispersivity: pedosphere.transport.doc_longitudinal_dispersivity from ParameterManager
+  pedosphere.transport.nitrate_distribution_coefficient: pedosphere.transport.nitrate_distribution_coefficient from ParameterManager
+  pedosphere.transport.doc_distribution_coefficient: pedosphere.transport.doc_distribution_coefficient from ParameterManager
+  pedosphere.physical.millington_quirk_exponent_numerator: pedosphere.physical.millington_quirk_exponent_numerator from ParameterManager
+  pedosphere.physical.millington_quirk_exponent_denominator: pedosphere.physical.millington_quirk_exponent_denominator from ParameterManager
+operator_map:
+  D_h: finite-volume incidence/divergence map on the nonuniform vertical grid
+  star_D: level-3 structural PSD Hodge initialized by the ParameterManager-backed default molecular diffusivity; the full runtime K coefficient is evaluated directly by forward()
+  q_h: $J=qC_{upwind}-K\,dC/dz$ evaluated once at every finite-volume face
+  G_h: explicit top Cauchy input and bottom free-drainage export matter-port map
+unit_map:
+  soil_water_content: m3 m-3
+  darcy_flux: m s-1
+  bulk_density: kg m-3
+  porosity: m3 m-3
+  soil_temperature: K
+  surface_no3_concentration: g N m-3
+  surface_doc_concentration: g C m-3
+  nitrogen_leaching_flux: g N m-2 s-1
+  carbon_leaching_flux: g C m-2 s-1
+  no3_concentration: g N m-3
+  doc_concentration: g C m-3
+  diagnostics.solute_transport.nitrogen_surface_input_flux: g N m-2 s-1
+  diagnostics.solute_transport.carbon_surface_input_flux: g C m-2 s-1
+  diagnostics.solute_transport.nitrogen_mass_balance_residual: g N m-2
+  diagnostics.solute_transport.carbon_mass_balance_residual: g C m-2
+input_output_map:
+  soil_water_content: canonical storage and tortuosity input; no fallback
+  darcy_flux: canonical downward-positive water-flux input; no fallback
+  no3_concentration: canonical NO3 input and REPLACE full-state output
+  doc_concentration: canonical DOC input and REPLACE full-state output
+  bulk_density: canonical dry bulk-density input for sorbed storage
+  porosity: canonical total-porosity input for Millington-Quirk tortuosity
+  soil_temperature: canonical temperature input for molecular diffusivity scaling
+  surface_no3_concentration: canonical top NO3 Cauchy boundary input
+  surface_doc_concentration: canonical top DOC Cauchy boundary input
+  nitrogen_leaching_flux: canonical bottom NO3 export
+  carbon_leaching_flux: canonical bottom DOC export
+  diagnostics.solute_transport.nitrogen_surface_input_flux: explicit top NO3 input observation
+  diagnostics.solute_transport.carbon_surface_input_flux: explicit top DOC input observation
+  diagnostics.solute_transport.nitrogen_mass_balance_residual: explicit NO3 finite-volume ledger residual
+  diagnostics.solute_transport.carbon_mass_balance_residual: explicit DOC finite-volume ledger residual
+interface_map:
+  forward_signature: forward(self, state, time, dt)
+  bridge_class: TransportMechanismFunctor
+  abstraction_contract: TransportMechanism
+  state_write_mode: all retained outputs are explicit REPLACE UpdateItems; concentration states and integrated residuals are per-step, while boundary fluxes are instantaneous
+  legacy_inputs:
+  - soil_water_content
+  - darcy_flux
+  - no3_concentration
+  - doc_concentration
+  - bulk_density
+  - porosity
+  - soil_temperature
+  - surface_no3_concentration
+  - surface_doc_concentration
+  iphs_inputs:
+  - soil_water_content
+  - darcy_flux
+  - no3_concentration
+  - doc_concentration
+  - bulk_density
+  - porosity
+  - soil_temperature
+  - surface_no3_concentration
+  - surface_doc_concentration
+  legacy_outputs:
+  - nitrogen_leaching_flux
+  - carbon_leaching_flux
+  - no3_concentration
+  - doc_concentration
+  - diagnostics.solute_transport.nitrogen_surface_input_flux
+  - diagnostics.solute_transport.carbon_surface_input_flux
+  - diagnostics.solute_transport.nitrogen_mass_balance_residual
+  - diagnostics.solute_transport.carbon_mass_balance_residual
+  iphs_outputs:
+  - nitrogen_leaching_flux
+  - carbon_leaching_flux
+  - no3_concentration
+  - doc_concentration
+  - diagnostics.solute_transport.nitrogen_surface_input_flux
+  - diagnostics.solute_transport.carbon_surface_input_flux
+  - diagnostics.solute_transport.nitrogen_mass_balance_residual
+  - diagnostics.solute_transport.carbon_mass_balance_residual
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: ParameterManager-backed storage, dispersion, CFL, and grid coefficients define one finite-volume transport path; physical conversions use the physical-constants SSOT.
+  no_legacy_mode: No selectable legacy runtime branch is exposed for Phase 8 completion.
+state_advancement_map:
+  potential_basis: NO3 and DOC layer concentrations are declared as primal 0-cochains on pedosphere_solute_transport
+  effort_variable: The level 3 structural audit uses concentration cochains and a positive storage capacity B; it does not claim a thermodynamic effort or strict port-power pairing
+  state_advancer: $B_iC_i^{n+1}=B_iC_i^n-\Delta t(J_{i+1/2}-J_{i-1/2})/\Delta z_i$ with explicit top and bottom ports
+  runtime_usage: SoluteAdvectionDiffusion1D.forward evaluates one nonuniform-grid finite-volume transport law with capacity-weighted CFL substeps; it contains no reaction branch, second operator path, or concentration fallback.
+parameter_management_map:
+  pedosphere.grid.n_layers:
+    source: ParameterManager YAML
+  pedosphere.grid.soil_depth:
+    source: ParameterManager YAML
+  pedosphere.transport.cfl_number:
+    source: ParameterManager YAML
+  pedosphere.transport.layer_thickness_ratio:
+    source: ParameterManager YAML
+  pedosphere.transport.time_step_maximum:
+    source: ParameterManager YAML
+  pedosphere.transport.default_molecular_diffusivity_water:
+    source: ParameterManager YAML
+  pedosphere.transport.molecular_diffusivity_temperature_exponent:
+    source: ParameterManager YAML
+  pedosphere.transport.nitrate_diffusivity_water:
+    source: ParameterManager YAML
+  pedosphere.transport.doc_diffusivity_water:
+    source: ParameterManager YAML
+  pedosphere.transport.nitrate_longitudinal_dispersivity:
+    source: ParameterManager YAML
+  pedosphere.transport.doc_longitudinal_dispersivity:
+    source: ParameterManager YAML
+  pedosphere.transport.nitrate_distribution_coefficient:
+    source: ParameterManager YAML
+  pedosphere.transport.doc_distribution_coefficient:
+    source: ParameterManager YAML
+  pedosphere.physical.millington_quirk_exponent_numerator:
+    source: ParameterManager YAML
+  pedosphere.physical.millington_quirk_exponent_denominator:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares interfaces, execution phase, and conservation semantics
+  state_contract: all retained outputs use explicit REPLACE UpdateItems; concentration states and integrated residuals are per-step, while boundary fluxes are instantaneous
+  physical_constant_ssot:
+    liter_to_cubic_meter: get_physical_constant("relic.physical.constants.conversions.liter_to_cubic_meter")
+    reference_temperature: get_physical_constant("reference_temperature")
+  validation_rule: phase8 scientific inventory and equivalence certificate checks
+dependency_interconnection_map:
+  dependencies: hydrological, thermal, and boundary inputs are resolved from StateManager through declared canonical ports; no Functor instance is called directly
+  direct_functor_calls: none; hydrological, thermal, concentration, and boundary inputs are StateManager ports
+overflow_routing_map:
+  diagnostic_residuals: NO3 and DOC finite-volume mass residuals are returned through namespaced diagnostic ports
+  boundary_routes: surface concentrations define explicit top inputs and bottom leaching fluxes define explicit exports
+  invalid_states: missing, non-finite, negative, shape-incompatible, or unsupported upward-flow states fail fast; no clamp or hidden zero is applied
+  discarded_residuals: nitrate and dissolved-organic-carbon finite-volume residuals are explicit diagnostics, top inputs and bottom leaching are explicit boundary routes, and non-finite, negative, or unsupported upward-flow states are rejected without clipping
+conservation_map:
+  conserved_quantities: nitrogen|carbon|mass
+  balance_expression: $M^{n+1}-M^n-F_{top}\Delta t+F_{bottom}\Delta t=0$ independently for NO3-N and DOC-C
+entropy_audit:
+  operator_sign: star_D is structurally diagonal and non-negative because molecular diffusivity, dispersivity, water content, porosity, and temperature are validated before use; no runtime clipping supplies positivity
+  sigma_expression: the structural audit exposes $\sigma_h=X_h^T star_D X_h\geq0$ for diffusion-dispersion only; advection and matter ports prevent a strict thermodynamic claim
+equivalence_type: port_equivalent

@@ -1,0 +1,1574 @@
+description: Tapajos case parameter overrides
+schema_version: 1.0.0
+tier: calibrated
+namespace: ''
+metadata:
+  case_name: tapajos_single_site_bvoc
+  description: Case-level parameter overrides for tutorial/case Tapajos BVOC workflow
+  schema_version: 1.0.0
+parameters:
+  biosphere.bvoc.default.isoprene:
+    bounds:
+    - 8.0
+    - 50.0
+    category: calibration_parameter
+    description: Default PFT isoprene emission factor
+    dimension: emission_factor
+    dtype: float32
+    provenance:
+      source: tutorial_case
+    references:
+    - Guenther et al. 2006
+    - Guenther et al. 2012
+    requires_grad: true
+    tags:
+    - phase3
+    - trainable
+    units: ug g-1 DW h-1
+    value: 24.0
+  biosphere.bvoc.megan.alpha_light:
+    bounds:
+    - 0.0003
+    - 0.05
+    category: calibration_parameter
+    description: MEGAN light response alpha parameter for isoprene
+    dimension: light_response_parameter
+    dtype: float32
+    provenance:
+      source: tutorial_case
+    references:
+    - Guenther et al. 2012
+    requires_grad: true
+    tags:
+    - phase3
+    - phase4
+    - trainable
+    units: m2 s umol-1
+    value: 0.0027
+  biosphere.bvoc.megan.cl_light:
+    bounds:
+    - 0.5
+    - 3.0
+    category: calibration_parameter
+    description: MEGAN light response CL parameter for isoprene
+    dimension: dimensionless
+    dtype: float32
+    provenance:
+      source: tutorial_case
+    references:
+    - Guenther et al. 2012
+    requires_grad: true
+    tags:
+    - phase3
+    - phase4
+    - trainable
+    units: dimensionless
+    value: 1.066
+  biosphere.bvoc.megan.ct1_isoprene:
+    bounds:
+    - 70000.0
+    - 120000.0
+    category: calibration_parameter
+    description: MEGAN isoprene activation energy parameter.
+    dimension: energy_per_amount
+    dtype: float32
+    provenance:
+      source: tutorial_case
+    references:
+    - Guenther et al. 2012
+    requires_grad: true
+    tags:
+    - phase3
+    - phase4
+    - trainable
+    units: J mol-1
+    value: 95000.0
+  biosphere.bvoc.megan.ct2:
+    bounds:
+    - 180000.0
+    - 280000.0
+    category: calibration_parameter
+    description: Deactivation energy C_T2 of the MEGAN Eq. (8) temperature activity,
+      class independent (Guenther et al. 2012 Sect. 2.2, 230 kJ mol-1); calibrated
+      within the case bounds on the Tapajos isoprene flux.
+    dimension: energy_per_amount
+    dtype: float32
+    provenance:
+      source: tutorial_case
+    references:
+    - Guenther et al. 2012
+    requires_grad: true
+    tags:
+    - phase3
+    - phase4
+    - trainable
+    units: J mol-1
+    value: 230000.0
+  biosphere.bvoc.megan.eopt_isoprene:
+    bounds:
+    - 0.75
+    - 3.25
+    category: calibration_parameter
+    description: Isoprene optimum activity E_opt of the MEGAN Eq. (8) temperature activity;
+      starts at the Guenther et al. (2012) Table 4 isoprene value C_eo = 2 and is calibrated
+      within the case bounds on the Tapajos isoprene flux.
+    dimension: dimensionless
+    dtype: float32
+    provenance:
+      source: tutorial_case
+    references:
+    - Guenther et al. 2012
+    requires_grad: true
+    tags:
+    - phase3
+    - phase4
+    - trainable
+    units: dimensionless
+    value: 2.0
+  biosphere.bvoc.megan.topt:
+    bounds:
+    - 301.15
+    - 318.15
+    category: calibration_parameter
+    description: Optimum temperature T_opt of the MEGAN Eq. (8) temperature activity,
+      313 K at the standard history T240 = 297 K (Guenther et al. 2012 Eq. 9) and class
+      independent; calibrated within the case bounds on the Tapajos isoprene flux.
+    dimension: temperature
+    dtype: float32
+    provenance:
+      source: Guenther (2006/2012)
+    references:
+    - Guenther et al. 2012
+    requires_grad: true
+    tags:
+    - phase3
+    - phase4
+    - trainable
+    units: K
+    value: 313.0
+  biosphere.photosynthesis.jmax25:
+    bounds:
+    - 70.0
+    - 180.0
+    category: calibration_parameter
+    description: Maximum electron transport capacity at 25C
+    dimension: molar_flux
+    dtype: float32
+    provenance:
+      source: tutorial_case
+    references:
+    - Farquhar et al. 1980
+    - Bernacchi et al. 2001
+    requires_grad: true
+    tags:
+    - phase2
+    - trainable
+    units: umol e- m-2 s-1
+    value: 120.0
+  biosphere.photosynthesis.rd25:
+    bounds:
+    - 0.1
+    - 5.0
+    category: calibration_parameter
+    description: Dark respiration at 25C used in tutorial-case photosynthesis calibration.
+    dimension: molar_flux
+    dtype: float32
+    provenance:
+      source: tutorial_case
+    references:
+    - Farquhar et al. 1980
+    - Atkin et al. 2015
+    requires_grad: true
+    tags:
+    - phase2
+    - phase4
+    - trainable
+    units: umol CO2 m-2 s-1
+    value: 1.2
+  biosphere.photosynthesis.vcmax25:
+    bounds:
+    - 35.0
+    - 90.0
+    category: calibration_parameter
+    description: Maximum carboxylation capacity at 25C
+    dimension: molar_flux
+    dtype: float32
+    provenance:
+      source: tutorial_case
+    references:
+    - Farquhar et al. 1980
+    - Bernacchi et al. 2001
+    requires_grad: true
+    tags:
+    - phase2
+    - trainable
+    units: umol CO2 m-2 s-1
+    value: 60.0
+  biosphere.stress.ozone.ozone_detox_capacity:
+    bounds:
+    - 1.0e-08
+    - 1.0e-07
+    category: model_parameter
+    description: Tropical broadleaf ozone detoxification capacity (increased from
+      global default 2e-9 for high-antioxidant tropical trees)
+    dimension: molar_flux
+    dtype: float32
+    provenance:
+      source: tutorial_case
+    references:
+    - Emberson et al. 2000 Table 3
+    - Musselman et al. 2006
+    requires_grad: false
+    tags:
+    - ozone
+    - tropical
+    units: mol O3 m-2 s-1
+    value: 5.0e-08
+  case.atmosphere.aerodynamic_resistance_default:
+    bounds:
+    - 1.0
+    - 500.0
+    category: atmospheric_parameter
+    description: Fallback aerodynamic resistance when turbulence diagnostics are missing
+    dimension: resistance
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - FAO-56
+    requires_grad: false
+    tags:
+    - turbulence
+    - fallback
+    units: s m-1
+    value: 25.0
+  case.atmosphere.ozone_background_ppb:
+    bounds:
+    - 1.0
+    - 120.0
+    category: atmospheric_parameter
+    description: Background ozone concentration assumption for forcing completion
+    dimension: dimensionless
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - Emberson et al. 2000
+    - Mills et al. 2011
+    requires_grad: false
+    tags:
+    - ozone
+    - forcing_assumption
+    units: ppb
+    value: 15.0
+  case.atmosphere.vpd_formula.exponent_denominator_offset_c:
+    bounds:
+    - 220.0
+    - 260.0
+    category: model_parameter
+    description: Denominator offset in FAO Tetens saturation vapor pressure formula.
+    dimension: temperature
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - Allen et al. 1998
+    requires_grad: false
+    tags:
+    - vpd
+    - formula
+    units: degC
+    value: 237.3
+  case.atmosphere.vpd_formula.exponent_numerator:
+    bounds:
+    - 15.0
+    - 20.0
+    category: model_parameter
+    description: Numerator coefficient in FAO Tetens saturation vapor pressure formula.
+    dimension: dimensionless
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - Allen et al. 1998
+    requires_grad: false
+    tags:
+    - vpd
+    - formula
+    units: dimensionless
+    value: 17.27
+  case.atmosphere.vpd_formula.saturation_coeff_kpa:
+    bounds:
+    - 0.5
+    - 0.8
+    category: model_parameter
+    description: Saturation vapor pressure coefficient in FAO Tetens form.
+    dimension: pressure
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - Allen et al. 1998
+    requires_grad: false
+    tags:
+    - vpd
+    - formula
+    units: kPa
+    value: 0.6108
+  case.biosphere.canopy_albedo:
+    bounds:
+    - 0.05
+    - 0.25
+    category: biophysical
+    description: Effective canopy albedo used to derive net radiation from external
+      shortwave radiation.
+    dimension: dimensionless
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - Bonan 2008
+    - FAO-56
+    requires_grad: false
+    tags:
+    - radiation
+    - forcing_assumption
+    units: dimensionless
+    value: 0.12
+  case.biosphere.lai_qc_max:
+    bounds:
+    - 5.0
+    - 12.0
+    category: model_parameter
+    description: Maximum plausible LAI for QA filtering in evergreen broadleaf forest.
+    dimension: area_ratio
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - Myneni et al. 2015
+    requires_grad: false
+    tags:
+    - lai
+    - qc
+    units: m2 m-2
+    value: 8.0
+  case.biosphere.lai_qc_min:
+    bounds:
+    - 0.5
+    - 5.0
+    category: model_parameter
+    description: Minimum plausible LAI for QA filtering in evergreen broadleaf forest.
+    dimension: area_ratio
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - Myneni et al. 2015
+    requires_grad: false
+    tags:
+    - lai
+    - qc
+    units: m2 m-2
+    value: 2.0
+  case.biosphere.lai_smoothing_window_hours:
+    bounds:
+    - 1
+    - 720
+    category: model_parameter
+    description: Rolling-window length used to smooth hourly interpolated LAI.
+    dimension: time
+    dtype: int64
+    provenance:
+      source: tutorial_case
+    references:
+    - Zhang et al. 2017
+    requires_grad: false
+    tags:
+    - lai
+    - smoothing
+    units: h
+    value: 96
+  case.biosphere.leaf_area_index:
+    bounds:
+    - 0.1
+    - 12.0
+    category: biophysical
+    description: Representative LAI for Tapajos EBF canopy
+    dimension: area_ratio
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - AmeriFlux BR-Sa1 metadata
+    requires_grad: false
+    tags:
+    - lai
+    - forcing_assumption
+    units: m2 m-2
+    value: 5.5
+  case.biosphere.longwave_emissivity:
+    bounds:
+    - 0.9
+    - 1.0
+    category: biophysical
+    description: Effective surface emissivity used for longwave net radiation estimation.
+    dimension: dimensionless
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - Monteith and Unsworth 2013
+    requires_grad: false
+    tags:
+    - radiation
+    - forcing_assumption
+    units: dimensionless
+    value: 0.98
+  case.biosphere.stomatal_conductance_initial:
+    bounds:
+    - 0.01
+    - 2.0
+    category: initial_condition
+    description: Lag-state initialization for ozone stress coupling
+    dimension: molar_flux
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - Emberson et al. 2000
+    - Mills et al. 2011
+    requires_grad: false
+    tags:
+    - ozone
+    - lag_state
+    units: mol m-2 s-1
+    value: 0.3
+  case.conversions.megajoule_to_joule:
+    bounds:
+    - 1000000.0
+    - 1000000.0
+    category: conversion_factor
+    description: Energy conversion from megajoule to joule.
+    dimension: dimensionless
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - SI unit conversion
+    requires_grad: false
+    tags:
+    - unit_conversion
+    units: J MJ-1
+    value: 1000000.0
+  case.conversions.mm_to_m:
+    bounds:
+    - 0.001
+    - 0.001
+    category: conversion_factor
+    description: Depth conversion from millimeter to meter
+    dimension: dimensionless
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - SI unit conversion
+    requires_grad: false
+    tags:
+    - unit_conversion
+    units: m mm-1
+    value: 0.001
+  case.conversions.sw_radiation_to_ppfd:
+    bounds:
+    - 1.5
+    - 2.5
+    category: conversion_factor
+    description: Empirical conversion from shortwave radiation to PPFD.
+    dimension: amount_energy_inverse
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - McCree 1972
+    - Gu et al. 1999
+    requires_grad: false
+    tags:
+    - unit_conversion
+    - radiation
+    units: umol J-1
+    value: 2.04
+  case.conversions.umol_to_nmol:
+    bounds:
+    - 1000.0
+    - 1000.0
+    category: conversion_factor
+    description: Amount conversion from micromole to nanomole
+    dimension: dimensionless
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - SI unit conversion
+    requires_grad: false
+    tags:
+    - unit_conversion
+    units: nmol umol-1
+    value: 1000.0
+  case.data.raw_primary_threshold:
+    bounds:
+    - 0.0
+    - 1.0
+    category: model_parameter
+    description: Minimum raw-coverage ratio for using site data as primary source.
+    dimension: dimensionless
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - Tutorial forcing policy
+    requires_grad: false
+    tags:
+    - forcing
+    - fallback
+    units: dimensionless
+    value: 0.5
+  case.site.canopy_height:
+    bounds:
+    - 5.0
+    - 60.0
+    category: spatial_parameter
+    description: Representative canopy height
+    dimension: length
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - AmeriFlux BR-Sa1 site notes
+    requires_grad: false
+    tags:
+    - tapajos
+    - canopy
+    units: m
+    value: 35.0
+  case.site.elevation:
+    bounds:
+    - 0.0
+    - 1000.0
+    category: spatial_parameter
+    description: Representative site elevation
+    dimension: length
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - AmeriFlux BR-Sa1 BIF
+    requires_grad: false
+    tags:
+    - tapajos
+    - site_metadata
+    units: m
+    value: 100.0
+  case.site.latitude:
+    bounds:
+    - -90.0
+    - 90.0
+    category: spatial_coordinate
+    description: Tower latitude for BR-Sa1 site
+    dimension: angular
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - AmeriFlux BR-Sa1 BIF
+    requires_grad: false
+    tags:
+    - tapajos
+    - site_metadata
+    units: degrees_north
+    value: -2.857
+  case.site.longitude:
+    bounds:
+    - -180.0
+    - 180.0
+    category: spatial_coordinate
+    description: Tower longitude for BR-Sa1 site
+    dimension: angular
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - AmeriFlux BR-Sa1 BIF
+    requires_grad: false
+    tags:
+    - tapajos
+    - site_metadata
+    units: degrees_east
+    value: -54.959
+  case.site.reference_height:
+    bounds:
+    - 1.0
+    - 120.0
+    category: spatial_parameter
+    description: Meteorological reference height above ground
+    dimension: length
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - AmeriFlux BR-Sa1 site notes
+    requires_grad: false
+    tags:
+    - tapajos
+    - canopy
+    units: m
+    value: 65.0
+  case.site.representative_area_m2:
+    bounds:
+    - 1.0
+    - 1.0e+12
+    category: area_parameter
+    description: Reference footprint area for diagnostics
+    dimension: area
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - Tutorial convention
+    requires_grad: false
+    tags:
+    - diagnostics
+    units: m2
+    value: 1000000.0
+  case.soil.initial_moisture:
+    bounds:
+    - 0.05
+    - 0.8
+    category: initial_condition
+    description: Initial soil moisture from SA3 June climatology
+    dimension: volume_fraction
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - AmeriFlux BR-Sa3 SWC
+    requires_grad: false
+    tags:
+    - soil
+    - initial_state
+    units: m3 m-3
+    value: 0.35
+  case.surface.sensible_heat_fraction_default:
+    bounds:
+    - 0.05
+    - 0.95
+    category: model_parameter
+    description: Default sensible-heat fraction used when site H flux is missing.
+    dimension: dimensionless
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - Oke 1987
+    requires_grad: false
+    tags:
+    - energy_balance
+    - fallback
+    units: dimensionless
+    value: 0.25
+  case.window.target_steps:
+    bounds:
+    - 1
+    - 100000
+    category: model_configuration
+    description: Expected hourly simulation steps for target window
+    dimension: dimensionless
+    dtype: int64
+    provenance:
+      source: tutorial_case
+    references:
+    - Tutorial specification
+    requires_grad: false
+    tags:
+    - window
+    - validation
+    units: dimensionless
+    value: 375
+  hydrosphere.runoff.curve_number:
+    bounds:
+    - 30.0
+    - 55.0
+    category: model_parameter
+    description: SCS curve number for tropical evergreen forest under good hydrologic
+      condition.
+    dimension: dimensionless
+    dtype: float32
+    provenance:
+      source: tutorial_case
+    references:
+    - SCS 1972 National Engineering Handbook
+    requires_grad: false
+    tags:
+    - runoff
+    - tropical_forest
+    units: dimensionless
+    value: 36.0
+  hydrosphere.runoff.infiltration_capacity:
+    bounds:
+    - 20.0
+    - 100.0
+    category: model_parameter
+    description: Horton-style maximum infiltration capacity for deep tropical soils.
+    dimension: velocity
+    dtype: float32
+    provenance:
+      source: tutorial_case
+    references:
+    - Nobre et al. 2011
+    requires_grad: false
+    tags:
+    - runoff
+    - infiltration
+    units: mm h-1
+    value: 50.0
+  hydrosphere.runoff.runoff_method:
+    bounds: null
+    category: model_parameter
+    description: Surface runoff method selection; horton used for stable infiltration-excess
+      partitioning.
+    dimension: dimensionless
+    dtype: string
+    provenance:
+      source: tutorial_case
+    references:
+    - Horton 1933
+    requires_grad: false
+    tags:
+    - runoff
+    units: dimensionless
+    value: horton
+  hydrosphere.runoff.saturated_area_threshold:
+    bounds:
+    - 0.7
+    - 0.95
+    category: model_parameter
+    description: Threshold soil moisture controlling saturation-excess runoff onset.
+    dimension: volume_fraction
+    dtype: float32
+    provenance:
+      source: tutorial_case
+    references:
+    - Dunne and Black 1970
+    requires_grad: false
+    tags:
+    - runoff
+    - saturation
+    units: m3 m-3
+    value: 0.85
+  hydrosphere.soil_moisture.drainage_exponent:
+    bounds:
+    - 1.5
+    - 5.0
+    category: calibration_parameter
+    description: Drainage nonlinearity exponent in bucket model.
+    dimension: dimensionless
+    dtype: float32
+    provenance:
+      source: tutorial_case
+    references:
+    - Manabe 1969
+    - Rodriguez-Iturbe and Porporato 2004
+    requires_grad: true
+    tags:
+    - phase1
+    - trainable
+    units: dimensionless
+    value: 2.0
+  hydrosphere.soil_moisture.field_capacity:
+    bounds:
+    - 0.25
+    - 0.5
+    category: calibration_parameter
+    description: Field capacity used in bucket soil moisture calibration
+    dimension: volume_fraction
+    dtype: float32
+    provenance:
+      source: tutorial_case
+    references:
+    - Manabe 1969
+    - Rodriguez-Iturbe and Porporato 2004
+    requires_grad: true
+    tags:
+    - phase1
+    - trainable
+    units: m3 m-3
+    value: 0.4
+  hydrosphere.soil_moisture.porosity:
+    bounds:
+    - 0.4
+    - 0.6
+    category: calibration_parameter
+    description: Porosity used in bucket soil moisture calibration
+    dimension: volume_fraction
+    dtype: float32
+    provenance:
+      source: tutorial_case
+    references:
+    - Manabe 1969
+    - Rodriguez-Iturbe and Porporato 2004
+    requires_grad: true
+    tags:
+    - phase1
+    - trainable
+    units: m3 m-3
+    value: 0.5
+  hydrosphere.soil_moisture.saturated_hydraulic_conductivity:
+    bounds:
+    - 1.0e-08
+    - 0.0001
+    category: calibration_parameter
+    description: Saturated hydraulic conductivity controlling deep drainage intensity.
+    dimension: velocity
+    dtype: float32
+    provenance:
+      source: tutorial_case
+    references:
+    - Manabe 1969
+    - Rodriguez-Iturbe and Porporato 2004
+    requires_grad: true
+    tags:
+    - phase1
+    - trainable
+    units: m s-1
+    value: 1.0e-06
+  hydrosphere.soil_moisture.wilting_point:
+    bounds:
+    - 0.05
+    - 0.25
+    category: model_parameter
+    description: Wilting point used in bucket soil moisture stress response.
+    dimension: volume_fraction
+    dtype: float32
+    provenance:
+      source: tutorial_case
+    references:
+    - Cosby 1984
+    - Rodriguez-Iturbe and Porporato 2004
+    requires_grad: false
+    tags:
+    - fixed
+    units: m3 m-3
+    value: 0.1
+  tutorial.case.farquhar.jmax_scaling_default:
+    bounds:
+    - 0.1
+    - 5.0
+    category: process_coupling
+    description: Default Jmax scaling passed to Farquhar when no explicit nutrient
+      scaler is available.
+    dimension: dimensionless
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - Farquhar et al. 1980
+    - Bernacchi et al. 2001
+    requires_grad: false
+    tags:
+    - photosynthesis
+    - adapter
+    - fallback
+    units: dimensionless
+    value: 1.0
+  tutorial.case.farquhar.leaf_water_potential_default:
+    bounds:
+    - -3.0
+    - -0.01
+    category: process_coupling
+    description: Fallback leaf water potential used by Farquhar in single-site forcing
+      mode.
+    dimension: pressure
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - Leuning 1995
+    - Tuzet et al. 2003
+    requires_grad: false
+    tags:
+    - photosynthesis
+    - water_stress
+    - fallback
+    units: MPa
+    value: -0.5
+  tutorial.case.farquhar.vcmax_scaling_default:
+    bounds:
+    - 0.1
+    - 5.0
+    category: process_coupling
+    description: Default Vcmax scaling passed to Farquhar when no explicit nutrient
+      scaler is available.
+    dimension: dimensionless
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - Farquhar et al. 1980
+    - Bernacchi et al. 2001
+    requires_grad: false
+    tags:
+    - photosynthesis
+    - adapter
+    - fallback
+    units: dimensionless
+    value: 1.0
+  tutorial.case.forcing.precipitation_scale:
+    bounds:
+    - 0.7
+    - 1.5
+    category: process_coupling
+    description: Multiplicative correction to precipitation forcing; kept fixed to
+      avoid optimizer suppressing rainfall.
+    dimension: dimensionless
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - Beck et al. 2017
+    - Huffman et al. 2020
+    requires_grad: false
+    tags:
+    - forcing
+    - precipitation
+    - fixed
+    units: dimensionless
+    value: 1.0
+  tutorial.case.penman.canopy_conductance_default:
+    bounds:
+    - 0.0001
+    - 0.2
+    category: process_coupling
+    description: Default canopy conductance paired with surface resistance for Penman-Monteith
+      forcing completeness.
+    dimension: velocity
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - Allen et al. FAO-56 (1998)
+    requires_grad: false
+    tags:
+    - evapotranspiration
+    - adapter
+    - fallback
+    units: m s-1
+    value: 0.006666666666666667
+  tutorial.case.penman.surface_resistance_default:
+    bounds:
+    - 10.0
+    - 1000.0
+    category: process_coupling
+    description: Default canopy surface resistance for Penman-Monteith when direct
+      diagnostic is unavailable.
+    dimension: resistance
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - Allen et al. FAO-56 (1998)
+    requires_grad: false
+    tags:
+    - evapotranspiration
+    - adapter
+    - fallback
+    units: s m-1
+    value: 150.0
+  tutorial.case.precip_adapter.auto_detect_threshold:
+    bounds:
+    - 1.0e-05
+    - 0.1
+    category: process_coupling
+    description: Auto-mode threshold above which precipitation is interpreted as mm
+      h-1 input.
+    dimension: mass_flux
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - Tutorial forcing contract
+    requires_grad: false
+    tags:
+    - adapter
+    - precipitation
+    units: kg m-2 s-1
+    value: 0.01
+  tutorial.case.precip_adapter.input_unit_mode:
+    bounds: null
+    category: process_coupling
+    description: Precipitation unit mode for adapter input. Allowed values are kg_m2_s,
+      mm_h, auto.
+    dimension: dimensionless
+    dtype: str
+    provenance:
+      source: tutorial_case
+    references:
+    - Allen et al. 1998
+    - Tutorial forcing contract
+    requires_grad: false
+    tags:
+    - adapter
+    - precipitation
+    units: dimensionless
+    value: kg_m2_s
+  tutorial.case.radiation.par_effective_scale:
+    bounds:
+    - 0.5
+    - 1.5
+    category: calibration_parameter
+    description: Effective PAR scaling factor to represent canopy attenuation and
+      sensor mismatch.
+    dimension: dimensionless
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - Bonan 2008
+    - Guenther et al. 2012
+    requires_grad: true
+    tags:
+    - radiation
+    - trainable
+    units: dimensionless
+    value: 0.7
+  tutorial.case.state_init.soil_moisture:
+    bounds:
+    - 0.3
+    - 0.55
+    category: calibration_parameter
+    description: Trainable initial soil moisture for the first simulation step.
+    dimension: volume_fraction
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - Rodriguez-Iturbe and Porporato 2004
+    requires_grad: true
+    tags:
+    - soil
+    - initial_state
+    - trainable
+    units: m3 m-3
+    value: 0.45
+  tutorial.case.ml_surrogate.soil_moisture.model_path:
+    bounds:
+    - null
+    - null
+    category: model_configuration
+    description: Relative checkpoint path for the soil moisture ML surrogate.
+    dimension: dimensionless
+    dtype: str
+    provenance:
+      source: tutorial_case
+    references:
+    - Razavi et al. 2012
+    requires_grad: false
+    tags:
+    - ml
+    - surrogate
+    units: dimensionless
+    value: models/sm_surrogate.pth
+  tutorial.case.ml_surrogate.soil_moisture.output_min:
+    bounds:
+    - 0.0
+    - 1.0
+    category: physical_limit
+    description: Lower bound used to clip surrogate soil moisture predictions.
+    dimension: volume_fraction
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - Rodriguez-Iturbe and Porporato 2004
+    requires_grad: false
+    tags:
+    - ml
+    - surrogate
+    - bounds
+    units: m3 m-3
+    value: 0.0
+  tutorial.case.ml_surrogate.soil_moisture.output_max:
+    bounds:
+    - 0.1
+    - 0.8
+    category: physical_limit
+    description: Upper bound used to clip surrogate soil moisture predictions.
+    dimension: volume_fraction
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - Rodriguez-Iturbe and Porporato 2004
+    requires_grad: false
+    tags:
+    - ml
+    - surrogate
+    - bounds
+    units: m3 m-3
+    value: 0.65
+  tutorial.case.ml_surrogate.water_stress.model_path:
+    bounds:
+    - null
+    - null
+    category: model_configuration
+    description: Relative checkpoint path for the water-stress ML surrogate.
+    dimension: dimensionless
+    dtype: str
+    provenance:
+      source: tutorial_case
+    references:
+    - Egea et al. 2011
+    - Verhoef and Egea 2014
+    requires_grad: false
+    tags:
+    - ml
+    - surrogate
+    units: dimensionless
+    value: models/water_stress_surrogate.pth
+  tutorial.case.ml_surrogate.water_stress.output_min:
+    bounds:
+    - 0.0
+    - 1.0
+    category: physical_limit
+    description: Lower bound used to clip surrogate water stress predictions.
+    dimension: dimensionless
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - Egea et al. 2011
+    requires_grad: false
+    tags:
+    - ml
+    - surrogate
+    - bounds
+    units: dimensionless
+    value: 0.01
+  tutorial.case.ml_surrogate.water_stress.output_max:
+    bounds:
+    - 0.1
+    - 1.0
+    category: physical_limit
+    description: Upper bound used to clip surrogate water stress predictions.
+    dimension: dimensionless
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - Egea et al. 2011
+    requires_grad: false
+    tags:
+    - ml
+    - surrogate
+    - bounds
+    units: dimensionless
+    value: 1.0
+  tutorial.case.ml_surrogate.stomatal.model_path:
+    bounds:
+    - null
+    - null
+    category: model_configuration
+    description: Relative checkpoint path for the stomatal ML surrogate.
+    dimension: dimensionless
+    dtype: str
+    provenance:
+      source: tutorial_case
+    references:
+    - Ball et al. 1987
+    requires_grad: false
+    tags:
+    - ml
+    - surrogate
+    units: dimensionless
+    value: models/gs_surrogate.pth
+  tutorial.case.ml_surrogate.stomatal.output_min:
+    bounds:
+    - 0.0
+    - 1.0
+    category: physical_limit
+    description: Lower bound used to clip surrogate stomatal conductance predictions.
+    dimension: molar_flux
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - Ball et al. 1987
+    - Leuning 1995
+    requires_grad: false
+    tags:
+    - ml
+    - surrogate
+    - bounds
+    units: mol m-2 s-1
+    value: 0.01
+  tutorial.case.ml_surrogate.stomatal.output_max:
+    bounds:
+    - 0.1
+    - 5.0
+    category: physical_limit
+    description: Upper bound used to clip surrogate stomatal conductance predictions.
+    dimension: molar_flux
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - Ball et al. 1987
+    - Leuning 1995
+    requires_grad: false
+    tags:
+    - ml
+    - surrogate
+    - bounds
+    units: mol m-2 s-1
+    value: 1.2
+  tutorial.case.ml_surrogate.ozone_stress.model_path:
+    bounds:
+    - null
+    - null
+    category: model_configuration
+    description: Relative checkpoint path for the ozone-stress ML surrogate.
+    dimension: dimensionless
+    dtype: str
+    provenance:
+      source: tutorial_case
+    references:
+    - Lombardozzi et al. 2015
+    - Sitch et al. 2007
+    requires_grad: false
+    tags:
+    - ml
+    - surrogate
+    units: dimensionless
+    value: models/ozone_stress_surrogate.pth
+  tutorial.case.ml_surrogate.ozone_stress.output_min:
+    bounds:
+    - 0.0
+    - 1.0
+    category: physical_limit
+    description: Lower bound used to clip surrogate ozone stress predictions.
+    dimension: dimensionless
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - Lombardozzi et al. 2015
+    requires_grad: false
+    tags:
+    - ml
+    - surrogate
+    - bounds
+    units: dimensionless
+    value: 0.5
+  tutorial.case.ml_surrogate.ozone_stress.output_max:
+    bounds:
+    - 0.1
+    - 1.0
+    category: physical_limit
+    description: Upper bound used to clip surrogate ozone stress predictions.
+    dimension: dimensionless
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - Lombardozzi et al. 2015
+    requires_grad: false
+    tags:
+    - ml
+    - surrogate
+    - bounds
+    units: dimensionless
+    value: 1.0
+  tutorial.case.ml_surrogate.diurnal_activity.model_path:
+    bounds:
+    - null
+    - null
+    category: model_configuration
+    description: Relative checkpoint path for the MEGAN diurnal activity ML surrogate.
+    dimension: dimensionless
+    dtype: str
+    provenance:
+      source: tutorial_case
+    references:
+    - Guenther et al. 2012
+    - Reichstein et al. 2019
+    requires_grad: false
+    tags:
+    - ml
+    - surrogate
+    units: dimensionless
+    value: models/diurnal_activity_surrogate.pth
+  tutorial.case.ml_surrogate.diurnal_activity.output_min:
+    bounds:
+    - 0.05
+    - 1.0
+    category: physical_limit
+    description: Lower bound used to map MEGAN diurnal activity correction predictions.
+    dimension: dimensionless
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - Guenther et al. 2012
+    - Reichstein et al. 2019
+    requires_grad: false
+    tags:
+    - ml
+    - surrogate
+    - bounds
+    units: dimensionless
+    value: 0.1
+  tutorial.case.ml_surrogate.diurnal_activity.output_max:
+    bounds:
+    - 1.0
+    - 5.0
+    category: physical_limit
+    description: Upper bound used to map MEGAN diurnal activity correction predictions.
+    dimension: dimensionless
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - Guenther et al. 2012
+    - Reichstein et al. 2019
+    requires_grad: false
+    tags:
+    - ml
+    - surrogate
+    - bounds
+    units: dimensionless
+    value: 3.0
+  tutorial.case.ml_surrogate.isoprene_residual.model_path:
+    bounds:
+    - null
+    - null
+    category: model_configuration
+    description: Relative checkpoint path for the isoprene residual ML surrogate.
+    dimension: dimensionless
+    dtype: str
+    provenance:
+      source: tutorial_case
+    references:
+    - Guenther et al. 2012
+    - Oumami et al. 2024
+    requires_grad: false
+    tags:
+    - ml
+    - surrogate
+    units: dimensionless
+    value: models/isoprene_residual_surrogate.pth
+  tutorial.case.ml_surrogate.isoprene_residual.output_min:
+    bounds:
+    - 0.1
+    - 1.0
+    category: physical_limit
+    description: Lower bound used to map residual isoprene correction factor predictions.
+    dimension: dimensionless
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - Guenther et al. 2012
+    requires_grad: false
+    tags:
+    - ml
+    - surrogate
+    - bounds
+    units: dimensionless
+    value: 0.5
+  tutorial.case.ml_surrogate.isoprene_residual.output_max:
+    bounds:
+    - 1.0
+    - 5.0
+    category: physical_limit
+    description: Upper bound used to map residual isoprene correction factor predictions.
+    dimension: dimensionless
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - Guenther et al. 2012
+    requires_grad: false
+    tags:
+    - ml
+    - surrogate
+    - bounds
+    units: dimensionless
+    value: 3.0
+  tutorial.case.stomatal_proxy.g0:
+    bounds:
+    - 0.0
+    - 2.0
+    category: process_coupling
+    description: Baseline stomatal conductance used for one-step lag ozone coupling.
+    dimension: molar_flux
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - Ball et al. 1987
+    - Emberson et al. 2000
+    requires_grad: false
+    tags:
+    - adapter
+    - ozone
+    - lag_state
+    units: mol m-2 s-1
+    value: 0.05
+  tutorial.case.stomatal_proxy.max:
+    bounds:
+    - 0.1
+    - 5.0
+    category: process_coupling
+    description: Maximum allowed lagged stomatal conductance.
+    dimension: molar_flux
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - Emberson et al. 2000
+    requires_grad: false
+    tags:
+    - adapter
+    - ozone
+    - lag_state
+    units: mol m-2 s-1
+    value: 1.2
+  tutorial.case.stomatal_proxy.min:
+    bounds:
+    - 0.0
+    - 1.0
+    category: process_coupling
+    description: Minimum allowed lagged stomatal conductance.
+    dimension: molar_flux
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - Emberson et al. 2000
+    requires_grad: false
+    tags:
+    - adapter
+    - ozone
+    - lag_state
+    units: mol m-2 s-1
+    value: 0.01
+  tutorial.case.stomatal_proxy.slope:
+    bounds:
+    - 0.0
+    - 0.05
+    category: process_coupling
+    description: Slope linking net photosynthesis to lagged stomatal conductance.
+    dimension: dimensionless
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - Ball et al. 1987
+    - Leuning 1995
+    requires_grad: false
+    tags:
+    - adapter
+    - ozone
+    - lag_state
+    units: mol umol-1
+    value: 0.005
+  tutorial.case.stress_adapter.clamp_max:
+    bounds:
+    - 0.0
+    - 1.0
+    category: process_coupling
+    description: Upper clamp for stress adapter output
+    dimension: dimensionless
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - Numerical stability convention
+    requires_grad: false
+    tags:
+    - adapter
+    units: dimensionless
+    value: 1.0
+  tutorial.case.stress_adapter.clamp_min:
+    bounds:
+    - 0.0
+    - 1.0
+    category: process_coupling
+    description: Lower clamp for stress adapter output
+    dimension: dimensionless
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - Numerical stability convention
+    requires_grad: false
+    tags:
+    - adapter
+    units: dimensionless
+    value: 0.0
+  tutorial.case.throughfall.interception_coefficient:
+    bounds:
+    - 0.0
+    - 0.2
+    category: process_coupling
+    description: Linear canopy interception coefficient used to map LAI to interception
+      fraction.
+    dimension: dimensionless
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - Shuttleworth 1988
+    - Cuartas et al. 2007
+    requires_grad: false
+    tags:
+    - adapter
+    - throughfall
+    units: dimensionless
+    value: 0.04
+  tutorial.case.throughfall.max_interception_fraction:
+    bounds:
+    - 0.0
+    - 0.95
+    category: process_coupling
+    description: Maximum interception fraction upper bound for tropical forest canopy.
+    dimension: dimensionless
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - Shuttleworth 1988
+    - Cuartas et al. 2007
+    requires_grad: false
+    tags:
+    - adapter
+    - throughfall
+    units: dimensionless
+    value: 0.25
+  tutorial.case.throughfall.min_interception_fraction:
+    bounds:
+    - 0.0
+    - 0.8
+    category: process_coupling
+    description: Minimum interception fraction lower bound.
+    dimension: dimensionless
+    dtype: float64
+    provenance:
+      source: tutorial_case
+    references:
+    - Shuttleworth 1988
+    requires_grad: false
+    tags:
+    - adapter
+    - throughfall
+    units: dimensionless
+    value: 0.0
+

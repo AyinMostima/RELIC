@@ -1,0 +1,232 @@
+# Site-Specific Calibrated Parameters - Harvard Forest
+# Photosynthesis parameters calibrated using eddy covariance flux data
+#
+# Site Information:
+#   Site Name: Harvard Forest Environmental Measurement Site
+#   Site Code: US-Ha1
+#   Location: 42.5378degN, 72.1715degW, 340m elevation
+#   Ecosystem: Temperate deciduous broadleaf forest
+#   Dominant Species: Red oak (Quercus rubra), Red maple (Acer rubrum)
+#
+# Calibration Period: 2010-2015 (growing seasons)
+# Validation Period: 2016-2020 (independent validation)
+# Data Source: AmeriFlux network (US-Ha1)
+
+schema_version: "1.0.0"
+tier: "calibrated"
+calibration_scale: "site_specific"
+namespace: "biosphere.photosynthesis"
+description: "Harvard Forest calibrated photosynthesis parameters from flux tower data"
+
+# Site metadata
+site_info:
+  site_name: "Harvard Forest Environmental Measurement Site"
+  site_code: "US-Ha1"
+  latitude: 42.5378
+  longitude: -72.1715
+  elevation: 340.0
+  ecosystem_type: "temperate_deciduous_forest"
+  dominant_species: ["Quercus rubra", "Acer rubrum", "Betula papyrifera"]
+  canopy_height: 25.0
+  leaf_area_index_max: 5.2
+  
+# Calibration metadata
+calibration_info:
+  method: "differential_evolution"
+  algorithm_settings:
+    population_size: 150
+    max_generations: 1000
+    mutation_factor: 0.8
+    crossover_probability: 0.9
+    convergence_tolerance: 1e-6
+  
+  target_observations:
+    - "net_ecosystem_exchange"
+    - "gross_primary_productivity" 
+    - "ecosystem_respiration"
+    - "evapotranspiration"
+  
+  data_period:
+    calibration_start: "2010-05-01"
+    calibration_end: "2015-09-30"
+    validation_start: "2016-05-01"
+    validation_end: "2020-09-30"
+    temporal_resolution: "30min"
+    
+  environmental_conditions:
+    temperature_range: [-15.2, 32.8]  # degC
+    precipitation_annual: 1100.0  # mm/year
+    par_max: 2100.0  # umol m-2 s-1
+    vpd_range: [0.1, 3.5]  # kPa
+
+overrides:
+  biosphere.photosynthesis.vcmax25:
+    value: 75.3
+    units: umol CO2 m-2 s-1
+    dtype: float32
+    bounds: [50.0, 120.0]
+    category: biological_parameter
+    description: "Maximum carboxylation rate at 25degC - calibrated for Harvard Forest"
+    references:
+      - "doi:10.5194/bg-13-5317-2016"
+      - "Richardson et al. (2010) Agric For Meteorol 150:1443-1453"
+    tags:
+      - "calibrated"
+      - "site_specific"
+      - "harvard_forest"
+      - "deciduous_forest"
+    dimension: amount_flux
+    requires_grad: false
+    calibration_metadata:
+      prior_value: 60.0
+      prior_bounds: [30.0, 150.0]
+      posterior_mean: 75.3
+      posterior_std: 4.2
+      posterior_95ci: [67.8, 83.1]
+      correlation_with_obs: 0.78
+      sensitivity_rank: 1
+      identifiability: "high"
+    provenance:
+      source: "flux_tower_calibration"
+      schema_version: "1.0.0"
+      calibrated_by: "Harvard Forest Calibration Team"
+      calibration_date: "2024-01-15T10:00:00Z"
+      calibration_software: "RELIC Calibration Framework v1.0"
+
+  biosphere.photosynthesis.jmax25:
+    value: 148.6
+    units: umol e- m-2 s-1
+    dtype: float32
+    bounds: [80.0, 250.0]
+    category: biological_parameter
+    description: "Maximum electron transport rate at 25degC - calibrated for Harvard Forest"
+    references:
+      - "doi:10.5194/bg-13-5317-2016"
+      - "Richardson et al. (2010) Agric For Meteorol 150:1443-1453"
+    tags:
+      - "calibrated"
+      - "site_specific"
+      - "harvard_forest"
+      - "deciduous_forest"
+    dimension: amount_flux
+    requires_grad: false
+    calibration_metadata:
+      prior_value: 120.0
+      prior_bounds: [60.0, 300.0]
+      posterior_mean: 148.6
+      posterior_std: 8.7
+      posterior_95ci: [132.1, 165.3]
+      correlation_with_obs: 0.72
+      sensitivity_rank: 2
+      identifiability: "high"
+    provenance:
+      source: "flux_tower_calibration"
+      schema_version: "1.0.0"
+      calibrated_by: "Harvard Forest Calibration Team"
+      calibration_date: "2024-01-15T10:00:00Z"
+      calibration_software: "RELIC Calibration Framework v1.0"
+
+parameters:
+  
+  coupling.scales.biosphere_atmosphere.g1:
+    value: 12.4
+    units: "dimensionless"
+    dtype: "float32"
+    bounds: [6.0, 20.0]
+    category: "biological_parameter"
+    description: "Stomatal conductance slope parameter (Ball-Berry) - calibrated for Harvard Forest"
+    references:
+      - "doi:10.5194/bg-13-5317-2016"
+      - "Ball et al. (1987) Progress in Photosynthesis Research"
+    tags:
+      - "calibrated"
+      - "site_specific"
+      - "harvard_forest"
+      - "stomatal_parameter"
+    dimension: "dimensionless"
+    requires_grad: false
+    
+    # Calibration-specific metadata
+    calibration_metadata:
+      prior_value: 9.0
+      prior_bounds: [4.0, 25.0]
+      posterior_mean: 12.4
+      posterior_std: 1.8
+      posterior_95ci: [9.2, 15.9]
+      correlation_with_obs: 0.65
+      sensitivity_rank: 3
+      identifiability: "medium"
+      
+    provenance:
+      source: "flux_tower_calibration"
+      schema_version: "1.0.0"
+      calibrated_by: "Harvard Forest Calibration Team"
+      calibration_date: "2024-01-15T10:00:00Z"
+      calibration_software: "RELIC Calibration Framework v1.0"
+
+# Performance metrics
+performance_metrics:
+  calibration_period:
+    gpp:
+      r_squared: 0.84
+      rmse: 2.15  # g C m-2 day-1
+      mae: 1.67   # g C m-2 day-1
+      nash_sutcliffe: 0.83
+      bias: -0.12  # g C m-2 day-1
+    
+    nee:
+      r_squared: 0.71
+      rmse: 3.24  # g C m-2 day-1
+      mae: 2.45   # g C m-2 day-1
+      nash_sutcliffe: 0.68
+      bias: 0.34   # g C m-2 day-1
+    
+    et:
+      r_squared: 0.76
+      rmse: 0.89  # mm day-1
+      mae: 0.67   # mm day-1
+      nash_sutcliffe: 0.74
+      bias: -0.08  # mm day-1
+      
+  validation_period:
+    gpp:
+      r_squared: 0.79
+      rmse: 2.48  # g C m-2 day-1
+      mae: 1.89   # g C m-2 day-1
+      nash_sutcliffe: 0.77
+      bias: -0.23  # g C m-2 day-1
+      
+    nee:
+      r_squared: 0.66
+      rmse: 3.67  # g C m-2 day-1
+      mae: 2.78   # g C m-2 day-1
+      nash_sutcliffe: 0.62
+      bias: 0.45   # g C m-2 day-1
+
+# Parameter correlation matrix
+parameter_correlations:
+  vcmax25_vs_jmax25: 0.72
+  vcmax25_vs_g1: 0.31
+  jmax25_vs_g1: 0.28
+
+# Quality control and validation
+quality_control:
+  independent_validation: true
+  cross_validation_folds: 5
+  parameter_identifiability_analysis: true
+  residual_analysis_passed: true
+  temporal_stability_check: true
+  physical_realism_check: true
+  
+uncertainties:
+  calibration_data_uncertainty: "Included through data filtering and gap-filling uncertainty"
+  model_structural_uncertainty: "Not quantified - single model structure used"
+  parameter_uncertainty: "Quantified through posterior distributions"
+  prediction_uncertainty: "Propagated through Monte Carlo sampling"
+
+notes:
+  - "Parameters calibrated using multi-objective approach targeting GPP, NEE, and ET"
+  - "Strong correlation between Vcmax25 and Jmax25 consistent with biochemical coupling"
+  - "Validation performance slightly lower than calibration as expected"
+  - "Parameters applicable to temperate deciduous broadleaf forests in similar climate"
+  - "Seasonal variation in parameters not considered - annual mean values used"

@@ -1,0 +1,46 @@
+variable: leaf_temperature_daylight_samples
+title: "Leaf Temperature at the Daylight Gauss Samples"
+description: "Leaf temperature T_leaf = T_k + dT_k [K] of leaf_energy_balance with temporal_support daylight_gauss at each daylight Gauss instant and at the night sample (T_k the sample air temperature, dT_k the linearised balance of that sample). Its weighted mean is the 24-hour mean written to leaf_temperature. Read by megan_bvoc_model with temperature_source leaf_temperature and temporal_support daylight_gauss (gamma_T of the same instant). Trailing axis daylight_sample of length n + 1 (n = config daylight_gauss_nodes, 3 or 5): samples 0..n-1 are the Gauss-Legendre instants of the daylight period in time order (FAO-56 day length, Eq. 34), sample n is the night; the daily mean is sum_k W_k x_k with W_i = (N/24) w_i and W_night = 1 - N/24 (relic/scientific/atmosphere/daylight_quadrature.py; Goudriaan 1986)."
+kind: diagnostic
+dimension:
+  udunits: "K"
+  cf_standard_name: null
+support:
+  spatial_kind: leaf
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell, daylight_sample]
+owner: "leaf_energy_balance"
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Jones, H.G. (2014). Plants and Microclimate, 3rd ed. Cambridge University Press, Chapter 9"
+  - "Goudriaan, J. (1986). Agricultural and Forest Meteorology 38, 249-254"
+numerics:
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "leaf_energy_balance"
+      module: "relic.scientific.biosphere.photosynthesis.leaf_energy_balance"
+      provides: ["leaf_temperature_daylight_samples"]
+      unit: "K"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/biosphere/photosynthesis/leaf_energy_balance.py"
+  runtime_role: "daylight_gauss_leaf_temperature_samples"
+  runtime_writer: "leaf_energy_balance"
+  note: "Declared output of leaf_energy_balance only with config temporal_support daylight_gauss; UpdateItem(REPLACE, per_timestep=False) in K. Reader: megan_bvoc_model (daylight_gauss, temperature_source leaf_temperature)."

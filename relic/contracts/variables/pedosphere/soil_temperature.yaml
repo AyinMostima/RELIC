@@ -1,0 +1,64 @@
+variable: soil_temperature
+title: "Soil Temperature"
+description: "Bulk soil temperature T_soil [K] of the soil layer or profile a process acts on, read by the pedosphere process Functors (first_order_decomposition, microbial_enzyme_decomposition, pedosphere_methane_production, pedosphere_methane_oxidation, nitrification, denitrification, mineralization, root_nutrient_uptake, GasDiffusion1D, SoluteAdvectionDiffusion1D), vertical_percolation_transport, the water_carbon coupling and tillage_management (Q10 response of the tillage CO2 pulse). Every reader uses kelvin. Absolute temperature, non-negative. No relic Functor writes it: it is supplied as forcing or initial state; the external adapters map WRF TSLB, CLM TSOI, VIC OUT_SOIL_TEMP and SWAT SOL_TMP to it."
+kind: forcing
+dimension:
+  udunits: "K"
+  cf_standard_name: "soil_temperature"
+support:
+  spatial_kind: grid_cell
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: null
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "CF Standard Name Table v94: soil_temperature (canonical units K; bulk temperature of the soil, not the surface skin temperature)"
+  - "Davidson, E.A. and Janssens, I.A. (2006). Temperature sensitivity of soil carbon decomposition and feedbacks to climate change. Nature 440, 165-173"
+  - "Reicosky, D.C. (1997). Tillage-induced CO2 emission from soil. Nutrient Cycling in Agroecosystems 49, 273-285"
+numerics:
+  # Sign convention: absolute (thermodynamic) temperature, T_soil >= 0 K; no
+  # upper limit is declared.
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "CESMAdapter"
+      module: "relic.coupling.external.atmospheric_models.cesm_adapter"
+      provides: ["soil_temperature"]
+      unit: "K"
+    - name: "SWATAdapter"
+      module: "relic.coupling.external.hydrological_models.swat_adapter"
+      provides: ["soil_temperature"]
+      unit: "K"
+    - name: "VICAdapter"
+      module: "relic.coupling.external.hydrological_models.vic_adapter"
+      provides: ["soil_temperature"]
+      unit: "K"
+    - name: "WRFAdapter"
+      module: "relic.coupling.external.atmospheric_models.wrf_adapter"
+      provides: ["soil_temperature"]
+      unit: "K"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/anthroposphere/management/tillage.py"
+  runtime_role: "external_soil_temperature_forcing"
+  runtime_writer: null
+  note: "No RELIC Functor writes soil_temperature. Readers, all in K, include tillage_management (relic/scientific/anthroposphere/management/tillage.py:253 input, :781-791 read with no default, a missing value raises, Q10 pulse :657-670 with Q10 = pedosphere.physical.q10_decomposition), first_order_decomposition (relic/scientific/pedosphere/decomposition/first_order.py:227,636), the water_carbon coupling (relic/coupling/internal/water_carbon.py:314,1031-1032), vertical_percolation_transport, the methane, nitrogen-cycle, root-uptake and soil gas and solute transport Functors listed in the description. External adapters map TSLB, TSOI, OUT_SOIL_TEMP and SOL_TMP to soil_temperature in K (relic/coupling/external/common/schema.py:255,310,368,381). The SSOT scale catalog entry coupling.scales.defaults.variables.soil_temperature declares K."
+  adapter_writers:
+    - "CESMAdapter"
+    - "SWATAdapter"
+    - "VICAdapter"
+    - "WRFAdapter"

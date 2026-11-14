@@ -1,0 +1,32 @@
+variable: sector_emission_flux
+title: "Sector-Resolved Anthropogenic Emission Flux"
+description: "Sector split E_sector[s,k,x] = W[s,k,x] E_input[k,x] of the six canonical inventory mass fluxes anthropogenic_{nox,co,so2,voc,nh3,pm25}_flux over the fixed sector axis (power, transport, industry, buildings, agriculture) and species axis (NOx, CO, SO2, VOC, NH3, PM25), with sum_s E_sector = E_input in every cell. SectorAllocation returns it as UpdateItem(REPLACE, write_mode DERIVED, basis per_second, per_timestep False): a derived quantity of the step that partition_outputs routes out of the commit, so StateManager never stores it as state. It stays visible to the Functors that run later in the same group call (SpeciesMapper reads it there) and keeps its write provenance; a caller can also supply it as input state. The emission mass budget stays with the six inventory flux ports; the split is not a second budget term."
+kind: diagnostic
+dimension:
+  udunits: "kg m-2 s-1"
+  cf_standard_name: null
+owner: "sector_allocation"
+aliases: []
+incrementable: false
+accumulates: null
+numerics:
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies: []
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/anthroposphere/emissions/sector_allocation.py"
+  runtime_role: "derived_sector_species_mass_flux"
+  runtime_writer: "sector_allocation"
+  note: "Runtime channel verified: relic/scientific/anthroposphere/emissions/sector_allocation.py forward() returns write_mode StateWriteMode.DERIVED and check_conservation_laws() requires it; relic/core/state/types.py partition_outputs() routes DERIVED to the diagnostics channel; relic/core/simulator/execution_group.py _clean_updates_and_collect_diagnostics() keeps a declared DERIVED output visible to later Functors of the same group call; relic/core/state/manager.py records it as a state diagnostic and never commits it. The only committed-state writer declaration (tendencies sector_allocation, flux_contract allowed_in) was removed with the change of kind from flux to diagnostic."

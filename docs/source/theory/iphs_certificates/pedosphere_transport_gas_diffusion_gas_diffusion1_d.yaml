@@ -1,0 +1,289 @@
+certificate_version: '1.0'
+process_id: relic.scientific.pedosphere.transport.gas_diffusion.GasDiffusion1D
+module_name: GasDiffusion1D
+canonical_role: transport
+iphs_level: 3
+iphs_level_evidence:
+  classification: IPHS-structured transport process certificate
+  compatible_basis: Process declares composition-safe IPHS or DEC structure
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: DEC/IPHS soil-gas transport operator with conservative flux-divergence routing
+  structural_contribution: GasDiffusion1D declares CO2 and N2O cochains, a PSD gas-diffusion Hodge, and soil-atmosphere matter ports
+  assembly_participation: Certificate participates in Phase 8 inventory and GraphIR structural audit
+  level_3_limit: Typed form, Hodge, port, or related structure is declared, but no runtime-linked IPHSStructureSpec contribution and executable level 4 or 5 certificate binding is present.
+theory_document: docs\source\theory\pedosphere_transport.md
+theory_document_status: updated
+legacy_formula: J = -Deff partialC/partialz; Deff = f(thetaa, phi, T)
+literature_formula: Jz = -Deff partialC/partialz; F_surface,out = -Jz(0)
+iphs_formula: c_dot = -D_h q_h + G_h u_h, q_h = -star_K D_h^T e_h, e_h = delta H_h / delta c_h
+legacy_expression: J = -Deff partialC/partialz; Deff = f(thetaa, phi, T)
+iphs_expression: c_dot = -D_h q_h + G_h u_h, q_h = -star_K D_h^T e_h, e_h = c_h, dH/dt = -sigma_h + e_h.T G_h u_h + residual
+input_variables:
+- soil_moisture
+- porosity
+- soil_temperature
+- clay_content
+- soil_co2_concentration
+- n2o_concentration
+output_variables:
+- co2_surface_flux
+- n2o_surface_flux
+- co2_flux_profile
+- n2o_flux_profile
+- soil_co2_concentration
+- n2o_concentration
+- diagnostics.gas_diffusion.energy_storage
+- diagnostics.gas_diffusion.dissipation_rate
+- diagnostics.gas_diffusion.dH_dt_audit
+- diagnostics.gas_diffusion.port_power_residual
+- diagnostics.gas_diffusion.co2_clipping_residual
+- diagnostics.gas_diffusion.n2o_clipping_residual
+- diagnostics.gas_diffusion.step_seconds
+parameter_keys:
+- pedosphere.grid.n_layers
+- pedosphere.grid.soil_depth
+- pedosphere.transport.diffusion_model
+- pedosphere.transport.temperature_correction
+- pedosphere.transport.atmospheric_exchange
+- pedosphere.transport.allow_constructor_overrides
+- pedosphere.transport.n2o_dndc_clay_effect
+- pedosphere.transport.n2o_dndc_porosity_effect
+- pedosphere.transport.n2o_dndc_base_coefficient
+- pedosphere.transport.n2o_dndc_clay_porosity_coefficient
+- pedosphere.transport.n2o_dndc_temperature_base
+- pedosphere.transport.n2o_dndc_temperature_divisor
+- pedosphere.physical.co2_diffusivity_air_stp
+- pedosphere.physical.n2o_diffusivity_air_stp
+- pedosphere.physical.gas_diffusivity_temperature_exponent
+- pedosphere.physical.atmospheric_co2_concentration
+- pedosphere.physical.atmospheric_n2o_concentration
+- pedosphere.physical.millington_quirk_exponent_numerator
+- pedosphere.physical.millington_quirk_exponent_denominator
+- pedosphere.physical.penman_coefficient
+- pedosphere.numerical.clamp_min
+- pedosphere.numerical.epsilon
+- pedosphere.numerical.epsilon_length
+- pedosphere.numerical.min_time_step
+- pedosphere.numerical.zero_initial
+- pedosphere.numerical.wfps_minimum
+- pedosphere.numerical.wfps_maximum
+composition_ports:
+- phase8_runtime_port
+references:
+- Millington, R.J. & Quirk, J.P. (1961). Trans. Faraday Soc. 57, 1200-1207. doi:10.1039/TF9615701200
+- Penman, H.L. (1940). J. Agric. Sci. 30, 437-462
+- Moldrup, P. et al. (2000). Soil Sci. Soc. Am. J. 64, 94-100
+- Li, C. et al. (1992). J. Geophys. Res. 97, 9759-9776. doi:10.1029/92JD00509
+- Kusa, K. et al. (2008). Soil Sci. Plant Nutr. 54, 777-785. doi:10.1111/j.1747-0765.2008.00292.x
+- Song, H. et al. (2021). GMD discussion supplement, Table S1, Eq. 20. doi:10.5194/gmd-2021-23-supplement
+baseline_tests:
+- test\pedosphere\transport\test_gas_diffusion.py
+- test\scientific\pedosphere\test_gas_diffusion_l1.py
+- test\unit\pedosphere\test_gas_diffusion.py
+- test\integration\pedosphere\test_soil_transport_integration.py
+- test\audit\phase8_scientific_inventory.test.py
+validation_tests:
+- test\pedosphere\transport\test_gas_diffusion.py
+- test\scientific\pedosphere\test_gas_diffusion_l1.py
+- test\unit\pedosphere\test_gas_diffusion.py
+- test\integration\pedosphere\test_soil_transport_integration.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  soil_moisture: soil_moisture mapped to canonical Phase 8 cochain basis
+  porosity: porosity mapped to canonical Phase 8 cochain basis
+  soil_temperature: canonical soil temperature in K mapped to the Phase 8 cochain basis
+  clay_content: clay_content mapped to canonical Phase 8 cochain basis
+  soil_co2_concentration: canonical pedosphere CO2 state key mapped to the Phase 8 cochain basis; generic CO2 aliases are rejected
+  n2o_concentration: n2o_concentration mapped to canonical Phase 8 cochain basis
+parameter_map:
+  pedosphere.grid.n_layers: pedosphere.grid.n_layers from ParameterManager
+  pedosphere.grid.soil_depth: pedosphere.grid.soil_depth from ParameterManager
+  pedosphere.transport.diffusion_model: pedosphere.transport.diffusion_model from ParameterManager
+  pedosphere.transport.temperature_correction: pedosphere.transport.temperature_correction from ParameterManager
+  pedosphere.transport.atmospheric_exchange: pedosphere.transport.atmospheric_exchange from ParameterManager
+  pedosphere.transport.allow_constructor_overrides: pedosphere.transport.allow_constructor_overrides from ParameterManager
+  pedosphere.transport.n2o_dndc_clay_effect: pedosphere.transport.n2o_dndc_clay_effect from ParameterManager
+  pedosphere.transport.n2o_dndc_porosity_effect: pedosphere.transport.n2o_dndc_porosity_effect from ParameterManager
+  pedosphere.transport.n2o_dndc_base_coefficient: pedosphere.transport.n2o_dndc_base_coefficient from ParameterManager
+  pedosphere.transport.n2o_dndc_clay_porosity_coefficient: pedosphere.transport.n2o_dndc_clay_porosity_coefficient from ParameterManager
+  pedosphere.transport.n2o_dndc_temperature_base: pedosphere.transport.n2o_dndc_temperature_base from ParameterManager
+  pedosphere.transport.n2o_dndc_temperature_divisor: pedosphere.transport.n2o_dndc_temperature_divisor from ParameterManager
+  pedosphere.physical.co2_diffusivity_air_stp: pedosphere.physical.co2_diffusivity_air_stp from ParameterManager
+  pedosphere.physical.n2o_diffusivity_air_stp: pedosphere.physical.n2o_diffusivity_air_stp from ParameterManager
+  pedosphere.physical.gas_diffusivity_temperature_exponent: pedosphere.physical.gas_diffusivity_temperature_exponent from ParameterManager
+  pedosphere.physical.atmospheric_co2_concentration: pedosphere.physical.atmospheric_co2_concentration from ParameterManager
+  pedosphere.physical.atmospheric_n2o_concentration: pedosphere.physical.atmospheric_n2o_concentration from ParameterManager
+  pedosphere.physical.millington_quirk_exponent_numerator: pedosphere.physical.millington_quirk_exponent_numerator from ParameterManager
+  pedosphere.physical.millington_quirk_exponent_denominator: pedosphere.physical.millington_quirk_exponent_denominator from ParameterManager
+  pedosphere.physical.penman_coefficient: pedosphere.physical.penman_coefficient from ParameterManager
+  pedosphere.numerical.clamp_min: pedosphere.numerical.clamp_min from ParameterManager
+  pedosphere.numerical.epsilon: pedosphere.numerical.epsilon from ParameterManager
+  pedosphere.numerical.epsilon_length: pedosphere.numerical.epsilon_length from ParameterManager
+  pedosphere.numerical.min_time_step: pedosphere.numerical.min_time_step from ParameterManager
+  pedosphere.numerical.zero_initial: pedosphere.numerical.zero_initial from ParameterManager
+  pedosphere.numerical.wfps_minimum: pedosphere.numerical.wfps_minimum from ParameterManager
+  pedosphere.numerical.wfps_maximum: pedosphere.numerical.wfps_maximum from ParameterManager
+operator_map:
+  D_h: existing gradient and flux-divergence operator used by forward()
+  star_K: HodgeStarSpec assembled from ParameterManager-backed CO2 and N2O effective diffusivities
+  q_h: soil gas diffusive flux cochain computed by Fick law
+  G_h: soil-atmosphere CO2 and N2O matter-port map
+  H_h: quadratic concentration storage H_h = 0.5 * c_h.T c_h
+  sigma_h: non-negative diffusion dissipation X_h.T star_K X_h
+unit_map:
+  co2_surface_flux: g C m-2 s-1
+  n2o_surface_flux: g N m-2 s-1
+  co2_flux_profile: g C m-2 s-1
+  n2o_flux_profile: g N m-2 s-1
+  soil_co2_concentration: g C m-3
+  n2o_concentration: g N m-3
+  diagnostics.gas_diffusion.energy_storage: g2 m-6
+  diagnostics.gas_diffusion.dissipation_rate: g2 m-5 s-1
+  diagnostics.gas_diffusion.dH_dt_audit: g2 m-6 s-1
+  diagnostics.gas_diffusion.port_power_residual: g2 m-5 s-1
+  diagnostics.gas_diffusion.co2_clipping_residual: g C m-3
+  diagnostics.gas_diffusion.n2o_clipping_residual: g N m-3
+  diagnostics.gas_diffusion.step_seconds: s
+input_output_map:
+  clay_content: same interface variable preserved between legacy and IPHS runtime contracts
+  co2_flux_profile: same interface variable preserved between legacy and IPHS runtime contracts
+  co2_surface_flux: same interface variable preserved between legacy and IPHS runtime contracts
+  n2o_concentration: same interface variable preserved between legacy and IPHS runtime contracts
+  n2o_flux_profile: same interface variable preserved between legacy and IPHS runtime contracts
+  n2o_surface_flux: same interface variable preserved between legacy and IPHS runtime contracts
+  porosity: same interface variable preserved between legacy and IPHS runtime contracts
+  soil_co2_concentration: sole canonical pedosphere CO2 state key preserved by the IPHS runtime contract
+  soil_moisture: same interface variable preserved between legacy and IPHS runtime contracts
+  soil_temperature: sole canonical soil temperature key preserved by the IPHS runtime contract
+interface_map:
+  forward_signature: forward(self, state, time, dt)
+  bridge_class: TransportMechanismFunctor
+  abstraction_contract: TransportMechanism
+  state_write_mode: concentration states use ACCUMULATE per_timestep updates; instantaneous fluxes and diagnostics use REPLACE
+  legacy_inputs:
+  - soil_moisture
+  - porosity
+  - soil_temperature
+  - clay_content
+  - soil_co2_concentration
+  - n2o_concentration
+  iphs_inputs:
+  - soil_moisture
+  - porosity
+  - soil_temperature
+  - clay_content
+  - soil_co2_concentration
+  - n2o_concentration
+  legacy_outputs:
+  - co2_surface_flux
+  - n2o_surface_flux
+  - co2_flux_profile
+  - n2o_flux_profile
+  - soil_co2_concentration
+  - n2o_concentration
+  - diagnostics.gas_diffusion.energy_storage
+  - diagnostics.gas_diffusion.dissipation_rate
+  - diagnostics.gas_diffusion.dH_dt_audit
+  - diagnostics.gas_diffusion.port_power_residual
+  - diagnostics.gas_diffusion.co2_clipping_residual
+  - diagnostics.gas_diffusion.n2o_clipping_residual
+  - diagnostics.gas_diffusion.step_seconds
+  iphs_outputs:
+  - co2_surface_flux
+  - n2o_surface_flux
+  - co2_flux_profile
+  - n2o_flux_profile
+  - soil_co2_concentration
+  - n2o_concentration
+  - diagnostics.gas_diffusion.energy_storage
+  - diagnostics.gas_diffusion.dissipation_rate
+  - diagnostics.gas_diffusion.dH_dt_audit
+  - diagnostics.gas_diffusion.port_power_residual
+  - diagnostics.gas_diffusion.co2_clipping_residual
+  - diagnostics.gas_diffusion.n2o_clipping_residual
+  - diagnostics.gas_diffusion.step_seconds
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: Existing ParameterManager-backed calculations define canonical IPHS operator coefficients, rates, ports, or observations.
+  no_legacy_mode: No selectable legacy runtime branch is exposed for Phase 8 completion.
+state_advancement_map:
+  potential_basis: CO2 and N2O layer concentrations are declared as primal 0-cochains on pedosphere_soil_gas_diffusion
+  effort_variable: e_h = delta H_h / delta c_h = c_h for stacked CO2 and N2O concentration cochains
+  state_advancer: delta C_raw,i = -(J_i+1/2 - J_i-1/2) dt/dz with F_surface,out = -J_top and J_bottom = 0; delta C_accepted,i = max(-C_i, delta C_raw,i)
+  runtime_usage: GasDiffusion1D.forward computes ParameterManager-backed effective diffusivity once, advances each exact-grid concentration through one conservative finite-volume divergence, and returns explicit UpdateItems plus signed species-specific clipping routes.
+parameter_management_map:
+  pedosphere.grid.n_layers:
+    source: ParameterManager YAML
+  pedosphere.grid.soil_depth:
+    source: ParameterManager YAML
+  pedosphere.transport.diffusion_model:
+    source: ParameterManager YAML
+  pedosphere.transport.temperature_correction:
+    source: ParameterManager YAML
+  pedosphere.transport.atmospheric_exchange:
+    source: ParameterManager YAML
+  pedosphere.transport.allow_constructor_overrides:
+    source: ParameterManager YAML
+  pedosphere.transport.n2o_dndc_clay_effect:
+    source: ParameterManager YAML
+  pedosphere.transport.n2o_dndc_porosity_effect:
+    source: ParameterManager YAML
+  pedosphere.transport.n2o_dndc_base_coefficient:
+    source: ParameterManager YAML
+  pedosphere.transport.n2o_dndc_clay_porosity_coefficient:
+    source: ParameterManager YAML
+  pedosphere.transport.n2o_dndc_temperature_base:
+    source: ParameterManager YAML
+  pedosphere.transport.n2o_dndc_temperature_divisor:
+    source: ParameterManager YAML
+  pedosphere.physical.co2_diffusivity_air_stp:
+    source: ParameterManager YAML
+  pedosphere.physical.n2o_diffusivity_air_stp:
+    source: ParameterManager YAML
+  pedosphere.physical.gas_diffusivity_temperature_exponent:
+    source: ParameterManager YAML
+  pedosphere.physical.atmospheric_co2_concentration:
+    source: ParameterManager YAML
+  pedosphere.physical.atmospheric_n2o_concentration:
+    source: ParameterManager YAML
+  pedosphere.physical.millington_quirk_exponent_numerator:
+    source: ParameterManager YAML
+  pedosphere.physical.millington_quirk_exponent_denominator:
+    source: ParameterManager YAML
+  pedosphere.physical.penman_coefficient:
+    source: ParameterManager YAML
+  pedosphere.numerical.clamp_min:
+    source: ParameterManager YAML
+  pedosphere.numerical.epsilon:
+    source: ParameterManager YAML
+  pedosphere.numerical.epsilon_length:
+    source: ParameterManager YAML
+  pedosphere.numerical.min_time_step:
+    source: ParameterManager YAML
+  pedosphere.numerical.zero_initial:
+    source: ParameterManager YAML
+  pedosphere.numerical.wfps_minimum:
+    source: ParameterManager YAML
+  pedosphere.numerical.wfps_maximum:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares interfaces, execution phase, and conservation semantics
+  state_contract: concentration states use StateManager ACCUMULATE updates and flux ports use REPLACE
+  physical_constant_ssot: reference temperature, Celsius offset, seconds per hour, gas constant, standard pressure, standard temperature, and molar masses are read or derived only from relic physical constants
+  validation_rule: phase8 scientific inventory and equivalence certificate checks
+dependency_interconnection_map:
+  dependencies: declared through existing metadata or no external dependency
+  direct_functor_calls: none; gas, moisture, temperature, and boundary state enter via declared ports and no producer instance is called
+overflow_routing_map:
+  diagnostic_residuals: carbon and nitrogen clipping adjustments are routed separately to diagnostics.gas_diffusion.co2_clipping_residual and diagnostics.gas_diffusion.n2o_clipping_residual; port-power closure residuals use diagnostics.gas_diffusion.port_power_residual
+  discarded_residuals: carbon-dioxide and nitrous-oxide clipping adjustments are separate co2_clipping_residual and n2o_clipping_residual outputs, and port-power nonclosure is port_power_residual
+conservation_map:
+  conserved_quantities: mass
+  balance_expression: for each species sum_i(delta C_accepted,i * dz) + F_surface,out * dt - sum_i(R_clip,i * dz) = 0 under the declared no-flow bottom boundary, where R_clip = delta C_accepted - delta C_raw
+  top_boundary_switch: pedosphere.transport.atmospheric_exchange=false closes the soil-atmosphere boundary for both the Fickian and the DNDC surface expressions (F_surface,out = 0, J_top = 0), so the species ledger reduces to sum_i(delta C_accepted,i * dz) - sum_i(R_clip,i * dz) = 0
+entropy_audit:
+  operator_sign: star_K is diagonal and non-negative because effective diffusivities are clamped by ParameterManager-backed numerical bounds and Hodge validation checks PSD
+  sigma_expression: sigma_h = X_h.T star_K X_h >= 0 is emitted at runtime as diagnostics.gas_diffusion.dissipation_rate
+equivalence_type: port_equivalent

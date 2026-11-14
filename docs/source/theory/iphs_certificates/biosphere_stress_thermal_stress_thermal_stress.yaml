@@ -1,0 +1,172 @@
+{
+  "certificate_version": "1.0",
+  "process_id": "relic.scientific.biosphere.stress.thermal_stress.ThermalStress",
+  "module_name": "ThermalStress",
+  "canonical_role": "observation",
+  "iphs_level": 1,
+  "iphs_level_evidence": {
+    "classification": "IPHS-compatible diagnostic or observation certificate",
+    "compatible_basis": "Read-only observation or diagnostic contract with declared interface and no state ownership"
+  },
+  "theory_document": "docs\\source\\theory\\stress.md",
+  "theory_document_status": "updated",
+  "legacy_formula": "f_temp = exp(-0.5 * ((T - T_opt)/sigma)^2)",
+  "literature_formula": "f_temp = exp(-0.5 * ((T - T_opt)/sigma)^2)",
+  "iphs_formula": "y_h = O_h x_h through the declared observation operator",
+  "legacy_expression": "f_temp = exp(-0.5 * ((T - T_opt)/sigma)^2)",
+  "iphs_expression": "y_h = O_h x_h through the declared observation operator",
+  "input_variables": [
+    "air_temperature"
+  ],
+  "output_variables": [
+    "temperature_stress_factor",
+    "heat_stress_factor",
+    "cold_stress_factor"
+  ],
+  "parameter_keys": [
+    "biosphere.stress.thermal.optimal_temperature",
+    "biosphere.stress.thermal.heat_stress_threshold",
+    "biosphere.stress.thermal.critical_high_temperature",
+    "biosphere.stress.thermal.cold_stress_threshold",
+    "biosphere.stress.thermal.freezing_damage_threshold",
+    "biosphere.stress.thermal.temperature_tolerance_width",
+    "biosphere.stress.thermal.heat_stress_coefficient",
+    "biosphere.stress.thermal.cold_stress_coefficient",
+    "biosphere.stress.global.factor_min",
+    "biosphere.stress.global.factor_max"
+  ],
+  "composition_ports": [
+    "air_temperature"
+  ],
+  "references": [
+    "Berry, J. & Bjorkman, O. (1980). Annual Review of Plant Physiology 31, 491-543",
+    "Salvucci, M.E. & Crafts-Brandner, S.J. (2004). Plant, Cell & Environment 27, 1063-1071",
+    "Hatfield, J.L. & Prueger, J.H. (2015). Weather and Climate Extremes 10, 4-10"
+  ],
+  "baseline_tests": [
+    "test\\audit\\phase8_scientific_inventory.test.py"
+  ],
+  "validation_tests": [
+    "test\\audit\\phase8_scientific_inventory.test.py"
+  ],
+  "state_map": {
+    "air_temperature": "near-surface air temperature [K], the single temperature driver of the thermal factors"
+  },
+  "parameter_map": {
+    "biosphere.stress.thermal.optimal_temperature": "Optimal temperature for plant processes [K]",
+    "biosphere.stress.thermal.heat_stress_threshold": "Temperature threshold for heat stress [K]",
+    "biosphere.stress.thermal.critical_high_temperature": "Critical high temperature causing severe damage [K]",
+    "biosphere.stress.thermal.cold_stress_threshold": "Temperature threshold for cold stress [K]",
+    "biosphere.stress.thermal.freezing_damage_threshold": "Temperature causing freezing damage [K]",
+    "biosphere.stress.thermal.temperature_tolerance_width": "Temperature tolerance width for Gaussian response [K]",
+    "biosphere.stress.thermal.heat_stress_coefficient": "Coefficient for heat stress response function [K-1]",
+    "biosphere.stress.thermal.cold_stress_coefficient": "Coefficient for cold stress response function [K-1]",
+    "biosphere.stress.global.factor_min": "Lower bound for stress factors [dimensionless]",
+    "biosphere.stress.global.factor_max": "Upper bound for stress factors [dimensionless]"
+  },
+  "operator_map": {
+    "O_h": "declared observation map",
+    "H_h": "diagnostic metric or identity Hodge map"
+  },
+  "unit_map": {
+    "temperature_stress_factor": "dimensionless",
+    "heat_stress_factor": "dimensionless",
+    "cold_stress_factor": "dimensionless"
+  },
+  "input_output_map": {
+    "air_temperature": "same interface variable preserved between legacy and IPHS runtime contracts",
+    "cold_stress_factor": "same interface variable preserved between legacy and IPHS runtime contracts",
+    "heat_stress_factor": "same interface variable preserved between legacy and IPHS runtime contracts",
+    "temperature_stress_factor": "same interface variable preserved between legacy and IPHS runtime contracts"
+  },
+  "interface_map": {
+    "forward_signature": "forward(self, state, time, dt, **kwargs)",
+    "bridge_class": "BiologicalProcess",
+    "abstraction_contract": "BiologicalProcess",
+    "state_write_mode": "existing RELIC simulator and StateManager update path",
+    "legacy_inputs": [
+      "air_temperature"
+    ],
+    "iphs_inputs": [
+      "air_temperature"
+    ],
+    "legacy_outputs": [
+      "temperature_stress_factor",
+      "heat_stress_factor",
+      "cold_stress_factor"
+    ],
+    "iphs_outputs": [
+      "temperature_stress_factor",
+      "heat_stress_factor",
+      "cold_stress_factor"
+    ]
+  },
+  "runtime_replacement_map": {
+    "runtime_uses_iphs": false,
+    "legacy_removed": false,
+    "replacement_entrypoint": "forward",
+    "preserved_numerics": "Existing ParameterManager-backed calculations define canonical IPHS operator coefficients, rates, ports, or observations.",
+    "no_legacy_mode": "No selectable legacy runtime branch is exposed for Phase 8 completion."
+  },
+  "state_advancement_map": {
+    "potential_basis": "declared RELIC state, port, or observation cochain basis",
+    "effort_variable": "ParameterManager-backed thermodynamic effort, driver, or diagnostic input used by the module",
+    "state_advancer": "y_h = O_h x_h through the declared observation operator",
+    "runtime_usage": "ThermalStress.forward applies the canonical observation or diagnostic operator and emits validation diagnostics through the production output path."
+  },
+  "parameter_management_map": {
+    "biosphere.stress.thermal.optimal_temperature": {
+      "source": "ParameterManager YAML"
+    },
+    "biosphere.stress.thermal.heat_stress_threshold": {
+      "source": "ParameterManager YAML"
+    },
+    "biosphere.stress.thermal.critical_high_temperature": {
+      "source": "ParameterManager YAML"
+    },
+    "biosphere.stress.thermal.cold_stress_threshold": {
+      "source": "ParameterManager YAML"
+    },
+    "biosphere.stress.thermal.freezing_damage_threshold": {
+      "source": "ParameterManager YAML"
+    },
+    "biosphere.stress.thermal.temperature_tolerance_width": {
+      "source": "ParameterManager YAML"
+    },
+    "biosphere.stress.thermal.heat_stress_coefficient": {
+      "source": "ParameterManager YAML"
+    },
+    "biosphere.stress.thermal.cold_stress_coefficient": {
+      "source": "ParameterManager YAML"
+    },
+    "biosphere.stress.global.factor_min": {
+      "source": "ParameterManager YAML"
+    },
+    "biosphere.stress.global.factor_max": {
+      "source": "ParameterManager YAML"
+    }
+  },
+  "composition_management_map": {
+    "functor_metadata": "existing FunctorMetadata declares interfaces, execution phase, and conservation semantics",
+    "state_contract": "existing simulator state update path is preserved",
+    "validation_rule": "phase8 scientific inventory and equivalence certificate checks"
+  },
+  "dependency_interconnection_map": {
+    "dependencies": "no direct Functor dependency; air_temperature is a required external forcing or StateManager port",
+    "direct_functor_calls": "none declared by certificate"
+  },
+  "overflow_routing_map": {
+    "diagnostic_residuals": "existing diagnostics and conservation checks route clipping or residual terms",
+    "discarded_residuals": "this diagnostic-only observation advances no reservoir; the three bounded response functions are returned in full as temperature_stress_factor, heat_stress_factor, and cold_stress_factor, so no conservation residual is generated"
+  },
+  "conservation_map": {
+    "conserved_quantities": "declared by module metadata when applicable",
+    "balance_expression": "existing local balance is represented by the canonical Phase 8 state advancement map"
+  },
+  "entropy_audit": {
+    "operator_sign": "rates, mobilities, or diagnostic maps are non-negative or checked by existing validation hooks where physically required",
+    "sigma_expression": "canonical entropy production is non-negative for dissipative subexpressions"
+  },
+  "equivalence_type": "diagnostic"
+}
+

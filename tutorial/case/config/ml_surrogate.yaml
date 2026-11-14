@@ -1,0 +1,113 @@
+ml_surrogates:
+  soil_moisture:
+    architecture:
+      type: resnet
+      hidden_dim: 64
+      n_blocks: 3
+      activation: relu
+      dropout_rate: 0.05
+    training:
+      optimizer: adam
+      learning_rate: 0.0008
+      batch_size: 32
+      epochs: 220
+      loss_function: huber
+      early_stopping_patience: 20
+      validation_split: 0.2
+      shuffle_training: false
+    uncertainty:
+      method: dropout_mc
+      mc_samples: 30
+  water_stress:
+    architecture:
+      type: mlp
+      hidden_dims: [32, 16]
+      activation: relu
+      dropout_rate: 0.05
+    training:
+      optimizer: adam
+      learning_rate: 0.0005
+      batch_size: 32
+      epochs: 150
+      loss_function: huber
+      early_stopping_patience: 15
+      validation_split: 0.2
+      shuffle_training: false
+    uncertainty:
+      method: dropout_mc
+      mc_samples: 20
+  stomatal:
+    architecture:
+      type: resnet
+      hidden_dim: 64
+      n_blocks: 2
+      activation: relu
+      dropout_rate: 0.05
+    training:
+      optimizer: adam
+      learning_rate: 0.0008
+      batch_size: 32
+      epochs: 180
+      loss_function: huber
+      early_stopping_patience: 18
+      validation_split: 0.2
+      shuffle_training: false
+    uncertainty:
+      method: dropout_mc
+      mc_samples: 30
+  ozone_stress:
+    architecture:
+      type: mlp
+      hidden_dims: [32, 16]
+      activation: relu
+      dropout_rate: 0.05
+    training:
+      optimizer: adam
+      learning_rate: 0.0005
+      batch_size: 32
+      epochs: 150
+      loss_function: huber
+      early_stopping_patience: 15
+      validation_split: 0.2
+      shuffle_training: false
+    uncertainty:
+      method: dropout_mc
+      mc_samples: 20
+  diurnal_activity:
+    architecture:
+      type: mlp
+      hidden_dims: [32, 16]
+      activation: relu
+      dropout_rate: 0.05
+    training:
+      optimizer: adam
+      learning_rate: 0.0005
+      batch_size: 32
+      epochs: 180
+      loss_function: huber
+      early_stopping_patience: 18
+      validation_split: 0.2
+      shuffle_training: false
+      daytime_par_threshold: 10.0
+    uncertainty:
+      method: dropout_mc
+      mc_samples: 20
+  isoprene_residual:
+    architecture:
+      type: resnet
+      hidden_dim: 64
+      n_blocks: 3
+      activation: relu
+      dropout_rate: 0.05
+    training:
+      optimizer: adam
+      learning_rate: 0.0004
+      batch_size: 32
+      epochs: 240
+      loss_function: huber
+      early_stopping_patience: 24
+      validation_split: 0.2
+      shuffle_training: false
+    uncertainty:
+      method: dropout_mc
+      mc_samples: 40

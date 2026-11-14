@@ -1,0 +1,51 @@
+variable: diagnostics.diffusion_rate
+title: "Atmospheric Tracer Diffusive Tendency"
+description: "Explicit finite-volume diffusive tendency div(K_tot grad c) of tracer_concentration evaluated at the start-of-step state by the canonical combined advection-diffusion operator, with K_tot the molecular plus stability-dependent eddy diffusivity, so that c_new = c + dt * (advection_rate + diffusion_rate + source_term) (Stull 1988; Hundsdorfer and Verwer 2003). Per unit cell volume. Signed: positive adds tracer to the cell, negative removes it. Written only by atmospheric_advection_diffusion as a read-only step diagnostic."
+kind: diagnostic
+dimension:
+  udunits: "kg m-3 s-1"
+  cf_standard_name: null
+support:
+  spatial_kind: vertical_column
+  area_basis: grid_area
+  temporal_basis: instantaneous
+  vertical_basis: height_level
+  shape:
+    dimensions:
+      - cell
+      - layer
+owner: "atmospheric_advection_diffusion"
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Stull, R.B. (1988). An Introduction to Boundary Layer Meteorology, Kluwer"
+  - "Hundsdorfer, W. & Verwer, J.G. (2003). Numerical Solution of Time-Dependent Advection-Diffusion-Reaction Equations, Springer"
+  - "Patankar, S.V. (1980). Numerical Heat Transfer and Fluid Flow, Hemisphere"
+numerics:
+  # Signed tendency: no bound on either side.
+  lower_bound: null
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "atmospheric_advection_diffusion"
+      module: "relic.scientific.atmosphere.transport.AtmosphericAdvectionDiffusionFunctor"
+      provides: ["diagnostics.diffusion_rate"]
+      unit: "kg m-3 s-1"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/atmosphere/transport/AtmosphericAdvectionDiffusionFunctor.py"
+  runtime_role: "atmospheric_transport_diffusive_tendency_observation"
+  runtime_writer: "atmospheric_advection_diffusion"
+  sign_convention: "positive_adds_tracer_to_cell"
+  note: "Field copied from the operator result (AtmosphericAdvectionDiffusionFunctor.py:901-925 operator call, :936-949 read and batch-axis removal, :973); the operator advance is relic/computation/operators/functional.py:3899. The diagnostic has the caller's tracer shape: for an unbatched tracer field the leading batch axis is removed from the increment and from both rates together."

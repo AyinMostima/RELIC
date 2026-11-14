@@ -1,0 +1,226 @@
+certificate_version: '1.0'
+process_id: relic.scientific.atmosphere.transport.AtmosphericAdvectionDiffusionFunctor.AtmosphericAdvectionDiffusionFunctor
+module_name: AtmosphericAdvectionDiffusionFunctor
+canonical_role: transport
+iphs_level: 3
+iphs_level_evidence:
+  classification: IPHS-structured transport process certificate
+  compatible_basis: Process declares composition-safe IPHS or DEC structure
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: DEC/IPHS transport operator with conservative flux routing
+  structural_contribution: Tracer concentration, gradient, flux, Hodge, source, and boundary port structures are declared for assembly audit
+  assembly_participation: Certificate participates in Phase 8 inventory and GraphIR structural audit
+  level_3_limit: Typed form, Hodge, port, or related structure is declared, but no runtime-linked IPHSStructureSpec contribution and executable level 4 or 5 certificate binding is present.
+theory_document: docs\source\theory\atmosphere_advection_diffusion.md
+theory_document_status: updated
+legacy_formula: dc/dt + grad*(v c) = grad*(K gradc) + S
+literature_formula: dc/dt + grad*(v c) = grad*(K gradc) + S
+iphs_formula: c_dot = -D_h q_h + G_h u_h + s_h with q_h = v_h c_h - star_K d_h c_h
+legacy_expression: dc/dt + grad*(v c) = grad*(K gradc) + S
+iphs_expression: c_dot = -D_h q_h + G_h u_h + s_h with q_h = v_h c_h - star_K d_h c_h
+input_variables:
+- tracer_concentration
+- wind_u
+- wind_v
+- wind_w
+- temperature
+- sensible_heat_flux
+- atmospheric_pressure
+- relative_humidity
+- source_term
+output_variables:
+- tracer_concentration
+- diagnostics.atmospheric_advection_diffusion.cfl_number
+- diagnostics.stability_number
+- diagnostics.advection_rate
+- diagnostics.diffusion_rate
+- diagnostics.eddy_diffusivity
+- diagnostics.stability_parameter
+- diagnostics.conservation_error
+- diagnostics.boundary_flux_cochain
+parameter_keys:
+- atmosphere.grid.dx
+- atmosphere.grid.dy
+- atmosphere.grid.dz
+- atmosphere.boundary_layer.boundary_layer_height
+- atmosphere.turbulence.eddy_diffusivity_max
+- atmosphere.turbulence.transport_neutral_diffusivity_fraction
+- atmosphere.turbulence.transport_unstable_enhancement_coefficient
+- atmosphere.turbulence.transport_stable_suppression_coefficient
+- atmosphere.turbulence.transport_stability_limit
+- atmosphere.turbulence.minimum_friction_velocity
+- atmosphere.stability.potential_temperature_gradient
+- atmosphere.molecular_diffusion.molecular_diffusivity
+- transport.numerical.cfl_advection_max
+- transport.numerical.cfl_diffusion_max
+composition_ports:
+- atmospheric_turbulence
+- atmosphere_tracer_boundary_export
+- atmosphere_tracer_source_port
+references:
+- Stull, R.B. (1988). An Introduction to Boundary Layer Meteorology.
+- Jacobson, M.Z. (2005). Fundamentals of Atmospheric Modeling.
+- Seinfeld, J.H. & Pandis, S.N. (2016). Atmospheric Chemistry and Physics.
+- Holton, J.R. & Hakim, G.J. (2012). An Introduction to Dynamic Meteorology, 5th ed., Eqs. 2.63-2.64
+- Allen, R.G. et al. (1998). FAO Irrigation and Drainage Paper 56, Eqs. 11 and 19
+baseline_tests:
+- test\atmosphere\transport\test_atmospheric_advection_diffusion_parameters.py
+- test\audit\phase8_scientific_inventory.test.py
+validation_tests:
+- test\atmosphere\transport\test_atmospheric_advection_diffusion_parameters.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  tracer_concentration: tracer_concentration mapped to canonical Phase 8 cochain basis
+  wind_u: wind_u mapped to canonical Phase 8 cochain basis
+  wind_v: wind_v mapped to canonical Phase 8 cochain basis
+  wind_w: wind_w mapped to canonical Phase 8 cochain basis
+  temperature: temperature mapped to canonical Phase 8 cochain basis (monin-obukhov scheme only; no default, a missing value raises)
+  sensible_heat_flux: surface upward sensible heat flux H [W m-2] written by atmospheric_turbulence or supplied as forcing, read by the monin-obukhov scheme only; no default
+  atmospheric_pressure: atmospheric pressure p [Pa] of the moist-air density rho(T, p, RH*e_s(T)) in the Obukhov length, read by the monin-obukhov scheme only; no default
+  relative_humidity: relative humidity RH [1] of the vapour pressure e = RH*e_s(T) in the moist-air density, read by the monin-obukhov scheme only; no default
+  source_term: optional volumetric tracer source S [kg m-3 s-1] of the port atmosphere_tracer_source_port; absent means the closed no-source case S = 0, no ParameterManager default
+parameter_map:
+  atmosphere.grid.dx: Grid spacing in the x direction [m]
+  atmosphere.grid.dy: Grid spacing in the y direction [m]
+  atmosphere.grid.dz: Grid spacing in the vertical direction [m]
+  atmosphere.boundary_layer.boundary_layer_height: Atmospheric boundary layer height [m]
+  atmosphere.turbulence.eddy_diffusivity_max: Maximum eddy diffusivity [m2 s-1]
+  atmosphere.turbulence.transport_neutral_diffusivity_fraction: Neutral fraction K0 / K_max of the transport eddy-diffusivity closure [dimensionless]
+  atmosphere.turbulence.transport_unstable_enhancement_coefficient: Coefficient a of K = K0 (1 + a s / (1 + s)) for unstable stratification [dimensionless]
+  atmosphere.turbulence.transport_stable_suppression_coefficient: Coefficient b of K = K0 / (1 + b s) for stable stratification [dimensionless]
+  atmosphere.turbulence.transport_stability_limit: Symmetric bound of the stability index of the transport closure [dimensionless]
+  atmosphere.turbulence.minimum_friction_velocity: Minimum friction velocity [m s-1]
+  atmosphere.stability.potential_temperature_gradient: Potential-temperature gradient [K m-1]
+  atmosphere.molecular_diffusion.molecular_diffusivity: Molecular diffusivity of the scalar in air [m2 s-1]
+  transport.numerical.cfl_advection_max: Largest accepted advective Courant number [dimensionless]
+  transport.numerical.cfl_diffusion_max: Largest accepted diffusion number (von Neumann) [dimensionless]
+physical_constant_ssot:
+  gravity_acceleration: get_physical_constant("gravity_acceleration")
+  reference_temperature: get_physical_constant("reference_temperature")
+  von_karman_constant: get_physical_constant("von_karman_constant")
+  air_specific_heat_cp: get_physical_constant("air_specific_heat_cp")
+  psychrometric_tetens_constants: get_physical_constant("relic.physical.constants.psychrometrics.tetens_base_pressure", "tetens_coefficient_a", "tetens_coefficient_b") and get_physical_constant("celsius_to_kelvin") for e_s of the moist-air density
+operator_map:
+  D_h: declared atmospheric tracer divergence map
+  star_K: ParameterManager-backed molecular plus eddy diffusivity Hodge map
+  q_h: declared advective plus diffusive tracer flux cochain
+  G_h: boundary and source port map
+unit_map:
+  tracer_concentration: kg m-3
+  diagnostics.atmospheric_advection_diffusion.cfl_number: dimensionless
+  diagnostics.stability_number: dimensionless
+  diagnostics.advection_rate: kg m-3 s-1
+  diagnostics.diffusion_rate: kg m-3 s-1
+  diagnostics.eddy_diffusivity: m2 s-1
+  diagnostics.stability_parameter: dimensionless
+  diagnostics.conservation_error: dimensionless
+  diagnostics.boundary_flux_cochain: kg m-2 s-1
+  atmospheric_pressure: Pa
+  relative_humidity: '1'
+  source_term: kg m-3 s-1
+input_output_map:
+  atmospheric_pressure: moist-air density input of the monin-obukhov Obukhov length; replaces the fixed STP air density
+  diagnostics.advection_rate: same interface variable preserved between legacy and IPHS runtime contracts
+  diagnostics.atmospheric_advection_diffusion.cfl_number: cell-centred Courant sum max(dt * sum_k |u_k| / dx_k) of the pre-step limit check, renamed from diagnostics.cfl_number, which is the finite-volume outward-face Courant sum of the generic transport Functors
+  diagnostics.conservation_error: same interface variable preserved between legacy and IPHS runtime contracts
+  diagnostics.boundary_flux_cochain: optional packed outward face flux ledger returned by the canonical operator when exterior faces exist
+  diagnostics.diffusion_rate: same interface variable preserved between legacy and IPHS runtime contracts
+  diagnostics.eddy_diffusivity: same interface variable preserved between legacy and IPHS runtime contracts
+  diagnostics.stability_number: same interface variable preserved between legacy and IPHS runtime contracts
+  diagnostics.stability_parameter: same interface variable preserved between legacy and IPHS runtime contracts
+  relative_humidity: vapour pressure input e = RH*e_s(T) of the moist-air density of the monin-obukhov scheme
+  sensible_heat_flux: canonical surface upward sensible heat flux of atmospheric_turbulence; replaces the removed reader-side name surface_heat_flux and its 20 W m-2 state default
+  source_term: optional volumetric source port input, declared; replaces the removed background tendency atmosphere.transport.source_term_default
+  temperature: same interface variable preserved between legacy and IPHS runtime contracts
+  tracer_concentration: same interface variable preserved between legacy and IPHS runtime contracts
+  wind_u: same interface variable preserved between legacy and IPHS runtime contracts
+  wind_v: same interface variable preserved between legacy and IPHS runtime contracts
+interface_map:
+  forward_signature: forward(self, state, time, dt)
+  bridge_class: TransportMechanism
+  abstraction_contract: TransportMechanism
+  state_write_mode: existing RELIC simulator and StateManager update path
+  legacy_inputs:
+  - tracer_concentration
+  - wind_u
+  - wind_v
+  - wind_w
+  - temperature
+  - sensible_heat_flux
+  - atmospheric_pressure
+  - relative_humidity
+  - source_term
+  iphs_inputs:
+  - tracer_concentration
+  - wind_u
+  - wind_v
+  - wind_w
+  - temperature
+  - sensible_heat_flux
+  - atmospheric_pressure
+  - relative_humidity
+  - source_term
+  legacy_outputs:
+  - tracer_concentration
+  - diagnostics.atmospheric_advection_diffusion.cfl_number
+  - diagnostics.stability_number
+  - diagnostics.advection_rate
+  - diagnostics.diffusion_rate
+  - diagnostics.eddy_diffusivity
+  - diagnostics.stability_parameter
+  - diagnostics.conservation_error
+  - diagnostics.boundary_flux_cochain
+  iphs_outputs:
+  - tracer_concentration
+  - diagnostics.atmospheric_advection_diffusion.cfl_number
+  - diagnostics.stability_number
+  - diagnostics.advection_rate
+  - diagnostics.diffusion_rate
+  - diagnostics.eddy_diffusivity
+  - diagnostics.stability_parameter
+  - diagnostics.conservation_error
+  - diagnostics.boundary_flux_cochain
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: Existing ParameterManager-backed calculations define canonical IPHS operator coefficients, rates, ports, or observations.
+  no_legacy_mode: No selectable legacy runtime branch is exposed for Phase 8 completion.
+state_advancement_map:
+  potential_basis: declared RELIC state, port, or observation cochain basis
+  effort_variable: ParameterManager-backed thermodynamic effort, driver, or diagnostic input used by the module
+  state_advancer: c_dot = -D_h q_h + G_h u_h + s_h with declared tracer flux and boundary/source ports
+  runtime_usage: AtmosphericAdvectionDiffusionFunctor.forward applies the registered transport.advection_diffusion operator once to the caller's actual cells with the resolved homogeneous face law (zero-gradient neumann, periodic, or one static scalar dirichlet) in storage-order spacing, and returns the explicit integrated tracer increment plus CFL, stability, eddy diffusivity, conservation ledger, and packed outward face flux diagnostics.
+parameter_management_map:
+  atmosphere.grid.dx: {source: ParameterManager YAML}
+  atmosphere.grid.dy: {source: ParameterManager YAML}
+  atmosphere.grid.dz: {source: ParameterManager YAML}
+  atmosphere.boundary_layer.boundary_layer_height: {source: ParameterManager YAML}
+  atmosphere.turbulence.eddy_diffusivity_max: {source: ParameterManager YAML}
+  atmosphere.turbulence.transport_neutral_diffusivity_fraction: {source: ParameterManager YAML}
+  atmosphere.turbulence.transport_unstable_enhancement_coefficient: {source: ParameterManager YAML}
+  atmosphere.turbulence.transport_stable_suppression_coefficient: {source: ParameterManager YAML}
+  atmosphere.turbulence.transport_stability_limit: {source: ParameterManager YAML}
+  atmosphere.turbulence.minimum_friction_velocity: {source: ParameterManager YAML}
+  atmosphere.stability.potential_temperature_gradient: {source: ParameterManager YAML}
+  atmosphere.molecular_diffusion.molecular_diffusivity: {source: ParameterManager YAML}
+  transport.numerical.cfl_advection_max: {source: ParameterManager YAML}
+  transport.numerical.cfl_diffusion_max: {source: ParameterManager YAML}
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares interfaces, execution phase, and conservation semantics
+  state_contract: existing simulator state update path is preserved
+  physical_constant_ssot: gravity, reference temperature, von Karman constant, air specific heat, and the psychrometric Tetens constants resolve only through get_physical_constant; the monin-obukhov air density is compute_moist_air_density(T, p, RH*e_s(T)), never a fixed STP value
+  validation_rule: phase8 scientific inventory and equivalence certificate checks
+dependency_interconnection_map:
+  dependencies: optional same-step producer atmospheric_turbulence (sensible_heat_flux); without it the monin-obukhov scheme needs sensible_heat_flux as forcing; atmospheric_pressure and relative_humidity are forcing inputs of the monin-obukhov scheme
+  direct_functor_calls: none declared by certificate
+overflow_routing_map:
+  diagnostic_residuals: existing diagnostics and conservation checks route clipping or residual terms
+  discarded_residuals: tracer change is emitted through tracer_concentration relative to the caller's cells, the finite-volume ledger residual through diagnostics.conservation_error, outward face exchange through diagnostics.boundary_flux_cochain, and post-bound stability and eddy diffusivity through their diagnostics; no real cell is projected and no clipping or flux-tolerance filter alters the returned increment
+conservation_map:
+  conserved_quantities: mass
+  balance_expression: Delta M - dt*integral(S)dV + dt*sum_f(j_out,f*A_f) = 0 evaluated by the canonical finite-volume operator on the returned increment; unsupported face laws are rejected before any state change
+entropy_audit:
+  operator_sign: rates, mobilities, or diagnostic maps are non-negative or checked by existing validation hooks where physically required
+  sigma_expression: canonical entropy production is non-negative for dissipative subexpressions
+equivalence_type: port_equivalent

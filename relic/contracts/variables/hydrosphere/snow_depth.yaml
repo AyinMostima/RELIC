@@ -1,0 +1,50 @@
+variable: snow_depth
+title: "Snow Depth"
+description: "Physical thickness of the surface snowpack diagnosed by snow_pack from the updated snow water equivalent and the bulk snow density: d = (SWE / 1000) * (rho_w / rho_snow) (Anderson 1976). Non-negative length measured upward from the ground surface; it carries no memory of its own (snow_pack never reads it) and is replaced every step. snow_albedo reads it as the snow presence mask d > minimum_snow_depth. CF v94 surface_snow_thickness (m)."
+kind: diagnostic
+dimension:
+  udunits: "m"
+  cf_standard_name: "surface_snow_thickness"
+support:
+  spatial_kind: grid_cell
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: "snow_pack"
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Anderson, E.A. (1976). A point energy and mass balance model of a snow cover. NOAA Technical Report NWS 19"
+  - "Dickinson, R.E. et al. (1993). Biosphere-Atmosphere Transfer Scheme (BATS) Version 1e. NCAR Technical Note NCAR/TN-387+STR"
+  - "CF Standard Name Table v94: surface_snow_thickness (canonical units m)"
+# Sign convention: thickness >= 0, zero exactly when SWE = 0. SWE is clamped at
+# zero and rho_w, rho_snow are positive (hydrosphere.snow.snow_density bounds
+# 50-500 kg m-3), so only the lower bound is physical.
+numerics:
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "snow_pack"
+      module: "relic.scientific.hydrosphere.snow.snowpack"
+      provides: ["snow_depth"]
+      unit: "m"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/hydrosphere/snow/snowpack.py"
+  runtime_role: "snowpack_thickness_diagnostic"
+  runtime_writer: "snow_pack"
+  note: "Declared output snowpack.py:143; computed at :637-638 from swe_new [mm] (mm -> m by the unit SSOT), relic.physical.constants water_density and hydrosphere.snow.snow_density [kg m-3]; written at :669 as UpdateItem(REPLACE, per_timestep=False) in m. Read by snow_albedo in m (albedo.py SnowAlbedo: metadata input_variables; lagged dependency on snow_pack; forward presence mask against hydrosphere.snow.minimum_snow_depth [m]). It is a required input: a missing value raises ValueError naming it and no state default is substituted (SnowAlbedo.forward)."

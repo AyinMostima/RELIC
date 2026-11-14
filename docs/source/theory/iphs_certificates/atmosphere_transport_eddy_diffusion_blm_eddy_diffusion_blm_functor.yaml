@@ -1,0 +1,230 @@
+certificate_version: '1.0'
+process_id: relic.scientific.atmosphere.transport.eddy_diffusion_blm.EddyDiffusionBLMFunctor
+module_name: EddyDiffusionBLMFunctor
+canonical_role: transport
+iphs_level: 3
+iphs_level_evidence:
+  classification: IPHS-structured transport process certificate
+  compatible_basis: Process declares DEC concentration, gradient, and flux cochains plus a positive eddy-diffusivity Hodge mobility
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: x_dot = -D_h q_h + G_h u_h with q_h = -star_K D_h^T e_h
+  structural_contribution: Cochain, Hodge, flux, and port structures are declared for assembly audit
+  assembly_participation: Certificate participates in Phase 8 inventory and GraphIR structural audit
+  level_3_limit: Typed form, Hodge, port, or related structure is declared, but no runtime-linked IPHSStructureSpec contribution and executable level 4 or 5 certificate binding is present.
+theory_document: docs\source\theory\atmosphere_eddy_diffusion_blm.md
+theory_document_status: updated
+legacy_formula: $\frac{\partial C}{\partial t} = \frac{\partial}{\partial z}\left[K(z,L) \frac{\partial C}{\partial z}\right] - \frac{C}{h} + S$\nwhere $K = \frac{\kappa u_* z}{\phi_h(z/L)}$ with MOST stability corrections
+literature_formula: $q=-K\,\partial C/\partial z$ with reduced one-box closure $\dot C=K h^{-2}(C_{bg}-C)$, $\zeta_{eff}=clip(\zeta_{raw},-\min(l_p,l_u),\min(l_p,l_s))$, and $K=\kappa u_* (h/2)/\phi_h(\zeta_{eff})$
+iphs_formula: x_dot = -D_h q_h + G_h u_h, q_h = -star_K D_h^T e_h, y_h = G_h^T e_h
+legacy_expression: $\frac{\partial C}{\partial t} = \frac{\partial}{\partial z}\left[K(z,L) \frac{\partial C}{\partial z}\right] - \frac{C}{h} + S$\nwhere $K = \frac{\kappa u_* z}{\phi_h(z/L)}$ with MOST stability corrections
+iphs_expression: x_dot = -D_h q_h + G_h u_h, q_h = -star_K D_h^T e_h, y_h = G_h^T e_h
+input_variables:
+- no_mixing_ratio
+- no2_mixing_ratio
+- o3_mixing_ratio
+- isoprene_mixing_ratio
+- pbl_height
+- friction_velocity
+- monin_obukhov_length
+output_variables:
+- no_mixing_ratio
+- no2_mixing_ratio
+- o3_mixing_ratio
+- isoprene_mixing_ratio
+- diagnostics.eddy_diffusion.enabled
+- diagnostics.eddy_diffusion.eddy_diffusivity
+- diagnostics.eddy_diffusion.pbl_height
+- diagnostics.eddy_diffusion.friction_velocity
+- diagnostics.eddy_diffusion.monin_obukhov_length
+- diagnostics.eddy_diffusion.stability_number
+- diagnostics.eddy_diffusion.stability_parameter_z_over_L
+- diagnostics.eddy_diffusion.eddy_diffusivity_clamped
+- diagnostics.eddy_diffusion.stability_parameter_clipping_residual
+parameter_keys:
+- atmosphere.transport.enabled
+- atmosphere.transport.target_species
+- atmosphere.transport.k_min
+- atmosphere.transport.k_max
+- atmosphere.transport.z_over_L_limit
+- atmosphere.transport.ustar_min
+- atmosphere.transport.ustar_max
+- atmosphere.transport.pbl_height_min
+- atmosphere.transport.pbl_height_max
+- atmosphere.transport.background_no_mixing_ratio
+- atmosphere.transport.background_no2_mixing_ratio
+- atmosphere.transport.background_o3_mixing_ratio
+- atmosphere.transport.background_isoprene_mixing_ratio
+- transport.numerical.cfl_safety_factor
+- transport.numerical.max_diffusion_stability
+- atmosphere.most.beta_stable
+- atmosphere.most.gamma_unstable
+- atmosphere.most.stable_correction_limit
+- atmosphere.most.unstable_correction_limit
+composition_ports:
+- boundary_layer_exchange_port
+references:
+- Businger, J.A. et al. (1971). Flux-profile relationships in surface layer. J. Atmos. Sci., 28, 181-189
+- Stull, R.B. (1988). An Introduction to Boundary Layer Meteorology. Kluwer Academic
+- Garratt, J.R. (1992). The Atmospheric Boundary Layer. Cambridge University Press
+- Monin, A.S. & Obukhov, A.M. (1954). Basic laws of turbulent mixing. Trudy Geofiz. Inst. AN SSSR
+baseline_tests:
+- test\atmosphere\transport\test_eddy_diffusion_blm_parameters.py
+- test\atmosphere\test_eddy_diffusion_config.py
+- test\atmosphere\transport\surface_layer_source.test.py
+- test\unit\transport\test_atmosphere_transport_l1.py
+- test\audit\phase8_scientific_inventory.test.py
+validation_tests:
+- test\integration\test_l2_transport_integration.py
+- test\system\test_atmospheric_transport_system_l3.py
+- test\system\test_l3_transport_system.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  no_mixing_ratio: no_mixing_ratio mapped to canonical Phase 8 cochain basis
+  no2_mixing_ratio: no2_mixing_ratio mapped to canonical Phase 8 cochain basis
+  o3_mixing_ratio: o3_mixing_ratio mapped to canonical Phase 8 cochain basis
+  isoprene_mixing_ratio: isoprene_mixing_ratio mapped to canonical Phase 8 cochain basis
+  pbl_height: pbl_height mapped to canonical Phase 8 cochain basis
+  friction_velocity: friction_velocity mapped to canonical turbulence forcing
+  monin_obukhov_length: monin_obukhov_length mapped to canonical turbulence forcing
+parameter_map:
+  atmosphere.transport.enabled: Opt-in process activation flag [dimensionless]
+  atmosphere.transport.target_species: Canonical transported species list [dimensionless]
+  atmosphere.transport.k_min: Minimum eddy diffusivity for stability [m2 s-1]
+  atmosphere.transport.k_max: Maximum eddy diffusivity limit [m2 s-1]
+  atmosphere.transport.z_over_L_limit: Absolute MOST stability parameter bound [dimensionless]
+  atmosphere.transport.ustar_min: Minimum friction velocity [m s-1]
+  atmosphere.transport.ustar_max: Maximum friction velocity [m s-1]
+  atmosphere.transport.pbl_height_min: Minimum accepted PBL height [m]
+  atmosphere.transport.pbl_height_max: Maximum accepted PBL height [m]
+  atmosphere.transport.background_no_mixing_ratio: Top-boundary NO mixing ratio [mol mol-1]
+  atmosphere.transport.background_no2_mixing_ratio: Top-boundary NO2 mixing ratio [mol mol-1]
+  atmosphere.transport.background_o3_mixing_ratio: Top-boundary O3 mixing ratio [mol mol-1]
+  atmosphere.transport.background_isoprene_mixing_ratio: Top-boundary isoprene mixing ratio [mol mol-1]
+  transport.numerical.cfl_safety_factor: Safety factor on the CFL stability limits [dimensionless]
+  transport.numerical.max_diffusion_stability: Maximum explicit diffusion stability number [dimensionless]
+  atmosphere.most.beta_stable: Stable MOST scalar-gradient coefficient [dimensionless]
+  atmosphere.most.gamma_unstable: Unstable MOST scalar-gradient coefficient [dimensionless]
+  atmosphere.most.stable_correction_limit: Shared positive MOST operational limit [dimensionless]
+  atmosphere.most.unstable_correction_limit: Shared absolute negative MOST operational limit [dimensionless]
+operator_map:
+  D_h: existing divergence/transport operator
+  q_h: declared flux cochain
+  G_h: boundary/source port map
+unit_map:
+  no_mixing_ratio: mol mol-1
+  no2_mixing_ratio: mol mol-1
+  o3_mixing_ratio: mol mol-1
+  isoprene_mixing_ratio: mol mol-1
+  diagnostics.eddy_diffusion.enabled: '1'
+  diagnostics.eddy_diffusion.eddy_diffusivity: m2 s-1
+  diagnostics.eddy_diffusion.pbl_height: m
+  diagnostics.eddy_diffusion.friction_velocity: m s-1
+  diagnostics.eddy_diffusion.monin_obukhov_length: m
+  diagnostics.eddy_diffusion.stability_number: '1'
+  diagnostics.eddy_diffusion.stability_parameter_z_over_L: '1'
+  diagnostics.eddy_diffusion.eddy_diffusivity_clamped: '1'
+  diagnostics.eddy_diffusion.stability_parameter_clipping_residual: '1'
+input_output_map:
+  species_state: each input mixing ratio maps to its same-name ACCUMULATE state increment
+  pbl_height: canonical boundary-layer characteristic height input
+  friction_velocity: canonical TurbulenceFunctor output
+  monin_obukhov_length: canonical TurbulenceFunctor output
+  diagnostics: namespaced numeric observations of coefficients and stability
+interface_map:
+  forward_signature: forward(self, state, time, dt)
+  bridge_class: TransportMechanismFunctor
+  abstraction_contract: TransportMechanism
+  state_write_mode: UpdateItem(ACCUMULATE, per_timestep=True, unit='mol mol-1') on canonical state keys
+  legacy_inputs:
+  - no_mixing_ratio
+  - no2_mixing_ratio
+  - o3_mixing_ratio
+  - isoprene_mixing_ratio
+  - pbl_height
+  - friction_velocity
+  - monin_obukhov_length
+  iphs_inputs:
+  - no_mixing_ratio
+  - no2_mixing_ratio
+  - o3_mixing_ratio
+  - isoprene_mixing_ratio
+  - pbl_height
+  - friction_velocity
+  - monin_obukhov_length
+  legacy_outputs:
+  - no_mixing_ratio
+  - no2_mixing_ratio
+  - o3_mixing_ratio
+  - isoprene_mixing_ratio
+  - diagnostics.eddy_diffusion.enabled
+  - diagnostics.eddy_diffusion.eddy_diffusivity
+  - diagnostics.eddy_diffusion.pbl_height
+  - diagnostics.eddy_diffusion.friction_velocity
+  - diagnostics.eddy_diffusion.monin_obukhov_length
+  - diagnostics.eddy_diffusion.stability_number
+  - diagnostics.eddy_diffusion.stability_parameter_z_over_L
+  - diagnostics.eddy_diffusion.eddy_diffusivity_clamped
+  - diagnostics.eddy_diffusion.stability_parameter_clipping_residual
+  iphs_outputs:
+  - no_mixing_ratio
+  - no2_mixing_ratio
+  - o3_mixing_ratio
+  - isoprene_mixing_ratio
+  - diagnostics.eddy_diffusion.enabled
+  - diagnostics.eddy_diffusion.eddy_diffusivity
+  - diagnostics.eddy_diffusion.pbl_height
+  - diagnostics.eddy_diffusion.friction_velocity
+  - diagnostics.eddy_diffusion.monin_obukhov_length
+  - diagnostics.eddy_diffusion.stability_number
+  - diagnostics.eddy_diffusion.stability_parameter_z_over_L
+  - diagnostics.eddy_diffusion.eddy_diffusivity_clamped
+  - diagnostics.eddy_diffusion.stability_parameter_clipping_residual
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: ParameterManager-backed MOST diffusivity, explicit stability saturation residual, and species top-boundary forcings define the single reduced K-theory closure.
+  no_legacy_mode: true
+state_advancement_map:
+  potential_basis: declared RELIC state, port, or observation cochain basis
+  effort_variable: ParameterManager-backed thermodynamic effort, driver, or diagnostic input used by the module
+  state_advancer: x_dot = -D_h q_h + G_h u_h with declared vertical turbulent flux q_h and boundary exchange port
+  runtime_usage: EddyDiffusionBLMFunctor.forward evaluates only zeta_eff=clip(zeta_raw,-min(l_p,l_u),min(l_p,l_s)) and DeltaC=dt*K/h^2*(C_background-C); no selectable diagnostic, dilution-only, fallback, or second process law remains.
+parameter_management_map:
+  atmosphere.transport.enabled: {source: ParameterManager YAML}
+  atmosphere.transport.target_species: {source: ParameterManager YAML}
+  atmosphere.transport.k_min: {source: ParameterManager YAML}
+  atmosphere.transport.k_max: {source: ParameterManager YAML}
+  atmosphere.transport.z_over_L_limit: {source: ParameterManager YAML}
+  atmosphere.transport.ustar_min: {source: ParameterManager YAML}
+  atmosphere.transport.ustar_max: {source: ParameterManager YAML}
+  atmosphere.transport.pbl_height_min: {source: ParameterManager YAML}
+  atmosphere.transport.pbl_height_max: {source: ParameterManager YAML}
+  atmosphere.transport.background_no_mixing_ratio: {source: ParameterManager YAML}
+  atmosphere.transport.background_no2_mixing_ratio: {source: ParameterManager YAML}
+  atmosphere.transport.background_o3_mixing_ratio: {source: ParameterManager YAML}
+  atmosphere.transport.background_isoprene_mixing_ratio: {source: ParameterManager YAML}
+  transport.numerical.cfl_safety_factor: {source: ParameterManager YAML}
+  transport.numerical.max_diffusion_stability: {source: ParameterManager YAML}
+  atmosphere.most.beta_stable: {source: ParameterManager YAML}
+  atmosphere.most.gamma_unstable: {source: ParameterManager YAML}
+  atmosphere.most.stable_correction_limit: {source: ParameterManager YAML}
+  atmosphere.most.unstable_correction_limit: {source: ParameterManager YAML}
+  relic.physical.constants.turbulence.von_karman_constant: {source: physical constants SSOT via get_physical_constant}
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares interfaces, execution phase, and conservation semantics
+  state_contract: existing simulator state update path is preserved
+  validation_rule: phase8 scientific inventory and equivalence certificate checks
+dependency_interconnection_map:
+  dependencies: atmospheric_turbulence provides friction_velocity and monin_obukhov_length through canonical state ports by default; under surface_layer_source = external_forcing no provider is declared, both arrive as State:ExternalForcing, and the closure is unchanged
+  direct_functor_calls: none declared by certificate
+overflow_routing_map:
+  diagnostic_residuals: diagnostics.eddy_diffusion.stability_parameter_clipping_residual records zeta_raw minus zeta_eff for the declared saturated reduced-box closure
+  discarded_residuals: none; stability-parameter saturation and eddy-diffusivity clipping are both exposed as namespaced diagnostics
+conservation_map:
+  conserved_quantities: species mixing ratio with declared top-boundary exchange
+  balance_expression: DeltaC_s = dt*K/h^2*(C_background_s-C_s), entirely routed through boundary_layer_exchange_port
+entropy_audit:
+  operator_sign: rates, mobilities, or diagnostic maps are non-negative or checked by existing validation hooks where physically required
+  sigma_expression: canonical entropy production is non-negative for dissipative subexpressions
+equivalence_type: port_equivalent

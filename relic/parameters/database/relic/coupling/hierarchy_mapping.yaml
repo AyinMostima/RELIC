@@ -1,0 +1,517 @@
+schema_version: 2.0.0
+tier: relic
+namespace: coupling.scales.hierarchy
+description: Hierarchy mapping and level definition parameters for multi-scale coupling
+metadata:
+  version: 1.0.0
+  created: '2025-10-11T00:00:00Z'
+  created_by: Yuchong Long
+  last_modified: '2025-10-11T00:00:00Z'
+  source: RELIC hierarchical coupling framework
+  notes: 'Defines the hierarchical structure and mapping between different spatial scales.
+
+    Supports RHESSys-style hierarchy with patch, hillslope, basin, and landscape levels.
+
+    '
+parameters:
+  coupling.scales.hierarchy.levels:
+    value:
+    - individual
+    - patch
+    - hillslope
+    - basin
+    - landscape
+    - regional
+    default: null
+    units: dimensionless
+    dtype: list
+    bounds: null
+    category: hierarchy_definition
+    description: Ordered list of hierarchy levels from finest to coarsest
+    references:
+    - 'Band, L.E. et al., RHESSys: Regional Hydro-Ecologic Simulation System'
+    tags:
+    - hierarchy
+    - levels
+    - spatial
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-11T00:00:00Z'
+  coupling.scales.hierarchy.default_source_level:
+    value: patch
+    default: patch
+    units: dimensionless
+    dtype: string
+    allowed_values:
+    - individual
+    - patch
+    - hillslope
+    - basin
+    - landscape
+    - regional
+    bounds: null
+    category: hierarchy_configuration
+    description: Default source (fine) level for hierarchical operations
+    references:
+    - 'Band, L.E. et al., RHESSys: Regional Hydro-Ecologic Simulation System'
+    tags:
+    - hierarchy
+    - source
+    - default
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-11T00:00:00Z'
+  coupling.scales.hierarchy.default_target_level:
+    value: landscape
+    default: landscape
+    units: dimensionless
+    dtype: string
+    allowed_values:
+    - individual
+    - patch
+    - hillslope
+    - basin
+    - landscape
+    - regional
+    bounds: null
+    category: hierarchy_configuration
+    description: Default target (coarse) level for hierarchical operations
+    references:
+    - 'Band, L.E. et al., RHESSys: Regional Hydro-Ecologic Simulation System'
+    tags:
+    - hierarchy
+    - target
+    - default
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-11T00:00:00Z'
+  coupling.scales.hierarchy.individual.units_per_patch:
+    value: 1
+    default: 1
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 1000
+    category: level_mapping
+    description: Default number of individual units per patch unit
+    references:
+    - 'RHESSys theory: Hierarchical spatial discretization'
+    tags:
+    - hierarchy
+    - mapping
+    - individual
+    - patch
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-03T00:00:00Z'
+  coupling.scales.hierarchy.patch.units_per_hillslope:
+    value: 3
+    default: 3
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 10
+    category: level_mapping
+    description: Default number of patch units per hillslope unit
+    references:
+    - 'RHESSys theory: Hierarchical spatial discretization'
+    tags:
+    - hierarchy
+    - mapping
+    - patch
+    - hillslope
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-11T00:00:00Z'
+  coupling.scales.hierarchy.patch.units_per_landscape:
+    value: 1000
+    default: 1000
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 1000000
+    category: level_mapping
+    description: Default number of patch units per landscape unit (derived from patch->hillslope and hillslope->basin mappings)
+    references:
+    - 'RHESSys theory: Hierarchical spatial discretization'
+    tags:
+    - hierarchy
+    - mapping
+    - patch
+    - landscape
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-30T00:00:00Z'
+  coupling.scales.hierarchy.hillslope.units_per_basin:
+    value: 2
+    default: 2
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 5
+    category: level_mapping
+    description: Default number of hillslope units per basin unit
+    references:
+    - 'RHESSys theory: Hierarchical spatial discretization'
+    tags:
+    - hierarchy
+    - mapping
+    - hillslope
+    - basin
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-11T00:00:00Z'
+  coupling.scales.hierarchy.basin.units_per_landscape:
+    value: 1
+    default: 1
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 10
+    category: level_mapping
+    description: Default number of basin units per landscape unit
+    references:
+    - 'RHESSys theory: Hierarchical spatial discretization'
+    tags:
+    - hierarchy
+    - mapping
+    - basin
+    - landscape
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-11T00:00:00Z'
+  coupling.scales.hierarchy.landscape.units_per_regional:
+    value: 1
+    default: 1
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 20
+    category: level_mapping
+    description: Default number of landscape units per regional unit
+    references:
+    - 'RHESSys theory: Hierarchical spatial discretization'
+    tags:
+    - hierarchy
+    - mapping
+    - landscape
+    - regional
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-03T00:00:00Z'
+  coupling.scales.hierarchy.patch.default_area:
+    value: 1000.0
+    default: 1000.0
+    units: m2
+    dtype: float32
+    bounds:
+    - 100.0
+    - 10000.0
+    category: area_parameter
+    description: Default area of a single patch unit
+    references:
+    - 'RHESSys theory: Patch-level spatial representation'
+    tags:
+    - hierarchy
+    - area
+    - patch
+    dimension: area
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-11T00:00:00Z'
+  coupling.scales.hierarchy.area_variation_factor:
+    value: 0.2
+    default: 0.2
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: area_parameter
+    description: Relative variation in unit areas within hierarchy levels (0.0 = uniform, 1.0 = high variation)
+    references:
+    - 'Landscape ecology: Spatial heterogeneity metrics'
+    tags:
+    - hierarchy
+    - area
+    - variation
+    - heterogeneity
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-11T00:00:00Z'
+  coupling.scales.hierarchy.connectivity_matrix_method:
+    value: area_based
+    default: area_based
+    units: dimensionless
+    dtype: string
+    allowed_values:
+    - area_based
+    - distance_based
+    - flow_based
+    - topological
+    bounds: null
+    category: connectivity_parameter
+    description: Method for constructing hierarchy connectivity matrices
+    references:
+    - 'Graph theory: Hierarchical network connectivity'
+    tags:
+    - hierarchy
+    - connectivity
+    - matrix
+    - method
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-11T00:00:00Z'
+  coupling.scales.hierarchy.allow_cross_level_connections:
+    value: false
+    default: false
+    units: dimensionless
+    dtype: bool
+    allowed_values:
+    - false
+    - true
+    bounds: null
+    category: connectivity_flag
+    description: Whether to allow direct connections between non-adjacent hierarchy levels
+    references:
+    - 'Graph theory: Multi-level hierarchical networks'
+    tags:
+    - hierarchy
+    - connectivity
+    - cross_level
+    - flag
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-11T00:00:00Z'
+  coupling.scales.hierarchy.extensive_variable_strategy:
+    value: area_weighted_sum
+    default: area_weighted_sum
+    units: dimensionless
+    dtype: string
+    allowed_values:
+    - area_weighted_sum
+    - flow_conserving
+    - conservative
+    bounds: null
+    category: scaling_strategy
+    description: Default scaling strategy for extensive variables (mass, energy, etc.)
+    references:
+    - Conservation laws in ecological systems
+    tags:
+    - hierarchy
+    - scaling
+    - extensive
+    - strategy
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-11T00:00:00Z'
+  coupling.scales.hierarchy.intensive_variable_strategy:
+    value: area_weighted_mean
+    default: area_weighted_mean
+    units: dimensionless
+    dtype: string
+    allowed_values:
+    - area_weighted_mean
+    - mass_weighted
+    - volume_weighted
+    - bilinear
+    bounds: null
+    category: scaling_strategy
+    description: Default scaling strategy for intensive variables (concentrations, rates, etc.)
+    references:
+    - Statistical aggregation theory
+    tags:
+    - hierarchy
+    - scaling
+    - intensive
+    - strategy
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-11T00:00:00Z'
+  coupling.scales.hierarchy.categorical_variable_strategy:
+    value: nearest
+    default: nearest
+    units: dimensionless
+    dtype: string
+    allowed_values:
+    - nearest
+    - majority
+    - weighted_random
+    bounds: null
+    category: scaling_strategy
+    description: Default scaling strategy for categorical variables (land cover, soil type, etc.)
+    references:
+    - Spatial aggregation of categorical data
+    tags:
+    - hierarchy
+    - scaling
+    - categorical
+    - strategy
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-11T00:00:00Z'
+  coupling.scales.hierarchy.patch_tolerance:
+    value: 1.0e-12
+    default: 1.0e-12
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-15
+    - 1.0e-09
+    category: tolerance_parameter
+    description: Conservation tolerance for patch-level operations
+    references:
+    - Numerical precision in ecological modeling
+    tags:
+    - hierarchy
+    - tolerance
+    - patch
+    - conservation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-11T00:00:00Z'
+  coupling.scales.hierarchy.hillslope_tolerance:
+    value: 1.0e-11
+    default: 1.0e-11
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-14
+    - 1.0e-08
+    category: tolerance_parameter
+    description: Conservation tolerance for hillslope-level operations
+    references:
+    - Numerical precision in ecological modeling
+    tags:
+    - hierarchy
+    - tolerance
+    - hillslope
+    - conservation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-11T00:00:00Z'
+  coupling.scales.hierarchy.basin_tolerance:
+    value: 1.0e-10
+    default: 1.0e-10
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-13
+    - 1.0e-07
+    category: tolerance_parameter
+    description: Conservation tolerance for basin-level operations
+    references:
+    - Numerical precision in ecological modeling
+    tags:
+    - hierarchy
+    - tolerance
+    - basin
+    - conservation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-11T00:00:00Z'
+  coupling.scales.hierarchy.landscape_tolerance:
+    value: 1.0e-09
+    default: 1.0e-09
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-12
+    - 1.0e-06
+    category: tolerance_parameter
+    description: Conservation tolerance for landscape-level operations
+    references:
+    - Numerical precision in ecological modeling
+    tags:
+    - hierarchy
+    - tolerance
+    - landscape
+    - conservation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-11T00:00:00Z'

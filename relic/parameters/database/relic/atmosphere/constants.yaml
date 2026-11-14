@@ -1,0 +1,131 @@
+﻿schema_version: 2.0.0
+tier: relic
+namespace: atmosphere.constants
+description: Physical constants and reference conditions for atmospheric processes
+version: 1.0.0
+parameters:
+  atmosphere.constants.radiation.earth_sun_distance_factor:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    description: Earth-Sun distance correction factor (1.0 at mean distance)
+    references:
+    - Astronomical constants
+    dtype: float32
+    category: model_parameter
+    tags:
+    - radiation
+    - orbital
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: astronomical_constants
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-12T00:00:00Z'
+    bounds:
+    - 0.0
+    - 100.0
+  atmosphere.constants.water_vapor.specific_gas_constant:
+    value: 461.52
+    default: 461.52
+    units: J kg-1 K-1
+    description: Specific gas constant for water vapor
+    references:
+    - Calculated from R/Mw
+    dtype: float32
+    category: model_parameter
+    tags:
+    - water_vapor
+    - gas_constant
+    dimension: specific_heat_capacity
+    requires_grad: false
+    provenance:
+      source: r_over_mw
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-12T00:00:00Z'
+    bounds:
+    - 0.0
+    - 46152.0
+  atmosphere.constants.stability.critical_richardson_number:
+    value: 0.25
+    default: 0.25
+    units: dimensionless
+    description: Critical Richardson number for turbulent transition
+    references:
+    - Miles (1961)
+    dtype: float32
+    category: model_parameter
+    tags:
+    - stability
+    - turbulence
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: miles_1961
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-12T00:00:00Z'
+    bounds:
+    - 0.0
+    - 25.0
+  atmosphere.constants.stability.neutral_drag_coefficient:
+    value: 0.0015
+    default: 0.0015
+    units: dimensionless
+    description: Neutral drag coefficient over smooth surface
+    references:
+    - Garratt (1992)
+    dtype: float32
+    category: model_parameter
+    tags:
+    - stability
+    - surface
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: garratt_1992
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-12T00:00:00Z'
+    bounds:
+    - 0.0
+    - 0.15
+  atmosphere.constants.coupling.default_ozone_stress_factor:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: model_parameter
+    description: Default ozone stress factor when O3 stress is enabled but not provided
+    references:
+    - Emberson et al. (2000)
+    tags:
+    - coupling_parameter
+    - stress_factor
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-12T00:00:00Z'
+metadata:
+  created_by: Yuchong Long
+  created_at: '2025-10-12T00:00:00Z'
+  schema_version: 1.0.0
+  tier: relic
+  version: 1.0.0
+quality_control:
+  validated_by: Scientific Review Panel
+  validation_date: '2025-10-12T00:00:00Z'
+  validation_criteria:
+  - Literature consistency check
+  - Physical bounds verification
+  - Unit dimensional analysis
+  - Cross-parameter relationship validation
+

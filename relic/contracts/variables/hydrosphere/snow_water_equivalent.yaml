@@ -1,0 +1,51 @@
+variable: snow_water_equivalent
+title: "Snow Water Equivalent"
+description: "Liquid-water-equivalent depth of the surface snowpack per unit ground area (SWE), the prognostic storage of the snow_pack temperature-index mass balance: SWE_new = max(0, SWE_old + (P_snow - M - E_sub) * dt) (Anderson 1976; Hock 2003). Non-negative storage: snowfall adds to it, melt and sublimation remove it, rain bypasses it. snow_pack reads the committed value as a required input (a missing value raises ValueError; no state default is substituted) and replaces it every step. CF v94 lwe_thickness_of_surface_snow_amount (canonical m; stored in mm)."
+kind: state
+dimension:
+  udunits: "mm"
+  cf_standard_name: "lwe_thickness_of_surface_snow_amount"
+support:
+  spatial_kind: grid_cell
+  area_basis: ground_area
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: "snow_pack"
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Anderson, E.A. (1976). A point energy and mass balance model of a snow cover. NOAA Technical Report NWS 19"
+  - "Hock, R. (2003). Temperature index melt modelling in mountain areas. Journal of Hydrology 282, 104-115"
+  - "CF Standard Name Table v94: lwe_thickness_of_surface_snow_amount (canonical units m)"
+# Sign convention: storage amount >= 0. Snowfall into the pack increases it;
+# melt and sublimation out of the pack decrease it. snow_pack limits melt and
+# sublimation by the starting SWE and projects a negative result to zero,
+# routing the projection residual to diagnostics.snow_pack.
+numerics:
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "snow_pack"
+      module: "relic.scientific.hydrosphere.snow.snowpack"
+      provides: ["snow_water_equivalent"]
+      unit: "mm"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/hydrosphere/snow/snowpack.py"
+  runtime_role: "snowpack_swe_full_state"
+  runtime_writer: "snow_pack"
+  note: "Prognostic storage of snow_pack only: declared input and output (snowpack.py:138,142), read in mm at :562 as a required input: a missing value raises ValueError naming it and no state default is substituted (:553-558), melt and sublimation limited by the starting SWE at :609-618, advanced and clamped at :619-621, written at :668 as UpdateItem(REPLACE, per_timestep=False) in mm; the DEC storage cochain declares mm (:219,222). No other relic Functor reads or writes it."

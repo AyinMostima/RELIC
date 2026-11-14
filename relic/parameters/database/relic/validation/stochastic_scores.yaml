@@ -1,0 +1,375 @@
+schema_version: 2.0.0
+tier: relic
+namespace: validation.stochastic_scores
+description: Screening thresholds and significance levels of the stochastic score validation rules (CRPS, PIT, Brier, interval
+  coverage)
+metadata:
+  created_by: RELIC Parameter System
+  last_modified: '2026-09-26T00:00:00Z'
+  schema_url: https://github.com/relic/parameter-schema/v2.0.0
+  version: 1.0.0
+parameters:
+  validation.stochastic_scores.crps_warning_threshold:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1000000.0
+    category: validation_parameter
+    description: Mean CRPS above which the CRPS rule reports WARNING. Compared with the CRPS in the native units of the verified
+      variable (the rule is variable-agnostic); the value is a screening convention, not a literature threshold.
+    references:
+    - Hersbach, H. (2000). Decomposition of the continuous ranked probability score for ensemble prediction systems. Weather
+      Forecast. 15, 559-570
+    - Gneiting, T. & Raftery, A.E. (2007). Strictly proper scoring rules, prediction, and estimation. J. Am. Stat. Assoc.
+      102, 359-378
+    - RELIC convention value (no literature threshold; documented as an operational screening choice)
+    tags:
+    - validation
+    - stochastic_scores
+    - crps
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  validation.stochastic_scores.crps_critical_threshold:
+    value: 2.0
+    default: 2.0
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1000000.0
+    category: validation_parameter
+    description: Mean CRPS above which the CRPS rule reports CRITICAL, in the native units of the verified variable; screening
+      convention (must exceed the warning threshold).
+    references:
+    - Hersbach, H. (2000). Decomposition of the continuous ranked probability score for ensemble prediction systems. Weather
+      Forecast. 15, 559-570
+    - Gneiting, T. & Raftery, A.E. (2007). Strictly proper scoring rules, prediction, and estimation. J. Am. Stat. Assoc.
+      102, 359-378
+    - RELIC convention value (no literature threshold; documented as an operational screening choice)
+    tags:
+    - validation
+    - stochastic_scores
+    - crps
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  validation.stochastic_scores.pit_significance_level:
+    value: 0.05
+    default: 0.05
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 1.0e-06
+    - 0.5
+    category: validation_parameter
+    description: Significance level alpha of the PIT uniformity tests (Kolmogorov-Smirnov, Cramer-von Mises, chi-squared);
+      a p-value below alpha rejects calibration.
+    references:
+    - Fisher, R.A. (1925). Statistical Methods for Research Workers. Oliver and Boyd (conventional 0.05 significance level)
+    - Gneiting, T., Balabdaoui, F. & Raftery, A.E. (2007). Probabilistic forecasts, calibration and sharpness. J. R. Stat.
+      Soc. B 69, 243-268
+    tags:
+    - validation
+    - stochastic_scores
+    - pit
+    - significance_level
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: statistical_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  validation.stochastic_scores.brier_event_threshold:
+    value: 0.0
+    default: 0.0
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - -1000000000000.0
+    - 1000000000000.0
+    category: validation_parameter
+    description: 'Binary event definition of the Brier rule: the event occurs when the observation exceeds this value, in
+      the native units of the verified variable (0 = any positive amount, e.g. precipitation occurrence); convention.'
+    references:
+    - Brier, G.W. (1950). Verification of forecasts expressed in terms of probability. Mon. Weather Rev. 78, 1-3
+    - RELIC convention value (no literature threshold; documented as an operational screening choice)
+    tags:
+    - validation
+    - stochastic_scores
+    - brier
+    - event_definition
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  validation.stochastic_scores.brier_warning_threshold:
+    value: 0.3
+    default: 0.3
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1.0
+    category: validation_parameter
+    description: Brier score above which the Brier rule reports WARNING; screening convention (a constant forecast of 0.5
+      scores 0.25).
+    references:
+    - Brier, G.W. (1950). Verification of forecasts expressed in terms of probability. Mon. Weather Rev. 78, 1-3
+    - Murphy, A.H. (1973). A new vector partition of the probability score. J. Appl. Meteorol. 12, 595-600
+    - RELIC convention value (no literature threshold; documented as an operational screening choice)
+    tags:
+    - validation
+    - stochastic_scores
+    - brier
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  validation.stochastic_scores.brier_critical_threshold:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1.0
+    category: validation_parameter
+    description: Brier score above which the Brier rule reports ERROR; screening convention.
+    references:
+    - Brier, G.W. (1950). Verification of forecasts expressed in terms of probability. Mon. Weather Rev. 78, 1-3
+    - Murphy, A.H. (1973). A new vector partition of the probability score. J. Appl. Meteorol. 12, 595-600
+    - RELIC convention value (no literature threshold; documented as an operational screening choice)
+    tags:
+    - validation
+    - stochastic_scores
+    - brier
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  validation.stochastic_scores.brier_reliability_warning_threshold:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1.0
+    category: validation_parameter
+    description: Reliability component of the Murphy (1973) Brier decomposition above which the rule warns of poor calibration;
+      screening convention.
+    references:
+    - Murphy, A.H. (1973). A new vector partition of the probability score. J. Appl. Meteorol. 12, 595-600
+    - RELIC convention value (no literature threshold; documented as an operational screening choice)
+    tags:
+    - validation
+    - stochastic_scores
+    - brier
+    - reliability
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  validation.stochastic_scores.nominal_interval_coverage:
+    value: 0.9
+    default: 0.9
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.01
+    - 0.999
+    category: validation_parameter
+    description: Nominal coverage of the central prediction interval checked by the coverage rule (90% central interval, alpha
+      = 0.10, as evaluated by Gneiting and Raftery 2007).
+    references:
+    - Gneiting, T. & Raftery, A.E. (2007). Strictly proper scoring rules, prediction, and estimation. J. Am. Stat. Assoc.
+      102, 359-378
+    tags:
+    - validation
+    - stochastic_scores
+    - coverage
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  validation.stochastic_scores.coverage_deviation_tolerance:
+    value: 0.05
+    default: 0.05
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1.0
+    category: validation_parameter
+    description: Absolute deviation of empirical from nominal coverage above which the coverage rule warns; screening convention.
+    references:
+    - Gneiting, T. & Raftery, A.E. (2007). Strictly proper scoring rules, prediction, and estimation. J. Am. Stat. Assoc.
+      102, 359-378
+    - RELIC convention value (no literature threshold; documented as an operational screening choice)
+    tags:
+    - validation
+    - stochastic_scores
+    - coverage
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  validation.stochastic_scores.coverage_error_significance_level:
+    value: 0.01
+    default: 0.01
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 1.0e-06
+    - 0.5
+    category: validation_parameter
+    description: Significance level below which a coverage deviation test p-value is an ERROR (highly significant deviation).
+    references:
+    - Fisher, R.A. (1925). Statistical Methods for Research Workers. Oliver and Boyd (conventional 0.05 significance level)
+    - RELIC convention value (no literature threshold; documented as an operational screening choice)
+    tags:
+    - validation
+    - stochastic_scores
+    - coverage
+    - significance_level
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: statistical_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  validation.stochastic_scores.coverage_warning_significance_level:
+    value: 0.05
+    default: 0.05
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 1.0e-06
+    - 0.5
+    category: validation_parameter
+    description: Significance level below which a coverage deviation test p-value is a WARNING.
+    references:
+    - Fisher, R.A. (1925). Statistical Methods for Research Workers. Oliver and Boyd (conventional 0.05 significance level)
+    tags:
+    - validation
+    - stochastic_scores
+    - coverage
+    - significance_level
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: statistical_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  validation.stochastic_scores.coverage_interval_confidence_level:
+    value: 0.95
+    default: 0.95
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.5
+    - 0.9999
+    category: validation_parameter
+    description: Confidence level 1 - alpha of the exact Clopper-Pearson interval that relic.stochastic.validation.coverage_probability
+      reports for the empirical coverage k/n, [B(alpha/2; k, n-k+1), B(1-alpha/2; k+1, n-k)] with B the beta quantile. It
+      describes the uncertainty of the reported coverage; it is not a p-value threshold (see coverage_warning_significance_level
+      and coverage_error_significance_level). The level 0.95 is the conventional statistical choice, not a literature value.
+    references:
+    - Clopper, C.J. & Pearson, E.S. (1934). The use of confidence or fiducial limits illustrated in the case of the binomial.
+      Biometrika 26, 404-413
+    - Fisher, R.A. (1925). Statistical Methods for Research Workers. Oliver and Boyd (conventional 0.05 significance level)
+    tags:
+    - validation
+    - stochastic_scores
+    - coverage
+    - confidence_interval
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: statistical_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  validation.stochastic_scores.interval_width_narrow_threshold:
+    value: 0.01
+    default: 0.01
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1000000.0
+    category: validation_parameter
+    description: Mean prediction-interval width below which the coverage rule warns of very narrow intervals, in the native
+      units of the verified variable; screening convention.
+    references:
+    - RELIC convention value (no literature threshold; documented as an operational screening choice)
+    tags:
+    - validation
+    - stochastic_scores
+    - coverage
+    - interval_width
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  validation.stochastic_scores.interval_width_wide_threshold:
+    value: 10.0
+    default: 10.0
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1000000000000.0
+    category: validation_parameter
+    description: Mean prediction-interval width above which the coverage rule warns of very wide intervals, in the native
+      units of the verified variable; screening convention.
+    references:
+    - RELIC convention value (no literature threshold; documented as an operational screening choice)
+    tags:
+    - validation
+    - stochastic_scores
+    - coverage
+    - interval_width
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'

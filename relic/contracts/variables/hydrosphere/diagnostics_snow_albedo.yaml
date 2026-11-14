@@ -1,0 +1,40 @@
+variable: diagnostics.snow_albedo
+title: "Snow Albedo Diagnostics Map"
+description: "Read-only diagnostics map emitted by the snow_albedo Functor as its declared output diagnostics.snow_albedo, a plain mapping rather than an UpdateItem. partition_outputs routes every diagnostics.* output to the diagnostics channel, so the map is never committed to StateManager state and no bound or writer check applies to it. Members carry their own units: aging_rate [s-1] for bats or [day day-1] for age_based; fresh_snow_reset and snow_present boolean masks; albedo_clipping_residual [1], non-negative, the part of the raw albedo outside [alpha_min, alpha_max]; snow_absorbed_shortwave_fraction [1], 1 - alpha_s in [0, 1]; snow_albedo_radiation_port_power [W m-2], the absorbed shortwave I_sw (1 - alpha_s), non-negative and present only when shortwave_down is supplied (the optional port effort; no zero is substituted); snow_nondimensional_age_tendency [s-1] for bats or snow_age_tendency [day s-1] for age_based, positive while the snow ages. The container unit dimensionless only labels this heterogeneous map and must not be used to convert a member."
+kind: diagnostic
+dimension:
+  udunits: "dimensionless"
+  cf_standard_name: null
+owner: "snow_albedo"
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Dickinson, R.E. et al. (1993). Biosphere-Atmosphere Transfer Scheme (BATS) Version 1e. NCAR Technical Note NCAR/TN-387+STR"
+  - "Warren, S.G. (1982). Optical properties of snow. Reviews of Geophysics 20, 67-89"
+  - "Wiscombe, W.J. and Warren, S.G. (1980). A model for the spectral albedo of snow. J. Atmos. Sci. 37, 2712-2733"
+numerics:
+  lower_bound: null
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "snow_albedo"
+      module: "relic.scientific.hydrosphere.snow.albedo"
+      provides: ["diagnostics.snow_albedo"]
+      unit: "dimensionless"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/hydrosphere/snow/albedo.py"
+  runtime_role: "read_only_heterogeneous_diagnostic_mapping"
+  runtime_writer: "snow_albedo"
+  note: "Declared output at albedo.py:160 and :410; the map is built at albedo.py:967-975 and returned at :979; the local energy-partition hook reads snow_absorbed_shortwave_fraction from it at albedo.py:787. diagnostics.* outputs are classified as diagnostics by partition_outputs (relic/core/state/types.py) and ingested by _clean_updates_and_collect_diagnostics (relic/core/simulator/execution_group.py). No other relic code reads it."

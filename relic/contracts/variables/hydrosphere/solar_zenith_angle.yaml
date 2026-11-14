@@ -1,0 +1,42 @@
+variable: solar_zenith_angle
+title: "Solar Zenith Angle"
+description: "Solar zenith angle in radians, used by the BATS zenith-angle correction of snow_albedo (cos of the angle). Required by SnowAlbedo; no relic Functor writes it (supplied as forcing). CF solar_zenith_angle (canonical unit degree; radians are the declared unit here)."
+kind: forcing
+dimension:
+  udunits: "rad"
+  cf_standard_name: "solar_zenith_angle"
+support:
+  spatial_kind: grid_cell
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Dickinson, R.E. et al. (1993). Biosphere-Atmosphere Transfer Scheme (BATS) Version 1e. NCAR Technical Note NCAR/TN-387+STR"
+numerics:
+  # Angle from the local vertical, >= 0 rad; no upper limit is declared by the reader.
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies: []
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/hydrosphere/snow/albedo.py"
+  runtime_role: "solar_zenith_angle_forcing"
+  runtime_writer: null
+  note: "Reader: SnowAlbedo (metadata input_variables; read in radians, cos(solar_zenith_angle) in the bats zenith correction; a missing value raises ValueError, no state default). No RELIC Functor writes solar_zenith_angle."

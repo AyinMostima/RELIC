@@ -1,0 +1,594 @@
+schema_version: 2.0.0
+tier: relic
+namespace: coupling.scales.biosphere_atmosphere
+description: Parameters for biosphere-atmosphere coupling processes
+metadata:
+  version: 1.0.0
+  stomatal_model_contract:
+    status: parameter_contract_only_no_production_medlyn_functor
+    formulation: modern_medlyn_positive_assimilation_with_declared_ctsm_style_closures
+    positive_assimilation: 'g_s = g0 + r_wc * (1 + g1 / sqrt(D_eff_kPa)) * A_leaf / C_surface_ppm'
+    nonpositive_assimilation: explicit_residual_g0_without_replacing_the_input_An
+    dark_condition: leaf_ppfd_nonpositive
+    dark_conductance: explicit_residual_g0
+    vpd_regularization: max_declared_leaf_surface_VPD_and_vpd_min_pa
+    atmospheric_input_substitution: explicit_conditional_leaf_surface_equals_canopy_air_assumption
+    support: representative_leaf_area_not_ground_area_assimilation
+    input_domain: 'Finite A_leaf and leaf PPFD; finite declared leaf-surface VPD; C_surface > 0. Raw An is preserved; darkness and nonpositive assimilation select a disclosed residual branch. The VPD floor is an implementation choice, including at nonpositive VPD, not a condensation model.'
+    output_units: mol_H2O_m-2_leaf_s-1
+    h2o_co2_diffusivity_constant: relic.physical.constants.conversions.h2o_co2_diffusivity_ratio
+    branch_diagnostics: [dark_residual, nonpositive_assimilation_residual, vpd_floor_active]
+    full_ctsm_equivalence: false
+    ctsm_maximum_resistance_implemented: false
+    notes: 'No claim of unmodified Medlyn across a full day, full CTSM hydraulic/leaf-boundary coupling, or interpretation of the unread 2012 correction. g0=0.01 and g1=4.0 are retained generic priors, not fitted nighttime data or the P3 comparator g1=4.45.'
+    implementation_reference: https://github.com/ESCOMP/CTSM/blob/7d1bc988a5a67660d2988c57a0bf195173c31017/src/biogeophys/PhotosynthesisMod.F90
+parameters:
+  coupling.scales.biosphere_atmosphere.model_type:
+    value: medlyn
+    default: medlyn
+    units: dimensionless
+    dtype: string
+    bounds: null
+    allowed_values:
+    - ball_berry
+    - leuning
+    - medlyn
+    category: model_option
+    description: Stomatal conductance model family
+    references:
+    - Medlyn et al. (2011)
+    tags:
+    - stomatal_conductance
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.biosphere_atmosphere.g0:
+    value: 0.01
+    default: 0.01
+    units: mol m-2 s-1
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.1
+    category: process_parameter
+    description: 'Generic residual leaf conductance prior for the explicitly declared dark/nonpositive-assimilation branch; retained value is not a measured nighttime calibration or a claim of the CTSM intercept value.'
+    references:
+    - Ball et al. (1987)
+    - 'CTSM PhotosynthesisMod.F90 at 7d1bc988a5a67660d2988c57a0bf195173c31017, lines 1856-1870 and 1927-1934: separate dark and negative-assimilation conductance treatment; its maximum-resistance cap is not adopted here.'
+    tags:
+    - stomatal_conductance
+    dimension: molar_flux
+    requires_grad: false
+    provenance:
+      source: retained_generic_residual_prior_with_explicit_ctsm_style_branch_contract
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-10-15T00:00:00Z'
+  coupling.scales.biosphere_atmosphere.g1:
+    value: 4.0
+    default: 4.0
+    units: kPa^0.5
+    dtype: float32
+    bounds:
+    - 0.0
+    - 20.0
+    category: process_parameter
+    description: 'Generic Medlyn slope prior multiplying inverse square root leaf-surface VPD in kPa. Value 4.0 is retained; it is not the dimensionless Ball-Berry PFT g1 or the independent P3 comparator value 4.45.'
+    references:
+    - 'Medlyn et al. (2011), Global Change Biology 17, 2134-2144, doi:10.1111/j.1365-2486.2010.02375.x; modern implemented equation verified against CTSM technical note Eq. 2.9.1.'
+    - 'CTSM Photosynthesis technical note, Eq. 2.9.1: D_s in kPa, requiring g1 in kPa^0.5; https://escomp.github.io/CTSM/tech_note/Photosynthesis/CLM50_Tech_Note_Photosynthesis.html'
+    tags:
+    - stomatal_conductance
+    dimension: pressure^0.5
+    requires_grad: false
+    provenance:
+      source: retained_generic_prior_with_corrected_medlyn_dimension
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-10-15T00:00:00Z'
+  coupling.scales.biosphere_atmosphere.stomatal_conductance_max:
+    value: 1.0
+    default: 1.0
+    units: mol m-2 s-1
+    dtype: float32
+    bounds:
+    - 0.2
+    - 2.0
+    category: numerical_threshold
+    description: Upper guard for stomatal conductance to avoid non-physical values
+    references:
+    - Medlyn et al. (2011)
+    tags:
+    - stomatal_conductance
+    - numerical_stability
+    dimension: amount_flux
+    requires_grad: false
+    provenance:
+      source: stomatal_response_literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-11-30T00:00:00Z'
+  coupling.scales.biosphere_atmosphere.d0:
+    value: 1500.0
+    default: 1500.0
+    units: Pa
+    dtype: float32
+    bounds:
+    - 500.0
+    - 5000.0
+    category: process_parameter
+    description: VPD at half-maximum stomatal conductance (Leuning model)
+    references:
+    - Leuning (1995)
+    tags:
+    - stomatal_conductance
+    dimension: pressure
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.biosphere_atmosphere.transpiration_fraction:
+    value: 0.8
+    default: 0.8
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 0.95
+    category: process_parameter
+    description: Fraction of ET attributed to transpiration
+    references:
+    - Allen et al. (1998)
+    tags:
+    - evapotranspiration
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.biosphere_atmosphere.canopy_interception_fraction:
+    value: 0.15
+    default: 0.15
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.05
+    - 0.3
+    category: process_parameter
+    description: Fraction of precipitation intercepted by canopy
+    references:
+    - Allen et al. (1998)
+    tags:
+    - evapotranspiration
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.biosphere_atmosphere.maximum_interception_storage:
+    value: 0.002
+    default: 0.002
+    units: m
+    dtype: float32
+    bounds:
+    - 0.0005
+    - 0.005
+    category: process_parameter
+    description: Maximum canopy water storage per unit LAI
+    references:
+    - Allen et al. (1998)
+    tags:
+    - evapotranspiration
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.biosphere_atmosphere.wind_speed_reference_height:
+    value: 10.0
+    default: 10.0
+    units: m
+    dtype: float32
+    bounds:
+    - 2.0
+    - 50.0
+    category: operational_parameter
+    description: Reference height for wind measurements
+    references:
+    - Monteith & Unsworth (2008)
+    tags:
+    - boundary_layer
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: meteorological_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.biosphere_atmosphere.roughness_length_momentum:
+    value: 0.1
+    default: 0.1
+    units: m
+    dtype: float32
+    bounds:
+    - 0.001
+    - 2.0
+    category: surface_parameter
+    description: Aerodynamic roughness length for momentum
+    references:
+    - Monteith & Unsworth (2008)
+    tags:
+    - boundary_layer
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: meteorological_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.biosphere_atmosphere.zero_displacement_height_fraction:
+    value: 0.67
+    default: 0.67
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 0.8
+    category: surface_parameter
+    description: Zero-plane displacement height as fraction of canopy height
+    references:
+    - Monteith & Unsworth (2008)
+    tags:
+    - boundary_layer
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: meteorological_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.biosphere_atmosphere.leaf_characteristic_dimension:
+    value: 0.05
+    default: 0.05
+    units: m
+    dtype: float64
+    bounds:
+    - 0.01
+    - 0.2
+    category: process_parameter
+    description: Characteristic leaf dimension for boundary-layer conductance
+    references:
+    - Campbell & Norman (1998)
+    tags:
+    - heat_transfer
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: canopy_energy_balance
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.biosphere_atmosphere.boundary_layer_transfer_coefficient:
+    value: 0.01
+    default: 0.01
+    units: m s-0.5
+    dtype: float64
+    bounds:
+    - 0.01
+    - 0.01
+    category: process_parameter
+    description: Turbulent transfer coefficient for leaf boundary-layer conductance
+    references:
+    - CTSM Technical Note Eqs. 2.5.128 and 2.5.135
+    - Campbell and Norman (1998)
+    tags:
+    - boundary_layer
+    - leaf_gas_exchange
+    dimension: boundary_layer_transfer_coefficient
+    requires_grad: false
+    provenance:
+      source: CTSM_5_technical_note
+      schema_version: 2.0.0
+      created_by: relic_iphs_refactor
+      last_modified: '2026-07-16T00:00:00Z'
+  coupling.scales.biosphere_atmosphere.ground_heat_flux_fraction:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.3
+    category: process_parameter
+    description: Fraction of net radiation partitioned to ground heat
+    references:
+    - RELIC coupling audit 2025-12-02
+    tags:
+    - energy_balance
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: penman_monteith
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.biosphere_atmosphere.aerodynamic_resistance:
+    value: 50.0
+    default: 50.0
+    units: s m-1
+    dtype: float32
+    bounds:
+    - 10.0
+    - 200.0
+    category: operational_parameter
+    description: Default aerodynamic resistance when not provided by state
+    references:
+    - RELIC coupling audit 2025-12-02
+    tags:
+    - boundary_layer
+    dimension: resistance
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.biosphere_atmosphere.use_parameter_aerodynamic_resistance:
+    value: false
+    default: false
+    units: dimensionless
+    dtype: bool
+    allowed_values:
+    - false
+    - true
+    bounds:
+    - false
+    - true
+    category: operational_parameter
+    description: Use parameterized aerodynamic resistance when state input is missing
+    references:
+    - Penman-Monteith sensitivity to aerodynamic resistance
+    tags:
+    - validation
+    - input_integrity
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic-parameter-cleanup
+      schema_version: 2.0.0
+      created_by: relic-parameter-cleanup
+      last_modified: '2025-11-09T00:00:00Z'
+  coupling.scales.biosphere_atmosphere.vpd_min_pa:
+    value: 50.0
+    default: 50.0
+    units: Pa
+    dtype: float32
+    bounds:
+    - 50.0
+    - 50.0
+    category: numerical_threshold
+    description: 'Declared CTSM-style VPD regularization: D_eff=max(D_surface,50 Pa), equivalently 0.05 kPa. This is a fixed implementation choice, not an original Medlyn equation term, observation filling, or a numerical acceptance tolerance.'
+    references:
+    - 'CTSM PhotosynthesisMod.F90 at 7d1bc988a5a67660d2988c57a0bf195173c31017, lines 87-88 and 1890: max(esat_tv-ceair,50 Pa)*0.001.'
+    tags:
+    - vpd
+    - stomatal_conductance
+    dimension: pressure
+    requires_grad: false
+    provenance:
+      source: explicit_ctsm_style_regularization_selected_20261015
+      schema_version: 2.0.0
+      created_by: relic-parameter-cleanup
+      last_modified: '2026-10-15T00:00:00Z'
+  coupling.scales.biosphere_atmosphere.co2_min_pa:
+    value: 30.0
+    default: 30.0
+    units: Pa
+    dtype: float32
+    bounds:
+    - 10.0
+    - 100.0
+    category: numerical_threshold
+    description: Minimum CO2 partial pressure to avoid singular behavior
+    references:
+    - Ball et al. (1987)
+    tags:
+    - co2
+    - stomatal_conductance
+    dimension: pressure
+    requires_grad: false
+    provenance:
+      source: FluxNet canopy climatology
+      schema_version: 2.0.0
+      created_by: relic-parameter-cleanup
+      last_modified: '2025-11-09T00:00:00Z'
+  coupling.scales.biosphere_atmosphere.assimilation_min_umol:
+    value: 0.0
+    default: 0.0
+    units: umol m-2 s-1
+    dtype: float32
+    bounds:
+    - 0.0
+    - 5.0
+    category: numerical_threshold
+    description: Minimum assimilation rate used for clamping
+    references:
+    - Farquhar et al. (1980)
+    tags:
+    - assimilation
+    - stomatal_conductance
+    dimension: amount_flux
+    requires_grad: false
+    provenance:
+      source: relic-parameter-cleanup
+      schema_version: 2.0.0
+      created_by: relic-parameter-cleanup
+      last_modified: '2025-11-09T00:00:00Z'
+  coupling.scales.biosphere_atmosphere.relative_humidity_min:
+    value: 0.01
+    default: 0.01
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.2
+    category: numerical_threshold
+    description: Minimum relative humidity for stability
+    references:
+    - Leuning (1995)
+    tags:
+    - humidity
+    - stomatal_conductance
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic-parameter-cleanup
+      schema_version: 2.0.0
+      created_by: relic-parameter-cleanup
+      last_modified: '2025-11-09T00:00:00Z'
+  coupling.scales.biosphere_atmosphere.relative_humidity_max:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.9
+    - 1.0
+    category: numerical_threshold
+    description: Maximum relative humidity (unit upper bound)
+    references:
+    - FAO-56 Penman-Monteith
+    tags:
+    - humidity
+    - stomatal_conductance
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic-parameter-cleanup
+      schema_version: 2.0.0
+      created_by: relic-parameter-cleanup
+      last_modified: '2025-11-09T00:00:00Z'
+  coupling.scales.biosphere_atmosphere.resistance_min_sm:
+    value: 1.0
+    default: 1.0
+    units: s m-1
+    dtype: float32
+    bounds:
+    - 0.1
+    - 10.0
+    category: numerical_threshold
+    description: Minimum aerodynamic or stomatal resistance
+    references:
+    - Allen et al. (1998)
+    tags:
+    - resistance
+    - penman_monteith
+    dimension: resistance
+    requires_grad: false
+    provenance:
+      source: FluxNet canopy climatology
+      schema_version: 2.0.0
+      created_by: relic-parameter-cleanup
+      last_modified: '2025-11-09T00:00:00Z'
+  coupling.scales.biosphere_atmosphere.et_flux_min:
+    value: 0.0
+    default: 0.0
+    units: kg m-2 s-1
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.01
+    category: numerical_threshold
+    description: Minimum evapotranspiration flux when clamping
+    references:
+    - FAO-56 Penman-Monteith
+    tags:
+    - evapotranspiration
+    - clamping
+    dimension: mass_flux
+    requires_grad: false
+    provenance:
+      source: relic-parameter-cleanup
+      schema_version: 2.0.0
+      created_by: relic-parameter-cleanup
+      last_modified: '2025-11-09T00:00:00Z'
+  coupling.scales.biosphere_atmosphere.ozone_factor_min:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.3
+    - 0.7
+    category: stress_modifier
+    description: Minimum ozone stress factor applied to stomatal conductance
+    references:
+    - Emberson et al. (2000)
+    tags:
+    - ozone
+    - stomatal_conductance
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic-parameter-cleanup
+      schema_version: 2.0.0
+      created_by: relic-parameter-cleanup
+      last_modified: '2025-11-09T00:00:00Z'
+  coupling.scales.biosphere_atmosphere.ozone_stress_factor_default:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: stress_modifier
+    description: Default ozone stress factor applied when driver is missing (Emberson et al., 2000)
+    references:
+    - Emberson et al. (2000)
+    tags:
+    - ozone
+    - stomatal_conductance
+    - diagnostic
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_default
+      schema_version: 2.0.0
+      created_by: relic-coupling-audit
+      last_modified: '2025-12-05T00:00:00Z'
+  coupling.scales.biosphere_atmosphere.ozone_stomatal_coupling_factor:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: process_parameter
+    description: Ratio of stomatal conductance reduction relative to photosynthesis reduction under ozone stress
+    references:
+    - Emberson et al. (2000)
+    tags:
+    - ozone
+    - stomatal_conductance
+    - coupling
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_default
+      schema_version: 2.0.0
+      created_by: relic-coupling-audit
+      last_modified: '2025-12-04T00:00:00Z'

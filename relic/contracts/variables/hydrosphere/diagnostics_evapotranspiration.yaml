@@ -1,0 +1,40 @@
+variable: diagnostics.evapotranspiration
+title: "Diagnostics.Evapotranspiration"
+kind: diagnostic
+dimension:
+  udunits: "dimensionless"
+  cf_standard_name: null
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+numerics:
+  lower_bound: null
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "penman_monteith_et"
+      module: "relic.scientific.hydrosphere.evapotranspiration.penman_monteith"
+      provides: ["diagnostics.evapotranspiration"]
+      unit: "dimensionless"
+    - name: "priestley_taylor_et"
+      module: "relic.scientific.hydrosphere.evapotranspiration.priestley_taylor"
+      provides: ["diagnostics.evapotranspiration"]
+      unit: "dimensionless"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/hydrosphere/evapotranspiration/penman_monteith.py"
+  runtime_role: "mutually_exclusive_heterogeneous_read_only_diagnostic_mapping"
+  runtime_writers:
+    - "penman_monteith_et"
+    - "priestley_taylor_et"

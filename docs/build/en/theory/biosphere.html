@@ -1,0 +1,827 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Biosphere Theory &mdash; RELIC 1.0.0 Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=mono5" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=a12e3537"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../_static/language_switch.js?v=mono5"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Hydrosphere Theory" href="hydrosphere.html" />
+    <link rel="prev" title="Atmosphere Theory" href="atmosphere.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            RELIC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">RELIC Guide</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../architecture.html">System Architecture</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#scope-and-architectural-contract">Scope and architectural contract</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#architecture-capability-map">Architecture capability map</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#package-ownership-and-seven-layer-map">Package ownership and seven-layer map</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#four-scientific-abstractions">Four scientific abstractions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#functor-lifecycle-and-metadata">Functor lifecycle and metadata</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#variable-roles-and-state-ownership">Variable roles and state ownership</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#parameters-constants-units-and-time">Parameters, constants, units, and time</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#simulator-execution-rates-and-device-policy">Simulator, execution rates, and device policy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#structural-scientific-layer">Structural scientific layer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#end-to-end-assembly-and-execution">End-to-end assembly and execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#connection-and-conservation-rules">Connection and conservation rules</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Scientific Theory and Governing Equations</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="foundations.html">Mathematical Foundations, State, Units, and Conservation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="foundations.html#architectural-contract-and-notation">Architectural contract and notation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="foundations.html#four-scientific-abstractions-and-functor-lifecycle">Four scientific abstractions and Functor lifecycle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="foundations.html#spatial-quantity-basis-and-temporal-overlap-laws">Spatial quantity basis and temporal overlap laws</a></li>
+<li class="toctree-l3"><a class="reference internal" href="foundations.html#universal-conservation-and-balance-laws">Universal conservation and balance laws</a></li>
+<li class="toctree-l3"><a class="reference internal" href="foundations.html#transactional-statemanager-governance-i1-i7">Transactional StateManager governance (<code class="docutils literal notranslate"><span class="pre">I1</span></code>–<code class="docutils literal notranslate"><span class="pre">I7</span></code>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="foundations.html#centralized-parametermanager-and-physical-constant-ssot">Centralized ParameterManager and physical-constant SSOT</a></li>
+<li class="toctree-l3"><a class="reference internal" href="foundations.html#piecewise-smooth-discrete-adjoint-differentiation-and-device-policy">Piecewise-smooth discrete adjoint differentiation and device policy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="foundations.html#bounded-mathematical-contracts-and-runtime-boundary-i-vs-n">Bounded mathematical contracts and runtime boundary (<code class="docutils literal notranslate"><span class="pre">[I]</span></code> vs <code class="docutils literal notranslate"><span class="pre">[N]</span></code>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="foundations.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dec_iphs_generic.html">DEC, IPHS, GENERIC, Ports, and Reaction Structure</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dec_iphs_generic.html#structural-governance-lifecycle">Structural governance lifecycle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dec_iphs_generic.html#discrete-exterior-calculus-relic-computation-operators-dec">Discrete exterior calculus (<code class="docutils literal notranslate"><span class="pre">relic.computation.operators.dec</span></code>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dec_iphs_generic.html#irreversible-port-hamiltonian-and-generic-lowering">Irreversible port-Hamiltonian and GENERIC lowering</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dec_iphs_generic.html#equivalence-certificates-and-live-repository-inventory">Equivalence certificates and live repository inventory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dec_iphs_generic.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="numerics.html">Numerical Integration, Splitting, Stability, Scale Coupling, and Hybrid Events</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="numerics.html#method-of-lines-formulation-and-solver-registry">Method-of-lines formulation and solver registry</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numerics.html#deterministic-time-stepping-linear-and-nonlinear-solvers">Deterministic time-stepping, linear, and nonlinear solvers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numerics.html#multi-rate-execution-operator-splitting-and-step-control">Multi-rate execution, operator splitting, and step control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numerics.html#transport-stability-and-nonlinear-richards-closure">Transport stability and nonlinear Richards closure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numerics.html#conservative-spatial-remapping-and-internal-cross-domain-couplers">Conservative spatial remapping and internal cross-domain couplers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numerics.html#transverse-hybrid-events-and-saltation-matrix-sensitivities">Transverse hybrid events and saltation-matrix sensitivities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numerics.html#stochastic-memory-ale-dae-and-topology-transition-families">Stochastic, memory, ALE, DAE, and topology-transition families</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numerics.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="atmosphere.html">Atmosphere Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="atmosphere.html#scope-process-inventory-and-certificate-map">Scope, process inventory, and certificate map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="atmosphere.html#solar-thermal-and-canopy-radiation">Solar, thermal, and canopy radiation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="atmosphere.html#surface-layer-turbulence-and-boundary-layer-tracer-transport">Surface-layer turbulence and boundary-layer tracer transport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="atmosphere.html#gas-phase-chemistry-open-tropospheric-kinetics-and-closed-level-5-generic-point">Gas-phase chemistry: open tropospheric kinetics and closed Level-5 GENERIC point</a></li>
+<li class="toctree-l3"><a class="reference internal" href="atmosphere.html#stochastic-atmospheric-forcing-and-replay-contracts">Stochastic atmospheric forcing and replay contracts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="atmosphere.html#atmospheric-observation-operators">Atmospheric observation operators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="atmosphere.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Biosphere Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#scope-process-inventory-and-certificate-map">Scope, process inventory, and certificate map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#photosynthesis-and-stomatal-conductance">Photosynthesis and stomatal conductance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#autotrophic-respiration-allocation-and-structural-growth">Autotrophic respiration, allocation, and structural growth</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#phenology-and-abiotic-stress-closures">Phenology and abiotic stress closures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#biogenic-volatile-organic-compound-bvoc-synthesis-and-emission">Biogenic volatile organic compound (BVOC) synthesis and emission</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hydrosphere.html">Hydrosphere Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hydrosphere.html#scope-process-inventory-and-certificate-map">Scope, process inventory, and certificate map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydrosphere.html#evapotranspiration-closures">Evapotranspiration closures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydrosphere.html#snowpack-mass-energy-balance-and-snow-albedo">Snowpack mass-energy balance and snow albedo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydrosphere.html#soil-water-retention-bucket-storage-and-richards-vadose-flow">Soil-water retention, bucket storage, and Richards vadose flow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydrosphere.html#surface-runoff-and-hybrid-event-driven-hortonian-ponding">Surface runoff and hybrid event-driven Hortonian ponding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydrosphere.html#subsurface-stormflow-vadose-aquifer-exchange-and-groundwater">Subsurface stormflow, vadose-aquifer exchange, and groundwater</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydrosphere.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pedosphere.html">Pedosphere Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pedosphere.html#scope-process-inventory-and-certificate-map">Scope, process inventory, and certificate map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pedosphere.html#soil-organic-carbon-turnover-and-cross-sphere-interface-maps">Soil organic carbon turnover and cross-sphere interface maps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pedosphere.html#soil-nitrogen-root-p-uptake-and-c-n-stoichiometry-boundaries">Soil nitrogen, root P uptake, and C:N stoichiometry boundaries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pedosphere.html#wetland-methane-request-and-coupler-architecture">Wetland methane request-and-coupler architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pedosphere.html#porous-media-water-gas-solute-dae-ale-and-memory-transport">Porous-media water, gas, solute, DAE, ALE, and memory transport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pedosphere.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="anthroposphere.html">Anthroposphere Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="anthroposphere.html#scope-process-inventory-and-fail-closed-boundary-status">Scope, process inventory, and fail-closed boundary status</a></li>
+<li class="toctree-l3"><a class="reference internal" href="anthroposphere.html#fail-closed-level-0-boundaries-vs-implemented-emission-operators">Fail-closed Level-0 boundaries vs implemented emission operators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="anthroposphere.html#continuous-time-markov-land-use-transitions-and-parameter-projection">Continuous-time Markov land-use transitions and parameter projection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="anthroposphere.html#management-coordination-and-agricultural-water-nutrient-ports">Management coordination and agricultural water-nutrient ports</a></li>
+<li class="toctree-l3"><a class="reference internal" href="anthroposphere.html#managed-biomass-removal-livestock-grazing-fire-and-tillage">Managed biomass removal, livestock grazing, fire, and tillage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="anthroposphere.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="isotopes_transport.html">Stable Isotopes and General Transport Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="isotopes_transport.html#scope-component-inventory-and-certificate-map">Scope, component inventory, and certificate map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="isotopes_transport.html#stable-isotope-ratios-exact-binary-fractionation-and-fail-closed-ledger-status">Stable-isotope ratios, exact binary fractionation, and fail-closed ledger status</a></li>
+<li class="toctree-l3"><a class="reference internal" href="isotopes_transport.html#general-conservative-transport-functors">General conservative transport Functors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="isotopes_transport.html#references">References</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../science/index.html">Core Scientific Class Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../science/anthroposphere.html">Anthroposphere Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#atmosphere-coupling">atmosphere_coupling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#sector-allocation">sector_allocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#species-mapping">species_mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#anthroposphere-interface-mapping">anthroposphere_interface_mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#emission-inventory">emission_inventory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#land-use-parameter-mapping">land_use_parameter_mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#land-use-transitions">land_use_transitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#management-coordinator">management_coordinator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#fertilization-management">fertilization_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#fire-management">fire_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#grazing-management">grazing_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#harvest-management">harvest_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#irrigationmanagement">IrrigationManagement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#tillagemanagement">TillageManagement</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/atmosphere.html">Atmosphere Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#chemistryfunctor">ChemistryFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#class-atmosphere-chemistry-chemistry-functor-closed-constant-volume">ChemistryFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#environmentalforcingfunctor">EnvironmentalForcingFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#radiationenergyconservationvalidator">RadiationEnergyConservationValidator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#radiationfield">RadiationField</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#radiationfunctor">RadiationFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#markedpoissonrainfallfunctor">MarkedPoissonRainfallFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#ornsteinuhlenbecktemperaturefunctor">OrnsteinUhlenbeckTemperatureFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#atmosphericadvectiondiffusionfunctor">AtmosphericAdvectionDiffusionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#drydepositionaggregator">DryDepositionAggregator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#eddydiffusionblmfunctor">EddyDiffusionBLMFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#turbulencefunctor">TurbulenceFunctor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/biosphere.html">Biosphere Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#meganmodel">MEGANModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#isoprenesynthesis">IsopreneSynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#monoterpenesynthesis">MonoterpeneSynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#sesquiterpenestressmodel">SesquiterpeneStressModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#sesquiterpenesynthesis">SesquiterpeneSynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#biomassallocation">BiomassAllocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#phenologygrowth">PhenologyGrowth</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#structuralgrowth">StructuralGrowth</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#cropphenology">CropPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#gddphenology">GDDPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#gsiphenology">GSIPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#staticphenology">StaticPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#phenologyfunctor">PhenologyFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#farquharphotosynthesis">FarquharPhotosynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#medlynstomatalconductance">MedlynStomatalConductance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#autotrophicrespiration">AutotrophicRespiration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#growthrespiration">GrowthRespiration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#maintenancerespiration">MaintenanceRespiration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#nutrientstress">NutrientStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#ozonestress">OzoneStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#thermalstress">ThermalStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#waterstress">WaterStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#simplecanopyphotosynthesis">SimpleCanopyPhotosynthesis</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/hydrosphere.html">Hydrosphere Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#penman-monteith-et">penman_monteith_et</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#priestley-taylor-et">priestley_taylor_et</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#groundwater-dynamics">groundwater_dynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#subsurface-runoff">subsurface_runoff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#hortonianpondingeventfunctor">HortonianPondingEventFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#surfacepondingfunctor">SurfacePondingFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#surface-runoff">surface_runoff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#snow-albedo">snow_albedo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#snow-pack">snow_pack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#bucket-soil-moisture">bucket_soil_moisture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#soilwaterretention">SoilWaterRetention</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#richards-soil-moisture">richards_soil_moisture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#capillary-rise-transport">capillary_rise_transport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#vertical-percolation-transport">vertical_percolation_transport</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/pedosphere.html">Pedosphere Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#carbonpoolsfunctor">CarbonPoolsFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#poolsmatrix">PoolsMatrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#firstorderdecomposition">FirstOrderDecomposition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#microbialenzymedecomposition">MicrobialEnzymeDecomposition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#litterfallinterfacemapper">LitterfallInterfaceMapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#pedosphereinterfacemapper">PedosphereInterfaceMapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methanebudgetcoupler">MethaneBudgetCoupler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methaneoxidationfunctor">MethaneOxidationFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methaneproductionfunctor">MethaneProductionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methanescalecouplingfunctor">MethaneScaleCouplingFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methanetransportfunctor">MethaneTransportFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#denitrification-process">denitrification_process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#mineralizationprocess">MineralizationProcess</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#nitrification-process">nitrification_process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#nitrogenleachingprocess">NitrogenLeachingProcess</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#nitrogencycling">NitrogenCycling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#rootnutrientuptake">RootNutrientUptake</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#stoichiometryconstraint">StoichiometryConstraint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#equilibriumsorptionfunctor">EquilibriumSorptionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#gasdiffusion1d">GasDiffusion1D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#movingdomaindiffusionfunctor">MovingDomainDiffusionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#soil-water-transport">soil_water_transport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#soluteadvectiondiffusion1d">SoluteAdvectionDiffusion1D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#tworegionmasstransferfunctor">TwoRegionMassTransferFunctor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/isotopes.html">Stable-Isotope Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/isotopes.html#isotopeheartbeatfunctor">IsotopeHeartbeatFunctor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/transport.html">General Transport Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#advection-diffusion">advection_diffusion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#linear-advection">linear_advection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#fickian-diffusion">fickian_diffusion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#class-transport-diffusion-fickian-diffusion-strict-runtime-point">fickian_diffusion</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/index.html#complete-coverage-matrix">Complete coverage matrix</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">RELIC Workflows</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#learning-tracks">Learning tracks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#how-to-use-a-tutorial">How to use a tutorial</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/installation_and_imports.html">Installation and Imports</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/configuration_and_parameters.html">Configuration and Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/state_functors_and_simulation.html">State, Functors, and Simulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/graph_validation_and_execution.html">Graph Validation and Execution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/persistence_outputs_and_data_io.html">Persistence, Outputs, and Data I/O</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/coupling_workflows.html">Coupling Workflows</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/calibration_sensitivity_and_uq.html">Calibration, Sensitivity Analysis, and Uncertainty Quantification</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/devices_and_distributed.html">Devices and Distributed Execution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/cli_and_extensions.html">CLI and Extensions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestration.html">Graph Orchestration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#canonical-owners">Canonical owners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#graphir">GraphIR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#portspec-and-the-contract-boundary">PortSpec and the contract boundary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#validation">Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#adapters">Adapters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#compilation-and-execution">Compilation and execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#strict-iphs-dec-boundary">Strict IPHS/DEC boundary</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../operations.html">Operations Quick Start</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#select-a-workflow">Select a workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#environment-preflight">Environment preflight</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#first-successful-run">First successful run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#benchmark-style-acceptance-checklist">Benchmark-style acceptance checklist</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#minimal-runtime-sequence">Minimal runtime sequence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#troubleshooting-order">Troubleshooting order</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#immediate-stop-conditions">Immediate stop conditions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../extension_contracts.html">Extension Contracts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#reuse-first-decision">Reuse-first decision</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#adding-a-scientific-functor">Adding a scientific Functor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#parameter-extension">Parameter extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#variable-contract-extension">Variable contract extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#graph-and-adapter-extension">Graph and adapter extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#external-extension-paths">External extension paths</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#scientific-structure-claims">Scientific structure claims</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#explicit-unavailable-scientific-boundaries">Explicit unavailable scientific boundaries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#anti-redundancy-boundary">Anti-redundancy boundary</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">Core API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/index.html#coverage-contract">Coverage contract</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/core_runtime.html">Core Runtime API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/parameters_contracts.html">Parameters and Parameter Contracts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/orchestration_validation.html">Orchestration, Contracts, and Validation API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/scientific_structure_extensions.html">Scientific Structure and Extension APIs</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">RELIC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Scientific Theory and Governing Equations</a></li>
+      <li class="breadcrumb-item active">Biosphere Theory</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="biosphere-theory">
+<h1>Biosphere Theory<a class="headerlink" href="#biosphere-theory" title="Link to this heading"></a></h1>
+<section id="scope-process-inventory-and-certificate-map">
+<h2>Scope, process inventory, and certificate map<a class="headerlink" href="#scope-process-inventory-and-certificate-map" title="Link to this heading"></a></h2>
+<p>The RELIC biosphere domain (<code class="docutils literal notranslate"><span class="pre">relic.scientific.biosphere</span></code>) represents terrestrial
+vegetation carbon assimilation, stomatal conductance, autotrophic respiration,
+organ carbon allocation, structural biomass turnover, leaf phenology, abiotic
+stress modifiers, and biogenic volatile organic compound (BVOC) synthesis and
+emission (<em>Methods of Ecological Analysis</em>, Chapters 20–22). Living vegetation
+is an open, sunlit, metabolically driven subsystem; accordingly, all 23 concrete
+biosphere Functors inherit <code class="docutils literal notranslate"><span class="pre">BiologicalProcessFunctor</span></code> and carry <code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">1</span></code>
+(read-only constitutive/observation map) or <code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code> (open port/stoichiometric
+balance) <code class="docutils literal notranslate"><span class="pre">IPHSEquivalenceCertificate</span></code> declarations. No closed-system <code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">4</span></code>
+or <code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">5</span></code> thermodynamic equilibrium claim is made for living canopy kinetics.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Subsystem</p></th>
+<th class="head"><p>Functor</p></th>
+<th class="head"><p>Cert. level</p></th>
+<th class="head"><p>Status</p></th>
+<th class="head"><p>Primary runtime role and state semantics</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Photosynthesis &amp; stomata</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-photosynthesis-farquhar-farquharphotosynthesis"><span class="std std-ref">FarquharPhotosynthesis</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>FvCB <span class="math notranslate nohighlight">\(\mathrm{C_3}\)</span> biochemical assimilation (<span class="math notranslate nohighlight">\(A_c, A_j, A_p\)</span>, gross and net <span class="math notranslate nohighlight">\(A\)</span>) (<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Photosynthesis &amp; stomata</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-photosynthesis-stomatal-medlynstomatalconductance"><span class="std std-ref">MedlynStomatalConductance</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">1</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Conditional leaf-support optimal stomatal conductance <span class="math notranslate nohighlight">\(g_s\)</span> (<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p>Photosynthesis &amp; stomata</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-surrogates-simple-photosynthesis-simplecanopyphotosynthesis"><span class="std std-ref">SimpleCanopyPhotosynthesis</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Light-use-efficiency canopy GPP surrogate (<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Autotrophic respiration</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-respiration-maintenance-respiration-maintenancerespiration"><span class="std std-ref">MaintenanceRespiration</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Organ-resolved nitrogen/biomass <span class="math notranslate nohighlight">\(Q_{10}\)</span> maintenance respiration <span class="math notranslate nohighlight">\(R_m\)</span> (<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p>Autotrophic respiration</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-respiration-growth-respiration-growthrespiration"><span class="std std-ref">GrowthRespiration</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Biosynthetic construction respiration <span class="math notranslate nohighlight">\(R_g\)</span> proportional to positive carbon gain (<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Autotrophic respiration</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-respiration-autotrophic-respiration-autotrophicrespiration"><span class="std std-ref">AutotrophicRespiration</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Coupled <span class="math notranslate nohighlight">\(R_a = R_m + R_g\)</span>, NPP, and carbon-use efficiency closure (<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p>Allocation &amp; growth</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-growth-biomass-allocation-biomassallocation"><span class="std std-ref">BiomassAllocation</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Resource-responsive simplex partitioning of NPP across leaves, stems, and roots (<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Allocation &amp; growth</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-growth-structural-growth-structuralgrowth"><span class="std std-ref">StructuralGrowth</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Organ carbon mass balance, senescence litter fluxes, and allometric LAI (<code class="docutils literal notranslate"><span class="pre">ACCUMULATE</span></code> / <code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p>Allocation &amp; growth</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-growth-phenology-growth-phenologygrowth"><span class="std std-ref">PhenologyGrowth</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">1</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Phenology-stage growth-modifier observation (<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Phenology (<code class="docutils literal notranslate"><span class="pre">PhenologyBase</span></code>)</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-phenology-models-staticphenology"><span class="std std-ref">StaticPhenology</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Prescribed time-invariant LAI and canopy cover baseline (<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p>Phenology (<code class="docutils literal notranslate"><span class="pre">PhenologyBase</span></code>)</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-phenology-models-gddphenology"><span class="std std-ref">GDDPhenology</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Growing-degree-day thermal budburst, expansion, and senescence (<code class="docutils literal notranslate"><span class="pre">ACCUMULATE</span></code> / <code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Phenology (<code class="docutils literal notranslate"><span class="pre">PhenologyBase</span></code>)</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-phenology-models-gsiphenology"><span class="std std-ref">GSIPhenology</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Growing Season Index (temperature, photoperiod, VPD) canopy state (<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p>Phenology (<code class="docutils literal notranslate"><span class="pre">PhenologyBase</span></code>)</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-phenology-models-cropphenology"><span class="std std-ref">CropPhenology</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Stage-resolved agricultural thermal-time development and harvest maturity (<code class="docutils literal notranslate"><span class="pre">ACCUMULATE</span></code> / <code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Phenology (<code class="docutils literal notranslate"><span class="pre">PhenologyBase</span></code>)</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-phenology-phenology-functor-phenologyfunctor"><span class="std std-ref">PhenologyFunctor</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">1</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Configured phenology observation and stage-index wrapper (<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p>Abiotic stress</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-stress-water-stress-waterstress"><span class="std std-ref">WaterStress</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">1</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Soil-moisture / matric-potential scalar <span class="math notranslate nohighlight">\(\beta_W \in [0, 1]\)</span> (<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Abiotic stress</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-stress-nutrient-stress-nutrientstress"><span class="std std-ref">NutrientStress</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">1</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Liebig or multiplicative foliar N:P limitation scalar <span class="math notranslate nohighlight">\(\beta_N \in [0, 1]\)</span> (<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p>Abiotic stress</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-stress-thermal-stress-thermalstress"><span class="std std-ref">ThermalStress</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">1</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Low- and high-temperature inhibition scalar <span class="math notranslate nohighlight">\(\beta_T \in [0, 1]\)</span> (<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Abiotic stress</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-stress-ozone-stress-ozonestress"><span class="std std-ref">OzoneStress</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Cumulative stomatal ozone uptake (<span class="math notranslate nohighlight">\(\mathrm{POD}_y\)</span>) damage dynamics (<code class="docutils literal notranslate"><span class="pre">ACCUMULATE</span></code> / <code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p>BVOC synthesis &amp; emission</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-bvoc-megan-model-meganmodel"><span class="std std-ref">MEGANModel</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Canopy empirical BVOC emission factors and <span class="math notranslate nohighlight">\(\gamma\)</span> activity multipliers (<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p>BVOC synthesis &amp; emission</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-bvoc-synthesis-isoprene-isoprenesynthesis"><span class="std std-ref">IsopreneSynthesis</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Plastidic MEP-pathway DMADP/energy-limited isoprene synthesis (<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p>BVOC synthesis &amp; emission</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-bvoc-synthesis-monoterpene-monoterpenesynthesis"><span class="std std-ref">MonoterpeneSynthesis</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Dual <em>de novo</em> plus bounded resin-pool (<span class="math notranslate nohighlight">\(P \in [0, P_{\max}]\)</span>) monoterpene emission (<code class="docutils literal notranslate"><span class="pre">ACCUMULATE</span></code> / <code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p>BVOC synthesis &amp; emission</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-bvoc-synthesis-sesquiterpene-sesquiterpenesynthesis"><span class="std std-ref">SesquiterpeneSynthesis</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Temperature- and stress-driven sesquiterpene synthesis and emission (<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p>BVOC synthesis &amp; emission</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-bvoc-synthesis-sesquiterpene-sesquiterpenestressmodel"><span class="std std-ref">SesquiterpeneStressModel</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">1</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Oxidative, herbivory/mechanical, and thermal stress-induction factor (<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>)</p></td>
+</tr>
+</tbody>
+</table>
+<p><code class="docutils literal notranslate"><span class="pre">relic.scientific.biosphere.phenology.base.PhenologyBase</span></code> is an abstract base
+class shared by the concrete phenology implementations and carries no separate
+certificate. General notation follows <a class="reference internal" href="foundations.html"><span class="std std-doc">Mathematical Foundations</span></a>,
+structural levels follow <a class="reference internal" href="dec_iphs_generic.html"><span class="std std-doc">DEC, IPHS, and GENERIC</span></a>, and
+integrator contracts follow <a class="reference internal" href="numerics.html"><span class="std std-doc">Numerical Methods</span></a>.</p>
+</section>
+<section id="photosynthesis-and-stomatal-conductance">
+<h2>Photosynthesis and stomatal conductance<a class="headerlink" href="#photosynthesis-and-stomatal-conductance" title="Link to this heading"></a></h2>
+<section id="farquhar-von-caemmerer-berry-biochemical-assimilation">
+<h3>Farquhar-von Caemmerer-Berry biochemical assimilation<a class="headerlink" href="#farquhar-von-caemmerer-berry-biochemical-assimilation" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">relic.scientific.biosphere.photosynthesis.farquhar.FarquharPhotosynthesis</span></code>
+(<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>) implements the <span class="math notranslate nohighlight">\(\mathrm{C_3}\)</span> biochemical model of Farquhar, von
+Caemmerer, and Berry (1980) with peaked Arrhenius temperature scaling of
+<span class="math notranslate nohighlight">\(V_{c\max}\)</span>, <span class="math notranslate nohighlight">\(J_{\max}\)</span>, triose-phosphate utilization <span class="math notranslate nohighlight">\(T_p\)</span>, Michaelis constants
+<span class="math notranslate nohighlight">\(K_c, K_o\)</span>, and <span class="math notranslate nohighlight">\(\mathrm{CO}_2\)</span> compensation point <span class="math notranslate nohighlight">\(\Gamma^\ast\)</span> (Bernacchi
+et al., 2001; Medlyn et al., 2002; <em>Methods of Ecological Analysis</em>, Chapter 20).
+At intercellular <span class="math notranslate nohighlight">\(\mathrm{CO}_2\)</span> partial pressure or mole fraction <span class="math notranslate nohighlight">\(C_i\)</span> and
+oxygen level <span class="math notranslate nohighlight">\(O_i\)</span>, the Rubisco-limited (<span class="math notranslate nohighlight">\(W_c\)</span>), RuBP-regeneration-limited
+(<span class="math notranslate nohighlight">\(W_j\)</span>), and TPU-limited (<span class="math notranslate nohighlight">\(W_p\)</span>) gross carboxylation rates are</p>
+<div class="math notranslate nohighlight">
+\[
+W_c = V_{c\max}(T_l)\,\frac{C_i}{C_i + K_c(T_l)\left(1 + O_i / K_o(T_l)\right)},
+\qquad
+W_j = \frac{J(I_{\mathrm{APAR}}, T_l)}{4}\,\frac{C_i}{C_i + 2\Gamma^\ast(T_l)},
+\qquad
+W_p = 3\,T_p(T_l)\,\frac{C_i}{C_i - \Gamma^\ast(T_l)},
+\]</div>
+<p>where electron transport <span class="math notranslate nohighlight">\(J\)</span> solves the non-rectangular hyperbola</p>
+<div class="math notranslate nohighlight">
+\[
+\theta_J J^2 - \left(\alpha_J I_{\mathrm{APAR}} + J_{\max}(T_l)\right)J + \alpha_J I_{\mathrm{APAR}} J_{\max}(T_l) = 0
+\]</div>
+<p>on its smaller positive root. Gross and net leaf or canopy assimilation
+[<span class="math notranslate nohighlight">\(\mu\)</span>mol <span class="math notranslate nohighlight">\(\mathrm{CO}_2\)</span> m<span class="math notranslate nohighlight">\(^{-2}\)</span> s<span class="math notranslate nohighlight">\(^{-1}\)</span>] satisfy</p>
+<div class="math notranslate nohighlight">
+\[
+A_{\mathrm{gross}} = \left(1 - \frac{\Gamma^\ast(T_l)}{C_i}\right)\min_{\mathrm{smooth}}(W_c, W_j, W_p),
+\qquad
+A_{\mathrm{net}} = \beta_{\mathrm{stress}}\,A_{\mathrm{gross}} - R_d(T_l),
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(R_d(T_l)\)</span> is mitochondrial day respiration and <span class="math notranslate nohighlight">\(\min_{\mathrm{smooth}}\)</span>
+denotes quadratic co-limitation (Collatz et al., 1991) or exact pointwise
+minimum according to configuration.</p>
+</section>
+<section id="optimal-stomatal-conductance-medlyn-closure">
+<h3>Optimal stomatal conductance (Medlyn closure)<a class="headerlink" href="#optimal-stomatal-conductance-medlyn-closure" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">relic.scientific.biosphere.photosynthesis.stomatal.MedlynStomatalConductance</span></code>
+(<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">1</span></code>) evaluates the optimal water-use-efficiency stomatal conductance law
+of Medlyn et al. (2011) as a conditional leaf-support observation under the
+explicit boundary assumption <code class="docutils literal notranslate"><span class="pre">surface_conditions</span> <span class="pre">=</span> <span class="pre">&quot;leaf_surface_equals_canopy_air&quot;</span></code>.
+Canopy-ground net assimilation is normalized onto leaf area using
+<code class="docutils literal notranslate"><span class="pre">leaf_area_index</span></code> (<span class="math notranslate nohighlight">\(A_{\mathrm{leaf}}\)</span>), leaf-surface <span class="math notranslate nohighlight">\(\mathrm{CO}_2\)</span> is <span class="math notranslate nohighlight">\(C_s\)</span>
+[<span class="math notranslate nohighlight">\(\mu\)</span>mol mol<span class="math notranslate nohighlight">\(^{-1}\)</span>], and vapor-pressure deficit is bounded away from zero by
+<span class="math notranslate nohighlight">\(D_{\mathrm{eff}} = \max(D_s, D_{\min})\)</span> [kPa]. Conductance to water vapor
+<span class="math notranslate nohighlight">\(g_s\)</span> [mol m<span class="math notranslate nohighlight">\(^{-2}\)</span> s<span class="math notranslate nohighlight">\(^{-1}\)</span>] is</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+g_s =
+\begin{cases}
+g_0, &amp; \mathrm{PPFD} \le \mathrm{PPFD}_{\mathrm{dark}} \;\text{ or }\; A_{\mathrm{leaf}} \le 0,\\
+g_0 + 1.6\left(1 + \dfrac{g_1}{\sqrt{D_{\mathrm{eff}}}}\right)\dfrac{A_{\mathrm{leaf}}}{C_s}, &amp; \mathrm{PPFD} &gt; \mathrm{PPFD}_{\mathrm{dark}} \;\text{ and }\; A_{\mathrm{leaf}} &gt; 0,
+\end{cases}
+\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(1.6\)</span> is the molecular diffusivity ratio <span class="math notranslate nohighlight">\(D_{\mathrm{H_2O}}/D_{\mathrm{CO_2}}\)</span>,
+<span class="math notranslate nohighlight">\(g_0 \ge 0\)</span> is residual cuticular/minimum conductance, and <span class="math notranslate nohighlight">\(g_1\)</span> [kPa<span class="math notranslate nohighlight">\(^{1/2}\)</span>]
+is the marginal water-cost slope parameter. <code class="docutils literal notranslate"><span class="pre">MedlynStomatalConductance</span></code> emits
+<code class="docutils literal notranslate"><span class="pre">stomatal_conductance</span></code> via <code class="docutils literal notranslate"><span class="pre">REPLACE</span></code> without solving an implicit leaf energy
+balance or mutating carbon pools.</p>
+</section>
+<section id="light-use-efficiency-canopy-surrogate">
+<h3>Light-use-efficiency canopy surrogate<a class="headerlink" href="#light-use-efficiency-canopy-surrogate" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">relic.scientific.biosphere.surrogates.simple_photosynthesis.SimpleCanopyPhotosynthesis</span></code>
+(<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>) provides a diagnostic Monteith (1972) light-use-efficiency closure,</p>
+<div class="math notranslate nohighlight">
+\[
+\mathrm{GPP} = \varepsilon_{\max}\,\mathrm{APAR}\,f_T(T_a)\,f_{\mathrm{VPD}}(D)\,\beta_W,
+\]</div>
+<p>for coarse-scale or calibration workflows where biochemical <span class="math notranslate nohighlight">\(C_i\)</span> iteration is
+not selected. Exactly one photosynthesis owner (<code class="docutils literal notranslate"><span class="pre">FarquharPhotosynthesis</span></code> or
+<code class="docutils literal notranslate"><span class="pre">SimpleCanopyPhotosynthesis</span></code>) may own <code class="docutils literal notranslate"><span class="pre">gpp</span></code> in a given simulator graph.</p>
+</section>
+</section>
+<section id="autotrophic-respiration-allocation-and-structural-growth">
+<h2>Autotrophic respiration, allocation, and structural growth<a class="headerlink" href="#autotrophic-respiration-allocation-and-structural-growth" title="Link to this heading"></a></h2>
+<section id="maintenance-growth-and-total-autotrophic-respiration">
+<h3>Maintenance, growth, and total autotrophic respiration<a class="headerlink" href="#maintenance-growth-and-total-autotrophic-respiration" title="Link to this heading"></a></h3>
+<p>RELIC separates autotrophic respiration into modular <code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code> owners (<em>Methods
+of Ecological Analysis</em>, Chapter 21; Ryan, 1991; Amthor, 2000):</p>
+<ol class="arabic">
+<li><p><code class="docutils literal notranslate"><span class="pre">relic.scientific.biosphere.respiration.maintenance_respiration.MaintenanceRespiration</span></code>
+evaluates organ-summed maintenance cost from live biomass <span class="math notranslate nohighlight">\(C_k\)</span> or tissue
+nitrogen content <span class="math notranslate nohighlight">\(N_k\)</span> with <span class="math notranslate nohighlight">\(Q_{10}\)</span> or modified-Arrhenius temperature
+acclimation (Atkin and Tjoelker, 2003):</p>
+<div class="math notranslate nohighlight">
+\[R_m = \sum_{k \in \{\mathrm{leaf,stem,root}\}} r_{m,k}\,M_k\,f_{T,k}(T_k), \qquad f_{T,k}(T_k) = Q_{10,k}^{(T_k - T_{\mathrm{ref}})/10}.\]</div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">relic.scientific.biosphere.respiration.growth_respiration.GrowthRespiration</span></code>
+computes biosynthetic construction cost on positive net assimilatory surplus:</p>
+<div class="math notranslate nohighlight">
+\[R_g = f_{\mathrm{gr}}\,\max(\mathrm{GPP} - R_m,\; 0), \qquad 0 \le f_{\mathrm{gr}} &lt; 1.\]</div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">relic.scientific.biosphere.respiration.autotrophic_respiration.AutotrophicRespiration</span></code>
+closes the canopy autotrophic carbon flux budget:</p>
+<div class="math notranslate nohighlight">
+\[R_a = R_m + R_g, \qquad \mathrm{NPP} = \mathrm{GPP} - R_a, \qquad \mathrm{CUE} = \frac{\mathrm{NPP}}{\max(\mathrm{GPP}, \varepsilon_{\mathrm{GPP}})}.\]</div>
+</li>
+</ol>
+</section>
+<section id="simplex-carbon-allocation-and-organ-mass-conservation">
+<h3>Simplex carbon allocation and organ mass conservation<a class="headerlink" href="#simplex-carbon-allocation-and-organ-mass-conservation" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">relic.scientific.biosphere.growth.biomass_allocation.BiomassAllocation</span></code>
+(<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>) maps environmental light, water, and nutrient limitation signals to
+organ allocation fractions <span class="math notranslate nohighlight">\(\mathbf{a} = (a_{\mathrm{leaf}}, a_{\mathrm{stem}}, a_{\mathrm{root}})^{\mathsf{T}}\)</span>
+(Friedlingstein et al., 1999) satisfying exact simplex normalization:</p>
+<div class="math notranslate nohighlight">
+\[
+a_k \ge 0,
+\qquad
+\sum_{k \in \{\mathrm{leaf,stem,root}\}} a_k = 1,
+\qquad
+F_{\mathrm{alloc},k} = a_k\,\max(\mathrm{NPP}, 0).
+\]</div>
+<p><code class="docutils literal notranslate"><span class="pre">relic.scientific.biosphere.growth.structural_growth.StructuralGrowth</span></code>
+(<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>) advances organ carbon pools <span class="math notranslate nohighlight">\(C_k\)</span> [g C m<span class="math notranslate nohighlight">\(^{-2}\)</span>] with senescence
+turnover rates <span class="math notranslate nohighlight">\(\tau_k^{-1}\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\mathrm{d}C_k}{\mathrm{d}t} = F_{\mathrm{alloc},k} - L_k,
+\qquad
+L_k = \frac{C_k}{\tau_k}\,f_{\mathrm{sen},k},
+\]</div>
+<p>emitting integrated pool increments <span class="math notranslate nohighlight">\(\Delta C_k\)</span> via
+<code class="docutils literal notranslate"><span class="pre">UpdateItem(ACCUMULATE,</span> <span class="pre">per_timestep=True)</span></code>, litterfall fluxes <span class="math notranslate nohighlight">\(L_k\)</span> (<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>,
+routed to pedosphere <code class="docutils literal notranslate"><span class="pre">LitterfallInterfaceMapper</span></code>), and prognostic leaf area
+index <span class="math notranslate nohighlight">\(L_{\mathrm{AI}} = \mathrm{SLA}\cdot C_{\mathrm{leaf}}\)</span> so the step carbon
+ledger <span class="math notranslate nohighlight">\(\sum_k \Delta C_k + \sum_k L_k\Delta t - \sum_k F_{\mathrm{alloc},k}\Delta t = 0\)</span>
+closes identically. <code class="docutils literal notranslate"><span class="pre">relic.scientific.biosphere.growth.phenology_growth.PhenologyGrowth</span></code>
+(<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">1</span></code>) supplies read-only stage-dependent growth multipliers without
+mutating carbon stocks.</p>
+</section>
+</section>
+<section id="phenology-and-abiotic-stress-closures">
+<h2>Phenology and abiotic stress closures<a class="headerlink" href="#phenology-and-abiotic-stress-closures" title="Link to this heading"></a></h2>
+<section id="leaf-phenology-models">
+<h3>Leaf phenology models<a class="headerlink" href="#leaf-phenology-models" title="Link to this heading"></a></h3>
+<p>Concrete phenology Functors inherit <code class="docutils literal notranslate"><span class="pre">relic.scientific.biosphere.phenology.base.PhenologyBase</span></code>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">StaticPhenology</span></code> (<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>): emits prescribed stationary <span class="math notranslate nohighlight">\(L_{\mathrm{AI}}\)</span>
+and greenness fraction.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GDDPhenology</span></code> (<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>): accumulates daily thermal forcing
+<span class="math notranslate nohighlight">\(\Delta \mathrm{GDD} = \max(T_a - T_{\mathrm{base}}, 0)\,\Delta t_{\mathrm{days}}\)</span>
+(<code class="docutils literal notranslate"><span class="pre">ACCUMULATE</span></code>, <code class="docutils literal notranslate"><span class="pre">per_timestep=True</span></code>) to drive logistic budburst, full-canopy
+plateau, and cold/photoperiod senescence.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GSIPhenology</span></code> (<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>): evaluates the Jolly et al. (2005) Growing Season
+Index as the product of piecewise-linear minimum-temperature, photoperiod, and
+vapor-pressure-deficit indicators, <span class="math notranslate nohighlight">\(\mathrm{GSI} = i_{T_{\min}}\,i_{\mathrm{photo}}\,i_{\mathrm{VPD}} \in [0, 1]\)</span>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">CropPhenology</span></code> (<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>): tracks vernalization- and photoperiod-weighted
+thermal units across emergence, vegetative, flowering, grain-filling, and
+maturity stages (<code class="docutils literal notranslate"><span class="pre">ACCUMULATE</span></code> thermal progress, <code class="docutils literal notranslate"><span class="pre">REPLACE</span></code> stage diagnostics).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PhenologyFunctor</span></code> (<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">1</span></code>): projects active phenological stage indices and
+canopy-activity scalars without owning separate carbon storage.</p></li>
+</ul>
+</section>
+<section id="water-nutrient-thermal-and-ozone-stress-functors">
+<h3>Water, nutrient, thermal, and ozone stress Functors<a class="headerlink" href="#water-nutrient-thermal-and-ozone-stress-functors" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">WaterStress</span></code>, <code class="docutils literal notranslate"><span class="pre">NutrientStress</span></code>, and <code class="docutils literal notranslate"><span class="pre">ThermalStress</span></code> (<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">1</span></code>) are pure
+constitutive observers mapping soil water content or potential, foliar N and P
+ratios, and leaf temperature extremes to bounded dimensionless scalars
+<span class="math notranslate nohighlight">\(\beta_W, \beta_N, \beta_T \in [0, 1]\)</span> (<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>).</p>
+<p><code class="docutils literal notranslate"><span class="pre">relic.scientific.biosphere.stress.ozone_stress.OzoneStress</span></code> (<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>)
+integrates phytotoxic ozone dose above flux threshold <span class="math notranslate nohighlight">\(y\)</span> (<span class="math notranslate nohighlight">\(\mathrm{POD}_y\)</span>,
+[mmol m<span class="math notranslate nohighlight">\(^{-2}\)</span>]; Emberson et al., 2000; Sitch et al., 2007):</p>
+<div class="math notranslate nohighlight">
+\[
+F_{\mathrm{O_3,stom}} = g_{s,\mathrm{O_3}}\,[\mathrm{O}_3]_{\mathrm{canopy}},
+\qquad
+\Delta \mathrm{POD}_y = \max\!\left(F_{\mathrm{O_3,stom}} - y,\; 0\right)\Delta t,
+\]</div>
+<p>committing <span class="math notranslate nohighlight">\(\Delta \mathrm{POD}_y\)</span> via <code class="docutils literal notranslate"><span class="pre">UpdateItem(ACCUMULATE,</span> <span class="pre">per_timestep=True)</span></code>
+and emitting the resulting photosynthetic damage factor
+<span class="math notranslate nohighlight">\(\beta_{\mathrm{O_3}} = \operatorname{clip}(1 - a_{\mathrm{O_3}}\,\mathrm{POD}_y,\; \beta_{\mathrm{O_3,min}},\; 1)\)</span>
+via <code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>.</p>
+</section>
+</section>
+<section id="biogenic-volatile-organic-compound-bvoc-synthesis-and-emission">
+<h2>Biogenic volatile organic compound (BVOC) synthesis and emission<a class="headerlink" href="#biogenic-volatile-organic-compound-bvoc-synthesis-and-emission" title="Link to this heading"></a></h2>
+<section id="canopy-empirical-megan-closure-and-continuous-co2-inhibition">
+<h3>Canopy empirical MEGAN closure and continuous CO2 inhibition<a class="headerlink" href="#canopy-empirical-megan-closure-and-continuous-co2-inhibition" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">relic.scientific.biosphere.bvoc.megan_model.MEGANModel</span></code> (<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>) evaluates
+canopy BVOC emission rate <span class="math notranslate nohighlight">\(E_s\)</span> for compound class <span class="math notranslate nohighlight">\(s\)</span> following Guenther et al.
+(2006, 2012) (<em>Methods of Ecological Analysis</em>, Chapter 22):</p>
+<div class="math notranslate nohighlight">
+\[
+E_s = \varepsilon_s\,\gamma_{\mathrm{CE}}(L_{\mathrm{AI}})\,\gamma_P(\mathrm{PPFD})\,\gamma_T(T_l)\,\gamma_{\mathrm{age}}\,\gamma_{\mathrm{SM}}(\theta)\,\gamma_{\mathrm{CO_2}}(C_a),
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\varepsilon_s\)</span> is the standard-condition emission factor and
+<span class="math notranslate nohighlight">\(\gamma_{\mathrm{CE}}, \gamma_P, \gamma_T, \gamma_{\mathrm{age}}, \gamma_{\mathrm{SM}}\)</span>
+are the canopy-environment, light, temperature-optimum, leaf-age, and
+soil-moisture activity factors. For isoprene <span class="math notranslate nohighlight">\(\mathrm{CO}_2\)</span> inhibition, RELIC
+evaluates the Wilkinson et al. (2009) / Guenther et al. (2012, Eq. 14) Hill
+curve continuously from intercellular concentration <span class="math notranslate nohighlight">\(C_i = r_{C_i} C_a\)</span>
+(<span class="math notranslate nohighlight">\(r_{C_i} = 0.7\)</span>, so <span class="math notranslate nohighlight">\(C_i = 280\)</span> ppm at <span class="math notranslate nohighlight">\(C_a = 400\)</span> ppm):</p>
+<div class="math notranslate nohighlight">
+\[
+\gamma_{\mathrm{CO_2}}(C_a) = \mathrm{IS}_{\max} - \frac{\mathrm{IS}_{\max}\,C_i^h}{C_\ast^h + C_i^h},
+\]</div>
+<p>with <span class="math notranslate nohighlight">\(\mathrm{IS}_{\max} = 1.344\)</span>, <span class="math notranslate nohighlight">\(C_\ast = 585\)</span> ppm, and <span class="math notranslate nohighlight">\(h = 1.4614\)</span>. At
+ambient <span class="math notranslate nohighlight">\(C_a = 400\)</span> ppm, this continuous parameterization evaluates to
+<code class="docutils literal notranslate"><span class="pre">1.0024713532535012</span></code> in <code class="docutils literal notranslate"><span class="pre">float64</span></code> (<code class="docutils literal notranslate"><span class="pre">1.0024713277816772</span></code> in <code class="docutils literal notranslate"><span class="pre">float32</span></code>); RELIC
+does not apply an ad-hoc discontinuity clamp forcing <span class="math notranslate nohighlight">\(\gamma_{\mathrm{CO_2}}(400\;\mathrm{ppm}) = 1\)</span>.</p>
+</section>
+<section id="mechanistic-plastidic-isoprene-resin-pool-monoterpene-and-sesquiterpene-synthesis">
+<h3>Mechanistic plastidic isoprene, resin-pool monoterpene, and sesquiterpene synthesis<a class="headerlink" href="#mechanistic-plastidic-isoprene-resin-pool-monoterpene-and-sesquiterpene-synthesis" title="Link to this heading"></a></h3>
+<ol class="arabic">
+<li><p><strong>Plastidic MEP isoprene synthesis (<code class="docutils literal notranslate"><span class="pre">IsopreneSynthesis</span></code>, <code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>)</strong>:
+<code class="docutils literal notranslate"><span class="pre">relic.scientific.biosphere.bvoc.synthesis.isoprene.IsopreneSynthesis</span></code> models
+chloroplastic dimethylallyl diphosphate (DMADP) supply driven by
+photosynthetic electron transport <span class="math notranslate nohighlight">\(J\)</span> and ATP/NADPH energetic availability
+(Niinemets et al., 1999; Morfopoulos et al., 2014), coupled with isoprene
+synthase Arrhenius kinetics. Without a permanent leaf storage organ, emission
+equals instantaneous enzymatic synthesis (<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>).</p></li>
+<li><p><strong>Dual de-novo and bounded storage-pool monoterpene dynamics (<code class="docutils literal notranslate"><span class="pre">MonoterpeneSynthesis</span></code>, <code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>)</strong>:
+<code class="docutils literal notranslate"><span class="pre">relic.scientific.biosphere.bvoc.synthesis.monoterpene.MonoterpeneSynthesis</span></code>
+separates light-dependent <em>de novo</em> synthesis <span class="math notranslate nohighlight">\(S_{\mathrm{denovo}}\)</span> from a
+specialized resin-duct or glandular-trichome storage pool <span class="math notranslate nohighlight">\(P \in [0, P_{\max}]\)</span>
+(Schurgers et al., 2009; Grote et al., 2013). With storage-directed synthesis
+<span class="math notranslate nohighlight">\(S_{\mathrm{pool}}\)</span> and temperature-driven volatilization release
+<span class="math notranslate nohighlight">\(E_{\mathrm{pool}} = k_{\mathrm{rel}}(T_l)\,P\)</span>, raw storage advancement
+<span class="math notranslate nohighlight">\(P_{\mathrm{raw}} = P + (S_{\mathrm{pool}} - E_{\mathrm{pool}})\Delta t\)</span> is
+projected onto <span class="math notranslate nohighlight">\([0, P_{\max}]\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[P_{\mathrm{next}} = \operatorname{clip}(P_{\mathrm{raw}},\; 0,\; P_{\max}), \qquad r_{\mathrm{bound}} = \frac{P_{\mathrm{raw}} - P_{\mathrm{next}}}{\Delta t},\]</div>
+<p>committing <span class="math notranslate nohighlight">\(\Delta P = P_{\mathrm{next}} - P\)</span> via
+<code class="docutils literal notranslate"><span class="pre">UpdateItem(ACCUMULATE,</span> <span class="pre">per_timestep=True)</span></code> and recording any capacity-clamp
+flux explicitly in <code class="docutils literal notranslate"><span class="pre">pool_boundary_residual_rate</span></code> (<span class="math notranslate nohighlight">\(r_{\mathrm{bound}}\)</span>) so the
+terpene carbon ledger closes identically:</p>
+<div class="math notranslate nohighlight">
+\[\frac{\Delta P}{\Delta t} + E_{\mathrm{pool}} + r_{\mathrm{bound}} - S_{\mathrm{pool}} = 0.\]</div>
+</li>
+<li><p><strong>Stress-induced sesquiterpene synthesis (<code class="docutils literal notranslate"><span class="pre">SesquiterpeneStressModel</span></code> <code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">1</span></code>, <code class="docutils literal notranslate"><span class="pre">SesquiterpeneSynthesis</span></code> <code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>)</strong>:
+<code class="docutils literal notranslate"><span class="pre">relic.scientific.biosphere.bvoc.synthesis.sesquiterpene.SesquiterpeneStressModel</span></code>
+(<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">1</span></code>) aggregates oxidative, thermal, and biotic/mechanical stress cues
+into a non-negative induction multiplier <span class="math notranslate nohighlight">\(\gamma_{\mathrm{stress}}\)</span> (<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>),
+which <code class="docutils literal notranslate"><span class="pre">relic.scientific.biosphere.bvoc.synthesis.sesquiterpene.SesquiterpeneSynthesis</span></code>
+(<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>) combines with <span class="math notranslate nohighlight">\(\beta\)</span>-exponential temperature volatility
+<span class="math notranslate nohighlight">\(\exp(\beta_{\mathrm{SQT}}(T_l - T_s))\)</span> and light-modulated <em>de novo</em>
+farnesyl-diphosphate synthesis (Duhl et al., 2008).</p></li>
+</ol>
+<p>In composed graphs, users select either canopy empirical <code class="docutils literal notranslate"><span class="pre">MEGANModel</span></code> or the
+mechanistic compound synthesis owners for a given BVOC flux target so surface
+emissions to atmospheric chemistry and observation operators have a single
+writer.</p>
+</section>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Amthor, J. S. (2000). The McCree-de Wit-Penning de Vries-Thornley respiration paradigms: 30 years later. <em>Annals of Botany</em>, 86, 1-20.</p></li>
+<li><p>Atkin, O. K. and Tjoelker, M. G. (2003). Thermal acclimation and the dynamic response of plant respiration to temperature. <em>Trends in Plant Science</em>, 8, 343-351.</p></li>
+<li><p>Bernacchi, C. J., Singsaas, E. L., Pimentel, C., Portis, A. R., and Long, S. P. (2001). Improved temperature response functions for models of Rubisco-limited photosynthesis. <em>Plant, Cell &amp; Environment</em>, 24, 253-259.</p></li>
+<li><p>Collatz, G. J., Ball, J. T., Grivet, C., and Berry, J. A. (1991). Physiological and environmental regulation of stomatal conductance, photosynthesis and transpiration: a model that includes a laminar boundary layer. <em>Agricultural and Forest Meteorology</em>, 54, 107-136.</p></li>
+<li><p>Duhl, T. R., Helmig, D., and Guenther, A. (2008). Sesquiterpene emissions from vegetation: a review. <em>Biogeosciences</em>, 5, 761-777. doi:10.5194/bg-5-761-2008.</p></li>
+<li><p>Emberson, L. D., Ashmore, M. R., Cambridge, H. M., Simpson, D., and Tuovinen, J.-P. (2000). Modelling stomatal ozone flux across Europe. <em>Environmental Pollution</em>, 109, 403-413.</p></li>
+<li><p>Farquhar, G. D., von Caemmerer, S., and Berry, J. A. (1980). A biochemical model of photosynthetic CO2 assimilation in leaves of C3 species. <em>Planta</em>, 149, 78-90.</p></li>
+<li><p>Friedlingstein, P., Joel, G., Field, C. B., and Fung, I. Y. (1999). Toward an allocation scheme for global terrestrial carbon models. <em>Global Change Biology</em>, 5, 755-770.</p></li>
+<li><p>Grote, R., Monson, R. K., and Niinemets, U. (2013). Leaf-level models of constitutive and stress-driven volatile organic compound emissions. In <em>Biology, Controls and Models of Tree Volatile Organic Compound Emissions</em>, Springer, 315-355.</p></li>
+<li><p>Guenther, A. et al. (2006). Estimates of global terrestrial isoprene emissions using MEGAN (Model of Emissions of Gases and Aerosols from Nature). <em>Atmospheric Chemistry and Physics</em>, 6, 3181-3210. doi:10.5194/acp-6-3181-2006.</p></li>
+<li><p>Guenther, A. B. et al. (2012). The Model of Emissions of Gases and Aerosols from Nature version 2.1 (MEGAN2.1): an extended and updated framework for modeling biogenic emissions. <em>Geoscientific Model Development</em>, 5, 1471-1492. doi:10.5194/gmd-5-1471-2012.</p></li>
+<li><p>Jolly, W. M., Nemani, R., and Running, S. W. (2005). A generalized, bioclimatic index to predict foliar phenology in response to climate. <em>Global Change Biology</em>, 11, 619-632.</p></li>
+<li><p>Medlyn, B. E. et al. (2002). Temperature response of parameters of a biochemically based model of photosynthesis. II. A review of experimental data. <em>Plant, Cell &amp; Environment</em>, 25, 1167-1179.</p></li>
+<li><p>Medlyn, B. E. et al. (2011). Reconciling the optimal and empirical approaches to modelling stomatal conductance. <em>Global Change Biology</em>, 17, 2134-2144. doi:10.1111/j.1365-2486.2010.02375.x.</p></li>
+<li><p>Monteith, J. L. (1972). Solar radiation and productivity in tropical ecosystems. <em>Journal of Applied Ecology</em>, 9, 747-766.</p></li>
+<li><p>Morfopoulos, C. et al. (2014). A model of plant isoprene emission based on available reducing power captures responses to atmospheric CO2. <em>New Phytologist</em>, 203, 125-139.</p></li>
+<li><p>Niinemets, U., Tenhunen, J. D., Harley, P. C., and Steinbrecher, R. (1999). A model of isoprene emission based on energetic requirements for isoprene synthesis and leaf photosynthetic properties for <em>Quercus coccifera</em>. <em>Plant, Cell &amp; Environment</em>, 22, 1319-1335.</p></li>
+<li><p>Ryan, M. G. (1991). Effects of climate change on plant respiration. <em>Ecological Applications</em>, 1, 157-167.</p></li>
+<li><p>Schurgers, G., Arneth, A., Holzinger, R., and Goldstein, A. H. (2009). Process-based modelling of biogenic monoterpene emissions combining production and release from storage. <em>Atmospheric Chemistry and Physics</em>, 9, 3409-3423. doi:10.5194/acp-9-3409-2009.</p></li>
+<li><p>Sitch, S., Cox, P. M., Collins, W. J., and Huntingford, C. (2007). Indirect radiative forcing of climate change through ozone effects on the land-carbon sink. <em>Nature</em>, 448, 791-794.</p></li>
+<li><p>Wilkinson, M. J. et al. (2009). Leaf isoprene emission rate as a function of atmospheric CO2 concentration. <em>Global Change Biology</em>, 15, 1189-1200. doi:10.1111/j.1365-2486.2008.01803.x.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="atmosphere.html" class="btn btn-neutral float-left" title="Atmosphere Theory" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="hydrosphere.html" class="btn btn-neutral float-right" title="Hydrosphere Theory" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,138 @@
+certificate_version: '1.0'
+process_id: relic.scientific.biosphere.respiration.autotrophic_respiration.AutotrophicRespiration
+module_name: AutotrophicRespiration
+canonical_role: reaction
+iphs_level: 2
+iphs_level_evidence:
+  classification: IPHS-wrapped reaction process certificate
+  compatible_basis: Reaction process is expressed through conserved or open stoichiometric ledgers
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: N_h r_h reaction-network state advance
+  level_2_limit: The canonical runtime wrapper is declared, but no executable typed-cochain or IPHS structural contribution is bound; strict level 4 or 5 evidence is not claimed.
+theory_document: docs\source\theory\respiration.md
+theory_document_status: updated
+legacy_formula: R_auto = R_maintenance + R_growth; NPP = GPP - R_auto
+literature_formula: R_auto = R_maintenance + R_growth; NPP = GPP - R_auto
+iphs_formula: x_dot = N_h r_h with scheduler-provided carbon-port rates r_h and declared stoichiometric/output map N_h
+legacy_expression: R_auto = R_maintenance + R_growth; NPP = GPP - R_auto
+iphs_expression: x_dot = N_h r_h with scheduler-provided carbon-port rates r_h and declared stoichiometric/output map N_h
+input_variables:
+- gross_primary_productivity
+- maintenance_respiration_total
+- growth_respiration_total
+output_variables:
+- total_autotrophic_respiration
+- net_primary_productivity
+- diagnostics.autotrophic_respiration.maintenance_component
+- diagnostics.autotrophic_respiration.growth_component
+- diagnostics.autotrophic_respiration.maintenance_fraction
+- diagnostics.autotrophic_respiration.growth_fraction
+- diagnostics.autotrophic_respiration.carbon_balance_residual
+parameter_keys:
+- biosphere.validation.epsilon.flux
+composition_ports:
+- maintenance_respiration_total
+- growth_respiration_total
+references:
+- Amthor, J.S. (2000). The McCree-de Wit-Penning de Vries-Thornley respiration paradigms. Annals of Botany 86, 1-20.
+- Cannell, M.G.R. and Thornley, J.H.M. (2000). Modelling the Components of Plant Respiration. Annals of Botany 85, 45-54.
+- Gifford, R.M. (2003). Plant respiration in productivity models. Functional Plant Biology 30, 171-186.
+baseline_tests:
+- test\unit\biosphere\respiration\test_autotrophic_respiration_l1.py
+- test\integration\biosphere\respiration\test_autotrophic_integration.py
+- test\audit\phase8_scientific_inventory.test.py
+validation_tests:
+- test\unit\biosphere\respiration\test_autotrophic_respiration_l1.py
+- test\integration\biosphere\respiration\test_respiration_integration_l2.py
+- test\system\biosphere\respiration\test_respiration_system_l3.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  gross_primary_productivity: scheduler state input mapped to the carbon-boundary cochain
+  maintenance_respiration_total: scheduler-produced maintenance flux mapped to r_h[1]
+  growth_respiration_total: scheduler-produced growth flux mapped to r_h[2]
+parameter_map:
+  biosphere.validation.epsilon.flux: diagnostic-only near-zero fraction threshold from ParameterManager
+operator_map:
+  N_h: declared stoichiometric or output incidence map for this reaction process
+  r_h: scheduler state-port vector [GPP, R_m, R_g] evaluated by the production forward path; the diagnostic epsilon is not a rate
+unit_map:
+  total_autotrophic_respiration: kg C m-2 s-1
+  net_primary_productivity: kg C m-2 s-1
+  diagnostics.autotrophic_respiration.maintenance_component: kg C m-2 s-1
+  diagnostics.autotrophic_respiration.growth_component: kg C m-2 s-1
+  diagnostics.autotrophic_respiration.maintenance_fraction: '1'
+  diagnostics.autotrophic_respiration.growth_fraction: '1'
+  diagnostics.autotrophic_respiration.carbon_balance_residual: kg C m-2 s-1
+input_output_map:
+  gross_primary_productivity: declared state input supplies the carbon boundary
+  maintenance_respiration_total: declared component input maps to the namespaced maintenance observation
+  growth_respiration_total: declared component input maps to the namespaced growth observation
+  diagnostics.autotrophic_respiration.maintenance_component: exact observation of the scheduled maintenance input
+  diagnostics.autotrophic_respiration.growth_component: exact observation of the scheduled growth input
+  diagnostics.autotrophic_respiration.maintenance_fraction: maintenance share of total autotrophic respiration
+  diagnostics.autotrophic_respiration.growth_fraction: growth share of total autotrophic respiration
+  diagnostics.autotrophic_respiration.carbon_balance_residual: exact GPP minus respiration minus NPP ledger residual
+  total_autotrophic_respiration: canonical aggregate reaction output
+  net_primary_productivity: unique canonical NPP output computed as GPP minus total autotrophic respiration
+interface_map:
+  forward_signature: forward(self, state, time, dt)
+  bridge_class: BiologicalProcessFunctor
+  abstraction_contract: BiologicalProcess
+  state_write_mode: all outputs use UpdateItem(REPLACE, per_timestep=False) with explicit units and writer provenance; non-incrementable fluxes use element=None because their SCM contracts declare accumulates=null
+  legacy_inputs:
+  - gross_primary_productivity
+  - maintenance_respiration_total
+  - growth_respiration_total
+  iphs_inputs:
+  - gross_primary_productivity
+  - maintenance_respiration_total
+  - growth_respiration_total
+  legacy_outputs:
+  - total_autotrophic_respiration
+  - net_primary_productivity
+  - diagnostics.autotrophic_respiration.maintenance_component
+  - diagnostics.autotrophic_respiration.growth_component
+  - diagnostics.autotrophic_respiration.maintenance_fraction
+  - diagnostics.autotrophic_respiration.growth_fraction
+  - diagnostics.autotrophic_respiration.carbon_balance_residual
+  iphs_outputs:
+  - total_autotrophic_respiration
+  - net_primary_productivity
+  - diagnostics.autotrophic_respiration.maintenance_component
+  - diagnostics.autotrophic_respiration.growth_component
+  - diagnostics.autotrophic_respiration.maintenance_fraction
+  - diagnostics.autotrophic_respiration.growth_fraction
+  - diagnostics.autotrophic_respiration.carbon_balance_residual
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: Existing component Functors own the scientific rates; the aggregate consumes their scheduler-produced state outputs and preserves the exact signed carbon ledger without scaling or clipping.
+  no_legacy_mode: No selectable legacy runtime branch is exposed for Phase 8 completion.
+state_advancement_map:
+  potential_basis: declared RELIC state, port, or observation cochain basis
+  effort_variable: no thermodynamic effort is claimed at level 2; gross_primary_productivity is the declared carbon input port
+  state_advancer: x_dot = N_h r_h with r_h = [GPP, R_m, R_g] and rows for R_a and NPP
+  runtime_usage: AutotrophicRespiration.forward reads all three scheduler state inputs, then evaluates total respiration and NPP through advance_reaction_network.
+  explicit_stoichiometric_usage: N_h rows are [0,1,1] for R_a and [1,-1,-1] for NPP.
+parameter_management_map:
+  biosphere.validation.epsilon.flux:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares interfaces, execution phase, and conservation semantics
+  state_contract: existing simulator state update path is preserved
+  validation_rule: phase8 scientific inventory and equivalence certificate checks
+dependency_interconnection_map:
+  dependencies: maintenance_respiration and growth_respiration are declared through get_dependencies and their totals are declared metadata inputs
+  direct_functor_calls: none; forward consumes only simulator state produced by dependency scheduling
+overflow_routing_map:
+  diagnostic_residuals: diagnostics.autotrophic_respiration.carbon_balance_residual reports the exact ledger residual
+  discarded_residuals: GPP, maintenance respiration, and growth respiration are mapped without clipping to total_autotrophic_respiration and signed net_primary_productivity; the exact remainder is exported as diagnostics.autotrophic_respiration.carbon_balance_residual
+  open_system_routes: total_autotrophic_respiration declares autotrophic_respiration as its SCM output writer; signed net_primary_productivity declares the same writer for both input and output directions
+conservation_map:
+  conserved_quantities: carbon
+  balance_expression: GPP - total_autotrophic_respiration - net_primary_productivity = 0
+entropy_audit:
+  operator_sign: no mobility or dissipative operator sign claim is made at level 2
+  sigma_expression: entropy production is not established for this empirical reaction-network wrapper
+equivalence_type: reaction_network

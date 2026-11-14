@@ -1,0 +1,167 @@
+# Test Fixture Data for Biosphere Modules
+# These values are used for unit and integration testing only
+# DO NOT use in production code
+
+schema_version: "1.0.0"
+tier: test_fixtures
+namespace: test.biosphere
+description: Standard test data for biosphere module testing
+
+test_states:
+  respiration_standard:
+    description: "Standard test state for respiration modules"
+    temperature:
+      value: 298.15
+      units: K
+      source: "biosphere.defaults.temperature"
+    biomass_leaf:
+      value: 150.0
+      units: g C m-2
+      source: "Typical temperate forest value"
+    biomass_stem:
+      value: 500.0
+      units: g C m-2
+      source: "Typical temperate forest value"
+    biomass_root:
+      value: 200.0
+      units: g C m-2
+      source: "Typical temperate forest value"
+    soluble_sugar:
+      value: 20.0
+      units: g C m-2
+      source: "Typical labile carbon pool"
+    soil_water_potential:
+      value: -0.3
+      units: MPa
+      source: "Well-watered condition"
+    gpp:
+      value: 25.0
+      units: umol CO2 m-2 s-1
+      source: "Moderate productivity"
+    n_content_leaf:
+      value: 1.5
+      units: g N m-2
+      source: "Typical N content"
+    p_content_leaf:
+      value: 0.1
+      units: g P m-2
+      source: "Typical P content"
+
+  photosynthesis_standard:
+    description: "Standard test state for photosynthesis modules"
+    temperature_air:
+      value: 298.15
+      units: K
+      source: "biosphere.defaults.temperature"
+    co2_concentration:
+      value: 400.0
+      units: ppm
+      source: "biosphere.defaults.co2_intercellular_modern"
+    par:
+      value: 1000.0
+      units: umol photons m-2 s-1
+      source: "Full sunlight"
+    vapor_pressure_deficit:
+      value: 1.0
+      units: kPa
+      source: "biosphere.defaults.vapor_pressure_deficit"
+    soil_water_potential:
+      value: -0.3
+      units: MPa
+      source: "Well-watered condition"
+    leaf_area_index:
+      value: 4.0
+      units: m2 m-2
+      source: "Typical forest canopy"
+
+  bvoc_standard:
+    description: "Standard test state for BVOC emission modules"
+    temperature_leaf:
+      value: 303.15
+      units: K
+      source: "30°C, typical for MEGAN"
+    par:
+      value: 1000.0
+      units: umol photons m-2 s-1
+      source: "Full sunlight"
+    co2_intercellular:
+      value: 370.0
+      units: ppm
+      source: "biosphere.defaults.co2_intercellular_historical"
+    leaf_area_index:
+      value: 3.0
+      units: m2 m-2
+      source: "Typical vegetation"
+    water_stress:
+      value: 1.0
+      units: dimensionless
+      source: "No water stress"
+    temperature_stress:
+      value: 1.0
+      units: dimensionless
+      source: "No temperature stress"
+
+  phenology_standard:
+    description: "Standard test state for phenology modules"
+    temperature_air:
+      value: 288.15
+      units: K
+      source: "15°C, spring conditions"
+    photoperiod:
+      value: 12.0
+      units: hours
+      source: "Equinox"
+    gdd_accumulated:
+      value: 200.0
+      units: degree-days
+      source: "Early season"
+    leaf_area_index:
+      value: 2.0
+      units: m2 m-2
+      source: "Developing canopy"
+
+# Expected output ranges for validation
+expected_ranges:
+  respiration:
+    maintenance_respiration:
+      min: 0.1
+      max: 50.0
+      units: umol CO2 m-2 s-1
+    growth_respiration:
+      min: 0.0
+      max: 30.0
+      units: umol CO2 m-2 s-1
+    total_autotrophic_respiration:
+      min: 0.1
+      max: 80.0
+      units: umol CO2 m-2 s-1
+
+  photosynthesis:
+    gpp:
+      min: 0.0
+      max: 60.0
+      units: umol CO2 m-2 s-1
+    ci:
+      min: 200.0
+      max: 600.0
+      units: ppm
+    stomatal_conductance:
+      min: 0.0
+      max: 1.0
+      units: mol m-2 s-1
+
+  bvoc:
+    isoprene_emission:
+      min: 0.0
+      max: 100.0
+      units: ug m-2 h-1
+    monoterpene_emission:
+      min: 0.0
+      max: 50.0
+      units: ug m-2 h-1
+
+provenance:
+  created_by: "parameter_system_refactoring"
+  created_date: "2025-10-09"
+  purpose: "Provide consistent test data for biosphere module testing"
+  usage: "Import via test utilities, never in production code"

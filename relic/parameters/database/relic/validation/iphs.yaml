@@ -1,0 +1,517 @@
+schema_version: 2.0.0
+tier: relic
+namespace: validation.iphs
+description: Tolerances for IPHS-DEC structural checks, reaction-network audits, and IPHS runtime-point verification of strict dPH/GENERIC processes
+metadata:
+  created_by: RELIC Parameter System
+  last_modified: '2026-09-23T00:00:00Z'
+  schema_url: https://github.com/relic/parameter-schema/v2.0.0
+  version: 1.0.0
+parameters:
+  validation.iphs.runtime_point_tolerance:
+    value: 1.0e-10
+    default: 1.0e-10
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 1.0e-16
+    - 1.0e-06
+    category: validation_parameter
+    description: Absolute tolerance shared by the skew, positive-semidefinite, degeneracy, entropy-production, and reaction-closure audits of one IPHS runtime point (dimensionless residual scale)
+    references:
+    - Grmela, M. & Ottinger, H.C. (1997). Phys. Rev. E 56, 6620-6632
+    - van der Schaft, A. & Jeltsema, D. (2014). Port-Hamiltonian Systems Theory, Foundations and Trends in Systems and Control
+    tags:
+    - iphs
+    - validation
+    - thermodynamics
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_audit_requirement
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-13T00:00:00Z'
+  validation.iphs.jacobi_tolerance:
+    value: 1.0e-08
+    default: 1.0e-08
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 1.0e-16
+    - 1.0e-06
+    category: validation_parameter
+    description: Default absolute tolerance for the autograd Jacobi residual max|sum_l (J_il d_l J_jk + J_jl d_l J_ki + J_kl d_l J_ij)| of a declared constant_field or state_field Poisson operator, applied at every declared poisson_domain sample and at a Level 5 runtime point when IPHSStructureSpec or assemble_iphs_structure receives no explicit jacobi_tol (dimensionless residual scale on the declared normalized coordinate basis; finite-point evidence, not a continuum proof)
+    references:
+    - Marsden, J.E. & Ratiu, T.S. (1999). Introduction to Mechanics and Symmetry, 2nd ed., Springer, Ch. 10 (Poisson manifolds)
+    - Grmela, M. & Ottinger, H.C. (1997). Phys. Rev. E 56, 6620-6632
+    tags:
+    - iphs
+    - validation
+    - poisson
+    - jacobi_identity
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_audit_requirement
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-23T00:00:00Z'
+  validation.iphs.skew_tolerance:
+    value: 1.0e-10
+    default: 1.0e-10
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1.0e-06
+    category: validation_parameter
+    description: Default absolute tolerance of IPHSStructureSpec and assemble_iphs_structure for the skew residual ||J + J^T||_F, the symmetry residuals ||R - R^T||_F and ||M - M^T||_F, the pointwise Poisson-field skew defect max|J_ij(x) + J_ji(x)|, the constant_field equality to the declared J, and the skewness of the port feedback C, used when no explicit skew_tol is passed (dimensionless residual scale on the declared normalized basis)
+    references:
+    - van der Schaft, A. & Jeltsema, D. (2014). Port-Hamiltonian Systems Theory, Foundations and Trends in Systems and Control
+    - Grmela, M. & Ottinger, H.C. (1997). Phys. Rev. E 56, 6620-6632
+    tags:
+    - iphs
+    - validation
+    - skew_symmetry
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_audit_requirement
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-23T00:00:00Z'
+  validation.iphs.psd_tolerance:
+    value: 1.0e-10
+    default: 1.0e-10
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1.0e-06
+    category: validation_parameter
+    description: Default absolute tolerance of IPHSStructureSpec and assemble_iphs_structure for positive semidefiniteness (lambda_min(sym(R)), lambda_min(sym(M)) >= -tol), for the port feedback D, and for the nonzero-operator and zero-mobility tests, used when no explicit psd_tol is passed (dimensionless eigenvalue scale on the declared normalized basis)
+    references:
+    - van der Schaft, A. & Jeltsema, D. (2014). Port-Hamiltonian Systems Theory, Foundations and Trends in Systems and Control
+    - Grmela, M. & Ottinger, H.C. (1997). Phys. Rev. E 56, 6620-6632
+    tags:
+    - iphs
+    - validation
+    - positive_semidefinite
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_audit_requirement
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-23T00:00:00Z'
+  validation.iphs.degeneracy_tolerance:
+    value: 1.0e-10
+    default: 1.0e-10
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1.0e-06
+    category: validation_parameter
+    description: Default absolute tolerance of IPHSStructureSpec and assemble_iphs_structure for the GENERIC degeneracy residuals ||J e_S|| and ||M e_E||, the entropy-production sign e_S^T M e_S >= -tol, the closed reaction energy and entropy pairings, and the Level 4 power-balance and reaction pairing allowances, used when no explicit degeneracy_tol is passed (dimensionless residual scale on the declared normalized basis)
+    references:
+    - Grmela, M. & Ottinger, H.C. (1997). Phys. Rev. E 56, 6620-6632
+    - Ottinger, H.C. (2005). Beyond Equilibrium Thermodynamics, Wiley
+    tags:
+    - iphs
+    - validation
+    - generic_degeneracy
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_audit_requirement
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-23T00:00:00Z'
+  validation.iphs.reaction_conservation_tolerance:
+    value: 1.0e-10
+    default: 1.0e-10
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1.0e-06
+    category: validation_parameter
+    description: Default absolute tolerance on max|C_h N_h| for the stoichiometric conservation check of ReactionNetworkAdvance.validate_conservation and advance_reaction_network (conservation_tolerance) when no explicit tolerance is passed (dimensionless residual of ledger coefficients times stoichiometric coefficients)
+    references:
+    - Feinberg, M. (2019). Foundations of Chemical Reaction Network Theory, Springer
+    - Rao, R. & Esposito, M. (2016). Nonequilibrium thermodynamics of chemical reaction networks, Phys. Rev. X 6, 041064
+    tags:
+    - iphs
+    - validation
+    - reaction_network
+    - conservation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_audit_requirement
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-23T00:00:00Z'
+  validation.iphs.reaction_thermodynamic_rtol:
+    value: 1.0e-10
+    default: 1.0e-10
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1.0e-03
+    category: validation_parameter
+    description: Default relative tolerance of advance_reaction_network (thermodynamic_rtol) for the aggregate affinity-rate power sum_j A_j r_j >= -rtol sum_j |A_j r_j| and the open-ledger residual |C_h q_open - ledger_rate| <= rtol scale when no explicit value is passed; it must still exceed the dtype reduction precision floor 8 gamma_k checked by the audit, so float32 point audits need an explicit larger value (dimensionless fraction)
+    references:
+    - Rao, R. & Esposito, M. (2016). Nonequilibrium thermodynamics of chemical reaction networks, Phys. Rev. X 6, 041064
+    - Higham, N.J. (2002). Accuracy and Stability of Numerical Algorithms, 2nd ed., SIAM
+    tags:
+    - iphs
+    - validation
+    - reaction_network
+    - thermodynamics
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_audit_requirement
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-23T00:00:00Z'
+  validation.iphs.hodge_psd_rtol:
+    value: 1.0e-10
+    default: 1.0e-10
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1.0e-08
+    category: validation_parameter
+    description: Default relative spectral tolerance psd_tol of the DEC HodgeStarSpec, tau_psd = max(psd_tol, n eps) max_i |lambda_i|, used for the PSD (lambda_min >= -tau_psd) and positive-definite (lambda_min > tau_psd) gates when no explicit psd_tol is passed; the upper bound keeps it below sqrt(machine epsilon) of float64, which strict Hodge validation requires (dimensionless fraction of the spectral scale)
+    references:
+    - Hirani, A.N. (2003). Discrete Exterior Calculus, PhD thesis, California Institute of Technology
+    - Desbrun, M., Kanso, E. & Tong, Y. (2008). Discrete differential forms for computational modeling, Discrete Differential Geometry, Birkhauser
+    tags:
+    - dec
+    - hodge
+    - validation
+    - positive_semidefinite
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_audit_requirement
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-23T00:00:00Z'
+  validation.iphs.hodge_symmetry_rtol:
+    value: 1.0e-10
+    default: 1.0e-10
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1.0e-08
+    category: validation_parameter
+    description: 'Default relative symmetry tolerance symmetry_tol of the DEC HodgeStarSpec, rho_sym = ||H - H^T||_F / max(||H||_F, tiny) <= max(symmetry_tol, n eps), used when no explicit symmetry_tol is passed; the upper bound keeps it below sqrt(machine epsilon) of float64, which strict Hodge validation requires (dimensionless fraction)'
+    references:
+    - 'Hirani, A.N. (2003). Discrete Exterior Calculus, PhD thesis, California Institute of Technology'
+    - 'Desbrun, M., Kanso, E. & Tong, Y. (2008). Discrete differential forms for computational modeling, Discrete Differential Geometry, Birkhauser'
+    tags:
+    - dec
+    - hodge
+    - validation
+    - symmetry
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_audit_requirement
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-23T00:00:00Z'
+  validation.iphs.hodge_kernel_rtol:
+    value: 1.0e-10
+    default: 1.0e-10
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1.0e-08
+    category: validation_parameter
+    description: 'Default relative kernel tolerance kernel_rtol of the DEC HodgeStarSpec for a singular material Hodge: the kernel rank cut sigma_i > max(kernel_rtol, n eps) sigma_max and the normalized kernel residual ||H K||_F / (||H||_2 ||K||_F) <= max(kernel_rtol, n eps), used when no explicit kernel_rtol is passed (dimensionless fraction)'
+    references:
+    - 'Hirani, A.N. (2003). Discrete Exterior Calculus, PhD thesis, California Institute of Technology'
+    - 'Desbrun, M., Kanso, E. & Tong, Y. (2008). Discrete differential forms for computational modeling, Discrete Differential Geometry, Birkhauser'
+    tags:
+    - dec
+    - hodge
+    - validation
+    - kernel
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_audit_requirement
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-23T00:00:00Z'
+  validation.iphs.chain_map_ledger_tolerance:
+    value: 1.0e-12
+    default: 1.0e-12
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1.0e-06
+    category: validation_parameter
+    description: 'Default absolute tolerance of LinearChainMap.preserves_ledger for the ledger identity max|C_t (u M) - C_s| <= tol on the declared ledger coefficients, used when no explicit tolerance is passed (dimensionless residual of ledger coefficients)'
+    references:
+    - 'Hatcher, A. (2002). Algebraic Topology, Cambridge University Press, ch. 2'
+    - 'Desbrun, M., Kanso, E. & Tong, Y. (2008). Discrete differential forms for computational modeling, Discrete Differential Geometry, Birkhauser'
+    tags:
+    - dec
+    - chain_map
+    - validation
+    - ledger
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_audit_requirement
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-23T00:00:00Z'
+  validation.iphs.m_matrix_sign_tolerance:
+    value: 1.0e-12
+    default: 1.0e-12
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1.0e-06
+    category: validation_parameter
+    description: 'Default absolute sign slack of is_nonsingular_m_matrix: off-diagonal entries of Delta must be <= tol (Z-matrix) and entries of Delta^-1 must be >= -tol (inverse nonnegativity), used when no explicit tolerance is passed (in the entry units of Delta and Delta^-1 on the declared normalized rate basis)'
+    references:
+    - 'Berman, A. & Plemmons, R.J. (1994). Nonnegative Matrices in the Mathematical Sciences, SIAM, ch. 6'
+    tags:
+    - g12_threshold
+    - validation
+    - m_matrix
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_audit_requirement
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-23T00:00:00Z'
+  validation.iphs.invasion_threshold_critical_band:
+    value: 1.0e-09
+    default: 1.0e-09
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1.0e-03
+    category: validation_parameter
+    description: 'Default critical band of activity_threshold: |R_act - 1| <= tol is reported as the non-hyperbolic critical case without a stability verdict, and the spectral bound s(G - Delta) is compared with the same slack in the sign-equivalence check, used when no explicit tolerance is passed (dimensionless)'
+    references:
+    - 'Berman, A. & Plemmons, R.J. (1994). Nonnegative Matrices in the Mathematical Sciences, SIAM, ch. 6'
+    - 'Diekmann, O., Heesterbeek, J.A.P. & Metz, J.A.J. (1990). On the definition and computation of R0, J. Math. Biol. 28, 365-382'
+    - 'van den Driessche, P. & Watmough, J. (2002). Reproduction numbers and sub-threshold endemic equilibria, Math. Biosci. 180, 29-48'
+    tags:
+    - g12_threshold
+    - validation
+    - invasion_threshold
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_audit_requirement
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-23T00:00:00Z'
+  validation.iphs.relative_storage_tolerance:
+    value: 1.0e-09
+    default: 1.0e-09
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1.0e-03
+    category: validation_parameter
+    description: 'Default tolerance of certify_relative_storage: the constrained stationarity residual ||C^T lambda - grad F(x*)|| <= tol max(1, ||grad F(x*)||) and the leaf definiteness test lambda_min(B^T grad^2 F(x*) B) > tol on ker C, used when no explicit tolerance is passed (dimensionless on the declared normalized state and storage basis)'
+    references:
+    - 'Willems, J.C. (1972). Dissipative dynamical systems, Arch. Rational Mech. Anal. 45, 321-351'
+    - 'Khalil, H.K. (2002). Nonlinear Systems, 3rd ed., Prentice Hall, Theorem 4.1'
+    tags:
+    - g12_exergy
+    - validation
+    - relative_storage
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_audit_requirement
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-23T00:00:00Z'
+  validation.iphs.feedback_power_ledger_rtol:
+    value: 1.0e-09
+    default: 1.0e-09
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1.0e-03
+    category: validation_parameter
+    description: 'Default relative tolerance of feedback_power_ledger for the open-system balance |dot F - (y^T u - D + Phi_F)| <= tol max(1, |dot F|, |y^T u|, |D|, |Phi_F|), used when no explicit tolerance is passed (dimensionless fraction of the power scale)'
+    references:
+    - 'Willems, J.C. (1972). Dissipative dynamical systems, Arch. Rational Mech. Anal. 45, 321-351'
+    tags:
+    - g12_exergy
+    - validation
+    - power_ledger
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_audit_requirement
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-23T00:00:00Z'
+  validation.iphs.reaction_power_scale_floor:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1.0e+06
+    category: validation_parameter
+    description: 'Lower bound of the power scale in the GENERIC runtime-point closed reaction energy check of IPHSStructureSpec,
+      |e_E^T N r| <= tol max(floor, ||e_E|| ||N r||) with tol = validation.iphs.degeneracy_tolerance. Numerical meaning: above
+      the floor the test is relative (tol ||e_E|| ||N r||); below it the test is absolute (tol floor), so a vanishing reaction
+      power does not demand an exactly zero pairing. The value 1.0 is one unit of power of the declared normalized state and
+      energy basis; it is a RELIC convention value, not a literature value, and is rescaled with the basis.'
+    references:
+    - Hairer, E., Norsett, S.P. & Wanner, G. (1993). Solving Ordinary Differential Equations I, 2nd ed., Springer, Sect. II.4
+      (mixed absolute/relative error scale sc = Atol + |y| Rtol)
+    - RELIC convention value (no literature value for the floor; documented as an operational choice)
+    tags:
+    - iphs
+    - validation
+    - generic_degeneracy
+    - tolerance
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  validation.iphs.relative_storage_gradient_scale_floor:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1.0e+06
+    category: validation_parameter
+    description: 'Lower bound of the gradient scale in the constrained stationarity test of certify_relative_storage,
+      ||C^T lambda - grad F(x*)|| <= tol max(floor, ||grad F(x*)||) with tol = validation.iphs.relative_storage_tolerance.
+      Numerical meaning: above the floor the test is relative to ||grad F(x*)||, below it absolute (tol floor), so a nearly
+      stationary storage with a small gradient is not refused for roundoff. The value 1.0 is one unit of grad F on the
+      declared normalized state and storage basis; it is a RELIC convention value, not a literature value.'
+    references:
+    - Hairer, E., Norsett, S.P. & Wanner, G. (1993). Solving Ordinary Differential Equations I, 2nd ed., Springer, Sect. II.4
+      (mixed absolute/relative error scale)
+    - Khalil, H.K. (2002). Nonlinear Systems, 3rd ed., Prentice Hall, Theorem 4.1 (stationarity premise)
+    - RELIC convention value (no literature value for the floor; documented as an operational choice)
+    tags:
+    - g12_exergy
+    - validation
+    - relative_storage
+    - tolerance
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  validation.iphs.feedback_power_ledger_scale_floor:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1.0e+06
+    category: validation_parameter
+    description: 'Lower bound of the power scale of feedback_power_ledger, |dot F - (y^T u - D + Phi_F)| <= tol max(floor,
+      |dot F|, |y^T u|, |D|, |Phi_F|) with tol = validation.iphs.feedback_power_ledger_rtol. Numerical meaning: above the floor
+      the ledger is closed to a relative tolerance of the largest power term, below it to the absolute tolerance tol floor, so
+      a nearly idle system is not refused for roundoff. The value 1.0 is one unit of power (units of F per second) of the
+      declared normalized basis; it is a RELIC convention value, not a literature value.'
+    references:
+    - Willems, J.C. (1972). Dissipative dynamical systems, part I. Arch. Rational Mech. Anal. 45, 321-351 (the balance)
+    - Hairer, E., Norsett, S.P. & Wanner, G. (1993). Solving Ordinary Differential Equations I, 2nd ed., Springer, Sect. II.4
+      (mixed absolute/relative error scale)
+    - RELIC convention value (no literature value for the floor; documented as an operational choice)
+    tags:
+    - g12_exergy
+    - validation
+    - power_ledger
+    - tolerance
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  validation.iphs.noise_covariance_tolerance:
+    value: 1.0e-10
+    default: 1.0e-10
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1.0e-06
+    category: validation_parameter
+    description: 'Default absolute tolerance of NoiseCovarianceSpec for the symmetry of M_noise (allclose atol), its positive semidefiniteness (lambda_min >= -tol), and the covariance relation ||Sigma Sigma^T - scale M_noise||_F <= tol, used when no tolerance is declared (in the covariance units of the declared normalized state basis)'
+    references:
+    - 'Grmela, M. & Ottinger, H.C. (1997). Phys. Rev. E 56, 6620-6632'
+    - 'Ottinger, H.C. (2005). Beyond Equilibrium Thermodynamics, Wiley'
+    tags:
+    - stochastic
+    - validation
+    - noise_covariance
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_audit_requirement
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-23T00:00:00Z'
+  validation.iphs.jump_ledger_tolerance:
+    value: 1.0e-10
+    default: 1.0e-10
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1.0e-06
+    category: validation_parameter
+    description: 'Default absolute tolerance of JumpResetSpec for the closed jump ledger max|C_h R_h| (or C_h N_h) <= tol and the open jump ledger max|C_h R_h - declared change| <= tol, used when no tolerance is declared (dimensionless residual of ledger coefficients times jump coefficients)'
+    references:
+    - 'Feinberg, M. (2019). Foundations of Chemical Reaction Network Theory, Springer'
+    - 'Gillespie, D.T. (2007). Stochastic simulation of chemical kinetics, Annu. Rev. Phys. Chem. 58, 35-55'
+    tags:
+    - stochastic
+    - validation
+    - jump_reset
+    - ledger
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_audit_requirement
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-23T00:00:00Z'

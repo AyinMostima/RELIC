@@ -1,0 +1,191 @@
+certificate_version: '1.0'
+process_id: relic.scientific.biosphere.phenology.models.GDDPhenology
+module_name: GDDPhenology
+canonical_role: reaction
+iphs_level: 2
+iphs_level_evidence:
+  classification: IPHS-wrapped reaction process certificate
+  compatible_basis: Reaction process is expressed through conserved or open stoichiometric ledgers
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: N_h r_h reaction-network state advance
+  level_2_limit: The canonical runtime wrapper is declared, but no executable typed-cochain or IPHS structural contribution is bound; strict level 4 or 5 evidence is not claimed.
+theory_document: docs\source\theory\phenology.md
+theory_document_status: updated
+legacy_formula: "\n            GDD phenology equations:\n            \n            Daily GDD: GDD_{daily} = \\max(0, \\frac{T_{max} + T_{min}}{2} - T_{base})\n            \n            Cumulative GDD: GDD_{cum} = \\sum_{i=1}^{t} GDD_{daily,i}\n            \n            Growth factor:\n            f_{growth}(GDD_{cum}) = \n            \\begin{cases}\n                0 & \\text{if } GDD_{cum} < GDD_{start} \\\\\n                \\frac{GDD_{cum} - GDD_{start}}{GDD_{full} - GDD_{start}} & \\text{if } GDD_{start} \\leq GDD_{cum} < GDD_{full} \\\\\n                1 & \\text{if } GDD_{full} \\leq GDD_{cum} < GDD_{end} \\\\\n                1 - \\frac{GDD_{cum} - GDD_{end}}{GDD_{senes} - GDD_{end}} & \\text{if } GDD_{end} \\leq GDD_{cum} < GDD_{senes} \\\\\n                0 & \\text{if } GDD_{cum} \\geq GDD_{senes}\n            \\end{cases}\n            \n            LAI(t) = LAI_{max} \\times f_{growth}(GDD_{cum}(t))\n            "
+literature_formula: "\n            GDD phenology equations:\n            \n            Daily GDD: GDD_{daily} = \\max(0, \\frac{T_{max} + T_{min}}{2} - T_{base})\n            \n            Cumulative GDD: GDD_{cum} = \\sum_{i=1}^{t} GDD_{daily,i}\n            \n            Growth factor:\n            f_{growth}(GDD_{cum}) = \n            \\begin{cases}\n                0 & \\text{if } GDD_{cum} < GDD_{start} \\\\\n                \\frac{GDD_{cum} - GDD_{start}}{GDD_{full} - GDD_{start}} & \\text{if } GDD_{start} \\leq GDD_{cum} < GDD_{full} \\\\\n                1 & \\text{if } GDD_{full} \\leq GDD_{cum} < GDD_{end} \\\\\n                1 - \\frac{GDD_{cum} - GDD_{end}}{GDD_{senes} - GDD_{end}} & \\text{if } GDD_{end} \\leq GDD_{cum} < GDD_{senes} \\\\\n                0 & \\text{if } GDD_{cum} \\geq GDD_{senes}\n            \\end{cases}\n            \n            LAI(t) = LAI_{max} \\times f_{growth}(GDD_{cum}(t))\n            "
+iphs_formula: x_dot = N_h r_h with ParameterManager-backed process rates r_h and declared stoichiometric/output map N_h
+legacy_expression: "\n            GDD phenology equations:\n            \n            Daily GDD: GDD_{daily} = \\max(0, \\frac{T_{max} + T_{min}}{2} - T_{base})\n            \n            Cumulative GDD: GDD_{cum} = \\sum_{i=1}^{t} GDD_{daily,i}\n            \n            Growth factor:\n            f_{growth}(GDD_{cum}) = \n            \\begin{cases}\n                0 & \\text{if } GDD_{cum} < GDD_{start} \\\\\n                \\frac{GDD_{cum} - GDD_{start}}{GDD_{full} - GDD_{start}} & \\text{if } GDD_{start} \\leq GDD_{cum} < GDD_{full} \\\\\n                1 & \\text{if } GDD_{full} \\leq GDD_{cum} < GDD_{end} \\\\\n                1 - \\frac{GDD_{cum} - GDD_{end}}{GDD_{senes} - GDD_{end}} & \\text{if } GDD_{end} \\leq GDD_{cum} < GDD_{senes} \\\\\n                0 & \\text{if } GDD_{cum} \\geq GDD_{senes}\n            \\end{cases}\n            \n            LAI(t) = LAI_{max} \\times f_{growth}(GDD_{cum}(t))\n            "
+iphs_expression: x_dot = N_h r_h with ParameterManager-backed process rates r_h and declared stoichiometric/output map N_h
+input_variables: &canonical_inputs
+- day_of_year
+- air_temperature
+- air_temperature_max
+- air_temperature_min
+- phenology_gdd_accumulated
+- phenology_gdd_previous_day_of_year
+- leaf_carbon
+- froot_carbon
+- leaf_nitrogen
+- froot_nitrogen
+output_variables: &canonical_outputs
+- leaf_area_index
+- phenological_factor
+- phenology_senescence_factor
+- phenology_gdd_accumulated
+- phenology_gdd_previous_day_of_year
+- diagnostics.phenology.accumulated_gdd
+- diagnostics.phenology.onset_event_flag
+- diagnostics.phenology.onset_event_time_offset
+- diagnostics.phenology.onset_event_time_sensitivity_gdd_start
+- diagnostics.phenology.lai_sensitivity_jump_gdd_start
+- phenology_phase
+- leaf_carbon
+- froot_carbon
+- leaf_nitrogen
+- froot_nitrogen
+- plant_nitrogen_pool
+- leaf_litterfall_carbon
+- froot_litterfall_carbon
+- leaf_litterfall_nitrogen
+- froot_litterfall_nitrogen
+- nitrogen_retranslocation
+- diagnostics.phenology.carbon_turnover_balance_residual
+- diagnostics.phenology.nitrogen_turnover_balance_residual
+parameter_keys:
+- biosphere.phenology.turnover.n_retrans_efficiency
+- biosphere.phenology.constants.max_lai_threshold
+- biosphere.phenology.gdd.base_temp
+- biosphere.phenology.gdd.threshold_start
+- biosphere.phenology.gdd.threshold_end
+- biosphere.phenology.gdd.max_temp_limit
+- biosphere.phenology.turnover.leaf_turnover_rate
+- biosphere.phenology.turnover.froot_turnover_rate
+- biosphere.phenology.morphology.max_lai
+- biosphere.phenology.morphology.min_lai
+- biosphere.validation.tolerance.phenology
+- biosphere.phenology.gdd.expansion_phase_gdd
+- biosphere.phenology.gdd.full_growth_offset
+- biosphere.phenology.gdd.reset_day_threshold
+- biosphere.phenology.gdd.senescence_buffer_gdd
+- biosphere.phenology.gdd.senescence_start_offset
+- biosphere.phenology.computational.unity_factor
+- biosphere.phenology.computational.zero_initial
+- biosphere.phenology.computational.clamp_min
+- biosphere.phenology.computational.clamp_max
+- biosphere.phenology.turnover.background_senescence_rate
+composition_ports:
+- phase8_runtime_port
+references:
+- 'McMaster, G.S. & Wilhelm, W.W. (1997). Growing degree-days: one equation, two interpretations. Agricultural and Forest Meteorology, 87(4), 291-300.'
+- Miller, P., et al. (2001). Using growing degree-days to predict plant stages. Montana State University Extension Service.
+baseline_tests:
+- test\unit\biosphere\phenology\test_phenology_models_l1.py
+- test\audit\phase8_scientific_inventory.test.py
+validation_tests:
+- test\integration\biosphere\phenology\test_phenology_integration_l2.py
+- test\integration\biosphere\phenology\test_phenology_system_validation.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  day_of_year: required calendar forcing port [day]
+  air_temperature: required mean temperature forcing port [K]
+  air_temperature_max: required maximum temperature forcing port [K]
+  air_temperature_min: required minimum temperature forcing port [K]
+  phenology_gdd_accumulated: StateManager-owned cumulative thermal-time state [degC day]
+  phenology_gdd_previous_day_of_year: StateManager-owned prior calendar-day state [day]
+  leaf_carbon: prognostic vegetation carbon pool [kg C m-2]
+  froot_carbon: prognostic vegetation carbon pool [kg C m-2]
+  leaf_nitrogen: prognostic vegetation nitrogen pool [kg N m-2]
+  froot_nitrogen: prognostic vegetation nitrogen pool [kg N m-2]
+parameter_map: &canonical_parameter_sources
+  biosphere.phenology.turnover.n_retrans_efficiency: ParameterManager YAML
+  biosphere.phenology.constants.max_lai_threshold: ParameterManager YAML
+  biosphere.phenology.gdd.base_temp: ParameterManager YAML
+  biosphere.phenology.gdd.threshold_start: ParameterManager YAML
+  biosphere.phenology.gdd.threshold_end: ParameterManager YAML
+  biosphere.phenology.gdd.max_temp_limit: ParameterManager YAML
+  biosphere.phenology.turnover.leaf_turnover_rate: ParameterManager YAML
+  biosphere.phenology.turnover.froot_turnover_rate: ParameterManager YAML
+  biosphere.phenology.morphology.max_lai: ParameterManager YAML
+  biosphere.phenology.morphology.min_lai: ParameterManager YAML
+  biosphere.validation.tolerance.phenology: ParameterManager YAML
+  biosphere.phenology.gdd.expansion_phase_gdd: ParameterManager YAML
+  biosphere.phenology.gdd.full_growth_offset: ParameterManager YAML
+  biosphere.phenology.gdd.reset_day_threshold: ParameterManager YAML
+  biosphere.phenology.gdd.senescence_buffer_gdd: ParameterManager YAML
+  biosphere.phenology.gdd.senescence_start_offset: ParameterManager YAML
+  biosphere.phenology.computational.unity_factor: ParameterManager YAML
+  biosphere.phenology.computational.zero_initial: ParameterManager YAML
+  biosphere.phenology.computational.clamp_min: ParameterManager YAML
+  biosphere.phenology.computational.clamp_max: ParameterManager YAML
+  biosphere.phenology.turnover.background_senescence_rate: ParameterManager YAML
+operator_map:
+  N_h: declared stoichiometric or output incidence map for this reaction process
+  r_h: ParameterManager-backed process-rate vector evaluated by the production forward path
+unit_map:
+  leaf_area_index: m2 m-2
+  phenological_factor: dimensionless
+  phenology_senescence_factor: dimensionless
+  phenology_gdd_accumulated: degC day
+  phenology_gdd_previous_day_of_year: day
+  diagnostics.phenology.accumulated_gdd: degC day
+  diagnostics.phenology.onset_event_flag: dimensionless
+  diagnostics.phenology.onset_event_time_offset: s
+  diagnostics.phenology.onset_event_time_sensitivity_gdd_start: s degC-1 day-1
+  diagnostics.phenology.lai_sensitivity_jump_gdd_start: m2 m-2 degC-1 day-1
+  phenology_phase: dimensionless
+  leaf_carbon: kg C m-2
+  froot_carbon: kg C m-2
+  leaf_nitrogen: kg N m-2
+  froot_nitrogen: kg N m-2
+  plant_nitrogen_pool: kg N m-2
+  leaf_litterfall_carbon: kg C m-2 s-1
+  froot_litterfall_carbon: kg C m-2 s-1
+  leaf_litterfall_nitrogen: kg N m-2 s-1
+  froot_litterfall_nitrogen: kg N m-2 s-1
+  nitrogen_retranslocation: kg N m-2 s-1
+  diagnostics.phenology.carbon_turnover_balance_residual: kg C m-2
+  diagnostics.phenology.nitrogen_turnover_balance_residual: kg N m-2
+input_output_map:
+  phenology_observations: canonical K temperatures and StateManager temporal inputs deterministically map to updated GDD state, LAI, phase, growth, and senescence-factor observations
+  carbon_turnover: vegetation carbon pools map to integrated pool increments and litter carbon boundary exports
+  nitrogen_turnover: vegetation nitrogen pools map to integrated pool increments, retranslocation, and litter nitrogen boundary exports
+interface_map:
+  forward_signature: forward(self, state, time, dt, **kwargs)
+  bridge_class: BiologicalProcessFunctor
+  abstraction_contract: BiologicalProcess
+  state_write_mode: integrated C and N pool increments use ACCUMULATE with per_timestep true; GDD temporal full states, rates, and observations use REPLACE with declared units
+  legacy_inputs: *canonical_inputs
+  iphs_inputs: *canonical_inputs
+  legacy_outputs: *canonical_outputs
+  iphs_outputs: *canonical_outputs
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: Existing ParameterManager-backed calculations define canonical IPHS operator coefficients, rates, ports, or observations.
+  no_legacy_mode: No selectable legacy runtime branch is exposed for Phase 8 completion.
+state_advancement_map:
+  potential_basis: declared RELIC state, port, or observation cochain basis
+  effort_variable: ParameterManager-backed thermodynamic effort, driver, or diagnostic input used by the module
+  state_advancer: x_dot = N_h r_h with explicit stoichiometric_N and rates evaluated by advance_reaction_network
+  runtime_usage: GDDPhenology inherits PhenologyBase.forward, which calls advance_reaction_network with declared stoichiometric_N and rates before emitting canonical phenology outputs.
+  explicit_stoichiometric_usage: PhenologyBase.forward materializes stoichiometric_N and rates for GDDPhenology outputs, then lowers x_dot=N_h r_h through advance_reaction_network.
+parameter_management_map: *canonical_parameter_sources
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares interfaces, execution phase, and conservation semantics
+  state_contract: existing simulator state update path is preserved
+  validation_rule: phase8 scientific inventory and equivalence certificate checks
+dependency_interconnection_map:
+  dependencies: calendar and canonical K temperature forcing, GDD temporal states, and vegetation C/N pools are StateManager ports; PFT coefficients are ParameterManager-bound; direct Functor dependencies are empty and downstream consumers connect through graph/SCM ports
+  direct_functor_calls: none; temperature, calendar, GDD temporal state, and vegetation pools are StateManager ports and no producer Functor is invoked
+overflow_routing_map:
+  diagnostic_residuals: existing diagnostics and conservation checks route clipping or residual terms
+  discarded_residuals: bounded LAI, senescence, and growth-factor projections have no elemental ledger effect; carbon and nitrogen turnover emits the two explicit PhenologyBase balance residuals and rejects nonclosure
+conservation_map:
+  conserved_quantities: carbon|nitrogen on the extended vegetation plus litter-boundary ledger
+  balance_expression: delta C_veg + dt F_C_litter = 0; delta N_veg + delta N_plant + dt F_N_litter = 0
+  open_system_route: litter carbon and nitrogen are explicit boundary_export ports
+entropy_audit:
+  operator_sign: rates, mobilities, or diagnostic maps are non-negative or checked by existing validation hooks where physically required
+  sigma_expression: canonical entropy production is non-negative for dissipative subexpressions
+equivalence_type: thermodynamic_embedding

@@ -1,0 +1,248 @@
+schema_version: 2.0.0
+tier: relic
+namespace: hydrosphere.groundwater
+description: Groundwater storage dynamics with exponential porosity decay and water table tracking
+metadata:
+  last_modified: '2025-10-09T00:00:00Z'
+  created_by: Yuchong Long
+  review_status: validated
+  version: 1.0.0
+parameters:
+  hydrosphere.groundwater.surface_porosity:
+    value: 0.45
+    default: 0.45
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.3
+    - 0.7
+    category: physical_parameter
+    description: Porosity at soil surface for exponential decay profile n(z) = n0 * exp(-z/p)
+    references:
+    - Beven, K.J. & Kirkby, M.J. (1979). Hydrological Sciences Bulletin, 24(1), 43-69
+    - Wigmosta, M.S. et al. (1994). Water Resources Research, 30(6), 1665-1679
+    tags:
+    - porosity
+    - physical_property
+    - soil
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RHESSys compute_delta_water.c + literature
+      schema_version: 2.0.0
+      created_by: RELIC
+      last_modified: '2025-10-09T00:00:00Z'
+  hydrosphere.groundwater.porosity_decay_length:
+    value: 2.0
+    default: 2.0
+    units: m
+    dtype: float32
+    bounds:
+    - 0.5
+    - 10.0
+    category: physical_parameter
+    description: Exponential decay length scale p in porosity profile n(z) = n0 * exp(-z/p)
+    references:
+    - Beven, K.J. & Kirkby, M.J. (1979). Hydrological Sciences Bulletin, 24(1), 43-69
+    tags:
+    - porosity
+    - decay_scale
+    - soil
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: RHESSys implementation + calibration
+      schema_version: 2.0.0
+      created_by: RELIC
+      last_modified: '2025-10-09T00:00:00Z'
+  hydrosphere.groundwater.max_water_table_depth:
+    value: 10.0
+    default: 10.0
+    units: m
+    dtype: float32
+    bounds:
+    - 2.0
+    - 50.0
+    category: physical_parameter
+    description: Maximum allowable water table depth below surface (positive downward)
+    references:
+    - Wigmosta, M.S. et al. (1994). Water Resources Research, 30(6), 1665-1679
+    tags:
+    - water_table
+    - depth
+    - constraint
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: RHESSys configuration guidelines
+      schema_version: 2.0.0
+      created_by: RELIC
+      last_modified: '2025-10-09T00:00:00Z'
+  hydrosphere.groundwater.bedrock_depth:
+    value: 5.0
+    default: 5.0
+    units: m
+    dtype: float32
+    bounds:
+    - 1.0
+    - 20.0
+    category: physical_parameter
+    description: Depth to impermeable bedrock below surface (positive downward)
+    references:
+    - Beven, K.J. & Kirkby, M.J. (1979). Hydrological Sciences Bulletin, 24(1), 43-69
+    tags:
+    - bedrock
+    - depth
+    - constraint
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: Site-specific geological data
+      schema_version: 2.0.0
+      created_by: RELIC
+      last_modified: '2025-10-09T00:00:00Z'
+  hydrosphere.groundwater.minimum_water_table_depth:
+    value: 0.1
+    default: 0.1
+    units: m
+    dtype: float32
+    bounds:
+    - 0.01
+    - 1.0
+    category: numerical_parameter
+    description: Minimum allowable water table depth for numerical stability
+    references:
+    - Numerical stability constraint for groundwater depth clamps
+    tags:
+    - numerical_stability
+    - water_table
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: numerical_implementation
+      schema_version: 2.0.0
+      created_by: RELIC
+      last_modified: '2025-12-27T00:00:00Z'
+  hydrosphere.groundwater.minimum_depth_factor:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.01
+    - 0.5
+    category: numerical_parameter
+    description: Minimum depth factor for baseflow scaling
+    references:
+    - Brutsaert and Nieber (1977); Tallaksen (1995)
+    tags:
+    - baseflow
+    - numerical_stability
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: hydrological_modeling
+      schema_version: 2.0.0
+      created_by: RELIC
+      last_modified: '2025-12-27T00:00:00Z'
+  hydrosphere.groundwater.specific_yield:
+    value: 0.2
+    default: 0.2
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.05
+    - 0.3
+    category: physical_parameter
+    description: Specific yield for unconfined aquifer water table fluctuations
+    references:
+    - Johnson, A.I. (1967). USGS Water-Supply Paper 1662-D
+    tags:
+    - hydraulic_property
+    - aquifer
+    - yield
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: USGS aquifer property database
+      schema_version: 2.0.0
+      created_by: RELIC
+      last_modified: '2025-10-09T00:00:00Z'
+  hydrosphere.groundwater.drainage_time_constant:
+    value: 86400.0
+    default: 86400.0
+    units: s
+    dtype: float32
+    bounds:
+    - 3600.0
+    - 2592000.0
+    category: physical_parameter
+    description: Time constant tau for exponential baseflow recession Q = Q0 * exp(-t/tau)
+    references:
+    - 'Beven, K.J. (2012). Rainfall-Runoff Modelling: The Primer. Wiley-Blackwell'
+    tags:
+    - recession
+    - baseflow
+    - time_constant
+    dimension: time
+    requires_grad: false
+    provenance:
+      source: Recession analysis from hydrograph data
+      schema_version: 2.0.0
+      created_by: RELIC
+      last_modified: '2025-10-09T00:00:00Z'
+  hydrosphere.groundwater.topographic_index:
+    value: 5.0
+    default: 5.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 15.0
+    category: physical_parameter
+    description: TOPMODEL topographic index ln(a/tan(beta)) for spatial baseflow distribution
+    references:
+    - Beven, K.J. & Kirkby, M.J. (1979). Hydrological Sciences Bulletin, 24(1), 43-69
+    tags:
+    - topmodel
+    - topographic_index
+    - slope
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: DEM-derived topographic analysis
+      schema_version: 2.0.0
+      created_by: RELIC
+      last_modified: '2025-10-09T00:00:00Z'
+  hydrosphere.groundwater.enable_lateral_flow:
+    value: true
+    default: true
+    units: dimensionless
+    dtype: bool
+    bounds:
+    category: configuration
+    description: Enable lateral groundwater inflow from adjacent grid cells or upslope areas
+    references:
+    - Boussinesq (1904) J. Math. Pures Appl. 10, 5-78
+    tags:
+    - configuration
+    - lateral_flow
+    - coupling
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Model configuration option
+      schema_version: 2.0.0
+      created_by: RELIC
+      last_modified: '2025-10-09T00:00:00Z'
+notes: 'Groundwater storage dynamics following RHESSys methodology with exponential
+
+  porosity decay profile n(z) = n0 * exp(-z/p). Water table depth is tracked
+
+  explicitly using the analytic inverse of the exponential integral
+
+  for storage change, without a second iterative formula. Compatible with TOPMODEL framework for distributed
+
+  hydrological modeling and variable source area hydrology.
+
+  '

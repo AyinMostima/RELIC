@@ -1,0 +1,119 @@
+schema_version: 2.0.0
+tier: relic
+namespace: stochastic.ensemble
+description: Screening and convergence settings of the stochastic ensemble runner (relic.stochastic.ensemble_runner.ExecutionConfig);
+  the outlier threshold is shared with the ensemble uncertainty quantifier (relic.optimization.uncertainty.ensemble.EnsembleConfig).
+  A configuration that does not state a setting reads it here.
+metadata:
+  version: 1.0.0
+  created_by: relic
+  last_modified: '2026-09-26T00:00:00Z'
+parameters:
+  stochastic.ensemble.outlier_threshold:
+    value: 3.0
+    default: 3.0
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 1.0e-06
+    - 100.0
+    category: numerical_parameter
+    description: Z-score threshold of the optional outlier screening of ensemble members (a member is removed when |z| of
+      any output exceeds it), shared by ExecutionConfig and EnsembleConfig. The value 3 is the conventional three-sigma
+      screening rule; Iglewicz and Hoaglin (1993) discuss the z-score rule and its weaknesses, so the value is a RELIC
+      convention value, not a recommendation from that source.
+    references:
+    - Iglewicz, B. & Hoaglin, D.C. (1993). How to Detect and Handle Outliers. ASQC Quality Press (z-score screening)
+    - RELIC convention value (documented as an operational choice)
+    tags:
+    - stochastic
+    - ensemble
+    - outliers
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  stochastic.ensemble.convergence_window:
+    value: 50
+    default: 50
+    units: dimensionless
+    dtype: int64
+    bounds:
+    - 2
+    - 1000000
+    category: numerical_parameter
+    description: Number of members n_1 of the first running mean of the ensemble convergence check of
+      ExecutionConfig (the running mean m_k over the first n_k members is compared for n_k = n_1, n_1 + max(1, n_1 // 4),
+      ..., N; an ensemble with fewer than n_1 members is reported as insufficient_samples). RELIC convention value;
+      Robert and Casella (2004) describe monitoring the running Monte Carlo average but prescribe no window.
+    references:
+    - Robert, C.P. & Casella, G. (2004). Monte Carlo Statistical Methods, 2nd ed. Springer, ch. 12 (monitoring
+      convergence of the running average)
+    - RELIC convention value (documented as an operational choice)
+    tags:
+    - stochastic
+    - ensemble
+    - convergence
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  stochastic.ensemble.convergence_tolerance:
+    value: 0.01
+    default: 0.01
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 1.0e-12
+    - 1.0
+    category: numerical_parameter
+    description: Relative tolerance tol of the ensemble convergence check of ExecutionConfig; an output is converged
+      when max_k |m_k - m_(k-1)| / |m_(k-1)| < tol over its running means m_k. RELIC convention value (1 percent);
+      Robert and Casella (2004) describe the running-average diagnostic but prescribe no tolerance.
+    references:
+    - Robert, C.P. & Casella, G. (2004). Monte Carlo Statistical Methods, 2nd ed. Springer, ch. 12 (monitoring
+      convergence of the running average)
+    - RELIC convention value (documented as an operational choice)
+    tags:
+    - stochastic
+    - ensemble
+    - convergence
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  stochastic.ensemble.convergence_stride_divisor:
+    value: 4
+    default: 4
+    units: dimensionless
+    dtype: int64
+    bounds:
+    - 1
+    - 1000000
+    category: numerical_parameter
+    description: Divisor d of the running-mean stride of the ExecutionConfig convergence check; the running means are taken
+      at n_1, n_1 + s, n_1 + 2 s, ... and N with s = max(1, n_1 // d), n_1 = convergence_window. A RELIC
+      convention value; Robert and Casella (2004) monitor the running average but prescribe no stride.
+    references:
+    - Robert, C.P. & Casella, G. (2004). Monte Carlo Statistical Methods, 2nd ed. Springer, ch. 12 (monitoring convergence of the running average)
+    - RELIC convention value (documented as an operational choice)
+    tags:
+    - stochastic
+    - ensemble
+    - convergence
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'

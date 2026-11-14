@@ -1,0 +1,140 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "relic"
+version = "1.0.0"
+description = "Recomposable Ecosystem Library for Integrated Coupling (RELIC) -- a differentiable, category-theoretic framework for multi-sphere biogeochemical simulation"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.11"
+authors = [
+    {name = "Yuchong Long"},
+]
+keywords = [
+    "earth-system-model",
+    "biogeochemistry",
+    "differentiable-modeling",
+    "pytorch",
+    "ecosystem",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Atmospheric Science",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+
+dependencies = [
+    "torch>=2.0",
+    "numpy>=1.24",
+    "scipy>=1.10",
+    "statsmodels>=0.14",
+    "xarray>=2023.1",
+    "zarr>=3.0",
+    "h5py>=3.10",
+    "dask[complete]>=2023.1",
+    "hydra-core>=1.3",
+    "pydantic>=2.0",
+    "jsonschema>=4.18",
+    "pyyaml>=6.0",
+    "toml>=0.10",
+    "cf-units>=3.2",
+    "netcdf4>=1.6",
+    "plotly>=5.0",
+    "dash>=2.0",
+    "matplotlib>=3.7",
+    "seaborn>=0.12",
+    "scikit-learn>=1.2",
+    "onnxruntime>=1.20",
+    "SALib>=1.4",
+    "chaospy>=4.3",
+    "emcee>=3.1",
+    "tqdm>=4.65",
+]
+
+[project.optional-dependencies]
+dev = [
+    "build>=1.0",
+    "pytest>=7.3",
+    "pytest-cov>=4.0",
+    "coverage[toml]>=7.10,<8",
+    "hypothesis>=6.70",
+    "black>=23.0",
+    "isort>=5.12",
+    "ruff>=0.1",
+    "mypy>=1.19.1",
+    "pre-commit>=3.0",
+    "sphinx>=7.0",
+    "myst-parser>=2.0",
+    "sphinxcontrib-mermaid==2.1.0",
+    "sphinx-rtd-theme>=2.0",
+    "furo>=2024.0",
+    "sphinx-copybutton>=0.5",
+]
+
+[project.urls]
+Documentation = "https://github.com/AyinMostima/RELIC/tree/main/docs"
+Repository = "https://github.com/AyinMostima/RELIC"
+
+# ---------------------------------------------------------------------------
+# Setuptools package discovery
+# ---------------------------------------------------------------------------
+
+[tool.setuptools.packages.find]
+include = ["relic*"]
+exclude = ["test*", "tutorial*", "docs*"]
+
+[tool.setuptools.package-data]
+relic = [
+    "**/*.yaml",
+    "**/*.yml",
+    "**/*.json",
+    "data/standards/cf_standard_name_table.xml",
+    "extensions/templates/**/*.template",
+    "interfaces/web/static/**/*.css",
+    "interfaces/web/static/**/*.js",
+    "interfaces/web/templates/**/*.html",
+    "coupling/plugin/*.h",
+]
+
+# ---------------------------------------------------------------------------
+# Tool configuration
+# ---------------------------------------------------------------------------
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+
+[tool.isort]
+profile = "black"
+line_length = 100
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "B", "SIM"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true
+
+[tool.coverage.run]
+branch = true
+source_dirs = ["relic"]
+relative_files = true
+parallel = true
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = false
+skip_empty = true
+precision = 2

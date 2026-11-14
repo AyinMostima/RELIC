@@ -1,0 +1,661 @@
+schema_version: 2.0.0
+tier: relic
+namespace: pedosphere.mineralization
+description: Parameters for nitrogen mineralization from organic matter decomposition including kinetic constants, stoichiometric
+  controls, and environmental response functions
+metadata:
+  created_by: RELIC Refactoring Phase 2
+  last_modified: '2025-10-06T00:00:00Z'
+  references:
+  - DOI:10.2136/sssaj1988.03615995005200030009x (Parton et al. 1988 CENTURY)
+  - DOI:10.1007/BF00336886 (Schimel et al. 1994)
+  - DOI:10.1016/j.soilbio.2008.10.012 (Manzoni & Porporato 2009)
+  - DOI:10.1029/2003GB002199 (Thornton et al. 2007 CLM-CN)
+  version: 1.0.0
+parameters:
+  pedosphere.mineralization.vmax_mineralization:
+    value: 5.0e-06
+    default: 5.0e-06
+    units: g N m-2 s-1
+    dtype: float32
+    bounds:
+    - 1.0e-07
+    - 0.0001
+    category: kinetic_parameter
+    description: Maximum gross nitrogen mineralization rate at reference conditions (15degC, optimal moisture)
+    references:
+    - DOI:10.2136/sssaj1988.03615995005200030009x
+    tags:
+    - kinetic
+    - calibratable
+    - learnable
+    dimension: mass_flux
+    requires_grad: true
+    provenance:
+      source: CENTURY model parameterization
+      schema_version: 2.0.0
+      created_by: parameter_migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.mineralization.k_mineralization:
+    value: 1.5
+    units: yr-1
+    dtype: float32
+    bounds:
+    - 0.1
+    - 10.0
+    category: kinetic_parameter
+    description: Base mineralization rate constant for gross nitrogen mineralization from organic matter
+    references:
+    - DOI:10.2136/sssaj1988.03615995005200030009x
+    tags:
+    - kinetic
+    - calibratable
+    - learnable
+    dimension: frequency
+    requires_grad: true
+    provenance:
+      source: CENTURY model parameterization
+      schema_version: 2.0.0
+      created_by: parameter_audit_2025
+      last_modified: '2025-10-07T00:00:00Z'
+  pedosphere.mineralization.k_immobilization:
+    value: 2.0
+    default: 2.0
+    units: yr-1
+    dtype: float32
+    bounds:
+    - 0.1
+    - 15.0
+    category: kinetic_parameter
+    description: Base immobilization rate constant for microbial nitrogen uptake from mineral pool
+    references:
+    - DOI:10.1007/BF00336886
+    tags:
+    - kinetic
+    - calibratable
+    - learnable
+    dimension: frequency
+    requires_grad: true
+    provenance:
+      source: Schimel et al. 1994 microbial dynamics
+      schema_version: 2.0.0
+      created_by: parameter_audit_2025
+      last_modified: '2025-10-07T00:00:00Z'
+  pedosphere.mineralization.km_organic_n:
+    value: 0.1
+    default: 0.1
+    units: g N m-2
+    dtype: float32
+    bounds:
+    - 0.01
+    - 1.0
+    category: kinetic_parameter
+    description: Half-saturation constant for organic nitrogen substrate in Michaelis-Menten kinetics
+    references:
+    - DOI:10.1007/BF00336886
+    tags:
+    - kinetic
+    - michaelis_menten
+    dimension: mass_per_area
+    requires_grad: false
+    provenance:
+      source: Schimel et al. 1994
+      schema_version: 2.0.0
+      created_by: literature_derived
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.mineralization.km_mineral_n:
+    value: 0.005
+    default: 0.005
+    units: g N m-2
+    dtype: float32
+    bounds:
+    - 0.001
+    - 0.02
+    category: kinetic_parameter
+    description: Half-saturation constant for mineral nitrogen availability in immobilization kinetics
+    references:
+    - DOI:10.1007/BF00336886
+    tags:
+    - kinetic
+    - michaelis_menten
+    dimension: mass_per_area
+    requires_grad: false
+    provenance:
+      source: Schimel et al. 1994
+      schema_version: 2.0.0
+      created_by: literature_derived
+      last_modified: '2025-11-18T00:00:00Z'
+  pedosphere.mineralization.q10_mineralization:
+    value: 2.4
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.5
+    - 3.5
+    category: temperature_response
+    description: Q10 temperature coefficient for mineralization rate (typically higher than decomposition due to microbial
+      enzyme activation)
+    references:
+    - DOI:10.1016/j.soilbio.2008.10.012
+    tags:
+    - temperature
+    - q10
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: Manzoni & Porporato 2009 meta-analysis
+      schema_version: 2.0.0
+      created_by: literature_derived
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.mineralization.temp_response_type:
+    value: arrhenius
+    units: dimensionless
+    dtype: str
+    category: configuration
+    description: Temperature response formulation used for gross mineralization (`arrhenius` or `q10`).
+    references:
+    - Manzoni & Porporato (2009) Soil Biol. Biochem. 41:1355-1379
+    tags:
+    - temperature_response
+    - configuration
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_configuration
+      schema_version: 2.0.0
+      created_by: pedosphere_team
+      last_modified: '2025-11-09T00:00:00Z'
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+  pedosphere.mineralization.temperature_reference:
+    value: 288.15
+    default: 288.15
+    units: K
+    dtype: float32
+    bounds:
+    - 273.15
+    - 298.15
+    category: temperature_response
+    description: Reference temperature for mineralization rate normalization (15degC, typical soil mean)
+    references:
+    - Standard laboratory conditions
+    tags:
+    - temperature
+    - reference
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: Standard laboratory conditions
+      schema_version: 2.0.0
+      created_by: standard_value
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.mineralization.activation_energy:
+    value: 54000.0
+    units: J mol-1
+    dtype: float32
+    bounds:
+    - 40000.0
+    - 70000.0
+    category: temperature_response
+    description: Activation energy for Arrhenius temperature response of mineralization enzymes
+    references:
+    - DOI:10.1029/2003GB002199
+    tags:
+    - temperature
+    - arrhenius
+    - enzyme_kinetics
+    dimension: energy_per_amount
+    requires_grad: false
+    provenance:
+      source: CLM-CN model (Thornton et al. 2007)
+      schema_version: 2.0.0
+      created_by: literature_derived
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.mineralization.temperature_minimum:
+    value: 273.15
+    default: 273.15
+    units: K
+    dtype: float32
+    bounds:
+    - 268.15
+    - 273.15
+    category: temperature_response
+    description: Minimum temperature for mineralization activity (0degC, freezing inhibition)
+    references:
+    - Extreme temperature limits
+    tags:
+    - temperature
+    - threshold
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: Physical constraint (freezing)
+      schema_version: 2.0.0
+      created_by: physical_constraint
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.mineralization.temperature_maximum:
+    value: 318.15
+    default: 318.15
+    units: K
+    dtype: float32
+    bounds:
+    - 308.15
+    - 328.15
+    category: temperature_response
+    description: Optimal maximum temperature for mineralization before enzyme denaturation (45degC)
+    references:
+    - Enzyme denaturation limits
+    tags:
+    - temperature
+    - threshold
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: Enzyme stability limits
+      schema_version: 2.0.0
+      created_by: biochemical_constraint
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.mineralization.moisture_optimum:
+    value: 0.6
+    units: m3 m-3
+    dtype: float32
+    bounds:
+    - 0.4
+    - 0.8
+    category: moisture_response
+    description: Optimal volumetric soil moisture for mineralization (balance between diffusion and aeration)
+    references:
+    - DOI:10.2136/sssaj1988.03615995005200030009x
+    tags:
+    - moisture
+    - optimal
+    dimension: volume_fraction
+    requires_grad: false
+    provenance:
+      source: CENTURY model
+      schema_version: 2.0.0
+      created_by: literature_derived
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.mineralization.moisture_response_power:
+    value: 1.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 3.0
+    category: moisture_response
+    description: Power coefficient for moisture response curve shape
+    references:
+    - Empirical moisture response
+    tags:
+    - moisture
+    - shape_parameter
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Empirical calibration
+      schema_version: 2.0.0
+      created_by: calibration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.mineralization.cn_ratio_threshold:
+    value: 25.0
+    default: 25.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 15.0
+    - 35.0
+    category: stoichiometry
+    description: Critical C:N ratio threshold below which net mineralization occurs (above this immobilization dominates)
+    references:
+    - DOI:10.2136/sssaj1988.03615995005200030009x
+    tags:
+    - stoichiometry
+    - critical_ratio
+    - threshold
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: CENTURY model parameterization
+      schema_version: 2.0.0
+      created_by: literature_derived
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.mineralization.cn_ratio_microbial:
+    value: 8.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 6.0
+    - 12.0
+    category: stoichiometry
+    description: Microbial biomass C:N ratio (determines nitrogen demand during decomposition)
+    references:
+    - DOI:10.1007/BF00336886
+    tags:
+    - stoichiometry
+    - microbial
+    - biomass
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Microbial ecology literature
+      schema_version: 2.0.0
+      created_by: literature_derived
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.mineralization.carbon_use_efficiency:
+    value: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.2
+    - 0.7
+    category: stoichiometry
+    description: Microbial carbon use efficiency (fraction of C assimilated into biomass vs respired)
+    references:
+    - DOI:10.1111/j.1365-2486.2007.01451.x
+    tags:
+    - stoichiometry
+    - microbial
+    - efficiency
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: Manzoni et al. 2008 meta-analysis
+      schema_version: 2.0.0
+      created_by: literature_derived
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.mineralization.immobilization_fraction:
+    value: 0.2
+    default: 0.2
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.5
+    category: immobilization
+    description: Fraction of mineralized N immediately re-immobilized by microbes under high C:N conditions
+    references:
+    - DOI:10.2136/sssaj1988.03615995005200030009x
+    tags:
+    - immobilization
+    - microbial_uptake
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: CENTURY model
+      schema_version: 2.0.0
+      created_by: literature_derived
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.mineralization.k_metabolic_litter_n:
+    value: 15.0
+    default: 15.0
+    units: yr-1
+    dtype: float32
+    bounds:
+    - 10.0
+    - 25.0
+    category: pool_specific_rate
+    description: Mineralization rate constant for nitrogen in metabolic litter pool (high quality, low C:N)
+    references:
+    - DOI:10.2136/sssaj1988.03615995005200030009x
+    tags:
+    - pool_specific
+    - metabolic
+    - decomposition_rate
+    dimension: frequency
+    requires_grad: true
+    provenance:
+      source: CENTURY model defaults
+      schema_version: 2.0.0
+      created_by: literature_derived
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.mineralization.k_structural_litter_n:
+    value: 5.0
+    default: 5.0
+    units: yr-1
+    dtype: float32
+    bounds:
+    - 2.0
+    - 10.0
+    category: pool_specific_rate
+    description: Mineralization rate constant for nitrogen in structural litter pool (low quality, high lignin)
+    references:
+    - DOI:10.2136/sssaj1988.03615995005200030009x
+    tags:
+    - pool_specific
+    - structural
+    - decomposition_rate
+    dimension: frequency
+    requires_grad: true
+    provenance:
+      source: CENTURY model defaults
+      schema_version: 2.0.0
+      created_by: literature_derived
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.mineralization.k_fast_som_n:
+    value: 7.0
+    default: 7.0
+    units: yr-1
+    dtype: float32
+    bounds:
+    - 5.0
+    - 12.0
+    category: pool_specific_rate
+    description: Mineralization rate constant for nitrogen in fast soil organic matter pool
+    references:
+    - DOI:10.2136/sssaj1988.03615995005200030009x
+    tags:
+    - pool_specific
+    - fast_som
+    - decomposition_rate
+    dimension: frequency
+    requires_grad: true
+    provenance:
+      source: CENTURY model defaults
+      schema_version: 2.0.0
+      created_by: literature_derived
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.mineralization.k_slow_som_n:
+    value: 0.25
+    default: 0.25
+    units: yr-1
+    dtype: float32
+    bounds:
+    - 0.1
+    - 0.5
+    category: pool_specific_rate
+    description: Mineralization rate constant for nitrogen in slow soil organic matter pool
+    references:
+    - DOI:10.2136/sssaj1988.03615995005200030009x
+    tags:
+    - pool_specific
+    - slow_som
+    - decomposition_rate
+    dimension: frequency
+    requires_grad: true
+    provenance:
+      source: CENTURY model defaults
+      schema_version: 2.0.0
+      created_by: literature_derived
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.mineralization.min_organic_n_pool:
+    value: 1.0e-08
+    default: 1.0e-08
+    units: g N m-2
+    dtype: float32
+    bounds:
+    - 1.0e-10
+    - 1.0e-06
+    category: numerical
+    description: Minimum organic nitrogen pool size for numerical stability
+    references:
+    - Numerical stability threshold
+    tags:
+    - numerical
+    - stability
+    - threshold
+    dimension: mass_areal_density
+    requires_grad: false
+    provenance:
+      source: Numerical precision requirement
+      schema_version: 2.0.0
+      created_by: numerical_design
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.mineralization.min_rate_threshold:
+    value: 1.0e-12
+    default: 1.0e-12
+    units: g N m-2 s-1
+    dtype: float32
+    bounds:
+    - 1.0e-15
+    - 1.0e-09
+    category: numerical
+    description: Minimum mineralization rate threshold for numerical precision
+    references:
+    - Numerical precision
+    tags:
+    - numerical
+    - stability
+    - threshold
+    dimension: mass_flux
+    requires_grad: false
+    provenance:
+      source: Numerical precision requirement
+      schema_version: 2.0.0
+      created_by: numerical_design
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.mineralization.max_rate_factor:
+    value: 25.0
+    default: 25.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 5.0
+    - 100.0
+    category: numerical
+    description: Maximum rate amplification factor for clipping unrealistic rates
+    references:
+    - Stability control
+    tags:
+    - numerical
+    - stability
+    - clipping
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Numerical stability design
+      schema_version: 2.0.0
+      created_by: numerical_design
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.mineralization.enzyme_efficiency:
+    value: 0.8
+    default: 0.8
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 1.0
+    category: biological_parameter
+    description: Efficiency of enzymatic breakdown of organic matter into bioavailable forms
+    references:
+    - DOI:10.1016/j.soilbio.2008.10.012
+    tags:
+    - enzyme
+    - efficiency
+    - biological
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: Enzyme kinetics literature
+      schema_version: 2.0.0
+      created_by: parameter_audit_2025
+      last_modified: '2025-10-07T00:00:00Z'
+  pedosphere.mineralization.substrate_accessibility:
+    value: 0.7
+    default: 0.7
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.3
+    - 1.0
+    category: biological_parameter
+    description: Fraction of organic matter that is physically accessible to decomposers and extracellular enzymes
+    references:
+    - DOI:10.1016/j.soilbio.2008.10.012
+    tags:
+    - substrate
+    - accessibility
+    - physical_protection
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: Physical protection literature
+      schema_version: 2.0.0
+      created_by: parameter_audit_2025
+      last_modified: '2025-10-07T00:00:00Z'
+  pedosphere.mineralization.cn_ratio_critical:
+    value: 25.0
+    default: 25.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 10.0
+    - 40.0
+    category: stoichiometry
+    description: Upper C:N ratio at which immobilization dominates (alias for threshold value).
+    references:
+    - DOI:10.2136/sssaj1988.03615995005200030009x
+    tags:
+    - stoichiometry
+    - immobilization
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: CENTURY model parameterization
+      schema_version: 2.0.0
+      created_by: literature_derived
+      last_modified: '2025-11-09T00:00:00Z'
+  pedosphere.mineralization.n_assimilation_efficiency:
+    value: 0.6
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.3
+    - 1.0
+    category: stoichiometry
+    description: Fraction of mineralized nitrogen assimilated into microbial biomass before release.
+    references:
+    - Manzoni & Porporato (2009) Soil Biol. Biochem. 41:1355-1379
+    tags:
+    - nitrogen
+    - assimilation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Substrate-decomposer stoichiometry calibration
+      schema_version: 2.0.0
+      created_by: pedosphere_team
+      last_modified: '2025-11-09T00:00:00Z'
+  pedosphere.mineralization.stoichiometric_flexibility:
+    value: 0.2
+    default: 0.2
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 0.5
+    category: stoichiometry
+    description: Relative flexibility of microbial biomass C:N ratio in response to substrate forcing.
+    references:
+    - Manzoni & Porporato (2009) Soil Biol. Biochem. 41:1355-1379
+    tags:
+    - stoichiometry
+    - microbial
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Substrate-decomposer stoichiometry calibration
+      schema_version: 2.0.0
+      created_by: pedosphere_team
+      last_modified: '2025-11-09T00:00:00Z'

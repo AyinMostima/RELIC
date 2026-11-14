@@ -1,0 +1,170 @@
+certificate_version: '1.0'
+process_id: relic.scientific.pedosphere.methane.oxidation.MethaneOxidationFunctor
+module_name: MethaneOxidationFunctor
+canonical_role: reaction
+iphs_level: 2
+iphs_level_evidence:
+  classification: IPHS-wrapped reaction process certificate
+  compatible_basis: Methane oxidation uses declared methane storage and oxidation-rate ports with an explicit open carbon ledger
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: N_h r_h reaction-network state advance with r_h supplied by the ParameterManager-backed CLM4Me kinetic closure
+  level_2_limit: The canonical runtime wrapper is declared, but no executable typed-cochain or IPHS structural contribution is bound; strict level 4 or 5 evidence is not claimed.
+theory_document: docs\source\theory\wetland_methane.md
+theory_document_status: updated
+legacy_formula: Prior RELIC oxidation blended an unsourced first-order k_base branch with an unsourced calibrated Vmax branch under a logistic redox gate and a gating weight; both branches were removed in round 51.
+literature_formula: R = R_o,max C_CH4/(K_CH4 + C_CH4) C_O2/(K_O2 + C_O2) Q10^((Ts - T_base)/10) F following Riley et al. (2011) Eq. 7 and Table 1 and Oleson et al. (2013) CLM4.5 Technical Note Eq. 19.11 and Table 19.1 (T_base = 12 C), with Q10 = 1.9 from Riley et al. (2011) Sect. 2.7, concentrations per water volume (Oleson et al. (2013) Eq. 19.1), F = 1 in the saturated layer, and demand scaling to the available storage (Riley et al. (2011) Sect. 2.1.7).
+iphs_formula: x_dot = N_h r_h with N_h = [[1], [-1]] and r_h equal to the storage-limited methane oxidation rate
+legacy_expression: O = min(M/dt, R z M_C) with C_CH4 = M/(M_C z phi WFPS)
+iphs_expression: x_dot = N_h r_h with an open matter port, explicit limiter residual, and no independent H, e, J, M, port-power, or GENERIC claim
+input_variables:
+- ch4_soil_storage
+- soil_temperature
+- soil_o2_concentration
+- porosity
+- water_filled_pore_space
+output_variables:
+- ch4_oxidation_rate
+- ch4_storage_tendency_oxid
+- diagnostics.methane_oxidation.kinetic_rate
+- diagnostics.methane_oxidation.storage_limiter_residual
+parameter_keys:
+- pedosphere.methane.oxidation.maximum_rate
+- pedosphere.methane.oxidation.half_saturation_ch4
+- pedosphere.methane.oxidation.half_saturation_o2
+- pedosphere.methane.oxidation.q10
+- pedosphere.methane.oxidation.temperature_base
+- pedosphere.methane.transport.layer_mixing_depth
+- pedosphere.numerical.minimum_timestep
+- pedosphere.numerical.epsilon_length
+composition_ports:
+- methane_oxidation_open_matter_port
+references:
+- Riley et al. (2011) doi:10.5194/bg-8-1925-2011
+- Oleson et al. (2013) CLM4.5 Technical Note NCAR/TN-503+STR
+- Walter and Heimann (2000) doi:10.1029/1999GB001204
+baseline_tests:
+- test\unit\pedosphere\methane\test_oxidation_dual_mm.py
+- test\audit\phase8_scientific_inventory.test.py
+validation_tests:
+- test\unit\pedosphere\methane\test_oxidation_dual_mm.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  ch4_soil_storage: required methane-carbon storage input M [g C m-2]
+  soil_o2_concentration: O2 concentration per water volume C_O2 [mol m-3]
+  porosity: soil porosity phi [-] defining the water volume of the saturated layer
+  water_filled_pore_space: water-filled pore-space fraction WFPS [-]
+  ch4_oxidation_rate: positive oxidation export mapped by r_h [g C m-2 s-1]
+  ch4_storage_tendency_oxid: equal negative storage tendency mapped by -r_h [g C m-2 s-1]
+  diagnostics.methane_oxidation.kinetic_rate: CLM4Me oxidation demand before the storage limit [g C m-2 s-1]
+  diagnostics.methane_oxidation.storage_limiter_residual: unmet oxidation demand removed by the storage limit [g C m-2 s-1]
+parameter_map:
+  pedosphere.methane.oxidation.maximum_rate: R_o,max maximum oxidation rate per soil volume
+  pedosphere.methane.oxidation.half_saturation_ch4: K_CH4 in the methane Monod factor
+  pedosphere.methane.oxidation.half_saturation_o2: K_O2 in the oxygen Monod factor
+  pedosphere.methane.oxidation.q10: Q10 of the oxidation temperature factor
+  pedosphere.methane.oxidation.temperature_base: T_base of the oxidation temperature factor
+  pedosphere.methane.transport.layer_mixing_depth: layer depth z used for concentration and areal rate
+  pedosphere.numerical.minimum_timestep: dt lower bound for availability limiter
+  pedosphere.numerical.epsilon_length: depth lower bound
+physical_constant_ssot:
+  q10_interval:
+    key: relic.physical.constants.temperature.q10_interval
+    access: get_physical_constant
+    role: Q10 temperature interval [K]
+  carbon_molar_mass:
+    key: relic.physical.constants.molecular_weights.carbon
+    access: get_physical_constant
+    role: Carbon molar mass converting storage to CH4 moles and the molar rate to g C
+operator_map:
+  N_h: explicit stoichiometric_N = [[1], [-1]] mapping r_h to the oxidation export and negative storage tendency
+  r_h: ParameterManager-backed nonnegative methane oxidation rate evaluated by the canonical forward path
+  strict_structure_boundary: No independent H, effort, J, M, port-power, or GENERIC operator is claimed
+unit_map:
+  ch4_oxidation_rate: g C m-2 s-1
+  ch4_storage_tendency_oxid: g C m-2 s-1
+  diagnostics.methane_oxidation.kinetic_rate: g C m-2 s-1
+  diagnostics.methane_oxidation.storage_limiter_residual: g C m-2 s-1
+input_output_map:
+  ch4_oxidation_imaple_rate: removed with the k_base branch in round 51
+  ch4_oxidation_dndc_rate: removed with the calibrated branch in round 51
+  ch4_oxidation_rate: canonical positive oxidation export
+  ch4_storage_tendency_oxid: canonical equal negative storage tendency
+  diagnostics.methane_oxidation.kinetic_rate: namespaced CLM4Me oxidation demand observation
+  diagnostics.methane_oxidation.storage_limiter_residual: routed unmet-demand diagnostic of the storage limit
+interface_map:
+  forward_signature: forward(self, state, time, dt)
+  bridge_class: BiologicalProcessFunctor
+  abstraction_contract: BiologicalProcess
+  state_write_mode: explicit UpdateItem REPLACE rate ports with per_timestep false, canonical units, and source_functor provenance
+  legacy_inputs:
+  - ch4_soil_storage
+  - soil_temperature
+  - soil_o2_concentration
+  - porosity
+  - water_filled_pore_space
+  iphs_inputs:
+  - ch4_soil_storage
+  - soil_temperature
+  - soil_o2_concentration
+  - porosity
+  - water_filled_pore_space
+  legacy_outputs:
+  - ch4_oxidation_rate
+  - ch4_storage_tendency_oxid
+  - diagnostics.methane_oxidation.kinetic_rate
+  - diagnostics.methane_oxidation.storage_limiter_residual
+  iphs_outputs:
+  - ch4_oxidation_rate
+  - ch4_storage_tendency_oxid
+  - diagnostics.methane_oxidation.kinetic_rate
+  - diagnostics.methane_oxidation.storage_limiter_residual
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: The single CLM4Me oxidation law defines the ParameterManager-backed entry of r_h and is not an independent state-advance path.
+  no_legacy_mode: No selectable legacy runtime branch is exposed for Phase 8 completion.
+state_advancement_map:
+  potential_basis: methane oxidation export and its equal negative soil-storage tendency on the CH4-C basis
+  effort_variable: No thermodynamic effort is asserted; temperature, methane and oxygen concentrations are kinetic rate drivers.
+  state_advancer: x_dot = N_h r_h with N_h = [[1], [-1]] and a single storage-limited oxidation rate r_h
+  runtime_usage: MethaneOxidationFunctor.forward calls advance_reaction_network with declared stoichiometric_N and rates before emitting the four canonical outputs.
+  explicit_stoichiometric_usage: MethaneOxidationFunctor.forward materializes stoichiometric_N and rates, then lowers x_dot=N_h r_h through advance_reaction_network.
+parameter_management_map:
+  pedosphere.methane.oxidation.maximum_rate:
+    source: ParameterManager YAML
+  pedosphere.methane.oxidation.half_saturation_ch4:
+    source: ParameterManager YAML
+  pedosphere.methane.oxidation.half_saturation_o2:
+    source: ParameterManager YAML
+  pedosphere.methane.oxidation.q10:
+    source: ParameterManager YAML
+  pedosphere.methane.oxidation.temperature_base:
+    source: ParameterManager YAML
+  pedosphere.methane.transport.layer_mixing_depth:
+    source: ParameterManager YAML
+  pedosphere.numerical.minimum_timestep:
+    source: ParameterManager YAML
+  pedosphere.numerical.epsilon_length:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: FunctorMetadata declares the exact five-input and four-output interface, execution phase, and mass semantics
+  state_contract: StateManager receives explicit REPLACE UpdateItems with canonical units, element, and source_functor provenance
+  validation_rule: phase8 scientific inventory and equivalence certificate checks
+  ports:
+  - methane_oxidation_open_matter_port
+dependency_interconnection_map:
+  dependencies: no Functor dependencies; get_dependencies() returns an empty list because oxidation reads only committed state and no gating weight
+  direct_functor_calls: none declared by certificate
+overflow_routing_map:
+  diagnostic_residuals:
+  - diagnostics.methane_oxidation.storage_limiter_residual
+  discarded_residuals: the oxidation demand above the storage available within dt is scaled to that storage (Riley et al. (2011) Sect. 2.1.7); the unmet demand is not carbon and is exported entirely as diagnostics.methane_oxidation.storage_limiter_residual
+conservation_map:
+  conserved_quantities: open methane mass ledger
+  balance_expression: closed local reaction ledger uses [1, -1] for the oxidation export and storage tendency; open methane conversion is declared with open_system_route=port
+  open_system_route: port
+entropy_audit:
+  rate_sign: Runtime validation requires a finite non-negative kinetic rate before the storage limiter.
+  strict_entropy_claim: No entropy-production, port-power, or GENERIC degeneracy identity is asserted at level 2.
+equivalence_type: reaction_network

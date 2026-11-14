@@ -1,0 +1,34 @@
+variable: dung_n_flux
+title: "Dung Fecal Organic N Flux"
+kind: flux
+dimension:
+  udunits: "kg N m-2 s-1"
+  cf_standard_name: null
+owner: "grazing_management"
+aliases: []
+incrementable: false
+accumulates: nitrogen.total
+numerics:
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "grazing_management"
+      module: "relic.scientific.anthroposphere.management.grazing"
+      provides: ["dung_n_flux"]
+      unit: "kg N m-2 s-1"
+flux_contract:
+  allowed_in: ["grazing_management"]
+  allowed_out: ["litterfall_interface_mapper"]
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/anthroposphere/management/grazing.py"
+  runtime_role: "managed_livestock_fecal_organic_nitrogen_return_flux"
+  runtime_writer: "grazing_management"

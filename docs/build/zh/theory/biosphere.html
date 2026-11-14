@@ -1,0 +1,716 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>生物圈过程理论 &mdash; RELIC 1.0.0 Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=mono5" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=86952a2f"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/translations.js?v=beaddf03"></script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../_static/language_switch.js?v=mono5"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="search" title="搜索" href="../search.html" />
+    <link rel="next" title="水圈过程理论" href="hydrosphere.html" />
+    <link rel="prev" title="大气圈过程理论" href="atmosphere.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            RELIC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="搜索文档" aria-label="搜索文档" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="导航菜单">
+              <p class="caption" role="heading"><span class="caption-text">RELIC 指南</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../architecture.html">系统架构</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#scope-and-architectural-contract">范围与架构契约</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#architecture-capability-map">架构能力图</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#package-ownership-and-seven-layer-map">软件包职责归属与七层架构映射</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#four-scientific-abstractions">四类科学抽象</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#functor-lifecycle-and-metadata">Functor lifecycle 与 metadata</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#variable-roles-and-state-ownership">变量角色与状态归属</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#parameters-constants-units-and-time">参数、常量、单位与时间</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#simulator-execution-rates-and-device-policy">Simulator、执行频率与 device policy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#structural-scientific-layer">结构化科学层</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#end-to-end-assembly-and-execution">端到端装配与执行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#connection-and-conservation-rules">连接与守恒规则</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">科学理论与控制方程</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="foundations.html">数学基础、状态、单位与守恒</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="foundations.html#architectural-contract-and-notation">架构契约与符号约定</a></li>
+<li class="toctree-l3"><a class="reference internal" href="foundations.html#four-scientific-abstractions-and-functor-lifecycle">四类科学抽象与 Functor 生命周期</a></li>
+<li class="toctree-l3"><a class="reference internal" href="foundations.html#spatial-quantity-basis-and-temporal-overlap-laws">空间物理量基准与时间重叠守恒律</a></li>
+<li class="toctree-l3"><a class="reference internal" href="foundations.html#universal-conservation-and-balance-laws">普适守恒与平衡定律</a></li>
+<li class="toctree-l3"><a class="reference internal" href="foundations.html#transactional-statemanager-governance-i1-i7">事务型 StateManager 状态治理（<code class="docutils literal notranslate"><span class="pre">I1</span></code>--<code class="docutils literal notranslate"><span class="pre">I7</span></code>）</a></li>
+<li class="toctree-l3"><a class="reference internal" href="foundations.html#centralized-parametermanager-and-physical-constant-ssot">集中式 ParameterManager 与物理常数单点事实源</a></li>
+<li class="toctree-l3"><a class="reference internal" href="foundations.html#piecewise-smooth-discrete-adjoint-differentiation-and-device-policy">分段光滑离散伴随微分与设备策略</a></li>
+<li class="toctree-l3"><a class="reference internal" href="foundations.html#bounded-mathematical-contracts-and-runtime-boundary-i-vs-n">有界数学契约与运行时边界（<code class="docutils literal notranslate"><span class="pre">[I]</span></code> 与 <code class="docutils literal notranslate"><span class="pre">[N]</span></code>）</a></li>
+<li class="toctree-l3"><a class="reference internal" href="foundations.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dec_iphs_generic.html">DEC、IPHS、GENERIC、端口与反应结构</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dec_iphs_generic.html#structural-governance-lifecycle">结构治理生命周期</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dec_iphs_generic.html#discrete-exterior-calculus-relic-computation-operators-dec">离散外微分（<code class="docutils literal notranslate"><span class="pre">relic.computation.operators.dec</span></code>）</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dec_iphs_generic.html#irreversible-port-hamiltonian-and-generic-lowering">不可逆端口哈密顿与 GENERIC 降阶</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dec_iphs_generic.html#equivalence-certificates-and-live-repository-inventory">等价性证书与现行代码库清单</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dec_iphs_generic.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="numerics.html">数值积分、算子分裂、稳定性、尺度耦合与混杂事件</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="numerics.html#method-of-lines-formulation-and-solver-registry">线方法表述与求解器注册表</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numerics.html#deterministic-time-stepping-linear-and-nonlinear-solvers">确定性时间步进、线性与非线性求解器</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numerics.html#multi-rate-execution-operator-splitting-and-step-control">多速率执行、算子分裂与步长控制</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numerics.html#transport-stability-and-nonlinear-richards-closure">输运稳定性与非线性 Richards 闭合</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numerics.html#conservative-spatial-remapping-and-internal-cross-domain-couplers">空间守恒重映射与内部跨域耦合器</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numerics.html#transverse-hybrid-events-and-saltation-matrix-sensitivities">横截混杂事件与跃变矩阵灵敏度</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numerics.html#stochastic-memory-ale-dae-and-topology-transition-families">随机、记忆、任意拉格朗日-欧拉（Arbitrary Lagrangian-Eulerian, ALE）、DAE 与拓扑跃迁族</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numerics.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="atmosphere.html">大气圈过程理论</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="atmosphere.html#scope-process-inventory-and-certificate-map">范围、过程清单与证书映射</a></li>
+<li class="toctree-l3"><a class="reference internal" href="atmosphere.html#solar-thermal-and-canopy-radiation">太阳短波、热长波与冠层辐射</a></li>
+<li class="toctree-l3"><a class="reference internal" href="atmosphere.html#surface-layer-turbulence-and-boundary-layer-tracer-transport">近地层湍流与边界层示踪物输运</a></li>
+<li class="toctree-l3"><a class="reference internal" href="atmosphere.html#gas-phase-chemistry-open-tropospheric-kinetics-and-closed-level-5-generic-point">气相化学：开放对流层动力学与封闭 Level-5 GENERIC 运行点</a></li>
+<li class="toctree-l3"><a class="reference internal" href="atmosphere.html#stochastic-atmospheric-forcing-and-replay-contracts">随机大气强迫与重放契约</a></li>
+<li class="toctree-l3"><a class="reference internal" href="atmosphere.html#atmospheric-observation-operators">大气观测算子</a></li>
+<li class="toctree-l3"><a class="reference internal" href="atmosphere.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">生物圈过程理论</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#scope-process-inventory-and-certificate-map">范围、过程清单与证书映射</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#photosynthesis-and-stomatal-conductance">光合作用与气孔导度</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#autotrophic-respiration-allocation-and-structural-growth">自养呼吸、分配与结构生长</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#phenology-and-abiotic-stress-closures">物候与非生物胁迫闭合</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#biogenic-volatile-organic-compound-bvoc-synthesis-and-emission">生物源挥发性有机化合物（BVOC）合成与排放</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hydrosphere.html">水圈过程理论</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hydrosphere.html#scope-process-inventory-and-certificate-map">范围、过程清单与证书映射</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydrosphere.html#evapotranspiration-closures">蒸散发闭合格式</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydrosphere.html#snowpack-mass-energy-balance-and-snow-albedo">积雪质量-能量平衡与积雪反照率</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydrosphere.html#soil-water-retention-bucket-storage-and-richards-vadose-flow">土壤持水特征、单桶蓄水与 Richards 包气带渗流</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydrosphere.html#surface-runoff-and-hybrid-event-driven-hortonian-ponding">地表径流与混杂事件驱动的霍顿积水</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydrosphere.html#subsurface-stormflow-vadose-aquifer-exchange-and-groundwater">壤中暴雨流、包气带-含水层交换与地下水</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydrosphere.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pedosphere.html">土壤圈过程理论</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pedosphere.html#scope-process-inventory-and-certificate-map">范围、过程清单与证书映射</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pedosphere.html#soil-organic-carbon-turnover-and-cross-sphere-interface-maps">土壤有机碳周转与跨圈层界面映射</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pedosphere.html#soil-nitrogen-root-p-uptake-and-c-n-stoichiometry-boundaries">土壤氮循环、根系磷吸收与碳氮化学计量边界</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pedosphere.html#wetland-methane-request-and-coupler-architecture">湿地甲烷请求-耦合器架构</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pedosphere.html#porous-media-water-gas-solute-dae-ale-and-memory-transport">多孔介质水分、气体、溶质、DAE、ALE 与记忆核输运</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pedosphere.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="anthroposphere.html">人类圈理论</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="anthroposphere.html#scope-process-inventory-and-fail-closed-boundary-status">范围、过程清单与故障封闭边界状态</a></li>
+<li class="toctree-l3"><a class="reference internal" href="anthroposphere.html#fail-closed-level-0-boundaries-vs-implemented-emission-operators">故障封闭 Level-0 边界与已实现排放算子</a></li>
+<li class="toctree-l3"><a class="reference internal" href="anthroposphere.html#continuous-time-markov-land-use-transitions-and-parameter-projection">连续时间马尔可夫土地利用转移与参数投影</a></li>
+<li class="toctree-l3"><a class="reference internal" href="anthroposphere.html#management-coordination-and-agricultural-water-nutrient-ports">管理协调与农业水肥端口</a></li>
+<li class="toctree-l3"><a class="reference internal" href="anthroposphere.html#managed-biomass-removal-livestock-grazing-fire-and-tillage">受管生物量移除、家畜放牧、火扰动与耕作</a></li>
+<li class="toctree-l3"><a class="reference internal" href="anthroposphere.html#references">参考文献</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="isotopes_transport.html">稳定同位素与一般输运理论</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="isotopes_transport.html#scope-component-inventory-and-certificate-map">范围、组件清单与证书映射</a></li>
+<li class="toctree-l3"><a class="reference internal" href="isotopes_transport.html#stable-isotope-ratios-exact-binary-fractionation-and-fail-closed-ledger-status">稳定同位素比值、精确二元分馏与故障封闭账本状态</a></li>
+<li class="toctree-l3"><a class="reference internal" href="isotopes_transport.html#general-conservative-transport-functors">一般守恒输运 Functor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="isotopes_transport.html#references">参考文献</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../science/index.html">核心科学类参考</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../science/anthroposphere.html">人类圈科学类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#atmosphere-coupling">atmosphere_coupling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#sector-allocation">sector_allocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#species-mapping">species_mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#anthroposphere-interface-mapping">anthroposphere_interface_mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#emission-inventory">emission_inventory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#land-use-parameter-mapping">land_use_parameter_mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#land-use-transitions">land_use_transitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#management-coordinator">management_coordinator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#fertilization-management">fertilization_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#fire-management">fire_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#grazing-management">grazing_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#harvest-management">harvest_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#irrigationmanagement">IrrigationManagement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#tillagemanagement">TillageManagement</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/atmosphere.html">大气科学类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#chemistryfunctor">ChemistryFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#class-atmosphere-chemistry-chemistry-functor-closed-constant-volume">ChemistryFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#environmentalforcingfunctor">EnvironmentalForcingFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#radiationenergyconservationvalidator">RadiationEnergyConservationValidator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#radiationfield">RadiationField</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#radiationfunctor">RadiationFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#markedpoissonrainfallfunctor">MarkedPoissonRainfallFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#ornsteinuhlenbecktemperaturefunctor">OrnsteinUhlenbeckTemperatureFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#atmosphericadvectiondiffusionfunctor">AtmosphericAdvectionDiffusionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#drydepositionaggregator">DryDepositionAggregator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#eddydiffusionblmfunctor">EddyDiffusionBLMFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#turbulencefunctor">TurbulenceFunctor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/biosphere.html">生物圈科学类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#meganmodel">MEGANModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#isoprenesynthesis">IsopreneSynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#monoterpenesynthesis">MonoterpeneSynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#sesquiterpenestressmodel">SesquiterpeneStressModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#sesquiterpenesynthesis">SesquiterpeneSynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#biomassallocation">BiomassAllocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#phenologygrowth">PhenologyGrowth</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#structuralgrowth">StructuralGrowth</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#cropphenology">CropPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#gddphenology">GDDPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#gsiphenology">GSIPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#staticphenology">StaticPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#phenologyfunctor">PhenologyFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#farquharphotosynthesis">FarquharPhotosynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#medlynstomatalconductance">MedlynStomatalConductance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#autotrophicrespiration">AutotrophicRespiration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#growthrespiration">GrowthRespiration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#maintenancerespiration">MaintenanceRespiration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#nutrientstress">NutrientStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#ozonestress">OzoneStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#thermalstress">ThermalStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#waterstress">WaterStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#simplecanopyphotosynthesis">SimpleCanopyPhotosynthesis</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/hydrosphere.html">水圈科学类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#penman-monteith-et">penman_monteith_et</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#priestley-taylor-et">priestley_taylor_et</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#groundwater-dynamics">groundwater_dynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#subsurface-runoff">subsurface_runoff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#hortonianpondingeventfunctor">HortonianPondingEventFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#surfacepondingfunctor">SurfacePondingFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#surface-runoff">surface_runoff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#snow-albedo">snow_albedo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#snow-pack">snow_pack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#bucket-soil-moisture">bucket_soil_moisture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#soilwaterretention">SoilWaterRetention</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#richards-soil-moisture">richards_soil_moisture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#capillary-rise-transport">capillary_rise_transport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#vertical-percolation-transport">vertical_percolation_transport</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/pedosphere.html">土壤圈科学类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#carbonpoolsfunctor">CarbonPoolsFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#poolsmatrix">PoolsMatrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#firstorderdecomposition">FirstOrderDecomposition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#microbialenzymedecomposition">MicrobialEnzymeDecomposition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#litterfallinterfacemapper">LitterfallInterfaceMapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#pedosphereinterfacemapper">PedosphereInterfaceMapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methanebudgetcoupler">MethaneBudgetCoupler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methaneoxidationfunctor">MethaneOxidationFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methaneproductionfunctor">MethaneProductionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methanescalecouplingfunctor">MethaneScaleCouplingFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methanetransportfunctor">MethaneTransportFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#denitrification-process">denitrification_process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#mineralizationprocess">MineralizationProcess</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#nitrification-process">nitrification_process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#nitrogenleachingprocess">NitrogenLeachingProcess</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#nitrogencycling">NitrogenCycling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#rootnutrientuptake">RootNutrientUptake</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#stoichiometryconstraint">StoichiometryConstraint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#equilibriumsorptionfunctor">EquilibriumSorptionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#gasdiffusion1d">GasDiffusion1D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#movingdomaindiffusionfunctor">MovingDomainDiffusionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#soil-water-transport">soil_water_transport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#soluteadvectiondiffusion1d">SoluteAdvectionDiffusion1D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#tworegionmasstransferfunctor">TwoRegionMassTransferFunctor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/isotopes.html">稳定同位素科学类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/isotopes.html#isotopeheartbeatfunctor">IsotopeHeartbeatFunctor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/transport.html">通用 Transport 科学类</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#advection-diffusion">advection_diffusion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#linear-advection">linear_advection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#fickian-diffusion">fickian_diffusion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#class-transport-diffusion-fickian-diffusion-strict-runtime-point">fickian_diffusion</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/index.html#complete-coverage-matrix">完整覆盖矩阵</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">RELIC 工作流</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#learning-tracks">学习路线</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#how-to-use-a-tutorial">如何使用教程</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/installation_and_imports.html">安装与导入</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/configuration_and_parameters.html">配置与参数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/state_functors_and_simulation.html">状态、Functors 与模拟</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/graph_validation_and_execution.html">Graph 验证与执行</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/persistence_outputs_and_data_io.html">持久化、输出与 Data I/O</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/coupling_workflows.html">耦合工作流</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/calibration_sensitivity_and_uq.html">校准、敏感性分析和不确定性量化</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/devices_and_distributed.html">设备与分布式执行</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/cli_and_extensions.html">CLI 与扩展</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestration.html">Graph 编排</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#canonical-owners">canonical owners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#graphir">GraphIR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#portspec-and-the-contract-boundary">PortSpec 与契约边界</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#validation">验证</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#adapters">Adapter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#compilation-and-execution">编译与执行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#strict-iphs-dec-boundary">Strict IPHS/DEC 边界</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../operations.html">操作快速入门</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#select-a-workflow">选择 workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#environment-preflight">环境预检</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#first-successful-run">首次成功运行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#benchmark-style-acceptance-checklist">Benchmark 式验收清单</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#minimal-runtime-sequence">最小 runtime 流程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#troubleshooting-order">故障排查顺序</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#immediate-stop-conditions">必须立即停止的条件</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../extension_contracts.html">扩展契约</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#reuse-first-decision">复用优先决策</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#adding-a-scientific-functor">添加科学 Functor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#parameter-extension">参数扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#variable-contract-extension">Variable contract 扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#graph-and-adapter-extension">Graph 与 adapter 扩展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#external-extension-paths">外部扩展路径</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#scientific-structure-claims">科学结构声明</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#explicit-unavailable-scientific-boundaries">显式声明不可用的科学边界</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#anti-redundancy-boundary">Anti-redundancy boundary（防冗余边界）</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">核心 API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/index.html#coverage-contract">覆盖范围契约</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/core_runtime.html">Core Runtime API（核心运行时 API）</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/parameters_contracts.html">参数与参数契约</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/orchestration_validation.html">编排、Contract 与 Validation API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/scientific_structure_extensions.html">科学结构与扩展 API</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="移动版导航菜单" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">RELIC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="页面导航">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">科学理论与控制方程</a></li>
+      <li class="breadcrumb-item active">生物圈过程理论</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="biosphere-theory">
+<h1>生物圈过程理论<a class="headerlink" href="#biosphere-theory" title="Link to this heading"></a></h1>
+<section id="scope-process-inventory-and-certificate-map">
+<h2>范围、过程清单与证书映射<a class="headerlink" href="#scope-process-inventory-and-certificate-map" title="Link to this heading"></a></h2>
+<p>RELIC 生物圈领域（<code class="docutils literal notranslate"><span class="pre">relic.scientific.biosphere</span></code>）刻画陆地植被碳同化、气孔导度、自养呼吸、器官碳分配、结构生物量周转、叶片物候、非生物胁迫修正因子以及生物源挥发性有机化合物（Biogenic Volatile Organic Compounds, BVOCs）的合成与排放（《生态学分析方法》，第 20--22 章）。活体植被属于受光照驱动的开放代谢子系统；相应地，全部 23 个具体生物圈算子均继承 <code class="docutils literal notranslate"><span class="pre">BiologicalProcessFunctor</span></code>，并携带 <code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">1</span></code>（只读本构或观测映射）或 <code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>（开放端口或化学计量平衡）的互连端口哈密顿系统（Interconnected Port-Hamiltonian System, IPHS）等价证书 <code class="docutils literal notranslate"><span class="pre">IPHSEquivalenceCertificate</span></code> 声明。活体冠层动力学不作封闭系统的 <code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">4</span></code> 或 <code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">5</span></code> 热力学平衡声明。</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>子系统</p></th>
+<th class="head"><p>算子</p></th>
+<th class="head"><p>证书等级</p></th>
+<th class="head"><p>状态</p></th>
+<th class="head"><p>主要运行期角色与状态语义</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>光合作用与气孔</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-photosynthesis-farquhar-farquharphotosynthesis"><span class="std std-ref">FarquharPhotosynthesis</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>FvCB <span class="math notranslate nohighlight">\(\mathrm{C_3}\)</span> 生化同化（<span class="math notranslate nohighlight">\(A_c, A_j, A_p\)</span>、总同化与净同化 <span class="math notranslate nohighlight">\(A\)</span>）（<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>）</p></td>
+</tr>
+<tr class="row-odd"><td><p>光合作用与气孔</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-photosynthesis-stomatal-medlynstomatalconductance"><span class="std std-ref">MedlynStomatalConductance</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">1</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>条件叶支撑域最优气孔导度 <span class="math notranslate nohighlight">\(g_s\)</span>（<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>）</p></td>
+</tr>
+<tr class="row-even"><td><p>光合作用与气孔</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-surrogates-simple-photosynthesis-simplecanopyphotosynthesis"><span class="std std-ref">SimpleCanopyPhotosynthesis</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>光能利用效率冠层总初级生产力（Gross Primary Productivity, GPP）代理模型（<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>）</p></td>
+</tr>
+<tr class="row-odd"><td><p>自养呼吸</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-respiration-maintenance-respiration-maintenancerespiration"><span class="std std-ref">MaintenanceRespiration</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>分器官氮含量/生物量 <span class="math notranslate nohighlight">\(Q_{10}\)</span> 维持呼吸 <span class="math notranslate nohighlight">\(R_m\)</span>（<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>）</p></td>
+</tr>
+<tr class="row-even"><td><p>自养呼吸</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-respiration-growth-respiration-growthrespiration"><span class="std std-ref">GrowthRespiration</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>与净碳增益正部成正比的生物合成建构呼吸 <span class="math notranslate nohighlight">\(R_g\)</span>（<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>）</p></td>
+</tr>
+<tr class="row-odd"><td><p>自养呼吸</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-respiration-autotrophic-respiration-autotrophicrespiration"><span class="std std-ref">AutotrophicRespiration</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>耦合 <span class="math notranslate nohighlight">\(R_a = R_m + R_g\)</span>、净初级生产力（Net Primary Productivity, NPP）与碳利用效率（Carbon-Use Efficiency, CUE）闭合（<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>）</p></td>
+</tr>
+<tr class="row-even"><td><p>分配与生长</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-growth-biomass-allocation-biomassallocation"><span class="std std-ref">BiomassAllocation</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>响应资源限制的叶、茎、根 NPP 单纯形分配（<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>）</p></td>
+</tr>
+<tr class="row-odd"><td><p>分配与生长</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-growth-structural-growth-structuralgrowth"><span class="std std-ref">StructuralGrowth</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>器官碳质量平衡、衰老凋落通量与异速生长叶面积指数（Leaf Area Index, LAI）（<code class="docutils literal notranslate"><span class="pre">ACCUMULATE</span></code> / <code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>）</p></td>
+</tr>
+<tr class="row-even"><td><p>分配与生长</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-growth-phenology-growth-phenologygrowth"><span class="std std-ref">PhenologyGrowth</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">1</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>物候阶段生长修正因子观测（<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>）</p></td>
+</tr>
+<tr class="row-odd"><td><p>物候（<code class="docutils literal notranslate"><span class="pre">PhenologyBase</span></code>）</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-phenology-models-staticphenology"><span class="std std-ref">StaticPhenology</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>给定定常 LAI 与冠层覆盖度基线（<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>）</p></td>
+</tr>
+<tr class="row-even"><td><p>物候（<code class="docutils literal notranslate"><span class="pre">PhenologyBase</span></code>）</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-phenology-models-gddphenology"><span class="std std-ref">GDDPhenology</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>有效积温（Growing Degree Days, GDD）热驱动萌芽、展叶与衰老（<code class="docutils literal notranslate"><span class="pre">ACCUMULATE</span></code> / <code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>）</p></td>
+</tr>
+<tr class="row-odd"><td><p>物候（<code class="docutils literal notranslate"><span class="pre">PhenologyBase</span></code>）</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-phenology-models-gsiphenology"><span class="std std-ref">GSIPhenology</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>生长季指数（Growing Season Index, GSI；温度、光周期与饱和水汽压差（Vapor Pressure Deficit, VPD））冠层状态（<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>）</p></td>
+</tr>
+<tr class="row-even"><td><p>物候（<code class="docutils literal notranslate"><span class="pre">PhenologyBase</span></code>）</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-phenology-models-cropphenology"><span class="std std-ref">CropPhenology</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>分阶段作物热时间发育与收获成熟（<code class="docutils literal notranslate"><span class="pre">ACCUMULATE</span></code> / <code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>）</p></td>
+</tr>
+<tr class="row-odd"><td><p>物候（<code class="docutils literal notranslate"><span class="pre">PhenologyBase</span></code>）</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-phenology-phenology-functor-phenologyfunctor"><span class="std std-ref">PhenologyFunctor</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">1</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>可配置物候观测与阶段索引封装（<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>）</p></td>
+</tr>
+<tr class="row-even"><td><p>非生物胁迫</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-stress-water-stress-waterstress"><span class="std std-ref">WaterStress</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">1</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>土壤水分/基质势标量 <span class="math notranslate nohighlight">\(\beta_W \in [0, 1]\)</span>（<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>）</p></td>
+</tr>
+<tr class="row-odd"><td><p>非生物胁迫</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-stress-nutrient-stress-nutrientstress"><span class="std std-ref">NutrientStress</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">1</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Liebig 最小因子或乘积型叶片氮磷（N:P）限制标量 <span class="math notranslate nohighlight">\(\beta_N \in [0, 1]\)</span>（<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>）</p></td>
+</tr>
+<tr class="row-even"><td><p>非生物胁迫</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-stress-thermal-stress-thermalstress"><span class="std std-ref">ThermalStress</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">1</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>低温与高温抑制标量 <span class="math notranslate nohighlight">\(\beta_T \in [0, 1]\)</span>（<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>）</p></td>
+</tr>
+<tr class="row-odd"><td><p>非生物胁迫</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-stress-ozone-stress-ozonestress"><span class="std std-ref">OzoneStress</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>累积气孔臭氧吸收剂量（<span class="math notranslate nohighlight">\(\mathrm{POD}_y\)</span>）损伤动力学（<code class="docutils literal notranslate"><span class="pre">ACCUMULATE</span></code> / <code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>）</p></td>
+</tr>
+<tr class="row-even"><td><p>BVOC 合成与排放</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-bvoc-megan-model-meganmodel"><span class="std std-ref">MEGANModel</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>冠层经验 BVOC 排放因子与 <span class="math notranslate nohighlight">\(\gamma\)</span> 活性乘子（<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>）</p></td>
+</tr>
+<tr class="row-odd"><td><p>BVOC 合成与排放</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-bvoc-synthesis-isoprene-isoprenesynthesis"><span class="std std-ref">IsopreneSynthesis</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>质体 MEP 途径二甲基烯丙基二磷酸（DMADP）/能量受限异戊二烯合成（<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>）</p></td>
+</tr>
+<tr class="row-even"><td><p>BVOC 合成与排放</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-bvoc-synthesis-monoterpene-monoterpenesynthesis"><span class="std std-ref">MonoterpeneSynthesis</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>从头合成（<em>de novo</em>）与有界树脂库（<span class="math notranslate nohighlight">\(P \in [0, P_{\max}]\)</span>）双通道单萜排放（<code class="docutils literal notranslate"><span class="pre">ACCUMULATE</span></code> / <code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>）</p></td>
+</tr>
+<tr class="row-odd"><td><p>BVOC 合成与排放</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-bvoc-synthesis-sesquiterpene-sesquiterpenesynthesis"><span class="std std-ref">SesquiterpeneSynthesis</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>温度与胁迫驱动的倍半萜合成与排放（<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>）</p></td>
+</tr>
+<tr class="row-even"><td><p>BVOC 合成与排放</p></td>
+<td><p><a class="reference internal" href="../science/biosphere.html#class-relic-scientific-biosphere-bvoc-synthesis-sesquiterpene-sesquiterpenestressmodel"><span class="std std-ref">SesquiterpeneStressModel</span></a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">1</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>氧化、食草/机械损伤与热胁迫诱导因子（<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>）</p></td>
+</tr>
+</tbody>
+</table>
+<p><code class="docutils literal notranslate"><span class="pre">relic.scientific.biosphere.phenology.base.PhenologyBase</span></code> 是各具体物候实现共享的抽象基类，不单独携带证书。通用符号约定遵循<a class="reference internal" href="foundations.html"><span class="std std-doc">数学基础</span></a>，离散外微分（Discrete Exterior Calculus, DEC）与结构等级定义遵循 <a class="reference internal" href="dec_iphs_generic.html"><span class="std std-doc">DEC、IPHS 与 GENERIC</span></a>，积分器契约遵循<a class="reference internal" href="numerics.html"><span class="std std-doc">数值方法</span></a>。</p>
+</section>
+<section id="photosynthesis-and-stomatal-conductance">
+<h2>光合作用与气孔导度<a class="headerlink" href="#photosynthesis-and-stomatal-conductance" title="Link to this heading"></a></h2>
+<section id="farquhar-von-caemmerer-berry-biochemical-assimilation">
+<h3>Farquhar-von Caemmerer-Berry 生化同化<a class="headerlink" href="#farquhar-von-caemmerer-berry-biochemical-assimilation" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">relic.scientific.biosphere.photosynthesis.farquhar.FarquharPhotosynthesis</span></code>（<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>）实现了 Farquhar, von Caemmerer, and Berry (1980) 的 <span class="math notranslate nohighlight">\(\mathrm{C_3}\)</span> 生化光合模型，对 <span class="math notranslate nohighlight">\(V_{c\max}\)</span>、<span class="math notranslate nohighlight">\(J_{\max}\)</span>、丙糖磷酸利用速率 <span class="math notranslate nohighlight">\(T_p\)</span>、米氏常数 <span class="math notranslate nohighlight">\(K_c, K_o\)</span> 及 <span class="math notranslate nohighlight">\(\mathrm{CO}_2\)</span> 补偿点 <span class="math notranslate nohighlight">\(\Gamma^\ast\)</span> 采用带最适温峰值的 Arrhenius 温度标度（Bernacchi et al., 2001；Medlyn et al., 2002；《生态学分析方法》，第 20 章）。在胞间 <span class="math notranslate nohighlight">\(\mathrm{CO}_2\)</span> 分压或摩尔分数 <span class="math notranslate nohighlight">\(C_i\)</span> 与氧气浓度 <span class="math notranslate nohighlight">\(O_i\)</span> 下，Rubisco 羧化受限（<span class="math notranslate nohighlight">\(W_c\)</span>）、RuBP 再生受限（<span class="math notranslate nohighlight">\(W_j\)</span>）与丙糖磷酸利用（TPU）受限（<span class="math notranslate nohighlight">\(W_p\)</span>）的总羧化速率分别为</p>
+<div class="math notranslate nohighlight">
+\[
+W_c = V_{c\max}(T_l)\,\frac{C_i}{C_i + K_c(T_l)\left(1 + O_i / K_o(T_l)\right)},
+\qquad
+W_j = \frac{J(I_{\mathrm{APAR}}, T_l)}{4}\,\frac{C_i}{C_i + 2\Gamma^\ast(T_l)},
+\qquad
+W_p = 3\,T_p(T_l)\,\frac{C_i}{C_i - \Gamma^\ast(T_l)},
+\]</div>
+<p>其中电子传递速率 <span class="math notranslate nohighlight">\(J\)</span> 由非直角双曲线方程</p>
+<div class="math notranslate nohighlight">
+\[
+\theta_J J^2 - \left(\alpha_J I_{\mathrm{APAR}} + J_{\max}(T_l)\right)J + \alpha_J I_{\mathrm{APAR}} J_{\max}(T_l) = 0
+\]</div>
+<p>取较小正根求得。叶片或冠层总同化速率与净同化速率 [<span class="math notranslate nohighlight">\(\mu\)</span>mol <span class="math notranslate nohighlight">\(\mathrm{CO}_2\)</span> m<span class="math notranslate nohighlight">\(^{-2}\)</span> s<span class="math notranslate nohighlight">\(^{-1}\)</span>] 满足</p>
+<div class="math notranslate nohighlight">
+\[
+A_{\mathrm{gross}} = \left(1 - \frac{\Gamma^\ast(T_l)}{C_i}\right)\min_{\mathrm{smooth}}(W_c, W_j, W_p),
+\qquad
+A_{\mathrm{net}} = \beta_{\mathrm{stress}}\,A_{\mathrm{gross}} - R_d(T_l),
+\]</div>
+<p>其中 <span class="math notranslate nohighlight">\(R_d(T_l)\)</span> 为线粒体日间呼吸，<span class="math notranslate nohighlight">\(\min_{\mathrm{smooth}}\)</span> 根据配置取二次协同限制平滑极小值（Collatz et al., 1991）或逐点精确极小值。</p>
+</section>
+<section id="optimal-stomatal-conductance-medlyn-closure">
+<h3>最优气孔导度（Medlyn 闭合）<a class="headerlink" href="#optimal-stomatal-conductance-medlyn-closure" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">relic.scientific.biosphere.photosynthesis.stomatal.MedlynStomatalConductance</span></code>（<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">1</span></code>）在显式边界假设 <code class="docutils literal notranslate"><span class="pre">surface_conditions</span> <span class="pre">=</span> <span class="pre">&quot;leaf_surface_equals_canopy_air&quot;</span></code> 下，将 Medlyn et al. (2011) 最优水分利用效率气孔导度定律作为条件叶支撑域观测量求值。冠层地表净同化速率通过 <code class="docutils literal notranslate"><span class="pre">leaf_area_index</span></code> 归一化至叶面积基准（<span class="math notranslate nohighlight">\(A_{\mathrm{leaf}}\)</span>），叶表 <span class="math notranslate nohighlight">\(\mathrm{CO}_2\)</span> 摩尔分数为 <span class="math notranslate nohighlight">\(C_s\)</span> [<span class="math notranslate nohighlight">\(\mu\)</span>mol mol<span class="math notranslate nohighlight">\(^{-1}\)</span>]，饱和水汽压差通过 <span class="math notranslate nohighlight">\(D_{\mathrm{eff}} = \max(D_s, D_{\min})\)</span> [kPa] 施加严格正下界。对水汽的气孔导度 <span class="math notranslate nohighlight">\(g_s\)</span> [mol m<span class="math notranslate nohighlight">\(^{-2}\)</span> s<span class="math notranslate nohighlight">\(^{-1}\)</span>] 为</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+g_s =
+\begin{cases}
+g_0, &amp; \mathrm{PPFD} \le \mathrm{PPFD}_{\mathrm{dark}} \;\text{ or }\; A_{\mathrm{leaf}} \le 0,\\
+g_0 + 1.6\left(1 + \dfrac{g_1}{\sqrt{D_{\mathrm{eff}}}}\right)\dfrac{A_{\mathrm{leaf}}}{C_s}, &amp; \mathrm{PPFD} &gt; \mathrm{PPFD}_{\mathrm{dark}} \;\text{ and }\; A_{\mathrm{leaf}} &gt; 0,
+\end{cases}
+\end{split}\]</div>
+<p>其中 <span class="math notranslate nohighlight">\(1.6\)</span> 为分子扩散系数比 <span class="math notranslate nohighlight">\(D_{\mathrm{H_2O}}/D_{\mathrm{CO_2}}\)</span>，<span class="math notranslate nohighlight">\(g_0 \ge 0\)</span> 为残余角质层或最小导度，<span class="math notranslate nohighlight">\(g_1\)</span> [kPa<span class="math notranslate nohighlight">\(^{1/2}\)</span>] 为边际水分代价斜率参数。<code class="docutils literal notranslate"><span class="pre">MedlynStomatalConductance</span></code> 通过 <code class="docutils literal notranslate"><span class="pre">REPLACE</span></code> 输出 <code class="docutils literal notranslate"><span class="pre">stomatal_conductance</span></code>，不求解隐式叶片能量平衡，也不修改碳库状态。</p>
+</section>
+<section id="light-use-efficiency-canopy-surrogate">
+<h3>光能利用效率冠层代理模型<a class="headerlink" href="#light-use-efficiency-canopy-surrogate" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">relic.scientific.biosphere.surrogates.simple_photosynthesis.SimpleCanopyPhotosynthesis</span></code>（<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>）提供 Monteith (1972) 光能利用效率诊断闭合式：</p>
+<div class="math notranslate nohighlight">
+\[
+\mathrm{GPP} = \varepsilon_{\max}\,\mathrm{APAR}\,f_T(T_a)\,f_{\mathrm{VPD}}(D)\,\beta_W,
+\]</div>
+<p>适用于未选用生化 <span class="math notranslate nohighlight">\(C_i\)</span> 迭代的粗尺度模拟或率定流程。在同一仿真图中，仅允许单个光合作用归属算子（<code class="docutils literal notranslate"><span class="pre">FarquharPhotosynthesis</span></code> 或 <code class="docutils literal notranslate"><span class="pre">SimpleCanopyPhotosynthesis</span></code>）持有 <code class="docutils literal notranslate"><span class="pre">gpp</span></code> 的写入权。</p>
+</section>
+</section>
+<section id="autotrophic-respiration-allocation-and-structural-growth">
+<h2>自养呼吸、分配与结构生长<a class="headerlink" href="#autotrophic-respiration-allocation-and-structural-growth" title="Link to this heading"></a></h2>
+<section id="maintenance-growth-and-total-autotrophic-respiration">
+<h3>维持呼吸、生长呼吸与总自养呼吸<a class="headerlink" href="#maintenance-growth-and-total-autotrophic-respiration" title="Link to this heading"></a></h3>
+<p>RELIC 将自养呼吸拆分为模块化的 <code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code> 归属算子（《生态学分析方法》，第 21 章；Ryan, 1991；Amthor, 2000）：</p>
+<ol class="arabic">
+<li><p><code class="docutils literal notranslate"><span class="pre">relic.scientific.biosphere.respiration.maintenance_respiration.MaintenanceRespiration</span></code> 根据活体生物量 <span class="math notranslate nohighlight">\(C_k\)</span> 或组织氮含量 <span class="math notranslate nohighlight">\(N_k\)</span>，结合 <span class="math notranslate nohighlight">\(Q_{10}\)</span> 或修正 Arrhenius 温度驯化响应计算各器官求和的维持呼吸消耗（Atkin and Tjoelker, 2003）：</p>
+<div class="math notranslate nohighlight">
+\[R_m = \sum_{k \in \{\mathrm{leaf,stem,root}\}} r_{m,k}\,M_k\,f_{T,k}(T_k), \qquad f_{T,k}(T_k) = Q_{10,k}^{(T_k - T_{\mathrm{ref}})/10}.\]</div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">relic.scientific.biosphere.respiration.growth_respiration.GrowthRespiration</span></code> 基于净同化盈余的正部计算生物合成建构呼吸消耗：</p>
+<div class="math notranslate nohighlight">
+\[R_g = f_{\mathrm{gr}}\,\max(\mathrm{GPP} - R_m,\; 0), \qquad 0 \le f_{\mathrm{gr}} &lt; 1.\]</div>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">relic.scientific.biosphere.respiration.autotrophic_respiration.AutotrophicRespiration</span></code> 闭合冠层自养碳通量收支：</p>
+<div class="math notranslate nohighlight">
+\[R_a = R_m + R_g, \qquad \mathrm{NPP} = \mathrm{GPP} - R_a, \qquad \mathrm{CUE} = \frac{\mathrm{NPP}}{\max(\mathrm{GPP}, \varepsilon_{\mathrm{GPP}})}.\]</div>
+</li>
+</ol>
+</section>
+<section id="simplex-carbon-allocation-and-organ-mass-conservation">
+<h3>单纯形碳分配与器官质量守恒<a class="headerlink" href="#simplex-carbon-allocation-and-organ-mass-conservation" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">relic.scientific.biosphere.growth.biomass_allocation.BiomassAllocation</span></code>（<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>）将环境光照、水分与养分限制信号映射为满足精确单纯形归一化的器官分配比例向量 <span class="math notranslate nohighlight">\(\mathbf{a} = (a_{\mathrm{leaf}}, a_{\mathrm{stem}}, a_{\mathrm{root}})^{\mathsf{T}}\)</span>（Friedlingstein et al., 1999）：</p>
+<div class="math notranslate nohighlight">
+\[
+a_k \ge 0,
+\qquad
+\sum_{k \in \{\mathrm{leaf,stem,root}\}} a_k = 1,
+\qquad
+F_{\mathrm{alloc},k} = a_k\,\max(\mathrm{NPP}, 0).
+\]</div>
+<p><code class="docutils literal notranslate"><span class="pre">relic.scientific.biosphere.growth.structural_growth.StructuralGrowth</span></code>（<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>）以衰老周转率 <span class="math notranslate nohighlight">\(\tau_k^{-1}\)</span> 推进各器官碳库 <span class="math notranslate nohighlight">\(C_k\)</span> [g C m<span class="math notranslate nohighlight">\(^{-2}\)</span>]：</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\mathrm{d}C_k}{\mathrm{d}t} = F_{\mathrm{alloc},k} - L_k,
+\qquad
+L_k = \frac{C_k}{\tau_k}\,f_{\mathrm{sen},k},
+\]</div>
+<p>通过 <code class="docutils literal notranslate"><span class="pre">UpdateItem(ACCUMULATE,</span> <span class="pre">per_timestep=True)</span></code> 输出积分后的碳库增量 <span class="math notranslate nohighlight">\(\Delta C_k\)</span>，通过 <code class="docutils literal notranslate"><span class="pre">REPLACE</span></code> 输出凋落通量 <span class="math notranslate nohighlight">\(L_k\)</span>（路由至土壤圈 <code class="docutils literal notranslate"><span class="pre">LitterfallInterfaceMapper</span></code>）以及预报叶面积指数 <span class="math notranslate nohighlight">\(L_{\mathrm{AI}} = \mathrm{SLA}\cdot C_{\mathrm{leaf}}\)</span>（其中 SLA 为比叶面积（Specific Leaf Area, SLA）），从而使单步碳收支账本 <span class="math notranslate nohighlight">\(\sum_k \Delta C_k + \sum_k L_k\Delta t - \sum_k F_{\mathrm{alloc},k}\Delta t = 0\)</span> 恒等闭合。<code class="docutils literal notranslate"><span class="pre">relic.scientific.biosphere.growth.phenology_growth.PhenologyGrowth</span></code>（<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">1</span></code>）提供只读的分阶段生长乘子，不修改碳储量。</p>
+</section>
+</section>
+<section id="phenology-and-abiotic-stress-closures">
+<h2>物候与非生物胁迫闭合<a class="headerlink" href="#phenology-and-abiotic-stress-closures" title="Link to this heading"></a></h2>
+<section id="leaf-phenology-models">
+<h3>叶片物候模型<a class="headerlink" href="#leaf-phenology-models" title="Link to this heading"></a></h3>
+<p>具体物候算子均继承 <code class="docutils literal notranslate"><span class="pre">relic.scientific.biosphere.phenology.base.PhenologyBase</span></code>：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">StaticPhenology</span></code>（<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>）：输出给定的定常 <span class="math notranslate nohighlight">\(L_{\mathrm{AI}}\)</span> 与绿度分数。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GDDPhenology</span></code>（<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>）：累积逐日热量强迫 <span class="math notranslate nohighlight">\(\Delta \mathrm{GDD} = \max(T_a - T_{\mathrm{base}}, 0)\,\Delta t_{\mathrm{days}}\)</span>（<code class="docutils literal notranslate"><span class="pre">ACCUMULATE</span></code>，<code class="docutils literal notranslate"><span class="pre">per_timestep=True</span></code>），驱动逻辑斯谛萌芽、满冠平台期以及低温/光周期衰老过程。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GSIPhenology</span></code>（<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>）：计算 Jolly et al. (2005) 生长季指数，表示为分段线性最低气温、光周期与饱和水汽压差指标的乘积，<span class="math notranslate nohighlight">\(\mathrm{GSI} = i_{T_{\min}}\,i_{\mathrm{photo}}\,i_{\mathrm{VPD}} \in [0, 1]\)</span>。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">CropPhenology</span></code>（<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>）：在出苗、营养生长、开花、灌浆与成熟阶段追踪经春化与光周期加权的热积温单元（热发育进度采用 <code class="docutils literal notranslate"><span class="pre">ACCUMULATE</span></code>，阶段诊断量采用 <code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PhenologyFunctor</span></code>（<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">1</span></code>）：投影当前物候阶段索引与冠层活性标量，不独立持有碳库状态。</p></li>
+</ul>
+</section>
+<section id="water-nutrient-thermal-and-ozone-stress-functors">
+<h3>水分、养分、温度与臭氧胁迫算子<a class="headerlink" href="#water-nutrient-thermal-and-ozone-stress-functors" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">WaterStress</span></code>、<code class="docutils literal notranslate"><span class="pre">NutrientStress</span></code> 与 <code class="docutils literal notranslate"><span class="pre">ThermalStress</span></code>（<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">1</span></code>）均为纯本构观测算子，将土壤含水量或水势、叶片氮磷比以及叶温极值映射为有界无量纲标量 <span class="math notranslate nohighlight">\(\beta_W, \beta_N, \beta_T \in [0, 1]\)</span>（<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>）。</p>
+<p><code class="docutils literal notranslate"><span class="pre">relic.scientific.biosphere.stress.ozone_stress.OzoneStress</span></code>（<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>）对超出通量阈值 <span class="math notranslate nohighlight">\(y\)</span> 的植物毒性臭氧剂量（<span class="math notranslate nohighlight">\(\mathrm{POD}_y\)</span>，[mmol m<span class="math notranslate nohighlight">\(^{-2}\)</span>]；Emberson et al., 2000；Sitch et al., 2007）求时间积分：</p>
+<div class="math notranslate nohighlight">
+\[
+F_{\mathrm{O_3,stom}} = g_{s,\mathrm{O_3}}\,[\mathrm{O}_3]_{\mathrm{canopy}},
+\qquad
+\Delta \mathrm{POD}_y = \max\!\left(F_{\mathrm{O_3,stom}} - y,\; 0\right)\Delta t,
+\]</div>
+<p>通过 <code class="docutils literal notranslate"><span class="pre">UpdateItem(ACCUMULATE,</span> <span class="pre">per_timestep=True)</span></code> 提交 <span class="math notranslate nohighlight">\(\Delta \mathrm{POD}_y\)</span>，并通过 <code class="docutils literal notranslate"><span class="pre">REPLACE</span></code> 输出由此产生的光合损伤因子 <span class="math notranslate nohighlight">\(\beta_{\mathrm{O_3}} = \operatorname{clip}(1 - a_{\mathrm{O_3}}\,\mathrm{POD}_y,\; \beta_{\mathrm{O_3,min}},\; 1)\)</span>。</p>
+</section>
+</section>
+<section id="biogenic-volatile-organic-compound-bvoc-synthesis-and-emission">
+<h2>生物源挥发性有机化合物（BVOC）合成与排放<a class="headerlink" href="#biogenic-volatile-organic-compound-bvoc-synthesis-and-emission" title="Link to this heading"></a></h2>
+<section id="canopy-empirical-megan-closure-and-continuous-co2-inhibition">
+<h3>冠层经验 MEGAN 闭合与连续 CO2 抑制<a class="headerlink" href="#canopy-empirical-megan-closure-and-continuous-co2-inhibition" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">relic.scientific.biosphere.bvoc.megan_model.MEGANModel</span></code>（<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>）依据 Guenther et al. (2006, 2012) 计算化合物类别 <span class="math notranslate nohighlight">\(s\)</span> 的冠层 BVOC 排放速率 <span class="math notranslate nohighlight">\(E_s\)</span>（《生态学分析方法》，第 22 章）：</p>
+<div class="math notranslate nohighlight">
+\[
+E_s = \varepsilon_s\,\gamma_{\mathrm{CE}}(L_{\mathrm{AI}})\,\gamma_P(\mathrm{PPFD})\,\gamma_T(T_l)\,\gamma_{\mathrm{age}}\,\gamma_{\mathrm{SM}}(\theta)\,\gamma_{\mathrm{CO_2}}(C_a),
+\]</div>
+<p>其中 <span class="math notranslate nohighlight">\(\varepsilon_s\)</span> 为标准条件排放因子，<span class="math notranslate nohighlight">\(\gamma_{\mathrm{CE}}, \gamma_P, \gamma_T, \gamma_{\mathrm{age}}, \gamma_{\mathrm{SM}}\)</span> 分别为冠层环境、光照（基于光合光子通量密度（Photosynthetic Photon Flux Density, PPFD））、温度最适、叶龄与土壤水分活性因子。对于异戊二烯的 <span class="math notranslate nohighlight">\(\mathrm{CO}_2\)</span> 抑制效应，RELIC 由胞间浓度 <span class="math notranslate nohighlight">\(C_i = r_{C_i} C_a\)</span>（<span class="math notranslate nohighlight">\(r_{C_i} = 0.7\)</span>，即当 <span class="math notranslate nohighlight">\(C_a = 400\)</span> ppm 时 <span class="math notranslate nohighlight">\(C_i = 280\)</span> ppm）连续计算 Wilkinson et al. (2009) 与 Guenther et al. (2012, Eq. 14) 的 Hill 曲线：</p>
+<div class="math notranslate nohighlight">
+\[
+\gamma_{\mathrm{CO_2}}(C_a) = \mathrm{IS}_{\max} - \frac{\mathrm{IS}_{\max}\,C_i^h}{C_\ast^h + C_i^h},
+\]</div>
+<p>其中 <span class="math notranslate nohighlight">\(\mathrm{IS}_{\max} = 1.344\)</span>，<span class="math notranslate nohighlight">\(C_\ast = 585\)</span> ppm，<span class="math notranslate nohighlight">\(h = 1.4614\)</span>。在环境浓度 <span class="math notranslate nohighlight">\(C_a = 400\)</span> ppm 下，该连续参数化在 <code class="docutils literal notranslate"><span class="pre">float64</span></code> 精度下求值为 <code class="docutils literal notranslate"><span class="pre">1.0024713532535012</span></code>（在 <code class="docutils literal notranslate"><span class="pre">float32</span></code> 精度下为 <code class="docutils literal notranslate"><span class="pre">1.0024713277816772</span></code>）；RELIC 不施加强制 <span class="math notranslate nohighlight">\(\gamma_{\mathrm{CO_2}}(400\;\mathrm{ppm}) = 1\)</span> 的人为不连续截断。</p>
+</section>
+<section id="mechanistic-plastidic-isoprene-resin-pool-monoterpene-and-sesquiterpene-synthesis">
+<h3>质体异戊二烯、树脂库单萜与倍半萜机理合成<a class="headerlink" href="#mechanistic-plastidic-isoprene-resin-pool-monoterpene-and-sesquiterpene-synthesis" title="Link to this heading"></a></h3>
+<ol class="arabic">
+<li><p><strong>质体 MEP 异戊二烯合成（<code class="docutils literal notranslate"><span class="pre">IsopreneSynthesis</span></code>，<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>）</strong>：<code class="docutils literal notranslate"><span class="pre">relic.scientific.biosphere.bvoc.synthesis.isoprene.IsopreneSynthesis</span></code> 刻画由光合电子传递速率 <span class="math notranslate nohighlight">\(J\)</span> 与 ATP/NADPH 能量供给共同驱动的叶绿体二甲基烯丙基二磷酸（Dimethylallyl Diphosphate, DMADP）底物供应（Niinemets et al., 1999；Morfopoulos et al., 2014），并耦合异戊二烯合酶 Arrhenius 动力学。由于叶片内无永久贮存器官，瞬时酶促合成速率直接等于排放速率（<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>）。</p></li>
+<li><p><strong>从头合成与有界贮存库双通道单萜动力学（<code class="docutils literal notranslate"><span class="pre">MonoterpeneSynthesis</span></code>，<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>）</strong>：<code class="docutils literal notranslate"><span class="pre">relic.scientific.biosphere.bvoc.synthesis.monoterpene.MonoterpeneSynthesis</span></code> 将光依赖从头合成（<em>de novo</em>）通量 <span class="math notranslate nohighlight">\(S_{\mathrm{denovo}}\)</span> 与专化树脂道或腺毛贮存库 <span class="math notranslate nohighlight">\(P \in [0, P_{\max}]\)</span> 区分建模（Schurgers et al., 2009；Grote et al., 2013）。记入库合成通量为 <span class="math notranslate nohighlight">\(S_{\mathrm{pool}}\)</span>、温度驱动的挥发释放通量为 <span class="math notranslate nohighlight">\(E_{\mathrm{pool}} = k_{\mathrm{rel}}(T_l)\,P\)</span>，未截断的库推进量 <span class="math notranslate nohighlight">\(P_{\mathrm{raw}} = P + (S_{\mathrm{pool}} - E_{\mathrm{pool}})\Delta t\)</span> 投影至 <span class="math notranslate nohighlight">\([0, P_{\max}]\)</span>：</p>
+<div class="math notranslate nohighlight">
+\[P_{\mathrm{next}} = \operatorname{clip}(P_{\mathrm{raw}},\; 0,\; P_{\max}), \qquad r_{\mathrm{bound}} = \frac{P_{\mathrm{raw}} - P_{\mathrm{next}}}{\Delta t},\]</div>
+<p>通过 <code class="docutils literal notranslate"><span class="pre">UpdateItem(ACCUMULATE,</span> <span class="pre">per_timestep=True)</span></code> 提交 <span class="math notranslate nohighlight">\(\Delta P = P_{\mathrm{next}} - P\)</span>，并将任何库容上界截断通量显式记录于 <code class="docutils literal notranslate"><span class="pre">pool_boundary_residual_rate</span></code>（<span class="math notranslate nohighlight">\(r_{\mathrm{bound}}\)</span>），使萜烯碳账本恒等闭合：</p>
+<div class="math notranslate nohighlight">
+\[\frac{\Delta P}{\Delta t} + E_{\mathrm{pool}} + r_{\mathrm{bound}} - S_{\mathrm{pool}} = 0.\]</div>
+</li>
+<li><p><strong>胁迫诱导倍半萜合成（<code class="docutils literal notranslate"><span class="pre">SesquiterpeneStressModel</span></code> <code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">1</span></code>，<code class="docutils literal notranslate"><span class="pre">SesquiterpeneSynthesis</span></code> <code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>）</strong>：<code class="docutils literal notranslate"><span class="pre">relic.scientific.biosphere.bvoc.synthesis.sesquiterpene.SesquiterpeneStressModel</span></code>（<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">1</span></code>）将氧化、热与生物/机械胁迫信号聚合为非负诱导乘子 <span class="math notranslate nohighlight">\(\gamma_{\mathrm{stress}}\)</span>（<code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>）；<code class="docutils literal notranslate"><span class="pre">relic.scientific.biosphere.bvoc.synthesis.sesquiterpene.SesquiterpeneSynthesis</span></code>（<code class="docutils literal notranslate"><span class="pre">Level</span> <span class="pre">2</span></code>）再将其与 <span class="math notranslate nohighlight">\(\beta\)</span> 指数温度挥发项 <span class="math notranslate nohighlight">\(\exp(\beta_{\mathrm{SQT}}(T_l - T_s))\)</span> 及光调控法尼基二磷酸从头合成（<em>de novo</em>）相耦合（Duhl et al., 2008）。</p></li>
+</ol>
+<p>在组合计算图中，针对任一给定的 BVOC 通量目标，用户应在冠层经验算子 <code class="docutils literal notranslate"><span class="pre">MEGANModel</span></code> 与机理化合物合成归属算子之间择一配置，确保输入大气化学与观测算子的地表排放具有唯一写入者。</p>
+</section>
+</section>
+<section id="references">
+<h2>参考文献<a class="headerlink" href="#references" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Amthor, J. S. (2000). The McCree-de Wit-Penning de Vries-Thornley respiration paradigms: 30 years later. <em>Annals of Botany</em>, 86, 1-20.</p></li>
+<li><p>Atkin, O. K. and Tjoelker, M. G. (2003). Thermal acclimation and the dynamic response of plant respiration to temperature. <em>Trends in Plant Science</em>, 8, 343-351.</p></li>
+<li><p>Bernacchi, C. J., Singsaas, E. L., Pimentel, C., Portis, A. R., and Long, S. P. (2001). Improved temperature response functions for models of Rubisco-limited photosynthesis. <em>Plant, Cell &amp; Environment</em>, 24, 253-259.</p></li>
+<li><p>Collatz, G. J., Ball, J. T., Grivet, C., and Berry, J. A. (1991). Physiological and environmental regulation of stomatal conductance, photosynthesis and transpiration: a model that includes a laminar boundary layer. <em>Agricultural and Forest Meteorology</em>, 54, 107-136.</p></li>
+<li><p>Duhl, T. R., Helmig, D., and Guenther, A. (2008). Sesquiterpene emissions from vegetation: a review. <em>Biogeosciences</em>, 5, 761-777. doi:10.5194/bg-5-761-2008.</p></li>
+<li><p>Emberson, L. D., Ashmore, M. R., Cambridge, H. M., Simpson, D., and Tuovinen, J.-P. (2000). Modelling stomatal ozone flux across Europe. <em>Environmental Pollution</em>, 109, 403-413.</p></li>
+<li><p>Farquhar, G. D., von Caemmerer, S., and Berry, J. A. (1980). A biochemical model of photosynthetic CO2 assimilation in leaves of C3 species. <em>Planta</em>, 149, 78-90.</p></li>
+<li><p>Friedlingstein, P., Joel, G., Field, C. B., and Fung, I. Y. (1999). Toward an allocation scheme for global terrestrial carbon models. <em>Global Change Biology</em>, 5, 755-770.</p></li>
+<li><p>Grote, R., Monson, R. K., and Niinemets, U. (2013). Leaf-level models of constitutive and stress-driven volatile organic compound emissions. In <em>Biology, Controls and Models of Tree Volatile Organic Compound Emissions</em>, Springer, 315-355.</p></li>
+<li><p>Guenther, A. et al. (2006). Estimates of global terrestrial isoprene emissions using MEGAN (Model of Emissions of Gases and Aerosols from Nature). <em>Atmospheric Chemistry and Physics</em>, 6, 3181-3210. doi:10.5194/acp-6-3181-2006.</p></li>
+<li><p>Guenther, A. B. et al. (2012). The Model of Emissions of Gases and Aerosols from Nature version 2.1 (MEGAN2.1): an extended and updated framework for modeling biogenic emissions. <em>Geoscientific Model Development</em>, 5, 1471-1492. doi:10.5194/gmd-5-1471-2012.</p></li>
+<li><p>Jolly, W. M., Nemani, R., and Running, S. W. (2005). A generalized, bioclimatic index to predict foliar phenology in response to climate. <em>Global Change Biology</em>, 11, 619-632.</p></li>
+<li><p>Medlyn, B. E. et al. (2002). Temperature response of parameters of a biochemically based model of photosynthesis. II. A review of experimental data. <em>Plant, Cell &amp; Environment</em>, 25, 1167-1179.</p></li>
+<li><p>Medlyn, B. E. et al. (2011). Reconciling the optimal and empirical approaches to modelling stomatal conductance. <em>Global Change Biology</em>, 17, 2134-2144. doi:10.1111/j.1365-2486.2010.02375.x.</p></li>
+<li><p>Monteith, J. L. (1972). Solar radiation and productivity in tropical ecosystems. <em>Journal of Applied Ecology</em>, 9, 747-766.</p></li>
+<li><p>Morfopoulos, C. et al. (2014). A model of plant isoprene emission based on available reducing power captures responses to atmospheric CO2. <em>New Phytologist</em>, 203, 125-139.</p></li>
+<li><p>Niinemets, U., Tenhunen, J. D., Harley, P. C., and Steinbrecher, R. (1999). A model of isoprene emission based on energetic requirements for isoprene synthesis and leaf photosynthetic properties for <em>Quercus coccifera</em>. <em>Plant, Cell &amp; Environment</em>, 22, 1319-1335.</p></li>
+<li><p>Ryan, M. G. (1991). Effects of climate change on plant respiration. <em>Ecological Applications</em>, 1, 157-167.</p></li>
+<li><p>Schurgers, G., Arneth, A., Holzinger, R., and Goldstein, A. H. (2009). Process-based modelling of biogenic monoterpene emissions combining production and release from storage. <em>Atmospheric Chemistry and Physics</em>, 9, 3409-3423. doi:10.5194/acp-9-3409-2009.</p></li>
+<li><p>Sitch, S., Cox, P. M., Collins, W. J., and Huntingford, C. (2007). Indirect radiative forcing of climate change through ozone effects on the land-carbon sink. <em>Nature</em>, 448, 791-794.</p></li>
+<li><p>Wilkinson, M. J. et al. (2009). Leaf isoprene emission rate as a function of atmospheric CO2 concentration. <em>Global Change Biology</em>, 15, 1189-1200. doi:10.1111/j.1365-2486.2008.01803.x.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="页脚">
+        <a href="atmosphere.html" class="btn btn-neutral float-left" title="大气圈过程理论" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="hydrosphere.html" class="btn btn-neutral float-right" title="水圈过程理论" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

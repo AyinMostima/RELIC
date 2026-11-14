@@ -1,0 +1,42 @@
+variable: diagnostics.two_region_exchange.storage_dissipation
+title: "Two-Region Storage Dissipation"
+kind: diagnostic
+dimension:
+  udunits: "kg2 m-6 s-1"
+  cf_standard_name: null
+support:
+  spatial_kind: grid_cell
+  area_basis: grid_area
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions:
+      - cell
+owner: "two_region_mass_transfer"
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "van Genuchten, M.Th. & Wierenga, P.J. (1976). Soil Sci. Soc. Am. J. 40, 473-480"
+  - "Haggerty, R. & Gorelick, S.M. (1995). Water Resour. Res. 31, 2383-2400"
+numerics:
+  lower_bound: null
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies: []
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-12
+      rtol: 1.0e-9
+provenance:
+  source_file: "relic/scientific/pedosphere/transport/two_region_mass_transfer.py"
+  runtime_role: "two_region_memory_diagnostic"
+  runtime_writer: "two_region_mass_transfer"
+  note: "Extended-storage time derivative -alpha (c_m - c_im)^2 at the step start; never positive."

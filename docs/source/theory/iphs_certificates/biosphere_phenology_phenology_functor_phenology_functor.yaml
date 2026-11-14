@@ -1,0 +1,124 @@
+certificate_version: '1.0'
+process_id: relic.scientific.biosphere.phenology.phenology_functor.PhenologyFunctor
+module_name: PhenologyFunctor
+canonical_role: observation
+iphs_level: 1
+iphs_level_evidence:
+  classification: IPHS-compatible dependency-injected observation aggregator
+  compatible_basis: Selected canonical phenology owner outputs are projected without changing state, units, dtype, device, or gradients
+theory_document: docs\source\theory\phenology.md
+theory_document_status: updated
+legacy_formula: Internal runtime selection evaluated duplicate static, GDD, GSI, or crop formulas and generated state updates.
+literature_formula: Static, GDD, GSI, and crop equations are evaluated only by their canonical owners in models.py.
+iphs_formula: z_h = P_owner y_h, where P_owner is a parameter-free diagnostic observation projection.
+legacy_expression: phi = f_selected(T, radiation, moisture, day_of_year, dt) inside PhenologyFunctor
+iphs_expression: z_h = P_owner y_h with no state advancement
+input_variables:
+- leaf_area_index
+- phenological_factor
+- phenology_senescence_factor
+- phenology_phase
+output_variables:
+- diagnostics.phenology_state
+- diagnostics.growth_stage
+- diagnostics.leaf_area_index
+- diagnostics.phenology.senescence_factor
+parameter_free: true
+composition_ports:
+- selected canonical phenology owner dependency-output channel
+references:
+- White, M.A. et al. (1997). Global Biogeochemical Cycles 11:217-234.
+- Jolly, W.M. et al. (2005). Global Change Biology 11:619-632.
+- McMaster, G.S. and Wilhelm, W.W. (1997). Agricultural and Forest Meteorology 87:291-300.
+- Jones, J.W. et al. (2003). European Journal of Agronomy 18:235-265.
+- Richardson, A.D. et al. (2013). Agricultural and Forest Meteorology 169:156-173.
+baseline_tests:
+- test\biosphere\test_phenology_diagnostics.py
+- test\biosphere\phenology\test_phenology_parameters.py
+- test\audit\phase8_scientific_inventory.test.py
+validation_tests:
+- test\biosphere\test_phenology_diagnostics.py
+- test\biosphere\phenology\test_phenology_parameters.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  leaf_area_index: selected owner leaf-area observation
+  phenological_factor: selected owner dimensionless development observation
+  phenology_senescence_factor: selected owner dimensionless senescence response factor
+  phenology_phase: selected owner phase observation
+  diagnostics.phenology_state: identity projection of phenological_factor
+  diagnostics.growth_stage: identity projection of phenology_phase
+  diagnostics.leaf_area_index: identity projection of leaf_area_index
+  diagnostics.phenology.senescence_factor: identity projection of phenology_senescence_factor
+parameter_map: {}
+operator_map:
+  P_owner: compile-time-selected identity and rename projection over required owner observations
+unit_map:
+  leaf_area_index: m2 m-2
+  phenological_factor: dimensionless
+  phenology_senescence_factor: dimensionless
+  phenology_phase: dimensionless
+  diagnostics.phenology_state: dimensionless
+  diagnostics.growth_stage: dimensionless
+  diagnostics.leaf_area_index: m2 m-2
+  diagnostics.phenology.senescence_factor: dimensionless
+input_output_map:
+  phenological_factor: diagnostics.phenology_state
+  phenology_phase: diagnostics.growth_stage
+  leaf_area_index: diagnostics.leaf_area_index
+  phenology_senescence_factor: diagnostics.phenology.senescence_factor
+interface_map:
+  forward_signature: forward(self, state, time, dt, subprocess_outputs)
+  bridge_class: BiologicalProcessFunctor
+  abstraction_contract: BiologicalProcess
+  state_write_mode: explicit REPLACE per-step diagnostics only; selected canonical model remains the sole scientific state owner
+  legacy_inputs:
+  - leaf_area_index
+  - phenological_factor
+  - phenology_senescence_factor
+  - phenology_phase
+  iphs_inputs:
+  - leaf_area_index
+  - phenological_factor
+  - phenology_senescence_factor
+  - phenology_phase
+  legacy_outputs:
+  - diagnostics.phenology_state
+  - diagnostics.growth_stage
+  - diagnostics.leaf_area_index
+  - diagnostics.phenology.senescence_factor
+  iphs_outputs:
+  - diagnostics.phenology_state
+  - diagnostics.growth_stage
+  - diagnostics.leaf_area_index
+  - diagnostics.phenology.senescence_factor
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: Scientific numerics remain exclusively in the selected StaticPhenology, GDDPhenology, GSIPhenology, or CropPhenology owner.
+  no_legacy_mode: PhenologyFunctor has no formula implementation, model instance, runtime switch, compatibility signature, or diagnostic fallback.
+state_advancement_map:
+  potential_basis: selected canonical owner observations
+  effort_variable: not applicable to a diagnostic observation projection
+  state_advancer: none; z_h = P_owner y_h is diagnostic only
+  runtime_usage: forward validates and projects dependency-injected owner observations without state advancement
+parameter_management_map:
+  parameter_free: compile-time dependency selection and identity observation projection require no scientific parameter
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares required observations and diagnostic outputs
+  state_contract: diagnostics are routed through the existing simulator and StateManager diagnostic path
+  validation_rule: phase8 scientific inventory and equivalence certificate checks
+dependency_interconnection_map:
+  dependencies: exactly one of static_phenology, gdd_phenology, gsi_phenology, or crop_phenology selected by config.canonical_model_owner
+  injection: existing simulator execution_group subprocess_outputs path
+  direct_functor_calls: none; one canonical owner is selected by config and its observations arrive through subprocess_outputs or state projection, not an instance call
+overflow_routing_map:
+  invalid_or_missing_observation: rejected before diagnostic projection
+  discarded_residuals: missing, non-scalar, non-finite, or out-of-range owner observations are rejected before diagnostic projection
+conservation_map:
+  conserved_quantities: none; observation projection is state-neutral
+  balance_expression: delta_state = 0
+entropy_audit:
+  operator_sign: not applicable to a state-neutral observation projection
+  sigma_expression: not applicable
+equivalence_type: diagnostic

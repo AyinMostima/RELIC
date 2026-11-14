@@ -1,0 +1,146 @@
+certificate_version: '1.0'
+process_id: relic.scientific.pedosphere.transport.two_region_mass_transfer.TwoRegionMassTransferFunctor
+module_name: TwoRegionMassTransferFunctor
+canonical_role: transport
+iphs_level: 3
+iphs_level_evidence:
+  classification: IPHS-structured mobile-immobile exchange certificate with declared passive memory realization (hybrid semantic memory)
+  compatible_basis: Two 0-cochains on the cell basis, mobile_solute_concentration and immobile_solute_concentration [kg m-3], with theta-weighted storage x = (theta_m c_m, theta_im c_im)
+  runtime_replacement: forward advances both states with the exact exponential solution of the linear exchange; no legacy branch, no separate memory manager.
+  canonical_operator: x_dot = -R e with e = (c_m, c_im), R = alpha [[1, -1], [-1, 1]] >= 0, J = 0; H = 0.5 (theta_m c_m^2 + theta_im c_im^2); dH/dt = -e^T R e = -alpha (c_m - c_im)^2
+  structural_contribution: J, R, H, effort, closed theta-weighted ledger, and the exponential memory kernel K(t) = alpha omega exp(-omega t) with hidden realization c_im are declared for assembly and rule audit
+  assembly_participation: Certificate participates in Phase 8 inventory, the stochastic_sdae_check memory execution binding, and GraphIR structural audit
+  level_3_limit: J, R, H, and the memory realization are declared and verified by tests, but no runtime-linked IPHSStructureSpec contribution or executable level 4 certificate binding is present.
+theory_document: docs\source\theory\pedosphere_two_region_mass_transfer.md
+theory_document_status: updated
+legacy_formula: theta_m dc_m/dt = -alpha (c_m - c_im); theta_im dc_im/dt = alpha (c_m - c_im)
+literature_formula: Two-region mobile-immobile first-order mass transfer (van Genuchten and Wierenga 1976); multirate mass transfer memory function with exponential kernel (Haggerty and Gorelick 1995)
+iphs_formula: x_dot = -R e, R = alpha [[1, -1], [-1, 1]], e = dH/dx = (c_m, c_im), H = 0.5 (theta_m c_m^2 + theta_im c_im^2)
+legacy_expression: d(t + dt) = d(t) exp(-kappa dt) with d = c_m - c_im and kappa = alpha (theta_m + theta_im)/(theta_m theta_im); m = theta_m c_m + theta_im c_im conserved
+iphs_expression: theta_m dc_m/dt = -alpha c_m + alpha e^{-omega t} c_im(0) + int_0^t alpha omega e^{-omega (t-s)} c_m(s) ds, omega = alpha/theta_im; hidden realization eta = c_im with d eta/dt = -omega eta + omega c_m
+input_variables:
+- mobile_solute_concentration
+- immobile_solute_concentration
+output_variables:
+- mobile_solute_concentration
+- immobile_solute_concentration
+- diagnostics.two_region_exchange.mass_transfer_rate
+- diagnostics.two_region_exchange.storage_dissipation
+- diagnostics.two_region_exchange.memory_residual
+parameter_keys:
+- pedosphere.transport.two_region_mass_transfer_coefficient
+- pedosphere.transport.two_region_mobile_water_content
+- pedosphere.transport.two_region_immobile_water_content
+composition_ports: []
+references:
+- van Genuchten, M.Th. & Wierenga, P.J. (1976). Mass transfer studies in sorbing porous media I. Soil Sci. Soc. Am. J. 40, 473-480
+- Haggerty, R. & Gorelick, S.M. (1995). Multiple-rate mass transfer for modeling diffusion and surface reactions in media with pore-scale heterogeneity. Water Resour. Res. 31, 2383-2400
+- RELIC Mathematical Foundations Revised v2, memory/Volterra semantics (exponential-kernel passive realization theorem)
+baseline_tests:
+- test\unit\pedosphere\test_two_region_mass_transfer.py
+- test\audit\phase8_scientific_inventory.test.py
+validation_tests:
+- test\unit\pedosphere\test_two_region_mass_transfer.py
+- test\integration\test_two_region_memory_integration.py
+- test\core\splitting_sub_flow_order.test.py
+- test\unit\validation\framework\rules\stochastic_sdae_structure.test.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  mobile_solute_concentration: effort state c_m of the mobile region [kg m-3]; input state and accumulated increment
+  immobile_solute_concentration: hidden memory realization c_im of the immobile region [kg m-3]; input state and accumulated increment
+  diagnostics.two_region_exchange.mass_transfer_rate: alpha (c_m - c_im) at the step start [kg m-3 s-1]
+  diagnostics.two_region_exchange.storage_dissipation: -alpha (c_m - c_im)^2 at the step start [kg2 m-6 s-1]
+  diagnostics.two_region_exchange.memory_residual: theta_m Delta c_m + theta_im Delta c_im of the emitted step [kg m-3]
+parameter_map:
+  pedosphere.transport.two_region_mass_transfer_coefficient: First-order mass transfer coefficient alpha [s-1]
+  pedosphere.transport.two_region_mobile_water_content: Mobile volumetric water content theta_m [m3 m-3]
+  pedosphere.transport.two_region_immobile_water_content: Immobile volumetric water content theta_im [m3 m-3]
+operator_map:
+  R_h: alpha [[1, -1], [-1, 1]] symmetric positive semidefinite dissipation on the effort pair (c_m, c_im)
+  J_h: zero; the exchange is purely dissipative
+  memory_kernel: K(t) = alpha omega exp(-omega t) with omega = alpha/theta_im obtained by eliminating c_im; realization d eta/dt = -omega eta + omega c_m with eta = c_im
+  time_integration: exact matrix-exponential update of the linear exchange with coefficients constant during one call; governed T11 verifies the dt-halving ladder against an independent 2-by-2 matrix exponential and the semigroup under unequal partitions
+  sub_flow_accuracy: FunctorMetadata.sub_flow_accuracy EXACT for the concentration state update up to floating-point rounding; the step-start diagnostic rates are not time-integrated by this declaration; one fast member reports exact, while an interacting composition remains limited by its other sub-flows and composition order
+unit_map:
+  mobile_solute_concentration: kg m-3
+  immobile_solute_concentration: kg m-3
+  diagnostics.two_region_exchange.mass_transfer_rate: kg m-3 s-1
+  diagnostics.two_region_exchange.storage_dissipation: kg2 m-6 s-1
+  diagnostics.two_region_exchange.memory_residual: kg m-3
+input_output_map:
+  mobile_solute_concentration: canonical state input and UpdateItem ACCUMULATE increment, per_timestep true
+  immobile_solute_concentration: canonical state input and UpdateItem ACCUMULATE increment, per_timestep true
+  diagnostics.two_region_exchange.mass_transfer_rate: canonical REPLACE observation of the step-start exchange rate
+  diagnostics.two_region_exchange.storage_dissipation: canonical REPLACE observation of the extended-storage derivative
+  diagnostics.two_region_exchange.memory_residual: canonical REPLACE observation of the closed theta-weighted ledger residual (memory residual route)
+interface_map:
+  forward_signature: forward(self, state, time, dt, **kwargs)
+  bridge_class: TransportMechanismFunctor
+  abstraction_contract: TransportMechanism
+  transport_type: interphase_mass_transfer
+  constructor_selection: TwoRegionMassTransferFunctor()
+  state_write_mode: UpdateItem ACCUMULATE with per_timestep true for both concentrations and REPLACE observations for diagnostics
+  legacy_inputs:
+  - mobile_solute_concentration
+  - immobile_solute_concentration
+  iphs_inputs:
+  - mobile_solute_concentration
+  - immobile_solute_concentration
+  legacy_outputs:
+  - mobile_solute_concentration
+  - immobile_solute_concentration
+  - diagnostics.two_region_exchange.mass_transfer_rate
+  - diagnostics.two_region_exchange.storage_dissipation
+  - diagnostics.two_region_exchange.memory_residual
+  iphs_outputs:
+  - mobile_solute_concentration
+  - immobile_solute_concentration
+  - diagnostics.two_region_exchange.mass_transfer_rate
+  - diagnostics.two_region_exchange.storage_dissipation
+  - diagnostics.two_region_exchange.memory_residual
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward -> exact exponential two-region update
+  preserved_numerics: The single forward path evaluates the closed-form solution of the linear exchange for the step and emits the exact increments; no alternative kinetic branch exists.
+  no_legacy_mode: No selectable legacy runtime branch is exposed; the Functor was introduced directly with the exact update.
+  non_strict_reason: Level 3 declares J, R, H, and the memory realization; the runtime-point IPHSStructureSpec witness (level 4) is not bound.
+state_advancement_map:
+  potential_basis: theta-weighted storage x = (theta_m c_m, theta_im c_im) with H = 0.5 (theta_m c_m^2 + theta_im c_im^2)
+  effort_variable: e = dH/dx = (c_m, c_im)
+  state_advancer: x_dot = -R e realized exactly per step by d(t+dt) = d(t) exp(-kappa dt) with the theta-weighted total held fixed
+  runtime_usage: TwoRegionMassTransferFunctor.forward validates both states and the step, evaluates the exact exchange, emits two ACCUMULATE increments and three REPLACE diagnostics, and reports the theta-weighted ledger residual through check_conservation_laws.
+parameter_management_map:
+  pedosphere.transport.two_region_mass_transfer_coefficient:
+    source: ParameterManager YAML
+  pedosphere.transport.two_region_mobile_water_content:
+    source: ParameterManager YAML
+  pedosphere.transport.two_region_immobile_water_content:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares two state inputs, two state outputs, three diagnostics, no dependencies, and the mass conservation law
+  state_contract: SCM contracts mobile_solute_concentration and immobile_solute_concentration (kg m-3, state) and the three diagnostics.two_region_exchange.* contracts type the GraphIR ports
+  validation_rule: stochastic_sdae_check with the memory execution binding (memory_kernels, memory_restart with history_state_keys immobile_solute_concentration), phase8 scientific inventory, and equivalence certificate checks
+  memory_binding: execution_bindings.memory names this class, its forward, the state pair, history_state_scope state_manager, and the unit test as executed evidence
+dependency_interconnection_map:
+  dependencies: no Functor dependencies; get_dependencies() returns an empty list
+  direct_functor_calls: none; the exact exchange is evaluated inside forward without calling another Functor or solver
+overflow_routing_map:
+  invalid_state_route: missing, non-tensor, non-floating, non-finite, negative, or shape-mismatched states fail before any UpdateItem
+  inadmissible_timestep_route: a non-positive or non-finite step fails before any UpdateItem
+  memory_residual_route: diagnostics.two_region_exchange.memory_residual carries theta_m Delta c_m + theta_im Delta c_im of every step (zero to rounding for the exact update)
+  discarded_residuals: no residual is discarded; the exact update needs no clipping
+conservation_map:
+  conserved_quantity: mass
+  balance_expression: theta_m Delta c_m + theta_im Delta c_im = 0 for every step (closed two-region ledger)
+  local_check: check_conservation_laws reports max |memory_residual| in kg m-3
+  functor_law: FunctorMetadata.conservation_laws includes mass
+entropy_audit:
+  dissipative_operator: R = alpha [[1, -1], [-1, 1]] is symmetric positive semidefinite for alpha > 0
+  storage_functional: H = 0.5 (theta_m c_m^2 + theta_im c_im^2)
+  effort_definition: e = (c_m, c_im)
+  sigma_expression: sigma = e^T R e = alpha (c_m - c_im)^2 >= 0
+  dH_balance: dH/dt = -sigma; the instantaneous power delivered to the mobile state may be positive (energy return from the immobile memory) while the extended storage never increases
+  units_and_scope: H is a theta-weighted concentration norm [kg2 m-6]; sigma is norm dissipation [kg2 m-6 s-1], not thermodynamic entropy production
+  validation_hook: unit tests verify the exact solution, the semigroup property, the nonincreasing extended storage, the Volterra reconstruction of the hidden state, and the closed ledger; no strict runtime Hamiltonian or GENERIC evidence is claimed
+equivalence_type: exact

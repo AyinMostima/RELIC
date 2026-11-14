@@ -1,0 +1,35 @@
+variable: baseflow_flux
+title: "Baseflow Flux"
+kind: flux
+dimension:
+  udunits: "kg m-2 s-1"
+  cf_standard_name: null
+owner: "groundwater_dynamics"
+aliases: []
+incrementable: false
+accumulates: null
+numerics:
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "groundwater_dynamics"
+      module: "relic.scientific.hydrosphere.groundwater.dynamics"
+      provides: ["baseflow_flux"]
+      unit: "kg m-2 s-1"
+flux_contract:
+  allowed_in:
+    - "groundwater_dynamics"
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/hydrosphere/groundwater/dynamics.py"
+  runtime_role: "groundwater_boundary_export_flux"
+  runtime_writer: "groundwater_dynamics"

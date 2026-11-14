@@ -1,0 +1,323 @@
+certificate_version: '1.0'
+process_id: relic.scientific.biosphere.photosynthesis.farquhar.FarquharPhotosynthesis
+module_name: FarquharPhotosynthesis
+canonical_role: reaction
+iphs_level: 2
+iphs_level_evidence:
+  classification: IPHS-wrapped reaction process certificate
+  compatible_basis: Reaction process is expressed through conserved or open stoichiometric ledgers
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: N_h r_h reaction-network state advance
+  level_2_limit: The canonical runtime wrapper is declared, but no executable typed-cochain or IPHS structural contribution is bound; strict level 4 or 5 evidence is not claimed.
+theory_document: docs\source\theory\photosynthesis.md
+theory_document_status: updated
+legacy_formula: A = min(Ac, Aj) - Rd; Ac = Vcmax * (Ci - Gamma_star) / (Ci + Kc * (1 + O/Ko)); Aj = J * (Ci - Gamma_star) / (4 * (Ci + 2*Gamma_star))
+literature_formula: A = min(Ac, Aj) - Rd; Ac = Vcmax * (Ci - Gamma_star) / (Ci + Kc * (1 + O/Ko)); Aj = J * (Ci - Gamma_star) / (4 * (Ci + 2*Gamma_star))
+iphs_formula: x_dot = N_h r_h with ParameterManager-backed process rates r_h and declared stoichiometric/output map N_h
+legacy_expression: A = min(Ac, Aj) - Rd; Ac = Vcmax * (Ci - Gamma_star) / (Ci + Kc * (1 + O/Ko)); Aj = J * (Ci - Gamma_star) / (4 * (Ci + 2*Gamma_star))
+iphs_expression: x_dot = N_h r_h with ParameterManager-backed process rates r_h and declared stoichiometric/output map N_h
+input_variables:
+- air_temperature
+- atmospheric_co2_ppm
+- ppfd
+- vapor_pressure_deficit
+- vcmax_scaling
+- vpmax_scaling
+- jmax_scaling
+- water_stress_factor
+- temperature_stress_factor
+- ozone_stress_factor
+- leaf_area_index
+- actual_vapor_pressure
+- air_temperature_max
+- air_temperature_min
+- latitude
+- day_of_year
+output_variables:
+- gross_photosynthesis
+- net_photosynthesis
+- gross_primary_productivity
+- electron_transport_rate
+- diagnostics.photosynthesis.dark_respiration
+- diagnostics.photosynthesis.transport_limited
+- diagnostics.photosynthesis.jmax_actual
+- diagnostics.photosynthesis.limitation_factor
+- diagnostics.photosynthesis.pathway_type
+- net_photosynthesis_daylight_samples
+parameter_keys:
+- biosphere.photosynthesis.pathway
+- biosphere.photosynthesis.vcmax25
+- biosphere.photosynthesis.jmax25
+- biosphere.photosynthesis.rd25
+- biosphere.photosynthesis.kc25
+- biosphere.photosynthesis.ko25
+- biosphere.photosynthesis.gamma_star25
+- biosphere.photosynthesis.ha_vcmax
+- biosphere.photosynthesis.hd_vcmax
+- biosphere.photosynthesis.s_vcmax
+- biosphere.photosynthesis.ha_jmax
+- biosphere.photosynthesis.hd_jmax
+- biosphere.photosynthesis.s_jmax
+- biosphere.respiration.rd_q10
+- biosphere.photosynthesis.ha_kc
+- biosphere.photosynthesis.ha_ko
+- biosphere.photosynthesis.ha_gamma_star
+- biosphere.photosynthesis.alpha
+- biosphere.photosynthesis.theta
+- biosphere.photosynthesis.o2_concentration
+- biosphere.photosynthesis.vpmax25
+- biosphere.photosynthesis.kp25
+- biosphere.photosynthesis.phi
+- biosphere.photosynthesis.ve_max25
+- biosphere.photosynthesis.ha_vpmax
+- biosphere.photosynthesis.hd_vpmax
+- biosphere.photosynthesis.s_vpmax
+- biosphere.photosynthesis.ha_kp
+- biosphere.photosynthesis.ha_ve_max
+- biosphere.photosynthesis.hd_ve_max
+- biosphere.photosynthesis.s_ve_max
+- biosphere.photosynthesis.vcmax_min_scaling
+- biosphere.photosynthesis.vcmax_max_scaling
+- biosphere.photosynthesis.canopy_light_extinction
+- biosphere.photosynthesis.rubisco_kinetic_factor1
+- biosphere.photosynthesis.rubisco_kinetic_factor2
+- biosphere.photosynthesis.c4_pathway_type
+- validation.numerical.epsilon_divide
+- validation.numerical.clamp_min_zero
+- validation.numerical.clamp_min_small
+- validation.numerical.clamp_max_one
+- validation.numerical.clamp_min_negative
+- validation.numerical.clamp_max_zero
+- validation.numerical.clamp_min_temperature
+- validation.numerical.clamp_max_temperature
+- validation.numerical.clamp_min_co2
+- validation.numerical.clamp_max_co2
+- validation.numerical.vpd_response_d0
+- validation.numerical.c4_electron_factor
+- validation.numerical.max_ppfd_validation
+composition_ports:
+- vapor_pressure_deficit
+- ppfd
+- gross_primary_productivity
+- electron_transport_rate
+references:
+- Farquhar, G.D., von Caemmerer, S., Berry, J.A. (1980). A biochemical model of photosynthetic CO2 assimilation in leaves of C3 species. Planta 149, 78-90
+- Medlyn et al. (2002). Temperature response of parameters of a biochemically based model of photosynthesis. Plant, Cell & Environment 25, 1167-1179
+- Bernacchi et al. (2001). Improved temperature response functions for models of Rubisco-limited photosynthesis. Plant, Cell & Environment 24, 253-259
+baseline_tests:
+- test\unit\biosphere\photosynthesis\test_photosynthesis_farquhar_l1.py
+- test\unit\biosphere\photosynthesis\test_farquhar_comprehensive.py
+- test\integration\biosphere\photosynthesis\test_photosynthesis_integration_l2.py
+- test\system\biosphere\photosynthesis\test_photosynthesis_system_l3.py
+- test\biosphere\photosynthesis\farquhar_environment_source.test.py
+- test\benchmark\device_speed_comparison.test.py
+- test\audit\phase8_scientific_inventory.test.py
+validation_tests:
+- test\unit\biosphere\photosynthesis\test_photosynthesis_farquhar_l1.py
+- test\integration\biosphere\photosynthesis\test_photosynthesis_integration_l2.py
+- test\system\biosphere\photosynthesis\test_photosynthesis_system_l3.py
+- test\orchestration\fixed_forest_boundary_layer_graph.test.py
+- test\benchmark\device_speed_comparison.test.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  air_temperature: required atmospheric temperature forcing in K
+  atmospheric_co2_ppm: required atmospheric CO2 mole-fraction forcing in umol mol-1
+  ppfd: required photon flux from atmospheric_radiation, or from external forcing under environment_source = external_forcing, in umol photons m-2 s-1
+  vapor_pressure_deficit: required atmospheric demand from environmental_forcing, or from external forcing under environment_source = external_forcing, in Pa
+  vcmax_scaling: optional C3/C4 capacity control
+  vpmax_scaling: optional C4 PEP capacity control
+  jmax_scaling: optional electron-transport capacity control
+  water_stress_factor: optional water limitation control in the unit interval
+  temperature_stress_factor: optional damage control outside enzyme temperature response in the unit interval
+  ozone_stress_factor: optional C3 ozone limitation control in the unit interval
+  leaf_area_index: required canopy state of the Beer-Lambert scaling L_eff = (1 - exp(-k LAI)) / k [m2 m-2]; no default
+  actual_vapor_pressure: actual vapour pressure e_a, read only with temporal_support daylight_gauss (D_k = max(e0(T_k) - e_a, 0) at the daylight samples)
+  air_temperature_max: daily maximum air temperature, read only with temporal_support daylight_gauss (diurnal course T_k of the samples)
+  air_temperature_min: daily minimum air temperature, read only with temporal_support daylight_gauss (diurnal course T_k of the samples)
+  latitude: latitude of the cell, read only with temporal_support daylight_gauss (daylight geometry of the samples)
+  day_of_year: day of year, read only with temporal_support daylight_gauss (daylight geometry of the samples)
+parameter_map:
+  biochemical_parameters: Full C3 and C4 kinetics resolve through the declared biosphere ParameterManager keys.
+  optional_controls: an absent stress factor or capacity scaling is the multiplicative identity 1 (no limitation, no scaling); no ParameterManager default is read.
+  numerical_guardrails: Finite-domain limits and VPD/PPFD response scales resolve through validation.numerical keys.
+  physical_constants: Gas constant, reference temperature, and carbon molar mass resolve through get_physical_constant from the physical constants SSOT.
+  pft_overrides: Optional biosphere.pft.<pft_name>.photosynthesis keys may replace declared base parameters before execution.
+operator_map:
+  N_h: declared stoichiometric or output incidence map for this reaction process
+  r_h: ParameterManager-backed process-rate vector evaluated by the production forward path
+unit_map:
+  gross_photosynthesis: umol CO2 m-2 s-1
+  net_photosynthesis: umol CO2 m-2 s-1
+  gross_primary_productivity: kg C m-2 s-1
+  electron_transport_rate: umol e- m-2 s-1
+  diagnostics.photosynthesis.dark_respiration: umol CO2 m-2 s-1
+  diagnostics.photosynthesis.transport_limited: umol CO2 m-2 s-1
+  diagnostics.photosynthesis.jmax_actual: umol e- m-2 s-1
+  diagnostics.photosynthesis.limitation_factor: dimensionless
+  diagnostics.photosynthesis.pathway_type: dimensionless
+  actual_vapor_pressure: Pa
+  air_temperature_max: K
+  air_temperature_min: K
+  latitude: degrees_north
+  day_of_year: '1'
+  net_photosynthesis_daylight_samples: umol CO2 m-2 s-1
+input_output_map:
+  air_temperature: required finite K forcing consumed without alias or parameter default
+  atmospheric_co2_ppm: required finite umol mol-1 forcing used as the current effective Ci driver
+  ppfd: required photon flux produced by atmospheric_radiation or supplied as external forcing
+  vapor_pressure_deficit: required Pa forcing produced by environmental_forcing or supplied as external forcing
+  optional_controls: absent scaling and stress-factor inputs are the identity 1; leaf_area_index is required
+  gross_photosynthesis: gross molar assimilation is exposed as an instantaneous replacement port
+  net_photosynthesis: net molar assimilation equals gross assimilation minus dark respiration
+  gross_primary_productivity: gross assimilation is converted to kg C m-2 s-1 with the carbon molar mass SSOT
+  electron_transport_rate: retained public port is consumed by mechanistic isoprene synthesis
+  diagnostics: secondary biochemical observations are emitted only under diagnostics.photosynthesis
+  net_photosynthesis_daylight_samples: net assimilation at the daylight Gauss samples, written only with temporal_support daylight_gauss
+interface_map:
+  forward_signature: forward(self, state, time, dt)
+  bridge_class: BiologicalProcessFunctor
+  abstraction_contract: BiologicalProcess
+  state_write_mode: explicit UpdateItem REPLACE with per_timestep=false through StateManager
+  legacy_inputs:
+  - air_temperature
+  - atmospheric_co2_ppm
+  - ppfd
+  - vapor_pressure_deficit
+  - vcmax_scaling
+  - vpmax_scaling
+  - jmax_scaling
+  - water_stress_factor
+  - temperature_stress_factor
+  - ozone_stress_factor
+  - leaf_area_index
+  - actual_vapor_pressure
+  - air_temperature_max
+  - air_temperature_min
+  - latitude
+  - day_of_year
+  iphs_inputs:
+  - air_temperature
+  - atmospheric_co2_ppm
+  - ppfd
+  - vapor_pressure_deficit
+  - vcmax_scaling
+  - vpmax_scaling
+  - jmax_scaling
+  - water_stress_factor
+  - temperature_stress_factor
+  - ozone_stress_factor
+  - leaf_area_index
+  - actual_vapor_pressure
+  - air_temperature_max
+  - air_temperature_min
+  - latitude
+  - day_of_year
+  legacy_outputs:
+  - gross_photosynthesis
+  - net_photosynthesis
+  - gross_primary_productivity
+  - electron_transport_rate
+  - diagnostics.photosynthesis.dark_respiration
+  - diagnostics.photosynthesis.transport_limited
+  - diagnostics.photosynthesis.jmax_actual
+  - diagnostics.photosynthesis.limitation_factor
+  - diagnostics.photosynthesis.pathway_type
+  - net_photosynthesis_daylight_samples
+  iphs_outputs:
+  - gross_photosynthesis
+  - net_photosynthesis
+  - gross_primary_productivity
+  - electron_transport_rate
+  - diagnostics.photosynthesis.dark_respiration
+  - diagnostics.photosynthesis.transport_limited
+  - diagnostics.photosynthesis.jmax_actual
+  - diagnostics.photosynthesis.limitation_factor
+  - diagnostics.photosynthesis.pathway_type
+  - net_photosynthesis_daylight_samples
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: ParameterManager-backed C3/C4 kinetics execute through one eager PyTorch forward path.
+  no_legacy_mode: No input alias, compiled fallback, simplified formula branch, or selectable legacy runtime is exposed.
+state_advancement_map:
+  potential_basis: open gross-assimilation, net-assimilation, and dark-respiration output ports
+  effort_variable: atmospheric CO2, PPFD, VPD, temperature, and optional control drivers; no thermodynamic effort proof is claimed
+  state_advancer: x_dot = N_h r_h uses an identity-like output incidence and advance_reaction_network with open_system_route=port
+  runtime_usage: FarquharPhotosynthesis.forward calls advance_reaction_network with declared stoichiometric_N and rates before emitting canonical outputs.
+  explicit_stoichiometric_usage: FarquharPhotosynthesis.forward materializes stoichiometric_N and rates, then lowers x_dot=N_h r_h through advance_reaction_network.
+parameter_management_map:
+  biosphere.photosynthesis.pathway: {source: ParameterManager YAML}
+  biosphere.photosynthesis.vcmax25: {source: ParameterManager YAML}
+  biosphere.photosynthesis.jmax25: {source: ParameterManager YAML}
+  biosphere.photosynthesis.rd25: {source: ParameterManager YAML}
+  biosphere.photosynthesis.kc25: {source: ParameterManager YAML}
+  biosphere.photosynthesis.ko25: {source: ParameterManager YAML}
+  biosphere.photosynthesis.gamma_star25: {source: ParameterManager YAML}
+  biosphere.photosynthesis.ha_vcmax: {source: ParameterManager YAML}
+  biosphere.photosynthesis.hd_vcmax: {source: ParameterManager YAML}
+  biosphere.photosynthesis.s_vcmax: {source: ParameterManager YAML}
+  biosphere.photosynthesis.ha_jmax: {source: ParameterManager YAML}
+  biosphere.photosynthesis.hd_jmax: {source: ParameterManager YAML}
+  biosphere.photosynthesis.s_jmax: {source: ParameterManager YAML}
+  biosphere.respiration.rd_q10: {source: ParameterManager YAML}
+  biosphere.photosynthesis.ha_kc: {source: ParameterManager YAML}
+  biosphere.photosynthesis.ha_ko: {source: ParameterManager YAML}
+  biosphere.photosynthesis.ha_gamma_star: {source: ParameterManager YAML}
+  biosphere.photosynthesis.alpha: {source: ParameterManager YAML}
+  biosphere.photosynthesis.theta: {source: ParameterManager YAML}
+  biosphere.photosynthesis.o2_concentration: {source: ParameterManager YAML}
+  biosphere.photosynthesis.vpmax25: {source: ParameterManager YAML}
+  biosphere.photosynthesis.kp25: {source: ParameterManager YAML}
+  biosphere.photosynthesis.phi: {source: ParameterManager YAML}
+  biosphere.photosynthesis.ve_max25: {source: ParameterManager YAML}
+  biosphere.photosynthesis.ha_vpmax: {source: ParameterManager YAML}
+  biosphere.photosynthesis.hd_vpmax: {source: ParameterManager YAML}
+  biosphere.photosynthesis.s_vpmax: {source: ParameterManager YAML}
+  biosphere.photosynthesis.ha_kp: {source: ParameterManager YAML}
+  biosphere.photosynthesis.ha_ve_max: {source: ParameterManager YAML}
+  biosphere.photosynthesis.hd_ve_max: {source: ParameterManager YAML}
+  biosphere.photosynthesis.s_ve_max: {source: ParameterManager YAML}
+  biosphere.photosynthesis.vcmax_min_scaling: {source: ParameterManager YAML}
+  biosphere.photosynthesis.vcmax_max_scaling: {source: ParameterManager YAML}
+  biosphere.photosynthesis.canopy_light_extinction: {source: ParameterManager YAML}
+  biosphere.photosynthesis.rubisco_kinetic_factor1: {source: ParameterManager YAML}
+  biosphere.photosynthesis.rubisco_kinetic_factor2: {source: ParameterManager YAML}
+  biosphere.photosynthesis.c4_pathway_type: {source: ParameterManager YAML}
+  validation.numerical.epsilon_divide: {source: ParameterManager YAML}
+  validation.numerical.clamp_min_zero: {source: ParameterManager YAML}
+  validation.numerical.clamp_min_small: {source: ParameterManager YAML}
+  validation.numerical.clamp_max_one: {source: ParameterManager YAML}
+  validation.numerical.clamp_min_negative: {source: ParameterManager YAML}
+  validation.numerical.clamp_max_zero: {source: ParameterManager YAML}
+  validation.numerical.clamp_min_temperature: {source: ParameterManager YAML}
+  validation.numerical.clamp_max_temperature: {source: ParameterManager YAML}
+  validation.numerical.clamp_min_co2: {source: ParameterManager YAML}
+  validation.numerical.clamp_max_co2: {source: ParameterManager YAML}
+  validation.numerical.vpd_response_d0: {source: ParameterManager YAML}
+  validation.numerical.c4_electron_factor: {source: ParameterManager YAML}
+  validation.numerical.max_ppfd_validation: {source: ParameterManager YAML}
+composition_management_map:
+  functor_metadata: FunctorMetadata declares the exact eleven-input and nine-output interface.
+  state_contract: All outputs use explicit REPLACE UpdateItems and StateManager owns mutation.
+  physical_constant_ssot: Gas constant, reference temperature, and carbon molar mass resolve only through get_physical_constant.
+  validation_rule: Phase 8 inventory, output-contract scan, L1/L2/L3 tests, and the real simulator benchmark validate the contract.
+dependency_interconnection_map:
+  dependencies: By default environmental_forcing must produce vapor_pressure_deficit and atmospheric_radiation must produce ppfd before Farquhar execution. Under environment_source = external_forcing neither provider is declared, both inputs are State:ExternalForcing, and the law is unchanged.
+  canonical_graph: external forcing -> {environmental_forcing, atmospheric_radiation} -> farquhar_photosynthesis; with environment_source = external_forcing, external forcing -> farquhar_photosynthesis
+  direct_functor_calls: none; execution is mediated by the existing simulator dependency graph.
+overflow_routing_map:
+  biochemical_bounds: Non-negative gross limitation rates define the open uptake port; no prognostic reservoir mass is clipped.
+  invalid_inputs: Missing, non-finite, or out-of-domain required forcings fail before rate evaluation.
+  discarded_residuals: none; the module advances no local reservoir and emits no hidden source or sink.
+conservation_map:
+  conserved_quantities: open carbon exchange; no closed local energy or carbon reservoir is claimed
+  metadata_laws:
+  - carbon_boundary
+  balance_expression: net_photosynthesis = gross_photosynthesis - diagnostics.photosynthesis.dark_respiration; GPP_kgC = gross_photosynthesis * M_C * 1e-9
+  local_check: check_conservation_laws requires floating finite shape-, dtype-, and device-matched ports and returns the maximum normalized residual across the molar assimilation identity and canonical carbon-mass mapping
+  open_system_route: gross uptake and respiration are explicit atmosphere-biosphere ports
+entropy_audit:
+  operator_sign: Gross uptake rates are non-negative and all emitted values are finite.
+  sigma_expression: No independent entropy-production or GENERIC degeneracy proof is claimed at level 2.
+equivalence_type: thermodynamic_embedding

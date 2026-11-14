@@ -1,0 +1,641 @@
+schema_version: 2.0.0
+tier: relic
+namespace: transport.advection
+description: Advection transport parameters for fluid and particle transport in atmosphere, hydrosphere, and pedosphere
+metadata:
+  created_by: RELIC Parameter System
+  last_modified: '2026-01-07T14:20:26Z'
+  schema_url: https://github.com/relic/parameter-schema/v2.0.0
+  version: 1.0.0
+functor_metadata:
+  spatial_scale: grid_cell
+  variable_kind: state
+  input_variables:
+    - tracer_concentration
+    - velocity_field
+    - source_term
+    - tracer_concentration_boundary_state
+  output_variables:
+    - tracer_concentration
+    - tracer_concentration_advective_boundary_flux
+    - diagnostics.cfl_number
+    - diagnostics.conservation_error
+  conservation_laws:
+    - mass
+  references:
+    - Courant et al. (1928)
+    - LeVeque (2007)
+    - Sweby (1984)
+parameters:
+  transport.advection.grid_spacing:
+    value: 1.0
+    default: 1.0
+    units: m
+    dtype: float32
+    bounds:
+    - 1.0e-06
+    - 1000.0
+    category: spatial_discretization
+    description: Default grid spacing for advection calculations
+    references:
+    - Spatial discretization requirement
+    tags:
+    - numerical
+    - spatial
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: numerical_method
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  transport.advection.minimal_diffusivity:
+    value: 1.0e-12
+    default: 1.0e-12
+    units: m2 s-1
+    dtype: float32
+    bounds:
+    - 1.0e-15
+    - 1.0e-09
+    category: numerical_stability
+    description: Minimal diffusivity for pure advection (numerical stability)
+    references:
+    - Numerical stability requirement for hyperbolic solvers
+    tags:
+    - numerical
+    - stability
+    dimension: diffusivity
+    requires_grad: false
+    provenance:
+      source: numerical_method
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  transport.advection.default_velocity_magnitude:
+    value: 1.0
+    default: 1.0
+    units: m s-1
+    dtype: float32
+    bounds:
+    - 1.0e-06
+    - 100.0
+    category: transport_parameter
+    description: Default velocity magnitude for uniform flow
+    references:
+    - Typical atmospheric/water velocities
+    tags:
+    - default
+    - velocity
+    dimension: velocity
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  transport.advection.default_velocity_direction_x:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - -1.0
+    - 1.0
+    category: transport_parameter
+    description: Default x-component of velocity direction vector
+    references:
+    - Unit vector component
+    tags:
+    - default
+    - direction
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  transport.advection.default_velocity_direction_y:
+    value: 0.0
+    default: 0.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - -1.0
+    - 1.0
+    category: transport_parameter
+    description: Default y-component of velocity direction vector
+    references:
+    - Unit vector component
+    tags:
+    - default
+    - direction
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  transport.advection.default_velocity_direction_z:
+    value: 0.0
+    default: 0.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - -1.0
+    - 1.0
+    category: transport_parameter
+    description: Default z-component of velocity direction vector
+    references:
+    - Unit vector component
+    tags:
+    - default
+    - direction
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  transport.advection.wind_speed_surface:
+    value: 2.0
+    default: 2.0
+    units: m s-1
+    dtype: float32
+    bounds:
+    - 0.1
+    - 50.0
+    category: atmospheric_parameter
+    description: Typical surface wind speed
+    references:
+    - Meteorological observations
+    tags:
+    - atmospheric
+    - wind
+    dimension: velocity
+    requires_grad: false
+    provenance:
+      source: observational
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  transport.advection.wind_direction_mean:
+    value: 0.0
+    default: 0.0
+    units: rad
+    dtype: float32
+    bounds:
+    - 0.0
+    - 6.283185
+    category: atmospheric_parameter
+    description: Mean wind direction (0 = east, pi/2 = north)
+    references:
+    - Meteorological convention
+    tags:
+    - atmospheric
+    - direction
+    dimension: angular
+    requires_grad: false
+    provenance:
+      source: convention
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  transport.advection.wind_profile_exponent:
+    value: 0.2
+    default: 0.2
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 0.4
+    category: atmospheric_parameter
+    description: Power law exponent for wind profile u(z) = u_ref*(z/z_ref)^alpha
+    references:
+    - Atmospheric boundary layer theory
+    - Stull (1988). An Introduction to Boundary Layer Meteorology
+    tags:
+    - atmospheric
+    - boundary_layer
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  transport.advection.reference_height:
+    value: 10.0
+    default: 10.0
+    units: m
+    dtype: float32
+    bounds:
+    - 1.0
+    - 100.0
+    category: atmospheric_parameter
+    description: Reference height for wind speed measurements
+    references:
+    - WMO standard meteorological height
+    tags:
+    - atmospheric
+    - height
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: standard
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  transport.advection.stream_velocity:
+    value: 0.5
+    default: 0.5
+    units: m s-1
+    dtype: float32
+    bounds:
+    - 0.01
+    - 10.0
+    category: hydrological_parameter
+    description: Typical stream/river velocity
+    references:
+    - Hydrological observations
+    tags:
+    - hydrological
+    - stream
+    dimension: velocity
+    requires_grad: false
+    provenance:
+      source: observational
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  transport.advection.groundwater_velocity:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: m s-1
+    dtype: float32
+    bounds:
+    - 1.0e-08
+    - 0.0001
+    category: hydrological_parameter
+    description: Typical groundwater velocity
+    references:
+    - Hydrogeological observations
+    - Freeze & Cherry (1979). Groundwater
+    tags:
+    - hydrological
+    - groundwater
+    dimension: velocity
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  transport.advection.upwind_coefficient:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: numerical_scheme
+    description: Upwind scheme coefficient (1.0 = full upwind, 0.0 = central difference)
+    references:
+    - Numerical scheme parameter
+    - LeVeque (2002). Finite Volume Methods for Hyperbolic Problems
+    tags:
+    - numerical
+    - scheme
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_method
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  transport.advection.flux_limiter_type:
+    value: superbee
+    default: superbee
+    units: dimensionless
+    dtype: string
+    allowed_values:
+    - upwind
+    - superbee
+    - van_leer
+    - minmod
+    bounds: null
+    category: numerical_scheme
+    description: Flux limiter type for high-resolution schemes
+    references:
+    - Sweby (1984). High resolution schemes using flux limiters for hyperbolic conservation laws. SIAM J. Numer. Anal.
+    tags:
+    - numerical
+    - limiter
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  transport.advection.limiter_smoothness_parameter:
+    value: 2.0
+    default: 2.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 4.0
+    category: numerical_scheme
+    description: Smoothness parameter for flux limiters (r-parameter in Sweby diagram)
+    references:
+    - Sweby (1984). SIAM J. Numer. Anal.
+    tags:
+    - numerical
+    - limiter
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  transport.advection.inflow_boundary_type:
+    value: dirichlet
+    default: dirichlet
+    units: dimensionless
+    dtype: string
+    allowed_values:
+    - dirichlet
+    - neumann
+    - open
+    bounds: null
+    category: boundary_condition
+    description: Boundary condition type for inflow boundaries
+    references:
+    - Boundary condition specification for hyperbolic systems
+    tags:
+    - boundary
+    - numerical
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_method
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  transport.advection.outflow_boundary_type:
+    value: open
+    default: open
+    units: dimensionless
+    dtype: string
+    allowed_values:
+    - dirichlet
+    - neumann
+    - open
+    bounds: null
+    category: boundary_condition
+    description: Boundary condition type for outflow boundaries
+    references:
+    - Open boundary conditions for advection-dominated flows
+    tags:
+    - boundary
+    - numerical
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_method
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  transport.advection.wall_boundary_type:
+    value: reflecting
+    default: reflecting
+    units: dimensionless
+    dtype: string
+    allowed_values:
+    - reflecting
+    - absorbing
+    - periodic
+    bounds: null
+    category: boundary_condition
+    description: Boundary condition type for solid walls
+    references:
+    - Wall boundary conditions for particle transport
+    tags:
+    - boundary
+    - numerical
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_method
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  transport.advection.subcycling_factor:
+    value: 1
+    default: 1
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 10
+    category: numerical_scheme
+    description: Number of advection subcycles per time step for CFL stability
+    references:
+    - Courant-Friedrichs-Lewy stability enhancement
+    tags:
+    - numerical
+    - stability
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_method
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  transport.advection.adaptive_velocity_threshold:
+    value: 1.0e-10
+    default: 1.0e-10
+    units: m s-1
+    dtype: float32
+    bounds:
+    - 1.0e-15
+    - 1.0e-06
+    category: numerical_efficiency
+    description: Minimum velocity magnitude for advection calculation (skip below threshold)
+    references:
+    - Numerical efficiency for negligible advection
+    tags:
+    - numerical
+    - threshold
+    dimension: velocity
+    requires_grad: false
+    provenance:
+      source: numerical_method
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  transport.advection.atmospheric_stability_class:
+    value: D
+    default: D
+    units: dimensionless
+    dtype: string
+    allowed_values:
+    - A
+    - B
+    - C
+    - D
+    - E
+    - F
+    bounds: null
+    category: atmospheric_parameter
+    description: Pasquill-Gifford atmospheric stability class (A=very unstable, D=neutral, F=very stable)
+    references:
+    - Pasquill (1961). The estimation of the dispersion of windborne material. Meteorol. Mag.
+    - Gifford (1961). Use of routine meteorological observations for estimating atmospheric dispersion. Nucl. Safety
+    tags:
+    - atmospheric
+    - stability
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  transport.advection.mixing_height:
+    value: 1000.0
+    default: 1000.0
+    units: m
+    dtype: float32
+    bounds:
+    - 100.0
+    - 3000.0
+    category: atmospheric_parameter
+    description: Atmospheric mixing layer height (boundary layer depth)
+    references:
+    - Stull (1988). An Introduction to Boundary Layer Meteorology
+    tags:
+    - atmospheric
+    - boundary_layer
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  transport.advection.roughness_length:
+    value: 0.1
+    default: 0.1
+    units: m
+    dtype: float32
+    bounds:
+    - 0.0001
+    - 10.0
+    category: atmospheric_parameter
+    description: Aerodynamic roughness length for momentum transfer
+    references:
+    - Brutsaert (1982). Evaporation into the Atmosphere
+    tags:
+    - atmospheric
+    - surface
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  transport.advection.current_speed_surface:
+    value: 0.2
+    default: 0.2
+    units: m s-1
+    dtype: float32
+    bounds:
+    - 0.01
+    - 5.0
+    category: oceanographic_parameter
+    description: Typical surface ocean current speed
+    references:
+    - Oceanographic observations
+    tags:
+    - oceanographic
+    - current
+    dimension: velocity
+    requires_grad: false
+    provenance:
+      source: observational
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  transport.advection.current_shear_rate:
+    value: 0.01
+    default: 0.01
+    units: s-1
+    dtype: float32
+    bounds:
+    - 0.0001
+    - 1.0
+    category: oceanographic_parameter
+    description: Vertical shear rate in water column (du/dz)
+    references:
+    - Ocean dynamics and mixing
+    tags:
+    - oceanographic
+    - shear
+    dimension: frequency
+    requires_grad: false
+    provenance:
+      source: observational
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  transport.advection.tidal_amplitude:
+    value: 1.0
+    default: 1.0
+    units: m s-1
+    dtype: float32
+    bounds:
+    - 0.1
+    - 10.0
+    category: oceanographic_parameter
+    description: Tidal current amplitude
+    references:
+    - Tidal dynamics and coastal oceanography
+    tags:
+    - oceanographic
+    - tidal
+    dimension: velocity
+    requires_grad: false
+    provenance:
+      source: observational
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  transport.advection.tidal_period:
+    value: 44712.0
+    default: 44712.0
+    units: s
+    dtype: float32
+    bounds:
+    - 20000.0
+    - 50000.0
+    category: oceanographic_parameter
+    description: Principal lunar semidiurnal tidal period (M2 = 12.42 hours)
+    references:
+    - Pugh (1987). Tides, Surges and Mean Sea-Level
+    tags:
+    - oceanographic
+    - tidal
+    dimension: time
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'

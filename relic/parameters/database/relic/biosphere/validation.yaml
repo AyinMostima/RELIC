@@ -1,0 +1,81 @@
+schema_version: 2.0.0
+tier: relic
+namespace: biosphere.validation
+description: Biosphere-wide validation tolerances and numerical safeguards
+metadata:
+  created_by: Yuchong Long
+  last_modified: '2025-02-14T10:00:00Z'
+  source: Numerical stability requirements for phenology coupling
+  quality: validated
+  version: 1.0.0
+parameters:
+  tolerance.phenology:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-12
+    - 0.0001
+    category: numerical_parameter
+    description: Tolerance for phenology model numerical validation checks
+    references:
+    - Guenther, A. B. et al. (2012) Geosci. Model Dev., 5, 1471-1492
+    tags:
+    - validation
+    - phenology
+    - numerical_stability
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-02-14T10:00:00Z'
+  epsilon.nutrient:
+    value: 0.0001
+    default: 0.0001
+    units: g P m-2
+    dtype: float32
+    bounds:
+    - 1.0e-06
+    - 0.005
+    category: validation_parameter
+    description: Small phosphorus floor used to avoid division-by-zero in growth respiration N:P ratios
+    references:
+    - Penning de Vries et al. (1974) Journal of Theoretical Biology 45:339-377
+    - Poorter et al. (1991) Plant, Cell & Environment 14:963-970
+    tags:
+    - validation
+    - growth_respiration
+    - epsilon_guard
+    dimension: mass_areal_density
+    requires_grad: false
+    provenance:
+      source: respiration_framework_refactor
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+  epsilon.flux:
+    value: 1.0e-15
+    default: 1.0e-15
+    units: kg C m-2 s-1
+    dtype: float32
+    bounds:
+    - 1.0e-18
+    - 1.0e-10
+    category: validation_parameter
+    description: Canonical kg-C threshold used only for near-zero respiration fraction diagnostics
+    references:
+    - IEEE 754 numerical threshold for diagnostic flux ratios
+    tags:
+    - validation
+    - numerical_stability
+    - epsilon_guard
+    dimension: mass_flux
+    requires_grad: false
+    provenance:
+      source: respiration_canonical_unit_migration
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2026-07-14T00:00:00Z'

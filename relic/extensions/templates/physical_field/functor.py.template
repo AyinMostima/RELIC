@@ -1,0 +1,76 @@
+from __future__ import annotations
+
+import torch
+from torch import Tensor
+
+from relic.core.functor import (
+    FunctorMetadata,
+    PhysicalFieldFunctor,
+    ProcessCategory,
+    SpatialScale,
+    VariableKind,
+)
+
+
+class {{FUNCTOR_CLASS}}(PhysicalFieldFunctor):
+    """Scaffolded physical field functor."""
+
+    # Coordinate dimensions of the field's spatial query: 1, 2 or 3, or None
+    # for a point model whose state is read from StateManager.
+    SPATIAL_DIMS = None
+
+    def __init__(self, config=None, name="{{EXTENSION_KEY}}", **kwargs):
+        metadata = FunctorMetadata(
+            name=name,
+            category=ProcessCategory.PHYSICAL_FIELD,
+            description="Scaffolded physical field extension functor.",
+            references=[
+                "Arakawa and Lamb (1977). Methods in Computational Physics.",
+            ],
+            mathematical_expression="{{OUTPUT_VARIABLE}} = template_rate * driver_field",
+            input_variables=["driver_field"],
+            output_variables=["{{OUTPUT_VARIABLE}}"],
+            spatial_scale=SpatialScale.GRID_CELL,
+            variable_kind=VariableKind.STATE,
+        )
+        super().__init__(name=name, config=config or {}, metadata=metadata, **kwargs)
+
+    def get_dependencies(self):
+        # Static Functor dependencies of this extension (Functor names, never
+        # state variables). FunctorBase merges them with config["dependencies"],
+        # set_dependencies and add_dependency; a bare list would drop those.
+        return self._merge_declared_dependencies([])
+
+    def get_value_at(self, coordinates: Tensor) -> Tensor:
+        # A point model (SPATIAL_DIMS = None) has no coordinate query.
+        raise NotImplementedError(
+            f"{type(self).__name__} is a point model (SPATIAL_DIMS = None): it has no "
+            "coordinate query; read its state from StateManager"
+        )
+
+    def forward(self, state, time, dt, **kwargs):
+        # References: Arakawa and Lamb (1977).
+        # Mathematical expression: field_update = k * driver_field.
+        # Parameters: k=template_rate [s-1], driver_field=field variable [state units].
+        driver = state.get("driver_field")
+        if driver is None:
+            driver_tensor = torch.tensor(0.0, dtype=torch.float32)
+        elif isinstance(driver, Tensor):
+            driver_tensor = driver
+        else:
+            driver_tensor = torch.tensor(float(driver), dtype=torch.float32)
+
+        rate_value = self.get_parameter_value("template_rate", required=False)
+        if rate_value is None:
+            raise ValueError("Missing parameter 'template_rate'. Define it in parameters.yaml.")
+        if isinstance(rate_value, Tensor):
+            rate_tensor = rate_value.to(device=driver_tensor.device, dtype=driver_tensor.dtype)
+        else:
+            rate_tensor = torch.tensor(
+                float(rate_value),
+                device=driver_tensor.device,
+                dtype=driver_tensor.dtype,
+            )
+
+        return {"{{OUTPUT_VARIABLE}}": rate_tensor * driver_tensor}
+

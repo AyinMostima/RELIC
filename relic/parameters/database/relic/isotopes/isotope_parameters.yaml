@@ -1,0 +1,3440 @@
+﻿schema_version: 2.0.0
+tier: relic
+namespace: isotopes
+description: Isotope tracking parameters for 13C, 15N, and 18O processes in biogeochemical cycling
+metadata:
+  created_by: RELIC Parameter System
+  last_modified: '2026-01-07T14:20:26Z'
+  schema_url: https://github.com/relic/parameter-schema/v2.0.0
+  version: 1.0.0
+parameters:
+  isotopes.temperature.min:
+    value: 200.0
+    default: 200.0
+    units: K
+    dtype: float32
+    bounds:
+    - 183.95
+    - 200.0
+    category: physical_parameter
+    description: 'Lower end of the temperature domain of the isotope fractionation laws: a
+      temperature below it is clamped to it with a warning, and one more than 50 K below
+      it raises (IsotopeFractionationCalculator.validate_temperature). It is an absolute
+      temperature, so the declared bounds are its only constraint: the lower bound is
+      the lowest recorded near-surface air temperature, -89.2 degC = 183.95 K (Vostok,
+      Antarctica, 21 July 1983; WMO archive of weather and climate extremes), which keeps
+      it strictly positive and within the environmental domain; the upper bound is the
+      lowest admissible isotopes.temperature.max (200 K), so that min <= max. The former
+      bounds [0, 1000] K admitted absolute zero and a minimum above the maximum.'
+    references:
+    - Physical constraint for biological and chemical reactions
+    - 'WMO World Weather and Climate Extremes Archive: lowest temperature, -89.2 degC,
+      Vostok, Antarctica, 21 July 1983'
+    tags:
+    - validation
+    - temperature
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: constraint
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  isotopes.temperature.max:
+    value: 400.0
+    default: 400.0
+    units: K
+    dtype: float32
+    bounds:
+    - 200.0
+    - 1000.0
+    category: physical_parameter
+    description: Maximum valid temperature for isotope calculations
+    references:
+    - Upper limit for typical environmental temperatures
+    tags:
+    - validation
+    - temperature
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: constraint
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  isotopes.temperature.warning_min:
+    value: 273.15
+    default: 273.15
+    units: K
+    dtype: float32
+    bounds:
+    - 200.0
+    - 400.0
+    category: physical_parameter
+    description: Lower warning threshold for isotope temperature checks.
+    references:
+    - Project convention for typical environmental range
+    tags:
+    - validation
+    - temperature
+    - warning
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: constraint
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.temperature.warning_max:
+    value: 323.15
+    default: 323.15
+    units: K
+    dtype: float32
+    bounds:
+    - 200.0
+    - 400.0
+    category: physical_parameter
+    description: Upper warning threshold for isotope temperature checks.
+    references:
+    - Project convention for typical environmental range
+    tags:
+    - validation
+    - temperature
+    - warning
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: constraint
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.temperature.reference:
+    value: 298.15
+    default: 298.15
+    units: K
+    dtype: float32
+    bounds:
+    - 273.15
+    - 373.15
+    category: physical_parameter
+    description: Reference temperature for fractionation calculations (25掳C)
+    references:
+    - Standard temperature for biochemical reactions
+    tags:
+    - reference
+    - temperature
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: standard
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  isotopes.standards.nitrogen_15.abundance:
+    value: 0.0036765
+    default: 0.0036765
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.003
+    - 0.004
+    category: isotope_standard
+    description: Natural 15N abundance in atmospheric N2
+    references:
+    - Junk & Svec (1958). Geochimica et Cosmochimica Acta
+    tags:
+    - standard
+    - nitrogen
+    - abundance
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  isotopes.standards.nitrogen_15.air_ratio:
+    value: 0.0036765
+    default: 0.0036765
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.003
+    - 0.004
+    category: isotope_standard
+    description: 15N/14N ratio in atmospheric N2 standard (AIR)
+    references:
+    - Mariotti (1983). Nature
+    tags:
+    - standard
+    - nitrogen
+    - ratio
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  isotopes.standards.carbon_13.pdb_ratio:
+    value: 0.0112372
+    default: 0.0112372
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.01
+    - 0.015
+    category: isotope_standard
+    description: 13C/12C ratio in PDB (Pee Dee Belemnite) standard
+    references:
+    - Craig (1957). Geochimica et Cosmochimica Acta
+    tags:
+    - standard
+    - carbon
+    - ratio
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  isotopes.standards.oxygen_18.vsmow_ratio:
+    value: 0.0020052
+    default: 0.0020052
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0015
+    - 0.0025
+    category: isotope_standard
+    description: 18O/16O ratio in VSMOW (Vienna Standard Mean Ocean Water) standard
+    references:
+    - Baertschi (1976). Earth Planet. Sci. Lett.
+    tags:
+    - standard
+    - oxygen
+    - ratio
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  isotopes.fractionation.alpha_min:
+    value: 0.9
+    default: 0.9
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: numerical_parameter
+    description: Minimum allowed fractionation factor alpha
+    references:
+    - Numerical stability constraint
+    tags:
+    - bounds
+    - numerical
+    - fractionation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_method
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  isotopes.heartbeat.health_check_interval_seconds:
+    value: 3600.0
+    default: 3600.0
+    units: s
+    dtype: float32
+    bounds:
+    - 60.0
+    - 86400.0
+    category: diagnostic_parameter
+    description: Interval between automatic isotope tracker health checks
+    references:
+    - RELIC isotope heartbeat scheduler design specification (internal).
+    - H枚gberg (1997). New Phytologist 137:179-203.
+    tags:
+    - heartbeat
+    - monitoring
+    - scheduler
+    dimension: time
+    requires_grad: false
+    provenance:
+      source: isotope_tracker_service
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-11-01T00:00:00Z'
+  isotopes.heartbeat.interval_seconds:
+    value: 86400.0
+    default: 86400.0
+    units: s
+    dtype: float32
+    bounds:
+    - 3600.0
+    - 604800.0
+    category: diagnostic_parameter
+    description: Primary heartbeat cadence controlling aggregation checkpoints
+    references:
+    - RELIC isotope heartbeat scheduler design specification (internal).
+    - RELIC heartbeat diagnostics window design note (internal).
+    tags:
+    - heartbeat
+    - scheduler
+    - aggregation
+    dimension: time
+    requires_grad: false
+    provenance:
+      source: isotope_tracker_service
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-11-01T00:00:00Z'
+  isotopes.heartbeat.log_interval_count:
+    value: 10
+    default: 10
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 1440
+    category: diagnostic_parameter
+    description: Number of heartbeat cycles between diagnostic log entries
+    references:
+    - H枚gberg (1997). New Phytologist 137:179-203.
+    tags:
+    - logging
+    - monitoring
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: isotope_tracker_service
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-11-01T00:00:00Z'
+  isotopes.heartbeat.summary_interval_count:
+    value: 24
+    default: 24
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 365
+    category: diagnostic_parameter
+    description: Number of heartbeat cycles between summary reports
+    references:
+    - H枚gberg (1997). New Phytologist 137:179-203.
+    tags:
+    - reporting
+    - monitoring
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: isotope_tracker_service
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-11-01T00:00:00Z'
+  isotopes.heartbeat.health_history_max_records:
+    value: 720
+    default: 720
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 24
+    - 10000
+    category: diagnostic_parameter
+    description: Maximum number of health records preserved for heartbeat monitoring
+    references:
+    - RELIC isotope heartbeat scheduler design specification (internal).
+    tags:
+    - monitoring
+    - storage
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: isotope_tracker_service
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-11-01T00:00:00Z'
+  isotopes.heartbeat.health_history_retention_records:
+    value: 360
+    default: 360
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 12
+    - 720
+    category: diagnostic_parameter
+    description: Rolling window of health history retained for diagnostics
+    references:
+    - RELIC isotope heartbeat scheduler design specification (internal).
+    tags:
+    - monitoring
+    - retention
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: isotope_tracker_service
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-11-01T00:00:00Z'
+  isotopes.heartbeat.execution_history_max_records:
+    value: 1000
+    default: 1000
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 10
+    - 10000
+    category: diagnostic_parameter
+    description: Maximum number of heartbeat execution records retained
+    references:
+    - RELIC isotope heartbeat scheduler design specification (internal).
+    tags:
+    - execution
+    - monitoring
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: isotope_tracker_service
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-11-01T00:00:00Z'
+  isotopes.heartbeat.execution_history_retention_records:
+    value: 500
+    default: 500
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 10
+    - 5000
+    category: diagnostic_parameter
+    description: Rolling window of heartbeat execution statistics retained
+    references:
+    - RELIC isotope heartbeat scheduler design specification (internal).
+    tags:
+    - execution
+    - retention
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: isotope_tracker_service
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-11-01T00:00:00Z'
+  isotopes.heartbeat.error_history_max_records:
+    value: 100
+    default: 100
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 10
+    - 1000
+    category: diagnostic_parameter
+    description: Maximum number of recent error events tracked by heartbeat
+    references:
+    - H枚gberg (1997). New Phytologist 137:179-203.
+    tags:
+    - errors
+    - monitoring
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: isotope_tracker_service
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-11-01T00:00:00Z'
+  isotopes.heartbeat.error_history_retention_records:
+    value: 50
+    default: 50
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 5
+    - 500
+    category: diagnostic_parameter
+    description: Rolling window of error records used for service alerts
+    references:
+    - H枚gberg (1997). New Phytologist 137:179-203.
+    tags:
+    - errors
+    - retention
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: isotope_tracker_service
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-11-01T00:00:00Z'
+  isotopes.heartbeat.conservation_warning_threshold:
+    value: 5
+    default: 5
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 100
+    category: diagnostic_parameter
+    description: Number of conservation warnings tolerated before escalation
+    references:
+    - RELIC heartbeat diagnostics window design note (internal).
+    tags:
+    - conservation
+    - alerts
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: isotope_tracker_service
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-11-01T00:00:00Z'
+  isotopes.heartbeat.execution_average_window:
+    value: 10
+    default: 10
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 100
+    category: diagnostic_parameter
+    description: Window length for averaging heartbeat execution time
+    references:
+    - RELIC heartbeat diagnostics window design note (internal).
+    tags:
+    - execution
+    - averaging
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: isotope_tracker_service
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-11-01T00:00:00Z'
+  isotopes.heartbeat.diagnostics_window:
+    value: 100
+    default: 100
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 10
+    - 1000
+    category: diagnostic_parameter
+    description: Number of records included in rolling diagnostics summary
+    references:
+    - RELIC heartbeat diagnostics window design note (internal).
+    tags:
+    - diagnostics
+    - monitoring
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: isotope_tracker_service
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-11-01T00:00:00Z'
+  isotopes.heartbeat.service_error_alert_threshold:
+    value: 100
+    default: 100
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 1000
+    category: diagnostic_parameter
+    description: Count threshold for raising service error alerts
+    references:
+    - RELIC isotope heartbeat scheduler design specification (internal).
+    tags:
+    - alerts
+    - monitoring
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: isotope_tracker_service
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-11-01T00:00:00Z'
+  isotopes.heartbeat.aggregation_tolerance_seconds:
+    value: 300.0
+    default: 300.0
+    units: s
+    dtype: float32
+    bounds:
+    - 60.0
+    - 7200.0
+    category: diagnostic_parameter
+    description: Tolerance on heartbeat trigger alignment with aggregation windows
+    references:
+    - RELIC isotope heartbeat scheduler design specification (internal).
+    tags:
+    - aggregation
+    - tolerance
+    dimension: time
+    requires_grad: false
+    provenance:
+      source: isotope_tracker_service
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-11-01T00:00:00Z'
+  isotopes.heartbeat.service_timeout_seconds:
+    value: 10.0
+    default: 10.0
+    units: s
+    dtype: float32
+    bounds:
+    - 1.0
+    - 300.0
+    category: diagnostic_parameter
+    description: Maximum wait time for isotope service responses
+    references:
+    - RELIC isotope heartbeat scheduler design specification (internal).
+    tags:
+    - service
+    - timeout
+    dimension: time
+    requires_grad: false
+    provenance:
+      source: isotope_tracker_service
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-11-01T00:00:00Z'
+  isotopes.fractionation.alpha_max:
+    value: 1.05
+    default: 1.05
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.9
+    - 1.2
+    category: numerical_parameter
+    description: Maximum allowed fractionation factor alpha
+    references:
+    - Upper limit for typical environmental fractionation
+    tags:
+    - bounds
+    - numerical
+    - fractionation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_method
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  isotopes.fractionation.ratio_min:
+    value: 0.0
+    default: 0.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.1
+    category: numerical_parameter
+    description: Minimum allowed nitrogen isotope abundance ratio.
+    references:
+    - Mariotti et al. (1981). Experimental determination of nitrogen kinetic isotope fractionation
+    tags:
+    - bounds
+    - nitrogen
+    - ratio
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_method
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-11-07T00:00:00Z'
+  isotopes.fractionation.ratio_max:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.9
+    - 1.0
+    category: numerical_parameter
+    description: Maximum allowed nitrogen isotope abundance ratio.
+    references:
+    - Mariotti et al. (1981). Experimental determination of nitrogen kinetic isotope fractionation
+    tags:
+    - bounds
+    - nitrogen
+    - ratio
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_method
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-11-07T00:00:00Z'
+  isotopes.fractionation.carbon.photosynthesis_type:
+    value: C3
+    default: C3
+    units: dimensionless
+    dtype: string
+    category: configuration_parameter
+    description: Photosynthetic pathway (C3 or C4) of the configured carbon-13 discrimination parameter set, used when a call supplies no carbon_params (formerly photosynthesis_type_default).
+    references:
+    - Farquhar et al. (1989). Carbon isotope discrimination and photosynthesis.
+    tags:
+    - carbon
+    - fractionation
+    - photosynthesis
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+    bounds: null
+  isotopes.fractionation.carbon.photosynthesis.alpha_0:
+    value: 0.981
+    default: 0.981
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.9
+    - 1.1
+    category: fractionation_parameter
+    description: Constant fractionation factor for carbon photosynthesis (alpha_0).
+    references:
+    - Farquhar et al. (1989). Carbon isotope discrimination and photosynthesis.
+    tags:
+    - carbon
+    - fractionation
+    - photosynthesis
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-29T00:00:00Z'
+  isotopes.fractionation.carbon.diffusion_fractionation:
+    value: 4.4
+    default: 4.4
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 3.0
+    - 6.0
+    category: fractionation_parameter
+    description: CO2 diffusion fractionation factor a (per mil).
+    references:
+    - Plant Physiology and Development (7th ed.).
+    tags:
+    - carbon
+    - fractionation
+    - diffusion
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.carbon.carboxylation_fractionation:
+    value: 27.0
+    default: 27.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 20.0
+    - 35.0
+    category: fractionation_parameter
+    description: Net C3 carboxylation discrimination b (per mil) of the C3 law epsilon = a + (b - a) ci/ca (net C3 fixation with respect to p_i, Farquhar et al. 1989 Table 1); the C4 law uses the Rubisco b3 (c4_rubisco_fractionation).
+    references:
+    - Farquhar et al. (1989). Carbon isotope discrimination and photosynthesis.
+    tags:
+    - carbon
+    - fractionation
+    - carboxylation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.carbon.c4_pep_net_fractionation:
+    value: -5.7
+    default: -5.7
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - -8.7
+    - -4.2
+    category: fractionation_parameter
+    description: 'C4 net discrimination b4 (per mil) of the fixation of gaseous CO2, in equilibrium with HCO3-, by PEP carboxylase: b4 = e_s + e_b + b_p (Farquhar et al. 1989, Eq. 9 and Table 1), -5.7 per mil at 25 degC (Farquhar 1983). Negative because 13C concentrates in HCO3- at equilibrium. RELIC uses the 25 degC value; the bounds span b4(T) = -9483/(273 + T) + 23.89 + 2.2 (T in degC; Mook et al. 1974 equilibrium plus the PEP carboxylase fractionation, von Caemmerer et al. 2014) from 0 to 40 degC.'
+    references:
+    - 'Farquhar, G.D., Ehleringer, J.R. and Hubick, K.T. (1989). Carbon isotope discrimination and photosynthesis. Annu. Rev. Plant Physiol. Plant Mol. Biol. 40, 503-537.'
+    - 'Farquhar, G.D. (1983). On the nature of carbon isotope discrimination in C4 species. Aust. J. Plant Physiol. 10, 205-226.'
+    - 'von Caemmerer, S., Ghannoum, O., Pengelly, J.J.L. and Cousins, A.B. (2014). Carbon isotope discrimination as a tool to explore C4 photosynthesis. J. Exp. Bot. 65, 3459-3470.'
+    tags:
+    - carbon
+    - fractionation
+    - c4
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-27T00:00:00Z'
+      literature_check: 'verified: Farquhar et al. (1989) Table 1 lists b4 = -5.7 per mil (Farquhar 1983) for gaseous CO2 in equilibrium with HCO3- at 25 degC; the former +5.7 had the wrong sign'
+  isotopes.fractionation.carbon.c4_rubisco_fractionation:
+    value: 30.0
+    default: 30.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 29.0
+    - 30.0
+    category: fractionation_parameter
+    description: 'Rubisco discrimination b3 (per mil) against CO2 in the C4 bundle sheath, the b3 of the C4 law of Farquhar et al. (1989), Eq. (10); Table 1 gives 30 per mil (pH 8, Roeske and O''Leary 1984) and 29 per mil (Guy et al.). Distinct from the net C3 value b (carboxylation_fractionation, 27 per mil) of the C3 law.'
+    references:
+    - 'Farquhar, G.D., Ehleringer, J.R. and Hubick, K.T. (1989). Carbon isotope discrimination and photosynthesis. Annu. Rev. Plant Physiol. Plant Mol. Biol. 40, 503-537.'
+    - 'Roeske, C.A. and O''Leary, M.H. (1984). Carbon isotope effects on the enzyme-catalyzed carboxylation of ribulose bisphosphate. Biochemistry 23, 6275-6284.'
+    tags:
+    - carbon
+    - fractionation
+    - c4
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-27T00:00:00Z'
+      literature_check: 'verified: Farquhar et al. (1989) Table 1 and Eq. (10) use b3 = 30 per mil; with b4 = -5.7 and a = 4.4 the factor b4 + b3 phi - a vanishes at phi = 0.34 as stated there'
+  isotopes.fractionation.carbon.c4_bundle_sheath_leakiness:
+    value: 0.2
+    default: 0.2
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.08
+    - 0.5
+    category: fractionation_parameter
+    description: 'C4 bundle-sheath leakiness phi [1]: the proportion of the carbon fixed by PEP carboxylation that subsequently leaks out of the bundle sheath (Farquhar et al. 1989, Eq. 10). Measured value: about 0.2 in several C4 species of different decarboxylation types under a range of conditions (Henderson et al. 1992, as reviewed by von Caemmerer et al. 2014). The bounds are the measured range summarised by Kromdijk et al. (2014), Table 1: 0.08 (radiolabelling, monocots) to 0.50 (very low light, Bellasio and Griffiths 2013). With phi = 0.2 the photosynthetic discrimination is Delta = 2.4-2.8 per mil at ci/ca = 0.5-0.4; dry-matter values include post-photosynthetic fractionation and are not directly comparable. Henderson et al. (1992) estimated phi with a model that carries the leakage fractionation s = 1.8 per mil, which Eq. (10) lacks; at ci/ca = 0.4 the term -s phi ci/ca is about -0.14 per mil.'
+    references:
+    - 'Farquhar, G.D., Ehleringer, J.R. and Hubick, K.T. (1989). Carbon isotope discrimination and photosynthesis. Annu. Rev. Plant Physiol. Plant Mol. Biol. 40, 503-537.'
+    - 'Henderson, S.A., von Caemmerer, S. and Farquhar, G.D. (1992). Short-term measurements of carbon isotope discrimination in several C4 species. Aust. J. Plant Physiol. 19, 263-285.'
+    - 'von Caemmerer, S., Ghannoum, O., Pengelly, J.J.L. and Cousins, A.B. (2014). Carbon isotope discrimination as a tool to explore C4 photosynthesis. J. Exp. Bot. 65, 3459-3470.'
+    - 'Kromdijk, J., Ubierna, N., Cousins, A.B. and Griffiths, H. (2014). Bundle-sheath leakiness in C4 photosynthesis: a careful balancing act between CO2 concentration and assimilation. J. Exp. Bot. 65, 3443-3457.'
+    tags:
+    - carbon
+    - fractionation
+    - c4
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-27T00:00:00Z'
+      literature_check: 'verified: von Caemmerer et al. (2014) quote phi of about 0.2 (Henderson et al. 1992); Kromdijk et al. (2014) Table 1 lists 0.08-0.14 (radiolabelling, monocots) to 0.20-0.50 (Bellasio and Griffiths 2013, PAR 500 to 30)'
+  isotopes.fractionation.carbon.respiration.substrate_sensitivity:
+    value: 0.001
+    default: 0.001
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.01
+    category: fractionation_parameter
+    description: Sensitivity of respiration fractionation to substrate delta13C.
+    references:
+    - Bowling et al. (2008). Carbon isotopes in respired CO2.
+    tags:
+    - carbon
+    - fractionation
+    - respiration
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.carbon.respiration.leaf.alpha_0:
+    value: 1.005
+    default: 1.005
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.99
+    - 1.02
+    category: fractionation_parameter
+    description: Reference fractionation factor for leaf respiration.
+    references:
+    - Bowling et al. (2008). Carbon isotopes in respired CO2.
+    tags:
+    - carbon
+    - fractionation
+    - respiration
+    - leaf
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.carbon.respiration.leaf.q10:
+    value: 1.005
+    default: 1.005
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 2.0
+    category: temperature_parameter
+    description: Q10 temperature response for leaf respiration fractionation.
+    references:
+    - Bowling et al. (2008). Carbon isotopes in respired CO2.
+    tags:
+    - carbon
+    - fractionation
+    - respiration
+    - leaf
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.carbon.respiration.root.alpha_0:
+    value: 1.006
+    default: 1.006
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.99
+    - 1.02
+    category: fractionation_parameter
+    description: Reference fractionation factor for root respiration.
+    references:
+    - Bowling et al. (2008). Carbon isotopes in respired CO2.
+    tags:
+    - carbon
+    - fractionation
+    - respiration
+    - root
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.carbon.respiration.root.q10:
+    value: 1.004
+    default: 1.004
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 2.0
+    category: temperature_parameter
+    description: Q10 temperature response for root respiration fractionation.
+    references:
+    - Bowling et al. (2008). Carbon isotopes in respired CO2.
+    tags:
+    - carbon
+    - fractionation
+    - respiration
+    - root
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.carbon.respiration.autotrophic.alpha_0:
+    value: 1.004
+    default: 1.004
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.99
+    - 1.02
+    category: fractionation_parameter
+    description: Reference fractionation factor for autotrophic respiration.
+    references:
+    - Bowling et al. (2008). Carbon isotopes in respired CO2.
+    tags:
+    - carbon
+    - fractionation
+    - respiration
+    - autotrophic
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.carbon.respiration.autotrophic.q10:
+    value: 1.005
+    default: 1.005
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 2.0
+    category: temperature_parameter
+    description: Q10 temperature response for autotrophic respiration fractionation.
+    references:
+    - Bowling et al. (2008). Carbon isotopes in respired CO2.
+    tags:
+    - carbon
+    - fractionation
+    - respiration
+    - autotrophic
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.carbon.respiration.heterotrophic.alpha_0:
+    value: 1.003
+    default: 1.003
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.99
+    - 1.02
+    category: fractionation_parameter
+    description: Reference fractionation factor for heterotrophic respiration.
+    references:
+    - Bowling et al. (2008). Carbon isotopes in respired CO2.
+    tags:
+    - carbon
+    - fractionation
+    - respiration
+    - heterotrophic
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.carbon.respiration.heterotrophic.q10:
+    value: 1.005
+    default: 1.005
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 2.0
+    category: temperature_parameter
+    description: Q10 temperature response for heterotrophic respiration fractionation.
+    references:
+    - Bowling et al. (2008). Carbon isotopes in respired CO2.
+    tags:
+    - carbon
+    - fractionation
+    - respiration
+    - heterotrophic
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.carbon.decomposition.alpha_0:
+    value: 1.003
+    default: 1.003
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.99
+    - 1.02
+    category: fractionation_parameter
+    description: Base fractionation factor for decomposition.
+    references:
+    - Tcherkez et al. (2003). Natural 13C abundance in C3 leaves.
+    tags:
+    - carbon
+    - fractionation
+    - decomposition
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.carbon.decomposition.q10:
+    value: 2.5
+    default: 2.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 5.0
+    category: temperature_parameter
+    description: Q10 temperature response for decomposition fractionation.
+    references:
+    - Manzoni and Porporato (2009). Soil Biology and Biochemistry.
+    tags:
+    - carbon
+    - fractionation
+    - decomposition
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.carbon.decomposition.substrate_correction.labile:
+    value: 1.2
+    default: 1.2
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 2.0
+    category: fractionation_parameter
+    description: Substrate correction for labile carbon.
+    references:
+    - Manzoni and Porporato (2009). Soil Biology and Biochemistry.
+    tags:
+    - carbon
+    - fractionation
+    - decomposition
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.carbon.decomposition.substrate_correction.recalcitrant:
+    value: 0.8
+    default: 0.8
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.2
+    - 1.0
+    category: fractionation_parameter
+    description: Substrate correction for recalcitrant carbon.
+    references:
+    - Manzoni and Porporato (2009). Soil Biology and Biochemistry.
+    tags:
+    - carbon
+    - fractionation
+    - decomposition
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.carbon.decomposition.substrate_correction.mixed:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 1.5
+    category: fractionation_parameter
+    description: Substrate correction for mixed carbon.
+    references:
+    - Manzoni and Porporato (2009). Soil Biology and Biochemistry.
+    tags:
+    - carbon
+    - fractionation
+    - decomposition
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.carbon.decomposition.moisture_optimal:
+    value: 0.6
+    default: 0.6
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 1.0
+    category: physical_parameter
+    description: Optimal soil moisture for decomposition fractionation.
+    references:
+    - Manzoni and Porporato (2009). Soil Biology and Biochemistry.
+    tags:
+    - carbon
+    - fractionation
+    - decomposition
+    - moisture
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.carbon.decomposition.moisture_scale:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: numerical_parameter
+    description: Moisture stress scaling for decomposition fractionation.
+    references:
+    - Model convention
+    tags:
+    - carbon
+    - fractionation
+    - decomposition
+    - moisture
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.carbon.decomposition.oxygen_scale:
+    value: 0.2
+    default: 0.2
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: numerical_parameter
+    description: Oxygen scaling for anaerobic fractionation effects.
+    references:
+    - Model convention
+    tags:
+    - carbon
+    - fractionation
+    - decomposition
+    - oxygen
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.carbon.decomposition.oxygen_reference:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.01
+    - 1.0
+    category: numerical_parameter
+    description: Reference oxygen level for decomposition fractionation.
+    references:
+    - Model convention
+    tags:
+    - carbon
+    - fractionation
+    - decomposition
+    - oxygen
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.carbon.decomposition.ph_optimal:
+    value: 6.75
+    default: 6.75
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 4.0
+    - 9.0
+    category: physical_parameter
+    description: Optimal soil pH for decomposition fractionation.
+    references:
+    - Manzoni and Porporato (2009). Soil Biology and Biochemistry.
+    tags:
+    - carbon
+    - fractionation
+    - decomposition
+    - ph
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.carbon.decomposition.ph_scale:
+    value: 0.05
+    default: 0.05
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: numerical_parameter
+    description: pH stress scaling for decomposition fractionation.
+    references:
+    - Model convention
+    tags:
+    - carbon
+    - fractionation
+    - decomposition
+    - ph
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.carbon.decomposition.ph_range:
+    value: 2.0
+    default: 2.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 5.0
+    category: numerical_parameter
+    description: pH range used to normalize decomposition stress.
+    references:
+    - Model convention
+    tags:
+    - carbon
+    - fractionation
+    - decomposition
+    - ph
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.carbon.bvoc.base_fractionation.isoprene:
+    value: 1.002
+    default: 1.002
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.99
+    - 1.02
+    category: fractionation_parameter
+    description: Base fractionation factor for isoprene.
+    references:
+    - Affek and Yakir (2003). Carbon isotope composition of isoprene.
+    tags:
+    - carbon
+    - fractionation
+    - bvoc
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.carbon.bvoc.base_fractionation.monoterpenes:
+    value: 1.001
+    default: 1.001
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.99
+    - 1.02
+    category: fractionation_parameter
+    description: Base fractionation factor for monoterpenes.
+    references:
+    - Jardine et al. (2009). BVOC isotopes.
+    tags:
+    - carbon
+    - fractionation
+    - bvoc
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.carbon.bvoc.base_fractionation.sesquiterpenes:
+    value: 1.003
+    default: 1.003
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.99
+    - 1.02
+    category: fractionation_parameter
+    description: Base fractionation factor for sesquiterpenes.
+    references:
+    - Jardine et al. (2009). BVOC isotopes.
+    tags:
+    - carbon
+    - fractionation
+    - bvoc
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.carbon.bvoc.base_fractionation.methanol:
+    value: 1.015
+    default: 1.015
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.99
+    - 1.05
+    category: fractionation_parameter
+    description: Base fractionation factor for methanol.
+    references:
+    - Jardine et al. (2009). BVOC isotopes.
+    tags:
+    - carbon
+    - fractionation
+    - bvoc
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.carbon.bvoc.base_fractionation.acetaldehyde:
+    value: 1.005
+    default: 1.005
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.99
+    - 1.05
+    category: fractionation_parameter
+    description: Base fractionation factor for acetaldehyde.
+    references:
+    - Jardine et al. (2009). BVOC isotopes.
+    tags:
+    - carbon
+    - fractionation
+    - bvoc
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.carbon.bvoc.base_fractionation.ethanol:
+    value: 1.008
+    default: 1.008
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.99
+    - 1.05
+    category: fractionation_parameter
+    description: Base fractionation factor for ethanol.
+    references:
+    - Jardine et al. (2009). BVOC isotopes.
+    tags:
+    - carbon
+    - fractionation
+    - bvoc
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.carbon.bvoc.q10:
+    value: 1.5
+    default: 1.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 3.0
+    category: temperature_parameter
+    description: Temperature sensitivity for BVOC fractionation.
+    references:
+    - Jardine et al. (2009). BVOC isotopes.
+    tags:
+    - carbon
+    - fractionation
+    - bvoc
+    - temperature
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.carbon.bvoc.reference_temperature:
+    value: 303.15
+    default: 303.15
+    units: K
+    dtype: float32
+    bounds:
+    - 293.15
+    - 313.15
+    category: temperature_parameter
+    description: Reference temperature for BVOC fractionation.
+    references:
+    - Jardine et al. (2009). BVOC isotopes.
+    tags:
+    - carbon
+    - fractionation
+    - bvoc
+    - temperature
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.carbon.bvoc.par_optimal:
+    value: 1000.0
+    default: 1000.0
+    units: umol photons m-2 s-1
+    dtype: float32
+    bounds:
+    - 100.0
+    - 3000.0
+    category: physical_parameter
+    description: Optimal PAR for BVOC light response.
+    references:
+    - Jardine et al. (2009). BVOC isotopes.
+    tags:
+    - carbon
+    - fractionation
+    - bvoc
+    - light
+    dimension: photon_flux_density
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.carbon.bvoc.light_scale:
+    value: 0.05
+    default: 0.05
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.5
+    category: numerical_parameter
+    description: Light scaling for BVOC fractionation.
+    references:
+    - Jardine et al. (2009). BVOC isotopes.
+    tags:
+    - carbon
+    - fractionation
+    - bvoc
+    - light
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.carbon.bvoc.substrate_correction.recent:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 1.5
+    category: fractionation_parameter
+    description: Substrate correction for recent photosynthate.
+    references:
+    - Jardine et al. (2009). BVOC isotopes.
+    tags:
+    - carbon
+    - fractionation
+    - bvoc
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.carbon.bvoc.substrate_correction.stored:
+    value: 1.05
+    default: 1.05
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 1.5
+    category: fractionation_parameter
+    description: Substrate correction for stored carbon.
+    references:
+    - Jardine et al. (2009). BVOC isotopes.
+    tags:
+    - carbon
+    - fractionation
+    - bvoc
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.carbon.bvoc.substrate_correction.mixed:
+    value: 1.025
+    default: 1.025
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 1.5
+    category: fractionation_parameter
+    description: Substrate correction for mixed carbon sources.
+    references:
+    - Jardine et al. (2009). BVOC isotopes.
+    tags:
+    - carbon
+    - fractionation
+    - bvoc
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.oxygen.transpiration.alpha_0:
+    value: 0.9943
+    default: 0.9943
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.9
+    - 1.1
+    category: fractionation_parameter
+    description: Constant fractionation factor for oxygen transpiration (alpha_0).
+    references:
+    - Craig & Gordon (1965). Deuterium and oxygen-18 variations in the ocean and the marine atmosphere.
+    tags:
+    - oxygen
+    - fractionation
+    - transpiration
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-29T00:00:00Z'
+  isotopes.fractionation.oxygen.soil_evaporation.alpha_0:
+    value: 0.99
+    default: 0.99
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.9
+    - 1.1
+    category: fractionation_parameter
+    description: Constant fractionation factor for soil evaporation (alpha_0).
+    references:
+    - Craig & Gordon (1965). Deuterium and oxygen-18 variations in the ocean and the marine atmosphere.
+    tags:
+    - oxygen
+    - fractionation
+    - evaporation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-29T00:00:00Z'
+  isotopes.fractionation.oxygen.kinetic_fractionation:
+    value: 32.0
+    default: 32.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 25.0
+    - 40.0
+    category: fractionation_parameter
+    description: Kinetic fractionation during diffusion (per mil).
+    references:
+    - Craig and Gordon (1965). Stable isotopes in ocean water.
+    tags:
+    - oxygen
+    - fractionation
+    - kinetic
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.oxygen.humidity_sensitivity:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 2.0
+    category: fractionation_parameter
+    description: Sensitivity to relative humidity in leaf water exchange.
+    references:
+    - Yakir and Sternberg (2000). Stable isotopes in ecosystem gas exchange.
+    tags:
+    - oxygen
+    - fractionation
+    - humidity
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.oxygen.boundary_layer_conductance:
+    value: 0.01
+    default: 0.01
+    units: m s-1
+    dtype: float32
+    bounds:
+    - 0.001
+    - 0.1
+    category: physical_parameter
+    description: Reference boundary layer conductance for kinetic fractionation.
+    references:
+    - Flanagan et al. (1991). Stable isotope composition of leaf water.
+    tags:
+    - oxygen
+    - fractionation
+    - boundary_layer
+    dimension: velocity
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.oxygen.peclet_number:
+    value: 2.0
+    default: 2.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 5.0
+    category: fractionation_parameter
+    description: Peclet number controlling advective enrichment in Craig-Gordon leaf water model.
+    references:
+    - Flanagan et al. (1991). Stable isotope composition of leaf water.
+    tags:
+    - oxygen
+    - fractionation
+    - peclet
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-10-11T00:00:00Z'
+  isotopes.fractionation.oxygen.discrimination_scale:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 1.0
+    category: numerical_parameter
+    description: Scaling applied when converting discrimination to alpha.
+    references:
+    - Craig and Gordon (1965). Stable isotopes in ocean water.
+    tags:
+    - oxygen
+    - fractionation
+    - scale
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_convention
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.oxygen.equilibrium.horita_a:
+    value: -7.685
+    default: -7.685
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - -8.0
+    - -7.0
+    category: fractionation_parameter
+    description: Horita coefficient A in 1000 ln(alpha_l-v) = A + B/T + C/T2 + D/T3.
+    references:
+    - 'doi:10.1016/0016-7037(94)90096-5'
+    tags:
+    - oxygen
+    - fractionation
+    - equilibrium
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.oxygen.equilibrium.horita_b:
+    value: 6712.3
+    default: 6712.3
+    units: K
+    dtype: float32
+    bounds:
+    - 6000.0
+    - 7500.0
+    category: fractionation_parameter
+    description: Horita coefficient B in 1000 ln(alpha_l-v) = A + B/T + C/T2 + D/T3.
+    references:
+    - 'doi:10.1016/0016-7037(94)90096-5'
+    tags:
+    - oxygen
+    - fractionation
+    - equilibrium
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.oxygen.equilibrium.horita_c:
+    value: -1666400.0
+    default: -1666400.0
+    units: K2
+    dtype: float32
+    bounds:
+    - -2000000.0
+    - -1400000.0
+    category: fractionation_parameter
+    description: Horita coefficient C in 1000 ln(alpha_l-v) = A + B/T + C/T2 + D/T3.
+    references:
+    - 'doi:10.1016/0016-7037(94)90096-5'
+    tags:
+    - oxygen
+    - fractionation
+    - equilibrium
+    dimension: temperature_squared
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.oxygen.equilibrium.horita_d:
+    value: 350410000.0
+    default: 350410000.0
+    units: K3
+    dtype: float32
+    bounds:
+    - 300000000.0
+    - 400000000.0
+    category: fractionation_parameter
+    description: Horita coefficient D in 1000 ln(alpha_l-v) = A + B/T + C/T2 + D/T3.
+    references:
+    - 'doi:10.1016/0016-7037(94)90096-5'
+    tags:
+    - oxygen
+    - fractionation
+    - equilibrium
+    dimension: temperature_cubed
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.oxygen.kinetic.temperature_exponent:
+    value: 1.75
+    default: 1.75
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 3.0
+    category: temperature_parameter
+    description: Exponent for diffusivity temperature dependence.
+    references:
+    - Craig and Gordon (1965). Stable isotopes in ocean water.
+    tags:
+    - oxygen
+    - fractionation
+    - kinetic
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.oxygen.boundary_layer.reference_wind_speed:
+    value: 2.0
+    default: 2.0
+    units: m s-1
+    dtype: float32
+    bounds:
+    - 0.1
+    - 10.0
+    category: physical_parameter
+    description: Reference wind speed for boundary layer scaling.
+    references:
+    - Flanagan et al. (1991). Stable isotope composition of leaf water.
+    tags:
+    - oxygen
+    - fractionation
+    - boundary_layer
+    dimension: velocity
+    requires_grad: false
+    provenance:
+      source: model_convention
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.oxygen.boundary_layer.scaling_factor:
+    value: 10.0
+    default: 10.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 100.0
+    category: numerical_parameter
+    description: Scaling applied to boundary layer conductance in kinetic fractionation.
+    references:
+    - Flanagan et al. (1991). Stable isotope composition of leaf water.
+    tags:
+    - oxygen
+    - fractionation
+    - boundary_layer
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_convention
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.oxygen.stomatal.reference_conductance:
+    value: 0.1
+    default: 0.1
+    units: mol m-2 s-1
+    dtype: float32
+    bounds:
+    - 0.01
+    - 1.0
+    category: physical_parameter
+    description: Reference stomatal conductance for kinetic scaling.
+    references:
+    - Flanagan et al. (1991). Stable isotope composition of leaf water.
+    tags:
+    - oxygen
+    - fractionation
+    - stomatal
+    dimension: molar_flux
+    requires_grad: false
+    provenance:
+      source: model_convention
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.oxygen.peclet.min:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: numerical_parameter
+    description: Minimum Peclet number allowed in correction.
+    references:
+    - Numerical stability constraint
+    tags:
+    - oxygen
+    - fractionation
+    - peclet
+    - bounds
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_method
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.oxygen.peclet.max:
+    value: 10.0
+    default: 10.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 50.0
+    category: numerical_parameter
+    description: Maximum Peclet number allowed in correction.
+    references:
+    - Numerical stability constraint
+    tags:
+    - oxygen
+    - fractionation
+    - peclet
+    - bounds
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_method
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.oxygen.peclet.threshold:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.01
+    - 1.0
+    category: numerical_parameter
+    description: Threshold for Peclet Taylor expansion.
+    references:
+    - Numerical stability constraint
+    tags:
+    - oxygen
+    - fractionation
+    - peclet
+    - bounds
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_method
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.oxygen.peclet.taylor_denominator:
+    value: 2.0
+    default: 2.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 10.0
+    category: numerical_parameter
+    description: Denominator used in Taylor expansion for small Peclet.
+    references:
+    - Numerical stability constraint
+    tags:
+    - oxygen
+    - fractionation
+    - peclet
+    - bounds
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_method
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.oxygen.root_fractionation:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 2.0
+    category: fractionation_parameter
+    description: Root water uptake fractionation (per mil).
+    references:
+    - Yakir and Sternberg (2000). Stable isotopes in ecosystem gas exchange.
+    tags:
+    - oxygen
+    - fractionation
+    - root
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.oxygen.temperature_sensitivity:
+    value: 0.1
+    default: 0.1
+    units: K-1
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: temperature_parameter
+    description: Temperature sensitivity for root uptake fractionation.
+    references:
+    - Yakir and Sternberg (2000). Stable isotopes in ecosystem gas exchange.
+    tags:
+    - oxygen
+    - fractionation
+    - temperature
+    dimension: inverse_temperature
+    requires_grad: false
+    provenance:
+      source: model_convention
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.oxygen.salinity_sensitivity:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: fractionation_parameter
+    description: Salinity sensitivity for root uptake fractionation.
+    references:
+    - Barnes and Allison (1988). Stable isotopes in dry soils.
+    tags:
+    - oxygen
+    - fractionation
+    - salinity
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_convention
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.oxygen.relative_humidity.min:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: numerical_parameter
+    description: Minimum relative humidity allowed in fractionation calculations.
+    references:
+    - Numerical stability constraint
+    tags:
+    - oxygen
+    - fractionation
+    - humidity
+    - bounds
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_method
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.oxygen.relative_humidity.max:
+    value: 0.95
+    default: 0.95
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: numerical_parameter
+    description: Maximum relative humidity allowed in fractionation calculations.
+    references:
+    - Numerical stability constraint
+    tags:
+    - oxygen
+    - fractionation
+    - humidity
+    - bounds
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_method
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.oxygen.evaporation.soil_kinetic_reduction:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 1.0
+    category: fractionation_parameter
+    description: Reduction factor of the kinetic fractionation for soil evaporation (model convention scaling the Craig-Gordon kinetic term; formerly soil_kinetic_reduction_default).
+    references:
+    - Barnes and Allison (1988). Stable isotopes in dry soils.
+    tags:
+    - oxygen
+    - fractionation
+    - evaporation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_convention
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.oxygen.evaporation.canopy_kinetic_reduction:
+    value: 0.8
+    default: 0.8
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 1.0
+    category: fractionation_parameter
+    description: Reduction factor of the kinetic fractionation for canopy (intercepted water) evaporation (model convention scaling the Craig-Gordon kinetic term; formerly canopy_kinetic_reduction_default).
+    references:
+    - Craig and Gordon (1965). Stable isotopes in ocean water.
+    tags:
+    - oxygen
+    - fractionation
+    - evaporation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_convention
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.oxygen.evaporation.soil_moisture_reference:
+    value: 0.3
+    default: 0.3
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.05
+    - 1.0
+    category: physical_parameter
+    description: Reference soil moisture for evaporation limitation.
+    references:
+    - Barnes and Allison (1988). Stable isotopes in dry soils.
+    tags:
+    - oxygen
+    - fractionation
+    - evaporation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_convention
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.oxygen.evaporation.moisture_limitation_min:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: numerical_parameter
+    description: Minimum moisture limitation factor for evaporation.
+    references:
+    - Numerical stability constraint
+    tags:
+    - oxygen
+    - fractionation
+    - evaporation
+    - bounds
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_method
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.oxygen.evaporation.moisture_limitation_max:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 2.0
+    category: numerical_parameter
+    description: Maximum moisture limitation factor for evaporation.
+    references:
+    - Numerical stability constraint
+    tags:
+    - oxygen
+    - fractionation
+    - evaporation
+    - bounds
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_method
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-27T00:00:00Z'
+  isotopes.fractionation.nitrogen.mineralization.alpha_0:
+    value: 0.995
+    default: 0.995
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.9
+    - 1.0
+    category: fractionation_parameter
+    description: Reference fractionation factor for N mineralization at 25 degC (near-unity, small fractionation assumption)
+    references:
+    - Mariotti et al. (1981). Experimental determination of nitrogen kinetic isotope fractionation
+    - Robinson (2001). Delta15N as an integrator of the nitrogen cycle
+    tags:
+    - fractionation
+    - nitrogen
+    - mineralization
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  isotopes.fractionation.nitrogen.mineralization.Q10:
+    value: 2.2
+    default: 2.2
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.5
+    - 3.0
+    category: temperature_parameter
+    description: Q10 coefficient for mineralization fractionation temperature dependence
+    references:
+    - Typical Q10 for enzymatic processes
+    tags:
+    - temperature
+    - nitrogen
+    - mineralization
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  isotopes.fractionation.nitrogen.mineralization.T_ref:
+    value: 298.15
+    default: 298.15
+    units: K
+    dtype: float32
+    bounds:
+    - 273.15
+    - 323.15
+    category: reference_parameter
+    description: Reference temperature for mineralization fractionation
+    references:
+    - Standard temperature for biochemical reactions
+    tags:
+    - reference
+    - nitrogen
+    - mineralization
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: standard
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  isotopes.fractionation.nitrogen.nitrification.alpha_0:
+    value: 0.985
+    default: 0.985
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.9
+    - 1.0
+    category: fractionation_parameter
+    description: Reference fractionation factor for nitrification at 25掳C
+    references:
+    - Casciotti et al. (2003). Linking diversity and stable isotope fractionation in ammonia-oxidizing bacteria
+    tags:
+    - fractionation
+    - nitrogen
+    - nitrification
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  isotopes.fractionation.nitrogen.nitrification.E_a:
+    value: 50000.0
+    default: 50000.0
+    units: J mol-1
+    dtype: float32
+    bounds:
+    - 20000.0
+    - 100000.0
+    category: activation_energy
+    description: Activation energy for nitrification fractionation temperature dependence
+    references:
+    - Casciotti et al. (2003). Geochim. Cosmochim. Acta
+    tags:
+    - temperature
+    - nitrogen
+    - nitrification
+    dimension: energy_per_amount
+    requires_grad: true
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  isotopes.fractionation.nitrogen.nitrification.T_ref:
+    value: 298.15
+    default: 298.15
+    units: K
+    dtype: float32
+    bounds:
+    - 273.15
+    - 323.15
+    category: reference_parameter
+    description: Reference temperature for nitrification fractionation
+    references:
+    - Standard temperature for biochemical reactions
+    tags:
+    - reference
+    - nitrogen
+    - nitrification
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: standard
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  isotopes.fractionation.nitrogen.denitrification.alpha_0:
+    value: 0.98
+    default: 0.98
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.9
+    - 1.0
+    category: fractionation_parameter
+    description: Reference fractionation factor for denitrification at 25掳C
+    references:
+    - Granger et al. (2008). N and O isotope fractionation during dissimilatory nitrate reduction by denitrifying bacteria
+    tags:
+    - fractionation
+    - nitrogen
+    - denitrification
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  isotopes.fractionation.nitrogen.denitrification.Q10:
+    value: 1.8
+    default: 1.8
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.2
+    - 2.5
+    category: temperature_parameter
+    description: Q10 coefficient for denitrification fractionation temperature dependence
+    references:
+    - Typical Q10 for anaerobic respiration processes
+    tags:
+    - temperature
+    - nitrogen
+    - denitrification
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  isotopes.fractionation.nitrogen.denitrification.T_ref:
+    value: 298.15
+    default: 298.15
+    units: K
+    dtype: float32
+    bounds:
+    - 273.15
+    - 323.15
+    category: reference_parameter
+    description: Reference temperature for denitrification fractionation
+    references:
+    - Standard temperature for biochemical reactions
+    tags:
+    - reference
+    - nitrogen
+    - denitrification
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: standard
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  isotopes.pool.min_total:
+    value: 1.0e-10
+    default: 1.0e-10
+    units: mol m-2
+    dtype: float32
+    bounds:
+    - 1.0e-15
+    - 1.0e-05
+    category: numerical_parameter
+    description: Minimum total pool size for numerical stability in isotope calculations
+    references:
+    - Numerical stability threshold
+    tags:
+    - validation
+    - pool
+    - numerical
+    dimension: amount_areal_density
+    requires_grad: false
+    provenance:
+      source: numerical_method
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  isotopes.pool.max_ratio:
+    value: 0.99
+    default: 0.99
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.9
+    - 1.0
+    category: numerical_parameter
+    description: Maximum isotope ratio to prevent numerical overflow
+    references:
+    - Physical constraint (ratio cannot equal 1.0)
+    tags:
+    - validation
+    - pool
+    - numerical
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: constraint
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  isotopes.validation.epsilon:
+    value: 1.0e-12
+    default: 1.0e-12
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-15
+    - 1.0e-08
+    category: numerical_parameter
+    description: Small number for numerical stability in isotope calculations
+    references:
+    - Machine epsilon for float32 precision
+    tags:
+    - validation
+    - numerical
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_method
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  isotopes.validation.temperature_diff_lower:
+    value: -50.0
+    default: -50.0
+    units: K
+    dtype: float32
+    bounds:
+    - -100.0
+    - -10.0
+    category: numerical_parameter
+    description: Lower bound for temperature difference clamping in fractionation calculations
+    references:
+    - Numerical stability for exponential calculations
+    tags:
+    - validation
+    - temperature
+    - numerical
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: numerical_method
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  isotopes.validation.temperature_diff_upper:
+    value: 50.0
+    default: 50.0
+    units: K
+    dtype: float32
+    bounds:
+    - 10.0
+    - 100.0
+    category: numerical_parameter
+    description: Upper bound for temperature difference clamping in fractionation calculations
+    references:
+    - Numerical stability for exponential calculations
+    tags:
+    - validation
+    - temperature
+    - numerical
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: numerical_method
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  isotopes.validation.numerical.epsilon:
+    value: 1.0e-12
+    default: 1.0e-12
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 1.0e-15
+    - 1.0e-09
+    category: numerical_parameter
+    description: Additive epsilon used to maintain numerical stability in isotope ratio calculations.
+    references:
+    - Jardine et al. (2006) Vadose Zone Journal 5:140-152
+    - He et al. (2018) Biogeosciences 15:1-23
+    tags:
+    - validation
+    - epsilon
+    - numerical
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: isotope_module_defaults
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-11-07T00:00:00Z'
+  isotopes.validation.numerical.conservation_tolerance:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 1.0e-08
+    - 0.0001
+    category: numerical_parameter
+    description: Maximum allowable relative mass imbalance for isotope pool conservation checks.
+    references:
+    - Randerson et al. (2002) Global Biogeochemical Cycles 16:1029
+    tags:
+    - validation
+    - conservation
+    - numerical
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: isotope_module_defaults
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-11-07T00:00:00Z'
+  isotopes.validation.numerical.stoichiometry_tolerance:
+    value: 0.2
+    default: 0.2
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1.0
+    category: numerical_parameter
+    description: Relative tolerance factor for expected stoichiometric ratio bounds in multi-isotope consistency checks.
+    references:
+    - Manzoni and Porporato (2009) Soil Biology and Biochemistry 41:1355-1379
+    tags:
+    - validation
+    - stoichiometry
+    - numerical
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: isotope_module_defaults
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2026-02-23T00:00:00Z'
+  isotopes.validation.numerical.arrhenius_exponent_min:
+    value: -10.0
+    default: -10.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - -20.0
+    - -5.0
+    category: numerical_parameter
+    description: Minimum value for Arrhenius exponential argument to prevent underflow
+    references:
+    - Numerical stability for exp(-E_a/RT)
+    tags:
+    - validation
+    - arrhenius
+    - numerical
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_method
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  isotopes.validation.numerical.arrhenius_exponent_max:
+    value: 10.0
+    default: 10.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 5.0
+    - 20.0
+    category: numerical_parameter
+    description: Maximum value for Arrhenius exponential argument to prevent overflow
+    references:
+    - Numerical stability for exp(-E_a/RT)
+    tags:
+    - validation
+    - arrhenius
+    - numerical
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_method
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  isotopes.output.netcdf_fill_value:
+    value: -9999.0
+    default: -9999.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - -1000000.0
+    - -1.0
+    category: model_parameter
+    description: Fill value used when writing isotope NetCDF output.
+    references:
+    - CF-1.8 recommended fill value conventions
+    tags:
+    - output
+    - netcdf
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: io_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-11-07T00:00:00Z'
+  isotopes.output.buffer_size:
+    value: 1000
+    default: 1000
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 100
+    - 100000
+    category: model_parameter
+    description: Number of records to buffer before flushing isotope data to disk.
+    references:
+    - NetCDF performance tuning guidelines
+    tags:
+    - output
+    - buffer
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: io_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-11-07T00:00:00Z'
+  isotopes.output.file:
+    value: ./results/isotopes_output.nc
+    default: ./results/isotopes_output.nc
+    units: dimensionless
+    dtype: string
+    category: configuration_parameter
+    description: Default NetCDF output file for isotope tracking.
+    references:
+    - CF-1.8 NetCDF conventions
+    tags:
+    - output
+    - netcdf
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: io_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-29T00:00:00Z'
+    bounds: null
+  isotopes.output.aggregation_frequency:
+    value: daily
+    default: daily
+    units: dimensionless
+    dtype: string
+    category: configuration_parameter
+    description: Default temporal aggregation frequency for isotope output.
+    references:
+    - RELIC output convention
+    tags:
+    - output
+    - aggregation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: io_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-29T00:00:00Z'
+    bounds: null
+  isotopes.output.time_units:
+    value: days since 1900-01-01 00:00:00
+    default: days since 1900-01-01 00:00:00
+    units: dimensionless
+    dtype: string
+    category: configuration_parameter
+    description: Default CF-compliant time units for isotope output.
+    references:
+    - CF-1.8 time units
+    tags:
+    - output
+    - time
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: io_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-29T00:00:00Z'
+    bounds: null
+  isotopes.output.calendar:
+    value: gregorian
+    default: gregorian
+    units: dimensionless
+    dtype: string
+    category: configuration_parameter
+    description: Default calendar for isotope output.
+    references:
+    - CF-1.8 calendar attribute
+    tags:
+    - output
+    - time
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: io_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-29T00:00:00Z'
+    bounds: null
+  isotopes.output.netcdf_format:
+    value: NETCDF4
+    default: NETCDF4
+    units: dimensionless
+    dtype: string
+    category: configuration_parameter
+    description: Default NetCDF file format for isotope output.
+    references:
+    - NetCDF4 format specification
+    tags:
+    - output
+    - netcdf
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: io_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-29T00:00:00Z'
+    bounds: null
+  isotopes.output.compression_level:
+    value: 4
+    default: 4
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 0
+    - 9
+    category: configuration_parameter
+    description: Default compression level for isotope output (0-9).
+    references:
+    - NetCDF compression guidelines
+    tags:
+    - output
+    - netcdf
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: io_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-29T00:00:00Z'
+  isotopes.output.chunking:
+    value: true
+    default: true
+    units: dimensionless
+    dtype: bool
+    bounds: null
+    category: configuration_parameter
+    description: Enable chunked storage for isotope output.
+    references:
+    - NetCDF performance tuning guidelines
+    tags:
+    - output
+    - netcdf
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: io_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-29T00:00:00Z'
+  isotopes.output.shuffle:
+    value: true
+    default: true
+    units: dimensionless
+    dtype: bool
+    bounds: null
+    category: configuration_parameter
+    description: Enable shuffle filter for isotope output.
+    references:
+    - NetCDF shuffle filter guidance
+    tags:
+    - output
+    - netcdf
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: io_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-29T00:00:00Z'
+  isotopes.output.fletcher32:
+    value: false
+    default: false
+    units: dimensionless
+    dtype: bool
+    bounds: null
+    category: configuration_parameter
+    description: Enable Fletcher32 checksum for isotope output.
+    references:
+    - NetCDF checksum options
+    tags:
+    - output
+    - netcdf
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: io_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-29T00:00:00Z'
+  isotopes.output.create_directory:
+    value: true
+    default: true
+    units: dimensionless
+    dtype: bool
+    bounds: null
+    category: configuration_parameter
+    description: Create output directory if it does not exist.
+    references:
+    - RELIC IO convention
+    tags:
+    - output
+    - filesystem
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: io_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-29T00:00:00Z'
+  isotopes.output.overwrite_existing:
+    value: false
+    default: false
+    units: dimensionless
+    dtype: bool
+    bounds: null
+    category: configuration_parameter
+    description: Overwrite existing isotope output file.
+    references:
+    - RELIC IO convention
+    tags:
+    - output
+    - filesystem
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: io_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-29T00:00:00Z'
+  isotopes.output.title:
+    value: RELIC isotope tracking results
+    default: RELIC isotope tracking results
+    units: dimensionless
+    dtype: string
+    category: configuration_parameter
+    description: Default NetCDF title attribute for isotope output.
+    references:
+    - CF-1.8 global attributes
+    tags:
+    - output
+    - metadata
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: io_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-29T00:00:00Z'
+    bounds: null
+  isotopes.output.institution:
+    value: ''
+    default: ''
+    units: dimensionless
+    dtype: string
+    category: configuration_parameter
+    description: Institution attribute for isotope output.
+    references:
+    - CF-1.8 global attributes
+    tags:
+    - output
+    - metadata
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: io_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-29T00:00:00Z'
+    bounds: null
+  isotopes.output.source:
+    value: RELIC isotope tracking
+    default: RELIC isotope tracking
+    units: dimensionless
+    dtype: string
+    category: configuration_parameter
+    description: Source attribute for isotope output.
+    references:
+    - CF-1.8 global attributes
+    tags:
+    - output
+    - metadata
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: io_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-29T00:00:00Z'
+    bounds: null
+  isotopes.output.history:
+    value: ''
+    default: ''
+    units: dimensionless
+    dtype: string
+    category: configuration_parameter
+    description: History attribute for isotope output.
+    references:
+    - CF-1.8 global attributes
+    tags:
+    - output
+    - metadata
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: io_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-29T00:00:00Z'
+    bounds: null
+  isotopes.output.references:
+    value: ''
+    default: ''
+    units: dimensionless
+    dtype: string
+    category: configuration_parameter
+    description: References attribute for isotope output.
+    references:
+    - CF-1.8 global attributes
+    tags:
+    - output
+    - metadata
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: io_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-29T00:00:00Z'
+    bounds: null
+  isotopes.output.comment:
+    value: ''
+    default: ''
+    units: dimensionless
+    dtype: string
+    category: configuration_parameter
+    description: Comment attribute for isotope output.
+    references:
+    - CF-1.8 global attributes
+    tags:
+    - output
+    - metadata
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: io_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-29T00:00:00Z'
+    bounds: null
+  isotopes.output.conventions:
+    value: CF-1.8
+    default: CF-1.8
+    units: dimensionless
+    dtype: string
+    category: configuration_parameter
+    description: Conventions attribute for isotope output.
+    references:
+    - CF-1.8 global attributes
+    tags:
+    - output
+    - metadata
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: io_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-29T00:00:00Z'
+    bounds: null
+  isotopes.output.variable_compression_default:
+    value: true
+    default: true
+    units: dimensionless
+    dtype: bool
+    bounds: null
+    category: configuration_parameter
+    description: Default compression flag for isotope output variables.
+    references:
+    - NetCDF compression defaults
+    tags:
+    - output
+    - netcdf
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: io_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-29T00:00:00Z'
+  isotopes.multi.tracked_species_default:
+    value:
+    - 15N
+    default: null
+    units: dimensionless
+    dtype: list
+    category: configuration_parameter
+    description: Default set of isotope species to track.
+    references:
+    - RELIC multi-isotope configuration
+    tags:
+    - isotopes
+    - multi
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-29T00:00:00Z'
+    bounds: null
+  isotopes.multi.integration_timestep:
+    value: 3600.0
+    default: 3600.0
+    units: s
+    dtype: float32
+    bounds:
+    - 1.0
+    - 86400.0
+    category: numerical_parameter
+    description: Integration timestep for isotope calculations.
+    references:
+    - RELIC numerical defaults
+    tags:
+    - isotopes
+    - numerical
+    dimension: time
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-29T00:00:00Z'
+  isotopes.multi.numerical_solver:
+    value: euler_forward
+    default: euler_forward
+    units: dimensionless
+    dtype: string
+    category: numerical_parameter
+    description: Numerical solver for isotope integration.
+    references:
+    - RELIC numerical defaults
+    tags:
+    - isotopes
+    - numerical
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-29T00:00:00Z'
+    bounds: null
+  isotopes.multi.convergence_tolerance:
+    value: 1.0e-8
+    default: 1.0e-8
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 1.0e-12
+    - 1.0e-2
+    category: numerical_parameter
+    description: Convergence tolerance for iterative isotope solvers.
+    references:
+    - RELIC numerical defaults
+    tags:
+    - isotopes
+    - numerical
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-29T00:00:00Z'
+  isotopes.multi.max_iterations:
+    value: 100
+    default: 100
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 10000
+    category: numerical_parameter
+    description: Maximum iterations for isotope solvers.
+    references:
+    - RELIC numerical defaults
+    tags:
+    - isotopes
+    - numerical
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-29T00:00:00Z'
+  isotopes.stoichiometry.expected_ratios:
+    value:
+      leaf_biomass:
+        C:N:
+        - 25.0
+        - 50.0
+        C:O:
+        - 1.0
+        - 3.0
+      root_biomass:
+        C:N:
+        - 30.0
+        - 80.0
+        C:O:
+        - 1.0
+        - 3.0
+      soil_organic_matter:
+        C:N:
+        - 10.0
+        - 30.0
+        C:O:
+        - 0.5
+        - 2.0
+      litter:
+        C:N:
+        - 20.0
+        - 100.0
+        C:O:
+        - 1.0
+        - 4.0
+      wood:
+        C:N:
+        - 100.0
+        - 500.0
+        C:O:
+        - 1.0
+        - 2.0
+      atmospheric_co2:
+        C:N:
+        - 1000000.0
+        - 10000000000.0
+        C:O:
+        - 0.5
+        - 0.5
+    default: null
+    units: dimensionless
+    dtype: dict
+    bounds: null
+    category: validation_parameter
+    description: Expected stoichiometric ratio bounds for isotope pool validation.
+    references:
+    - RELIC stoichiometry defaults
+    tags:
+    - isotopes
+    - stoichiometry
+    - validation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-29T00:00:00Z'
+  isotopes.validation.abundance_tolerance_fraction:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: validation_parameter
+    description: Relative tolerance for natural abundance checks.
+    references:
+    - Isotope standard variability guidance
+    tags:
+    - isotopes
+    - validation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-29T00:00:00Z'
+  isotopes.tracking.zero_initial:
+    value: 0.0
+    default: 0.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.0
+    category: tracking_parameter
+    description: Zero initial value for isotope tracking timestamps
+    references:
+    - Initial condition for tracking state
+    tags:
+    - tracking
+    - initialization
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-17T00:00:00Z'
+  isotopes.tracking.default_dt:
+    value: 1.0
+    default: 1.0
+    units: s
+    dtype: float32
+    bounds:
+    - 1.0e-06
+    - 1000000.0
+    category: numerical_parameter
+    description: Fallback timestep for isotope tracking when dt is not provided.
+    references:
+    - RELIC numerical defaults
+    tags:
+    - tracking
+    - numerical
+    dimension: time
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-29T00:00:00Z'
+  isotopes.tracking.relative_humidity:
+    value: 0.7
+    default: 0.7
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: environmental_parameter
+    description: Default relative humidity when environmental forcing lacks humidity observations.
+    references:
+    - Craig & Gordon (1965). Deuterium and oxygen-18 variations in the ocean and the marine atmosphere.
+    tags:
+    - tracking
+    - humidity
+    - oxygen
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-11-07T00:00:00Z'
+

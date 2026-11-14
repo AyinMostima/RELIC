@@ -1,0 +1,227 @@
+certificate_version: '1.0'
+process_id: relic.scientific.pedosphere.nutrient_cycling.nitrification.NitrificationProcess
+module_name: nitrification_process
+canonical_role: reaction
+iphs_level: 2
+iphs_level_evidence:
+  classification: IPHS-wrapped reaction process certificate
+  compatible_basis: Reaction process is expressed through conserved or open stoichiometric ledgers
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: N_h r_h reaction-network state advance
+  level_2_limit: The canonical runtime wrapper is declared, but no executable typed-cochain or IPHS structural contribution is bound; strict level 4 or 5 evidence is not claimed.
+theory_document: docs\source\theory\nitrification.md
+theory_document_status: updated
+legacy_formula: R_nit = Vmax * NH4 / (Km + NH4) * f_T * f_O2 * f_pH with direct pool deltas.
+literature_formula: Michaelis-Menten ammonia oxidation with Q10, water-filled pore space oxygen (Linn and Doran 1984), and pH modifiers; N2O is a fixed fraction of nitrified nitrogen.
+iphs_formula: x_dot = N_h r_h(x_h, theta); x_h = [NH4, NO3, N2O]^T.
+legacy_expression: dNH4 = -R_nit dt; dNO3 = R_nit(1 - f_N2O)dt; dN2O = R_nit f_N2O dt.
+iphs_expression: x_dot = N_h r_h; N_h = [[-1,-1],[1,0],[0,1]]; r_h = [r_NO3, r_N2O]^T.
+input_variables:
+- nh4_nitrogen
+- soil_temperature
+- water_filled_pore_space
+- soil_ph
+output_variables:
+- nh4_nitrogen
+- no3_nitrogen
+- nitrification_flux
+- n2o_flux
+- diagnostics.temperature_response
+- diagnostics.oxygen_factor
+- diagnostics.ph_factor
+- diagnostics.nitrification.step_seconds
+- diagnostics.nitrification.substrate_limiter_residual
+parameter_keys:
+- pedosphere.nitrification.vmax_nitrification
+- pedosphere.nitrification.km_nh4
+- pedosphere.physical.wfps_nitrification_optimum
+- pedosphere.nitrification.minimum_oxygen_factor
+- pedosphere.nitrification.extreme_temperature_factor
+- pedosphere.nitrification.temperature_minimum
+- pedosphere.nitrification.temperature_maximum
+- pedosphere.nitrification.ph_minimum_factor
+- pedosphere.nitrification.min_rate_threshold
+- pedosphere.nitrification.max_rate_factor
+- pedosphere.nitrification.n2o_factor
+- pedosphere.physical.q10_nitrification
+- pedosphere.physical.reference_temperature
+- pedosphere.physical.ph_optimum_nitrification
+- pedosphere.physical.ph_response_width
+- pedosphere.numerical.unity_multiplier
+- pedosphere.numerical.epsilon
+- validation.conservation.conservation_tolerance
+- validation.conservation.strict_conservation
+composition_ports:
+- soil_chemistry
+- gas_emissions
+references:
+- Parton, W.J. et al. (1996). Generalized model for N2 and N2O production.
+- Li, C. et al. (1992). DNDC nitrification formulations.
+- Prosser, J.I. (1989). Autotrophic nitrification in bacteria.
+- Feinberg, M. (2019). Foundations of Chemical Reaction Network Theory.
+baseline_tests:
+- test\pedosphere\nutrient_cycling\test_nitrification.py
+- test\unit\pedosphere\test_nitrification_process.py
+validation_tests:
+- test\pedosphere\nutrient_cycling\test_nitrification.py
+- test\unit\pedosphere\test_nitrification_process.py
+- test\scientific\pedosphere\nutrient_cycling\nitrification_reference_trajectory.test.py
+- test\audit\phase8_scientific_inventory.test.py
+- test\core\splitting_sub_flow_order.test.py
+state_map:
+  nh4_nitrogen: state cochain x_h[0]
+  no3_nitrogen: state cochain x_h[1]
+  n2o_flux: open gas-output component x_h[2]
+  nitrification_flux: total NH4 oxidation rate
+parameter_map:
+  pedosphere.nitrification.vmax_nitrification: Maximum nitrification rate [g N m-2 s-1]
+  pedosphere.nitrification.km_nh4: Half-saturation for NH4 [g N m-2]
+  pedosphere.physical.wfps_nitrification_optimum: Water-filled pore space above which oxygen limits nitrification [dimensionless]
+  pedosphere.nitrification.minimum_oxygen_factor: Floor of the oxygen response factor f_O2 [dimensionless]
+  pedosphere.nitrification.extreme_temperature_factor: Activity factor outside the temperature range [dimensionless]
+  pedosphere.nitrification.temperature_minimum: Lower temperature limit of nitrification [K]
+  pedosphere.nitrification.temperature_maximum: Upper temperature limit of nitrification [K]
+  pedosphere.nitrification.ph_minimum_factor: Minimum pH response factor [dimensionless]
+  pedosphere.nitrification.min_rate_threshold: Lower bound of the temperature factor f_T [dimensionless]
+  pedosphere.nitrification.max_rate_factor: Upper bound of the temperature factor f_T [dimensionless]
+  pedosphere.nitrification.n2o_factor: Fraction of nitrified N converted to N2O [dimensionless]
+  pedosphere.physical.q10_nitrification: Q10 of nitrification [dimensionless]
+  pedosphere.physical.reference_temperature: Reference temperature of the Q10 response [K]
+  pedosphere.physical.ph_optimum_nitrification: Optimum pH of nitrification [dimensionless]
+  pedosphere.physical.ph_response_width: Width of the Gaussian pH response [dimensionless]
+  pedosphere.numerical.unity_multiplier: Unit multiplier of the rate normalization [dimensionless]
+  pedosphere.numerical.epsilon: Denominator floor of the nitrification statistics [dimensionless]
+  validation.conservation.conservation_tolerance: General relative tolerance of the conservation checks [dimensionless]
+  validation.conservation.strict_conservation: Switch that makes a conservation violation raise [dimensionless]
+operator_map:
+  N_h: explicit stoichiometric matrix in advance_reaction_network
+  r_h: Michaelis-Menten nitrification rate split into NO3 and N2O reaction channels
+  substrate_limiter: min(R_nit, NH4 / dt) applied before N_h r_h
+  time_integration: one explicit Euler step x(t + dt) = x(t) + N_h r_h(x(t)) dt per governed call with the soil drivers held at their call-start values; simulator sub-steps repeat the step
+  sub_flow_accuracy: FunctorMetadata.sub_flow_accuracy ORDER_1 (Hairer, Norsett and Wanner 1993, Sect. II.3) while the donor limit is inactive, R_nit dt < NH4, i.e. Vmax f_T f_O2 f_pH dt < Km + NH4; binding on the two coarse grids of CR-A-04 T11 exhausts the numerical pool and yields equal final donor error, while smaller inactive-limit steps recover first order (a finite-step characterization, not a loss of asymptotic convergence)
+unit_map:
+  nh4_nitrogen: g N m-2
+  no3_nitrogen: g N m-2
+  nitrification_flux: g N m-2 s-1
+  n2o_flux: g N m-2 s-1
+  diagnostics.nitrification.step_seconds: s
+  diagnostics.nitrification.substrate_limiter_residual: g N m-2 s-1
+input_output_map:
+  nh4_nitrogen: read as NH4 pool and advanced by N_h r_h
+  no3_nitrogen: written as NO3 product delta from N_h r_h
+  n2o_flux: written as open gas product rate from N_h r_h
+  diagnostics.nitrification.substrate_limiter_residual: unmet nitrification demand R_nit - min(R_nit, NH4 / dt); a demand, not nitrogen
+interface_map:
+  forward_signature: forward(self, state, time, dt, **kwargs)
+  bridge_class: BiologicalProcessFunctor
+  abstraction_contract: BiologicalProcess
+  state_write_mode: RELICSimulator applies emitted deltas and replace-mode flux outputs
+  legacy_inputs:
+  - nh4_nitrogen
+  - soil_temperature
+  - water_filled_pore_space
+  - soil_ph
+  iphs_inputs:
+  - nh4_nitrogen
+  - soil_temperature
+  - water_filled_pore_space
+  - soil_ph
+  legacy_outputs:
+  - nh4_nitrogen
+  - no3_nitrogen
+  - nitrification_flux
+  - n2o_flux
+  - diagnostics.temperature_response
+  - diagnostics.oxygen_factor
+  - diagnostics.ph_factor
+  - diagnostics.nitrification.step_seconds
+  - diagnostics.nitrification.substrate_limiter_residual
+  iphs_outputs:
+  - nh4_nitrogen
+  - no3_nitrogen
+  - nitrification_flux
+  - n2o_flux
+  - diagnostics.temperature_response
+  - diagnostics.oxygen_factor
+  - diagnostics.ph_factor
+  - diagnostics.nitrification.step_seconds
+  - diagnostics.nitrification.substrate_limiter_residual
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: Environmental response functions define r_h; production pool deltas are computed through advance_reaction_network.
+  no_legacy_mode: No runtime flag exposes a separate pre-Phase 8 nitrification state-advance branch.
+state_advancement_map:
+  potential_basis: nitrogen species cochain x_h = [NH4, NO3, N2O]^T
+  effort_variable: this required certificate slot records reaction-rate tensor r_h from ParameterManager-backed kinetics; r_h is a rate vector and no thermodynamic effort is asserted
+  state_advancer: x_dot = N_h r_h with explicit N_h and r_h evaluated by advance_reaction_network
+  runtime_usage: NitrificationProcess.forward calls advance_reaction_network before emitting NH4, NO3, and N2O outputs.
+  explicit_stoichiometric_usage: NitrificationProcess.forward materializes stoichiometric_N and rates, then lowers x_dot=N_h r_h through advance_reaction_network.
+parameter_management_map:
+  pedosphere.nitrification.vmax_nitrification:
+    source: ParameterManager YAML
+  pedosphere.nitrification.km_nh4:
+    source: ParameterManager YAML
+  pedosphere.physical.wfps_nitrification_optimum:
+    source: ParameterManager YAML
+  pedosphere.nitrification.minimum_oxygen_factor:
+    source: ParameterManager YAML
+  pedosphere.nitrification.extreme_temperature_factor:
+    source: ParameterManager YAML
+  pedosphere.nitrification.temperature_minimum:
+    source: ParameterManager YAML
+  pedosphere.nitrification.temperature_maximum:
+    source: ParameterManager YAML
+  pedosphere.nitrification.ph_minimum_factor:
+    source: ParameterManager YAML
+  pedosphere.nitrification.min_rate_threshold:
+    source: ParameterManager YAML
+  pedosphere.nitrification.max_rate_factor:
+    source: ParameterManager YAML
+  pedosphere.nitrification.n2o_factor:
+    source: ParameterManager YAML
+  pedosphere.physical.q10_nitrification:
+    source: ParameterManager YAML
+  pedosphere.physical.reference_temperature:
+    source: ParameterManager YAML
+  pedosphere.physical.ph_optimum_nitrification:
+    source: ParameterManager YAML
+  pedosphere.physical.ph_response_width:
+    source: ParameterManager YAML
+  pedosphere.numerical.unity_multiplier:
+    source: ParameterManager YAML
+  pedosphere.numerical.epsilon:
+    source: ParameterManager YAML
+  validation.conservation.conservation_tolerance:
+    source: ParameterManager YAML
+  validation.conservation.strict_conservation:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares nitrogen conservation and soil chemistry/gas-emission interfaces
+  structural_protocol: explicit N_h r_h reaction state advance
+  state_contract: existing simulator state update path consumes emitted deltas and flux outputs
+  ports:
+  - soil_chemistry
+  - gas_emissions
+dependency_interconnection_map:
+  dependencies: get_dependencies declares mineralization
+  direct_functor_calls: none; mineralization is scheduler-declared and ammonium state arrives through the state graph
+  chain_maps:
+  - nh4_nitrogen state cochain to nitrification reaction network
+  - N2O output to gas_emissions interface
+overflow_routing_map:
+  substrate_limiter: NH4 / dt limiter prevents overconsumption
+  diagnostic_residuals:
+  - diagnostics.nitrification.substrate_limiter_residual
+  conservation_residual: Functor-local nitrogen conservation check sees dNH4 + dNO3 + dN2O
+  discarded_residuals: potential rate is limited by ammonium availability per dt so unconsumed ammonium remains in state, accepted nitrogen is partitioned exactly to NH4, NO3, and N2O, and check_conservation_laws exposes closure
+conservation_map:
+  conserved_quantity: nitrogen
+  balance_expression: dNH4 + dNO3 + dN2O = 0 for the local reaction network
+  local_check: _enforce_forward_conservation on the internal per-step deltas; the public check_conservation_laws recomputes dNH4 + dNO3 + F_N2O * dt from the returned UpdateItems using diagnostics.nitrification.step_seconds and raises on missing outputs
+entropy_audit:
+  rate_domain: reaction channels are non-negative after substrate limitation
+  strict_entropy_claim: none at Level 2; non-negative rates alone do not prove affinity-rate entropy production
+  validation_hook: reaction_network_check and unit tests validate stoichiometric state advance and nitrogen closure, not a GENERIC entropy inequality
+equivalence_type: reaction_network

@@ -1,0 +1,107 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://relic.local/schemas/coupling/manifest.schema.json",
+  "title": "RELIC Coupler Plugin Manifest",
+  "type": "object",
+  "required": [
+    "name",
+    "interface_version",
+    "metadata",
+    "ports"
+  ],
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "interface_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+$"
+    },
+    "metadata": {
+      "type": "object",
+      "required": [
+        "provenance"
+      ],
+      "properties": {
+        "provenance": {
+          "type": "object",
+          "required": [
+            "git",
+            "pkg"
+          ],
+          "properties": {
+            "git": {
+              "type": "string"
+            },
+            "pkg": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "ports": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "direction",
+          "type_id",
+          "update_mode"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "direction": {
+            "type": "string",
+            "enum": [
+              "in",
+              "out",
+              "inout"
+            ]
+          },
+          "type_id": {
+            "type": "string",
+            "enum": [
+              "INT32",
+              "INT64",
+              "F32",
+              "F64",
+              "STR",
+              "BYTES"
+            ]
+          },
+          "shape_hint": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "units": {
+            "type": "string"
+          },
+          "update_mode": {
+            "type": "string",
+            "enum": [
+              "STATE",
+              "INCREMENT",
+              "FLUX"
+            ]
+          },
+          "per_timestep": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

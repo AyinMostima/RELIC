@@ -1,0 +1,167 @@
+certificate_version: '1.0'
+process_id: relic.scientific.pedosphere.nutrient_cycling.nitrogen_leaching.NitrogenLeachingProcess
+module_name: NitrogenLeachingProcess
+canonical_role: transport
+iphs_level: 3
+iphs_level_evidence:
+  classification: IPHS-structured transport process certificate
+  compatible_basis: Process declares DEC cochains, a positive Hodge mobility, and an open nitrate drainage port
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: x_dot = -D_h q_h + G_h u_h with q_h = star_Q C_NO3
+  structural_contribution: Cochain, Hodge, flux, and port structures are declared for assembly audit
+  assembly_participation: Certificate participates in Phase 8 inventory and GraphIR structural audit
+  level_3_limit: Typed form, Hodge, port, or related structure is declared, but no runtime-linked IPHSStructureSpec contribution and executable level 4 or 5 certificate binding is present.
+theory_document: docs\source\theory\nitrogen_leaching.md
+theory_document_status: updated
+legacy_formula: F_N = Q_drain * C_NO3 * mobile_fraction
+literature_formula: F_N = (F_water / rho_w) * (N_NO3 / (theta z_soil)) / (1 + rho_b K_d / theta)
+iphs_formula: x_dot = -D_h q_h + G_h u_h, q_h = min(star_Q C_NO3, N_NO3 / tau_leach, f_max N_NO3 / dt), y_h = G_h^T e_h
+legacy_expression: F_N = Q_drain * C_NO3 * mobile_fraction
+iphs_expression: x_dot = -D_h q_h + G_h u_h, q_h = star_Q C_NO3, y_h = G_h^T e_h
+input_variables:
+- no3_nitrogen
+- soil_moisture
+- drainage_flux
+- soil_depth
+- bulk_density
+output_variables:
+- nitrogen_leaching_flux
+- no3_nitrogen
+- diagnostics.nitrogen_leaching.nitrate_concentration
+- diagnostics.nitrogen_leaching.mobile_fraction
+- diagnostics.nitrogen_leaching.soil_water_volume
+- diagnostics.nitrogen_leaching.step_seconds
+parameter_keys:
+- pedosphere.nutrient_cycling.leaching_time_constant
+- pedosphere.nutrient_cycling.min_no3_pool
+- pedosphere.transport.nitrate_distribution_coefficient
+- pedosphere.nutrient_cycling.hodge_reference_soil_depth
+- pedosphere.numerical.max_flux_fraction
+- validation.conservation.conservation_tolerance
+- validation.conservation.strict_conservation
+composition_ports:
+- nitrate_drainage_export
+references:
+- Li et al. (2006), doi:10.1016/j.ecolmodel.2006.02.007
+- van Genuchten and Wierenga (1986), soil solute transport
+- 'Biome-BGC nleaching.c: MOBILEN_PROPORTION formulation'
+baseline_tests:
+- test\unit\pedosphere\test_nitrogen_leaching_process.py
+- test\audit\phase8_scientific_inventory.test.py
+validation_tests:
+- test\unit\pedosphere\test_nitrogen_leaching_process.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  no3_nitrogen: no3_nitrogen mapped to canonical Phase 8 cochain basis
+  soil_moisture: soil_moisture mapped to canonical Phase 8 cochain basis
+  drainage_flux: drainage_flux mapped to canonical Phase 8 cochain basis
+  soil_depth: soil_depth forcing z [m] of the soil water volume theta z
+  bulk_density: bulk_density forcing rho_b [kg m-3] of the retardation R = 1 + rho_b K_d / theta
+parameter_map:
+  pedosphere.nutrient_cycling.leaching_time_constant: Time constant limiting nitrate export [s]
+  pedosphere.nutrient_cycling.min_no3_pool: Minimum nitrate pool enforced for numerical stability [g N m-2]
+  pedosphere.transport.nitrate_distribution_coefficient: Nitrate sorption distribution coefficient K_d [L kg-1]
+  pedosphere.nutrient_cycling.hodge_reference_soil_depth: Reference soil depth of the static leaching Hodge contract [m]
+  pedosphere.numerical.max_flux_fraction: Maximum leaching fraction per time step [dimensionless]
+  validation.conservation.conservation_tolerance: General relative tolerance of the conservation checks [dimensionless]
+  validation.conservation.strict_conservation: Switch that makes a conservation violation raise [dimensionless]
+operator_map:
+  D_h: existing divergence/transport operator
+  q_h: declared flux cochain
+  G_h: boundary/source port map
+unit_map:
+  nitrogen_leaching_flux: g N m-2 s-1
+  no3_nitrogen: g N m-2
+  diagnostics.nitrogen_leaching.nitrate_concentration: g N m-3
+  diagnostics.nitrogen_leaching.mobile_fraction: dimensionless
+  diagnostics.nitrogen_leaching.soil_water_volume: m
+  diagnostics.nitrogen_leaching.step_seconds: s
+input_output_map:
+  drainage_flux: required canonical hydrological boundary input; no aliases or default
+  nitrogen_leaching_flux: retained canonical outward nitrate export rate
+  no3_nitrogen: retained canonical per-step nitrate pool increment
+  nitrate_concentration: renamed to diagnostics.nitrogen_leaching.nitrate_concentration
+  mobile_fraction: renamed to diagnostics.nitrogen_leaching.mobile_fraction
+  soil_water_volume: renamed to diagnostics.nitrogen_leaching.soil_water_volume
+  diagnostics.nitrogen_leaching.soil_water_volume: soil water volume per unit ground area, theta z_soil, a volume per area (m3 m-2) reported as the equivalent depth in m
+  leaching_water_flux: removed duplicate input echo
+  leaching_efficiency: removed ambiguous rate-ratio output
+  water_use_efficiency: removed dimensionally misleading duplicate diagnostic
+interface_map:
+  forward_signature: forward(self, state, time, dt)
+  bridge_class: TransportMechanismFunctor
+  abstraction_contract: TransportMechanism
+  state_write_mode: existing RELIC simulator and StateManager update path
+  legacy_inputs:
+  - no3_nitrogen
+  - soil_moisture
+  - drainage_flux
+  - soil_depth
+  - bulk_density
+  iphs_inputs:
+  - no3_nitrogen
+  - soil_moisture
+  - drainage_flux
+  - soil_depth
+  - bulk_density
+  legacy_outputs:
+  - nitrogen_leaching_flux
+  - no3_nitrogen
+  - diagnostics.nitrogen_leaching.nitrate_concentration
+  - diagnostics.nitrogen_leaching.mobile_fraction
+  - diagnostics.nitrogen_leaching.soil_water_volume
+  - diagnostics.nitrogen_leaching.step_seconds
+  iphs_outputs:
+  - nitrogen_leaching_flux
+  - no3_nitrogen
+  - diagnostics.nitrogen_leaching.nitrate_concentration
+  - diagnostics.nitrogen_leaching.mobile_fraction
+  - diagnostics.nitrogen_leaching.soil_water_volume
+  - diagnostics.nitrogen_leaching.step_seconds
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: Existing ParameterManager-backed calculations define canonical IPHS operator coefficients, rates, ports, or observations.
+  no_legacy_mode: No selectable legacy runtime branch is exposed for Phase 8 completion.
+state_advancement_map:
+  potential_basis: declared RELIC state, port, or observation cochain basis
+  effort_variable: ParameterManager-backed thermodynamic effort, driver, or diagnostic input used by the module
+  state_advancer: x_dot = -D_h q_h + G_h u_h with declared flux q_h and open drainage port
+  runtime_usage: NitrogenLeachingProcess.forward evaluates the single canonical nitrate drainage transport calculation. Empirical drainage and adsorption formulas are used only as ParameterManager-backed mobility and concentration coefficients.
+parameter_management_map:
+  pedosphere.nutrient_cycling.leaching_time_constant:
+    source: ParameterManager YAML
+  pedosphere.nutrient_cycling.min_no3_pool:
+    source: ParameterManager YAML
+  pedosphere.transport.nitrate_distribution_coefficient:
+    source: ParameterManager YAML
+  pedosphere.nutrient_cycling.hodge_reference_soil_depth:
+    source: ParameterManager YAML
+  pedosphere.numerical.max_flux_fraction:
+    source: ParameterManager YAML
+  validation.conservation.conservation_tolerance:
+    source: ParameterManager YAML
+  validation.conservation.strict_conservation:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares interfaces, execution phase, and conservation semantics
+  state_contract: existing simulator state update path is preserved
+  validation_rule: phase8 scientific inventory and equivalence certificate checks
+dependency_interconnection_map:
+  dependencies: nitrification
+  direct_functor_calls: none declared by certificate
+overflow_routing_map:
+  diagnostic_residuals: none; flux limiting leaves unexported nitrate in no3_nitrogen
+  discarded_residuals: every executed export is emitted as nitrogen_leaching_flux and the identical step amount is subtracted from no3_nitrogen; limiting leaves unexported nitrate in the source pool and forward conservation is enforced
+conservation_map:
+  conserved_quantities: nitrogen|mass
+  balance_expression: delta_NO3 + nitrogen_leaching_flux * dt = 0
+  local_check: _enforce_forward_conservation on the internal per-step deltas; the public check_conservation_laws recomputes delta_NO3 + F_leach * dt from the returned UpdateItems using diagnostics.nitrogen_leaching.step_seconds and raises on missing outputs
+entropy_audit:
+  operator_sign: rates, mobilities, or diagnostic maps are non-negative or checked by existing validation hooks where physically required
+  sigma_expression: canonical entropy production is non-negative for dissipative subexpressions
+equivalence_type: port_equivalent
+physical_constant_ssot:
+  water_density: get_physical_constant("water_density")
+  liter_to_cubic_meter: get_physical_constant("relic.physical.constants.conversions.liter_to_cubic_meter")

@@ -1,0 +1,474 @@
+schema_version: 2.0.0
+tier: relic
+namespace: optimization.calibration
+description: Iteration limits, objective targets, early stopping, gradient optimizer settings and adaptive-strategy
+  thresholds of the parameter calibrators (relic.parameters.calibration) used when a configuration does not state them
+metadata:
+  version: 1.0.0
+  created_by: relic
+parameters:
+  optimization.calibration.max_iterations:
+    value: 1000
+    default: 1000
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 10000000
+    category: numerical_parameter
+    description: Maximum number of optimizer iterations of one calibration run (CalibrationConfig.max_iterations,
+      CalibrationConfig.create_simple and GradientCalibrationConfig.max_iterations). The value 1000 is a RELIC convention
+      value, not a literature value.
+    references:
+    - RELIC convention value (no literature value; documented as an operational choice)
+    tags:
+    - optimization
+    - calibration
+    - iteration_limit
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  optimization.calibration.objective_tolerance:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - .inf
+    category: numerical_parameter
+    description: 'Objective target of a calibration run: the run stops and is reported successful once the objective value
+      L satisfies L < tol (population and local methods of ParameterCalibrator) or L <= tol (GradientCalibrator). The
+      threshold is compared with the objective value itself, so it carries the units of the caller''s objective function
+      (for an MSE objective the squared observation units); the numerical value is a RELIC convention value, not a
+      literature value.'
+    references:
+    - RELIC convention value (no literature value; documented as an operational choice)
+    tags:
+    - optimization
+    - calibration
+    - convergence
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  optimization.calibration.early_stopping_patience:
+    value: 50
+    default: 50
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 10000000
+    category: numerical_parameter
+    description: 'Early-stopping patience p: the number of consecutive non-improving steps after which a calibration stops.
+      GradientCalibrator counts optimizer iterations whose accepted loss does not improve the best loss; ConvergenceCallback
+      counts objective evaluations whose value does not improve the best value by more than
+      optimization.calibration.min_objective_improvement. The early-stopping rule with a patience parameter follows
+      Goodfellow et al. (2016, Sect. 7.8, Algorithm 7.1), which prescribes no value; 50 is a RELIC convention value.'
+    references:
+    - Goodfellow, I., Bengio, Y. & Courville, A. (2016). Deep Learning. MIT Press, Sect. 7.8, Algorithm 7.1 (patience parameter,
+      no recommended value)
+    - RELIC convention value (documented as an operational choice)
+    tags:
+    - optimization
+    - calibration
+    - early_stopping
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  optimization.calibration.min_objective_improvement:
+    value: 1.0e-07
+    default: 1.0e-07
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - .inf
+    category: numerical_parameter
+    description: 'Minimum objective improvement delta. GradientCalibrator stops when two successive accepted losses differ by
+      less than delta (|L_(k-1) - L_k| < delta); ConvergenceCallback counts an evaluation as an improvement only when it
+      lowers the best value by more than delta. delta is compared with objective values and so carries the units of the
+      caller''s objective function; the value is a RELIC convention value, not a literature value.'
+    references:
+    - RELIC convention value (no literature value; documented as an operational choice)
+    tags:
+    - optimization
+    - calibration
+    - early_stopping
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  optimization.calibration.gradient.learning_rate:
+    value: 0.001
+    default: 0.001
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 1.0e-12
+    - 10.0
+    category: numerical_parameter
+    description: Step size alpha of the gradient calibrators (Adam, L-BFGS and plain gradient descent of GradientCalibrator).
+      Kingma & Ba (2015, Algorithm 1) give alpha = 0.001 as the default setting for Adam; the same value is used for the
+      other gradient methods.
+    references:
+    - 'Kingma, D.P. & Ba, J. (2015). Adam: A Method for Stochastic Optimization. ICLR 2015, arXiv:1412.6980, Algorithm
+      1 (good default settings alpha = 0.001, beta1 = 0.9, beta2 = 0.999, epsilon = 1e-8)'
+    tags:
+    - optimization
+    - calibration
+    - gradient
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  optimization.calibration.gradient.adam_beta1:
+    value: 0.9
+    default: 0.9
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 0.999999
+    category: numerical_parameter
+    description: Exponential decay rate beta1 of the Adam first-moment estimate, beta1 in [0, 1) (Kingma & Ba 2015,
+      Algorithm 1).
+    references:
+    - 'Kingma, D.P. & Ba, J. (2015). Adam: A Method for Stochastic Optimization. ICLR 2015, arXiv:1412.6980, Algorithm
+      1 (good default settings alpha = 0.001, beta1 = 0.9, beta2 = 0.999, epsilon = 1e-8)'
+    tags:
+    - optimization
+    - calibration
+    - gradient
+    - adam
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  optimization.calibration.gradient.adam_beta2:
+    value: 0.999
+    default: 0.999
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 0.999999
+    category: numerical_parameter
+    description: Exponential decay rate beta2 of the Adam second raw-moment estimate, beta2 in [0, 1) (Kingma & Ba 2015,
+      Algorithm 1).
+    references:
+    - 'Kingma, D.P. & Ba, J. (2015). Adam: A Method for Stochastic Optimization. ICLR 2015, arXiv:1412.6980, Algorithm
+      1 (good default settings alpha = 0.001, beta1 = 0.9, beta2 = 0.999, epsilon = 1e-8)'
+    tags:
+    - optimization
+    - calibration
+    - gradient
+    - adam
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  optimization.calibration.gradient.adam_epsilon:
+    value: 1.0e-08
+    default: 1.0e-08
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1.0
+    category: numerical_parameter
+    description: Denominator offset epsilon of the Adam update theta_t = theta_(t-1) - alpha m_hat_t / (sqrt(v_hat_t) +
+      epsilon) (Kingma & Ba 2015, Algorithm 1).
+    references:
+    - 'Kingma, D.P. & Ba, J. (2015). Adam: A Method for Stochastic Optimization. ICLR 2015, arXiv:1412.6980, Algorithm
+      1 (good default settings alpha = 0.001, beta1 = 0.9, beta2 = 0.999, epsilon = 1e-8)'
+    tags:
+    - optimization
+    - calibration
+    - gradient
+    - adam
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  optimization.calibration.gradient.weight_decay:
+    value: 0.0
+    default: 0.0
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1000.0
+    category: numerical_parameter
+    description: L2 penalty coefficient added to the gradient by torch.optim.Adam (weight_decay). Adam as published by
+      Kingma & Ba (2015) has no such term; 0.0 disables it and is a RELIC convention value (it equals the torch.optim.Adam
+      default).
+    references:
+    - RELIC convention value (no penalty; equals the torch.optim.Adam default)
+    tags:
+    - optimization
+    - calibration
+    - gradient
+    - adam
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  optimization.calibration.gradient.lbfgs_history_size:
+    value: 100
+    default: 100
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 100000
+    category: numerical_parameter
+    description: Number m of stored correction pairs (s_i, y_i) of torch.optim.LBFGS. The value 100 is the torch default and
+      a RELIC convention value; Nocedal & Wright (Sect. 9.1 of the 1999 edition, Sect. 7.2 of the 2006 edition) report that
+      modest values of m between 3 and 20 often produce satisfactory results, so 100 costs more memory and work per
+      iteration than that range but is not an error.
+    references:
+    - torch default (torch.optim.LBFGS history_size = 100)
+    - Nocedal, J. & Wright, S.J. (1999/2006). Numerical Optimization. Springer, Sect. 9.1 (1999) / Sect. 7.2 (2006) (m =
+      3-20 suggested)
+    - RELIC convention value (documented as an operational choice)
+    tags:
+    - optimization
+    - calibration
+    - gradient
+    - lbfgs
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  optimization.calibration.adaptive.adaptation_interval:
+    value: 50
+    default: 50
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 10000000
+    category: numerical_parameter
+    description: Number of iterations between two evaluations of the adaptive-strategy callback (AdaptiveCallback). RELIC
+      convention value, not a literature value.
+    references:
+    - RELIC convention value (no literature value; documented as an operational choice)
+    tags:
+    - optimization
+    - calibration
+    - adaptive
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  optimization.calibration.adaptive.improvement_scale_floor:
+    value: 1.0e-12
+    default: 1.0e-12
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 1.0e-300
+    - .inf
+    category: numerical_parameter
+    description: 'Lower bound s of the scale of the relative objective improvement of AdaptiveCallback, rho = (L_prev - L_curr)
+      / max(|L_prev|, s). Numerical meaning: above the floor rho is relative to |L_prev|; below it rho is the improvement in
+      units of s, so rho stays defined when L_prev = 0 instead of being replaced by 0. s carries the units of the caller''s
+      objective function; the value 1e-12 keeps the relative measure for every objective larger than roundoff and is a RELIC
+      convention value, not a literature value.'
+    references:
+    - Hairer, E., Norsett, S.P. & Wanner, G. (1993). Solving Ordinary Differential Equations I, 2nd ed., Springer, Sect. II.4
+      (mixed absolute/relative error scale sc = Atol + |y| Rtol)
+    - RELIC convention value (no literature value for the floor; documented as an operational choice)
+    tags:
+    - optimization
+    - calibration
+    - adaptive
+    - tolerance
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  optimization.calibration.adaptive.population_stagnation_rate:
+    value: 0.01
+    default: 0.01
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1.0
+    category: numerical_parameter
+    description: AdaptiveCallback suggests a larger population for population-based methods when the relative improvement
+      rho over one adaptation interval is below this rate. RELIC convention value, not a literature value.
+    references:
+    - RELIC convention value (no literature value; documented as an operational choice)
+    tags:
+    - optimization
+    - calibration
+    - adaptive
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  optimization.calibration.adaptive.population_growth_factor:
+    value: 1.2
+    default: 1.2
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 1.0
+    - 10.0
+    category: numerical_parameter
+    description: Multiplicative population-size factor suggested by AdaptiveCallback when the relative improvement is below
+      optimization.calibration.adaptive.population_stagnation_rate. RELIC convention value, not a literature value.
+    references:
+    - RELIC convention value (no literature value; documented as an operational choice)
+    tags:
+    - optimization
+    - calibration
+    - adaptive
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  optimization.calibration.adaptive.learning_rate_decrease_rate:
+    value: 0.001
+    default: 0.001
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1.0
+    category: numerical_parameter
+    description: AdaptiveCallback suggests a smaller learning rate when the relative improvement rho over one adaptation
+      interval is below this rate. RELIC convention value, not a literature value.
+    references:
+    - RELIC convention value (no literature value; documented as an operational choice)
+    tags:
+    - optimization
+    - calibration
+    - adaptive
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  optimization.calibration.adaptive.learning_rate_decrease_factor:
+    value: 0.8
+    default: 0.8
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1.0
+    category: numerical_parameter
+    description: Multiplicative learning-rate factor suggested by AdaptiveCallback when the relative improvement is below
+      optimization.calibration.adaptive.learning_rate_decrease_rate. RELIC convention value, not a literature value.
+    references:
+    - RELIC convention value (no literature value; documented as an operational choice)
+    tags:
+    - optimization
+    - calibration
+    - adaptive
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  optimization.calibration.adaptive.learning_rate_increase_rate:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - .inf
+    category: numerical_parameter
+    description: AdaptiveCallback suggests a larger learning rate when the relative improvement rho over one adaptation
+      interval exceeds this rate. RELIC convention value, not a literature value.
+    references:
+    - RELIC convention value (no literature value; documented as an operational choice)
+    tags:
+    - optimization
+    - calibration
+    - adaptive
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  optimization.calibration.adaptive.learning_rate_increase_factor:
+    value: 1.2
+    default: 1.2
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 1.0
+    - 10.0
+    category: numerical_parameter
+    description: Multiplicative learning-rate factor suggested by AdaptiveCallback when the relative improvement exceeds
+      optimization.calibration.adaptive.learning_rate_increase_rate. RELIC convention value, not a literature value.
+    references:
+    - RELIC convention value (no literature value; documented as an operational choice)
+    tags:
+    - optimization
+    - calibration
+    - adaptive
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'

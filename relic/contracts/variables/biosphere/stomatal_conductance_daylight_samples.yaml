@@ -1,0 +1,46 @@
+variable: stomatal_conductance_daylight_samples
+title: "Leaf Stomatal Conductance at the Daylight Gauss Samples"
+description: "Leaf stomatal conductance to water vapour g_s [mol H2O m-2 leaf s-1] of medlyn_stomatal_conductance with temporal_support daylight_gauss at each daylight Gauss instant and at the night sample (g0, or 0 without canopy). Its weighted mean is the 24-hour mean written to stomatal_conductance. Read by ozone_stress with temporal_support daylight_gauss (stomatal ozone uptake of the same instant). Trailing axis daylight_sample of length n + 1 (n = config daylight_gauss_nodes, 3 or 5): samples 0..n-1 are the Gauss-Legendre instants of the daylight period in time order (FAO-56 day length, Eq. 34), sample n is the night; the daily mean is sum_k W_k x_k with W_i = (N/24) w_i and W_night = 1 - N/24 (relic/scientific/atmosphere/daylight_quadrature.py; Goudriaan 1986)."
+kind: diagnostic
+dimension:
+  udunits: "mol m-2 s-1"
+  cf_standard_name: null
+support:
+  spatial_kind: leaf
+  area_basis: leaf_area
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell, daylight_sample]
+owner: "medlyn_stomatal_conductance"
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Medlyn, B.E. et al. (2011). Global Change Biology 17, 2134-2144"
+  - "Goudriaan, J. (1986). Agricultural and Forest Meteorology 38, 249-254"
+numerics:
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "medlyn_stomatal_conductance"
+      module: "relic.scientific.biosphere.photosynthesis.stomatal"
+      provides: ["stomatal_conductance_daylight_samples"]
+      unit: "mol m-2 s-1"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/biosphere/photosynthesis/stomatal.py"
+  runtime_role: "daylight_gauss_leaf_conductance_samples"
+  runtime_writer: "medlyn_stomatal_conductance"
+  note: "Declared output of medlyn_stomatal_conductance only with config temporal_support daylight_gauss; UpdateItem(REPLACE, per_timestep=False) in mol m-2 s-1. Reader: ozone_stress (daylight_gauss)."

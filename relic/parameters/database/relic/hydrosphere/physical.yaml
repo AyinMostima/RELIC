@@ -1,0 +1,419 @@
+﻿schema_version: 2.0.0
+tier: relic
+namespace: hydrosphere.physical
+description: Hydrosphere physical properties and model response parameters
+metadata:
+  created_by: RELIC Parameter System
+  last_modified: '2026-01-07T14:20:26Z'
+  schema_url: https://github.com/relic/parameter-schema/v2.0.0
+  version: 1.0.0
+parameters:
+  hydrosphere.physical.viscosity_temperature_factor:
+    value: 0.02
+    default: 0.02
+    units: K-1
+    dtype: float32
+    bounds:
+    - 0.01
+    - 0.03
+    category: model_parameter
+    description: Linearized sensitivity of liquid water viscosity to temperature for unsaturated flow corrections
+    references:
+    - Korson, L. et al. (1969) Journal of Physical Chemistry 73:34-39
+    - Decharme, B. et al. (2011) Journal of Hydrometeorology 12:153-172
+    tags:
+    - viscosity
+    - temperature_response
+    - hydrological_modeling
+    dimension: inverse_temperature
+    requires_grad: false
+    provenance:
+      source: water_viscosity_literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-18T00:00:00Z'
+  hydrosphere.physical.vpd_alpha_baseline:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.6
+    - 1.3
+    category: empirical_parameter
+    description: Baseline scaling factor for Priestley-Taylor alpha reduction as a function of vapor pressure deficit
+    references:
+    - Katerji & Rana (2011) Agric. For. Meteorol. 151:428-440
+    tags:
+    - vapor_pressure_deficit
+    - stress_response
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: evapotranspiration_stress_response
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-09T00:00:00Z'
+  hydrosphere.physical.vpd_alpha_sensitivity:
+    value: 0.1
+    default: 0.1
+    units: kPa-1
+    dtype: float32
+    bounds:
+    - 0.02
+    - 0.3
+    category: empirical_parameter
+    description: Sensitivity of Priestley-Taylor alpha to vapor pressure deficit above the threshold
+    references:
+    - Katerji & Rana (2011) Agric. For. Meteorol. 151:428-440
+    - Fisher et al. (2008) Water Resour. Res. 44:W00H14
+    tags:
+    - vapor_pressure_deficit
+    - calibratable
+    dimension: inverse_pressure
+    requires_grad: true
+    provenance:
+      source: evapotranspiration_stress_response
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-09T00:00:00Z'
+  hydrosphere.physical.vpd_alpha_threshold:
+    value: 1.0
+    default: 1.0
+    units: kPa
+    dtype: float32
+    bounds:
+    - 0.3
+    - 2.0
+    category: empirical_parameter
+    description: Vapor pressure deficit threshold beyond which Priestley-Taylor alpha is reduced
+    references:
+    - Gentine et al. (2016) Nature 529:400-403
+    - Katerji & Rana (2011) Agric. For. Meteorol. 151:428-440
+    tags:
+    - vapor_pressure_deficit
+    - stress_threshold
+    dimension: pressure
+    requires_grad: true
+    provenance:
+      source: evapotranspiration_stress_response
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-09T00:00:00Z'
+  hydrosphere.physical.maximum_lai_factor:
+    value: 6.0
+    default: 6.0
+    units: m2 m-2
+    dtype: float32
+    bounds:
+    - 1.0
+    - 10.0
+    category: vegetation_descriptor
+    description: Representative upper bound on LAI used for interception diagnostics and capacity checks
+    references:
+    - Gash (1979) J. Hydrol. 47:15-27
+    - Wang et al. (2007) Agric. For. Meteorol. 143:122-138
+    tags:
+    - canopy
+    - interception
+    - diagnostic
+    dimension: area_ratio
+    requires_grad: false
+    provenance:
+      source: canopy_interception_references
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-03-06T00:00:00Z'
+  hydrosphere.physical.moderate_lai_factor:
+    value: 3.0
+    default: 3.0
+    units: m2 m-2
+    dtype: float32
+    bounds:
+    - 1.0
+    - 6.0
+    category: vegetation_descriptor
+    description: Representative LAI used when scaling interception capacity for mixed evergreen stands
+    references:
+    - Rutter et al. (1971) J. Appl. Ecol. 8:667-688
+    - Gash (1979) Q. J. R. Meteorol. Soc. 105:43-55
+    tags:
+    - canopy
+    - interception
+    - lai_scaling
+    dimension: area_ratio
+    requires_grad: false
+    provenance:
+      source: canopy_interception_references
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-09T00:00:00Z'
+  hydrosphere.physical.scs_numerator_constant:
+    value: 25400.0
+    default: 25400.0
+    units: mm
+    dtype: float32
+    bounds:
+    - 25400.0
+    - 25400.0
+    category: model_parameter
+    description: SCS Curve Number method numerator constant (1000 inches converted to mm)
+    references:
+    - USDA-NRCS (1986) Urban Hydrology for Small Watersheds, TR-55
+    - Ponce & Hawkins (1996) J. Hydrol. Eng. 1(1):11-19
+    - doi:10.1061/(ASCE)1084-0699(1996)1:1(11)
+    tags:
+    - physical_constant
+    - scs_method
+    - runoff_modeling
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: usda_nrcs_tr55
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-09T00:00:00Z'
+  hydrosphere.physical.scs_offset_constant:
+    value: 254.0
+    default: 254.0
+    units: mm
+    dtype: float32
+    bounds:
+    - 254.0
+    - 254.0
+    category: model_parameter
+    description: SCS Curve Number method offset constant (10 inches converted to mm)
+    references:
+    - USDA-NRCS (1986) Urban Hydrology for Small Watersheds, TR-55
+    - Ponce & Hawkins (1996) J. Hydrol. Eng. 1(1):11-19
+    tags:
+    - physical_constant
+    - scs_method
+    - runoff_modeling
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: usda_nrcs_tr55
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-09T00:00:00Z'
+  hydrosphere.physical.soil_heat_flux_ratio_daytime:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.04
+    - 0.15
+    category: model_parameter
+    description: Ratio G/Rn of the hourly (or shorter) soil heat flux during daylight, Rn > 0 (FAO-56 Eq. 45; the ASCE-EWRI tall reference uses 0.04)
+    references:
+    - Allen, R.G. et al. (1998). Crop evapotranspiration. FAO Irrigation and Drainage Paper 56, Eqs. 45-46
+    - ASCE-EWRI (2005). The ASCE Standardized Reference Evapotranspiration Equation, Table 1
+    tags:
+    - soil_energy
+    - empirical_parameter
+    - calibratable
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: fao_56_standard
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-24T00:00:00Z'
+  hydrosphere.physical.soil_heat_flux_hourly_max_step:
+    value: 3600.0
+    default: 3600.0
+    units: s
+    dtype: float32
+    bounds:
+    - 3600.0
+    - 3600.0
+    category: numerical_constraint
+    description: Longest step for which the FAO-56 hourly soil heat flux fractions G = 0.1 Rn (daylight)
+      and G = 0.5 Rn (night) are defined; a longer step lies outside the hourly formulation
+    references:
+    - Allen, R.G. et al. (1998). Crop evapotranspiration. FAO Irrigation and Drainage Paper 56, Eqs. 45-46
+      (hourly or shorter periods) and Eq. 42 (day-long periods)
+    tags:
+    - soil_energy
+    - validity_domain
+    dimension: time
+    requires_grad: false
+    provenance:
+      source: fao_56_standard
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-24T00:00:00Z'
+  hydrosphere.physical.soil_heat_flux_ratio_nighttime:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.2
+    - 0.6
+    category: model_parameter
+    description: Ratio G/Rn of the hourly (or shorter) soil heat flux during nighttime, Rn <= 0 (FAO-56 Eq. 46; the ASCE-EWRI tall reference uses 0.2)
+    references:
+    - Allen, R.G. et al. (1998). Crop evapotranspiration. FAO Irrigation and Drainage Paper 56, Eqs. 45-46
+    - ASCE-EWRI (2005). The ASCE Standardized Reference Evapotranspiration Equation, Table 1
+    tags:
+    - soil_energy
+    - empirical_parameter
+    - calibratable
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: fao_56_standard
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-24T00:00:00Z'
+  hydrosphere.physical.heat_to_momentum_roughness_ratio:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.05
+    - 0.2
+    category: model_parameter
+    description: Ratio of roughness length for heat to momentum (z0h/z0m)
+    references:
+    - Brutsaert (1982) Evaporation into the Atmosphere
+    - Garratt (1992) The Atmospheric Boundary Layer
+    tags:
+    - aerodynamic
+    - roughness
+    - heat_transfer
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: boundary_layer_theory
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-09T00:00:00Z'
+  hydrosphere.physical.reference_surface_resistance:
+    value: 70.0
+    default: 70.0
+    units: s m-1
+    dtype: float32
+    bounds:
+    - 50.0
+    - 100.0
+    category: model_parameter
+    description: Surface resistance for reference grass (FAO-56 reference ET)
+    references:
+    - Allen et al. (1998) FAO-56
+    - Monteith (1981) Quart. J. Roy. Meteorol. Soc. 107:1-27
+    tags:
+    - reference_condition
+    - grass_parameter
+    - evapotranspiration
+    dimension: resistance
+    requires_grad: false
+    provenance:
+      source: fao_56_standard
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-09T00:00:00Z'
+  hydrosphere.physical.field_capacity_fraction:
+    value: 0.7
+    default: 0.7
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 0.9
+    category: model_parameter
+    description: Field capacity as fraction of saturated water content (typical for loam)
+    references:
+    - Brady & Weil (2008) The Nature and Properties of Soils, 14th ed
+    - Saxton & Rawls (2006) Soil Sci. Soc. Am. J. 70:1569-1578
+    tags:
+    - soil_property
+    - water_retention
+    - soil_specific
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: soil_physics_literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-09T00:00:00Z'
+  hydrosphere.physical.wilting_point_fraction:
+    value: 1.5
+    default: 1.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.2
+    - 2.0
+    category: model_parameter
+    description: Wilting point as multiplier of residual water content (typical for loam)
+    references:
+    - Brady & Weil (2008) The Nature and Properties of Soils, 14th ed
+    - Saxton & Rawls (2006) Soil Sci. Soc. Am. J. 70:1569-1578
+    tags:
+    - soil_property
+    - water_retention
+    - soil_specific
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: soil_physics_literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-09T00:00:00Z'
+  hydrosphere.physical.atmospheric_pressure_min:
+    value: 44000.0
+    default: 44000.0
+    units: Pa
+    dtype: float32
+    bounds:
+    - 30000.0
+    - 110000.0
+    category: model_parameter
+    description: 'Minimum plausible surface atmospheric pressure used to guard hydrosphere flux calculations:
+      US Standard Atmosphere 1976 pressure at 6,500 m, above the highest vascular plants (about 6,150 m,
+      Himalaya). Lowered from 70,000 Pa on 2026-11-05 for vegetated plateaus (Tibet, Andes); the psychrometric
+      constant gamma = c_p p / (epsilon L) holds at any pressure.'
+    references:
+    - US Standard Atmosphere 1976
+    tags:
+    - pressure
+    - boundary_layer
+    - hydrosphere
+    dimension: pressure
+    requires_grad: false
+    provenance:
+      source: atmospheric_climatology
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-03-01T00:00:00Z'
+  hydrosphere.physical.atmospheric_pressure_max:
+    value: 110000.0
+    default: 110000.0
+    units: Pa
+    dtype: float32
+    bounds:
+    - 80000.0
+    - 120000.0
+    category: model_parameter
+    description: 'Maximum plausible surface atmospheric pressure used to guard hydrosphere flux calculations:
+      above the Dead Sea shore (-430 m, about 106.5 kPa) under a strong anticyclone. Raised from 106,000 Pa on
+      2026-11-05.'
+    references:
+    - US Standard Atmosphere 1976
+    tags:
+    - pressure
+    - boundary_layer
+    - hydrosphere
+    dimension: pressure
+    requires_grad: false
+    provenance:
+      source: atmospheric_climatology
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-03-01T00:00:00Z'
+

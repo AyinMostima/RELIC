@@ -1,0 +1,48 @@
+variable: diagnostics.biomass_allocation.total_growth_rate
+title: "Total Biomass Growth Carbon Flux Diagnostic"
+description: "Total organ growth carbon flux emitted by the biomass_allocation Functor: G = F_leaf + F_stem + F_root = NPP - F_BVOC,C, where NPP is net_primary_productivity, F_BVOC,C the selected bvoc_carbon_allocation_flux (zero when no BVOC owner is selected) and F_i the growth_rate_leaf, growth_rate_stem and growth_rate_root ports. Carbon mass per unit ground area and time allocated into leaf, wood and root biomass, positive into the plant; non-negative because NPP >= 0, F_BVOC,C <= NPP and the allocation fractions are non-negative. partition_outputs routes every diagnostics.* output to the diagnostics channel, so G is never committed to StateManager state and no bound or writer check applies to it at commit; it is not a carbon ledger member, because the three organ ports already carry the flux. No CF standard name: net_primary_productivity_of_biomass_expressed_as_carbon equals G only when no BVOC carbon debit is selected. This contract replaces the placeholder for the removed bare output total_growth_rate, which no relic code writes or reads."
+kind: diagnostic
+dimension:
+  udunits: "kg C m-2 s-1"
+  cf_standard_name: null
+support:
+  spatial_kind: grid_cell
+  area_basis: ground_area
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: "biomass_allocation"
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Franklin, O. et al. (2012). Modeling carbon allocation in trees: a search for principles. Tree Physiology 32, 648-666"
+  - "Poorter, H. et al. (2012). Biomass allocation to leaves, stems and roots: meta-analyses of interspecific variation and environmental control. New Phytologist 193, 30-50"
+numerics:
+  # G = NPP - F_BVOC,C >= 0: NPP is required non-negative, F_BVOC,C <= NPP is
+  # enforced and the allocation fractions are non-negative. No upper bound.
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "biomass_allocation"
+      module: "relic.scientific.biosphere.growth.biomass_allocation"
+      provides: ["diagnostics.biomass_allocation.total_growth_rate"]
+      unit: "kg C m-2 s-1"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/biosphere/growth/biomass_allocation.py"
+  runtime_role: "total_npp_to_biomass_growth_carbon_flux_diagnostic"
+  runtime_writer: "biomass_allocation"
+  note: "Declared output at biomass_allocation.py:451; G is summed at :899 from the organ rates of :864-866 (NPP required >= 0 at :779-783, allocatable NPP at :804) and emitted with UpdateMode.REPLACE in kg C m-2 s-1 at :948-951 through the helper at :921-928. diagnostics.* outputs are classified as diagnostics by partition_outputs (relic/core/state/types.py) and ingested by _clean_updates_and_collect_diagnostics (relic/core/simulator/execution_group.py). No relic code reads it; the former bare name total_growth_rate is no longer written by BiomassAllocation."

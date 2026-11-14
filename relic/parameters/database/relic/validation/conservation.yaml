@@ -1,0 +1,774 @@
+schema_version: 2.0.0
+tier: relic
+namespace: validation.conservation
+description: Conservation validation parameters for mass and energy balance checks
+metadata:
+  created_by: RELIC Parameter System
+  last_modified: '2026-01-07T14:20:26Z'
+  schema_url: https://github.com/relic/parameter-schema/v2.0.0
+  version: 1.0.0
+parameters:
+  validation.conservation.conservation_tolerance:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-10
+    - 0.001
+    category: validation_parameter
+    description: General relative tolerance for conservation law violations (dimensionless fraction)
+    references:
+    - Numerical Methods for Conservation Laws (LeVeque, 1992)
+    tags:
+    - conservation
+    - validation
+    - numerical_stability
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_stability_requirement
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-02T00:00:00Z'
+  validation.conservation.functor_tolerance:
+    value: 1.0e-06
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-12
+    - 0.0001
+    category: validation_parameter
+    description: Functor-level conservation warning tolerance for local checks
+    references:
+    - Numerical Methods for Conservation Laws (LeVeque, 1992)
+    tags:
+    - conservation
+    - functor
+    - validation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: functor_local_validation_defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-01-07T00:00:00Z'
+  validation.conservation.functor_severe_threshold:
+    value: 1000.0
+    default: 1000.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 1000000.0
+    category: validation_parameter
+    description: Functor-level conservation error threshold for raising exceptions
+    references:
+    - Conservation law validation best practices
+    tags:
+    - conservation
+    - functor
+    - validation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: functor_local_validation_defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-01-07T00:00:00Z'
+  validation.conservation.strict_conservation:
+    value: false
+    default: false
+    units: dimensionless
+    dtype: bool
+    bounds: null
+    category: validation_parameter
+    description: Whether to raise exception on conservation violation (true) or just log warning (false)
+    references:
+    - Conservation law validation best practices
+    tags:
+    - conservation
+    - validation
+    - error_handling
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: validation_framework_design
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-02T00:00:00Z'
+  validation.conservation.carbon_conservation_tolerance:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-08
+    - 0.0001
+    category: validation_parameter
+    description: Relative closure tolerance of the carbon budget checks of the validation rules,
+      the coupling contracts and the G3 compile witnesses; a budget closes when max_i |r_i| /
+      sum_k |t_k,i| <= this value, r the budget residual and t_k its terms in one unit
+      (dimensionless); a budget with a missing term is not evaluable
+    references:
+    - LeVeque, R.J. (1992). Numerical Methods for Conservation Laws. Birkhauser
+    - Higham, N.J. (2002). Accuracy and Stability of Numerical Algorithms, 2nd ed., SIAM, section 4.2
+    tags:
+    - conservation
+    - carbon_cycle
+    - validation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_stability_requirement
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-24T00:00:00Z'
+  validation.conservation.nitrogen_conservation_tolerance:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-08
+    - 0.0001
+    category: validation_parameter
+    description: Relative closure tolerance of the nitrogen budget checks of the validation rules and
+      coupling contracts; a budget closes when max_i |r_i| / sum_k |t_k,i| <= this value, r the
+      budget residual and t_k its terms in one unit (dimensionless); a budget with a missing
+      term is not evaluable
+    references:
+    - LeVeque, R.J. (1992). Numerical Methods for Conservation Laws. Birkhauser
+    - Higham, N.J. (2002). Accuracy and Stability of Numerical Algorithms, 2nd ed., SIAM, section 4.2
+    tags:
+    - conservation
+    - nitrogen_cycle
+    - validation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_stability_requirement
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-24T00:00:00Z'
+  validation.conservation.water_conservation_tolerance:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-08
+    - 0.0001
+    category: validation_parameter
+    description: Relative closure tolerance of the water budget checks of the validation rules,
+      the coupling contracts and the G3 compile witnesses; a budget closes when max_i |r_i| /
+      sum_k |t_k,i| <= this value, r the budget residual and t_k its terms in one unit
+      (dimensionless); a budget with a missing term is not evaluable
+    references:
+    - LeVeque, R.J. (1992). Numerical Methods for Conservation Laws. Birkhauser
+    - Higham, N.J. (2002). Accuracy and Stability of Numerical Algorithms, 2nd ed., SIAM, section 4.2
+    tags:
+    - conservation
+    - water_cycle
+    - validation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_stability_requirement
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-24T00:00:00Z'
+  validation.conservation.energy_conservation_tolerance:
+    value: 1.0e-05
+    default: 1.0e-05
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-07
+    - 0.001
+    category: validation_parameter
+    description: Relative closure tolerance of the surface energy budget checks of the validation rules,
+      the coupling contracts and the G3 compile witnesses; a budget closes when max_i |r_i| /
+      sum_k |t_k,i| <= this value, r the budget residual and t_k its terms in one unit
+      (dimensionless); a budget with a missing term is not evaluable
+    references:
+    - LeVeque, R.J. (1992). Numerical Methods for Conservation Laws. Birkhauser
+    - Higham, N.J. (2002). Accuracy and Stability of Numerical Algorithms, 2nd ed., SIAM, section 4.2
+    tags:
+    - conservation
+    - energy_balance
+    - validation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_stability_requirement
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-24T00:00:00Z'
+  validation.conservation.radiation.minor_tolerance:
+    value: 0.1
+    default: 0.1
+    units: W m-2
+    dtype: float32
+    bounds:
+    - 0.01
+    - 1.0
+    category: validation_parameter
+    description: Absolute tolerance for minor radiation energy imbalances
+    references:
+    - Campbell & Norman (1998). Environmental Biophysics
+    tags:
+    - conservation
+    - energy_balance
+    - radiation
+    dimension: energy_flux
+    requires_grad: false
+    provenance:
+      source: radiation_validator_defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-02T00:00:00Z'
+  validation.conservation.radiation.moderate_tolerance:
+    value: 1.0
+    default: 1.0
+    units: W m-2
+    dtype: float32
+    bounds:
+    - 0.1
+    - 10.0
+    category: validation_parameter
+    description: Absolute tolerance for moderate radiation energy imbalances
+    references:
+    - Monteith & Unsworth (2013). Principles of Environmental Physics
+    tags:
+    - conservation
+    - energy_balance
+    - radiation
+    dimension: energy_flux
+    requires_grad: false
+    provenance:
+      source: radiation_validator_defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-02T00:00:00Z'
+  validation.conservation.radiation.severe_tolerance:
+    value: 5.0
+    default: 5.0
+    units: W m-2
+    dtype: float32
+    bounds:
+    - 1.0
+    - 50.0
+    category: validation_parameter
+    description: Absolute tolerance beyond which radiation imbalance is severe
+    references:
+    - Bonan (2019). Climate Change and Terrestrial Ecosystem Modeling
+    tags:
+    - conservation
+    - energy_balance
+    - radiation
+    dimension: energy_flux
+    requires_grad: false
+    provenance:
+      source: radiation_validator_defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-02T00:00:00Z'
+  validation.conservation.radiation.relative_minor:
+    value: 0.001
+    default: 0.001
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0001
+    - 0.01
+    category: validation_parameter
+    description: Relative tolerance for minor radiation energy imbalance (fraction of incoming energy)
+    references:
+    - Numerical stability requirements for energy balance models
+    tags:
+    - conservation
+    - energy_balance
+    - radiation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: radiation_validator_defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-02T00:00:00Z'
+  validation.conservation.radiation.relative_moderate:
+    value: 0.01
+    default: 0.01
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.001
+    - 0.05
+    category: validation_parameter
+    description: Relative tolerance for moderate radiation energy imbalance
+    references:
+    - Numerical stability requirements for energy balance models
+    tags:
+    - conservation
+    - energy_balance
+    - radiation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: radiation_validator_defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-02T00:00:00Z'
+  validation.conservation.radiation.relative_severe:
+    value: 0.05
+    default: 0.05
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.01
+    - 0.2
+    category: validation_parameter
+    description: Relative tolerance beyond which radiation imbalance is severe
+    references:
+    - Numerical stability requirements for energy balance models
+    tags:
+    - conservation
+    - energy_balance
+    - radiation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: radiation_validator_defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-02T00:00:00Z'
+  validation.conservation.radiation.min_albedo:
+    value: 0.0
+    default: 0.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.2
+    category: validation_parameter
+    description: Minimum physically plausible albedo
+    references:
+    - Campbell & Norman (1998). Environmental Biophysics
+    tags:
+    - conservation
+    - radiation
+    - albedo
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: radiation_validator_defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-02T00:00:00Z'
+  validation.conservation.radiation.max_albedo:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.8
+    - 1.0
+    category: validation_parameter
+    description: Maximum physically plausible albedo
+    references:
+    - Campbell & Norman (1998). Environmental Biophysics
+    tags:
+    - conservation
+    - radiation
+    - albedo
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: radiation_validator_defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-02T00:00:00Z'
+  validation.conservation.radiation.min_emissivity:
+    value: 0.7
+    default: 0.7
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 0.8
+    category: validation_parameter
+    description: Minimum physically plausible surface emissivity
+    references:
+    - Monteith & Unsworth (2013). Principles of Environmental Physics
+    tags:
+    - conservation
+    - radiation
+    - emissivity
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: radiation_validator_defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-02T00:00:00Z'
+  validation.conservation.radiation.max_emissivity:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.9
+    - 1.0
+    category: validation_parameter
+    description: Maximum physically plausible surface emissivity
+    references:
+    - Monteith & Unsworth (2013). Principles of Environmental Physics
+    tags:
+    - conservation
+    - radiation
+    - emissivity
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: radiation_validator_defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-02T00:00:00Z'
+  validation.conservation.radiation.min_temperature:
+    value: 200.0
+    default: 200.0
+    units: K
+    dtype: float32
+    bounds:
+    - 180.0
+    - 260.0
+    category: validation_parameter
+    description: Minimum surface temperature for radiation validation range
+    references:
+    - Energy balance constraints for terrestrial surfaces
+    tags:
+    - conservation
+    - radiation
+    - temperature
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: radiation_validator_defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-02T00:00:00Z'
+  validation.conservation.radiation.max_temperature:
+    value: 400.0
+    default: 400.0
+    units: K
+    dtype: float32
+    bounds:
+    - 320.0
+    - 500.0
+    category: validation_parameter
+    description: Maximum surface temperature for radiation validation range
+    references:
+    - Energy balance constraints for terrestrial surfaces
+    tags:
+    - conservation
+    - radiation
+    - temperature
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: radiation_validator_defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-02T00:00:00Z'
+  validation.conservation.radiation.canopy_conservation_tolerance:
+    value: 0.01
+    default: 0.01
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.001
+    - 0.05
+    category: validation_parameter
+    description: Relative tolerance for canopy radiation conservation checks
+    references:
+    - Bonan (2019). Climate Change and Terrestrial Ecosystem Modeling
+    tags:
+    - conservation
+    - radiation
+    - canopy
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: radiation_validator_defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-02T00:00:00Z'
+  validation.conservation.radiation.enable_canopy_layer_check:
+    value: true
+    default: true
+    units: dimensionless
+    dtype: bool
+    category: validation_parameter
+    description: Enable detailed canopy layer energy conservation checks
+    references:
+    - Bonan (2019). Climate Change and Terrestrial Ecosystem Modeling
+    tags:
+    - conservation
+    - radiation
+    - canopy
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: radiation_validator_defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-02T00:00:00Z'
+    bounds:
+    - 0.0
+    - 100
+  validation.conservation.phosphorus_conservation_tolerance:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-08
+    - 0.0001
+    category: validation_parameter
+    description: Relative closure tolerance of the phosphorus budget checks of the validation rules and
+      coupling contracts; a budget closes when max_i |r_i| / sum_k |t_k,i| <= this value, r the
+      budget residual and t_k its terms in one unit (dimensionless); a budget with a missing
+      term is not evaluable
+    references:
+    - LeVeque, R.J. (1992). Numerical Methods for Conservation Laws. Birkhauser
+    - Higham, N.J. (2002). Accuracy and Stability of Numerical Algorithms, 2nd ed., SIAM, section 4.2
+    tags:
+    - conservation
+    - phosphorus_cycle
+    - validation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_stability_requirement
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-24T00:00:00Z'
+  validation.conservation.plausibility.gross_primary_productivity_max:
+    value: 1.0e-03
+    default: 1.0e-03
+    units: g C m-2 s-1
+    dtype: float64
+    bounds:
+    - 5.0e-04
+    - 2.0e-03
+    category: validation_parameter
+    description: Upper plausibility limit of the instantaneous gross primary productivity checked by the carbon mass conservation rule (1e-3 g C m-2 s-1 is about 83 umol CO2 m-2 s-1); a larger value raises a warning, not a budget failure
+    references:
+    - Model plausibility limit; no literature value was found in the codeliteraturedatabase (queried 2026-09-24)
+    tags:
+    - conservation
+    - plausibility
+    - carbon
+    dimension: mass_flux
+    requires_grad: false
+    provenance:
+      source: model_plausibility_limit
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-24T00:00:00Z'
+      notes: Replaces the literal 1e-3 of validate_carbon_mass_conservation
+  validation.conservation.plausibility.net_radiation_abs_max:
+    value: 1000.0
+    default: 1000.0
+    units: W m-2
+    dtype: float64
+    bounds:
+    - 800.0
+    - 1400.0
+    category: validation_parameter
+    description: Upper plausibility limit of the magnitude of the surface net radiation checked by the energy balance rule; a larger magnitude raises a warning, not a budget failure
+    references:
+    - Model plausibility limit; no literature value was found in the codeliteraturedatabase (queried 2026-09-24)
+    tags:
+    - conservation
+    - plausibility
+    - energy_balance
+    dimension: energy_flux
+    requires_grad: false
+    provenance:
+      source: model_plausibility_limit
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-24T00:00:00Z'
+      notes: Replaces the literal 1000 of validate_energy_balance_conservation
+  validation.conservation.plausibility.latent_heat_flux_min:
+    value: -50.0
+    default: -50.0
+    units: W m-2
+    dtype: float64
+    bounds:
+    - -200.0
+    - -10.0
+    category: validation_parameter
+    description: Lower plausibility limit of the latent heat flux (positive away from the surface) checked by the energy balance rule; a more negative, downward (condensation) flux raises a warning, not a budget failure
+    references:
+    - Model plausibility limit; no literature value was found in the codeliteraturedatabase (queried 2026-09-24)
+    tags:
+    - conservation
+    - plausibility
+    - energy_balance
+    dimension: energy_flux
+    requires_grad: false
+    provenance:
+      source: model_plausibility_limit
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-24T00:00:00Z'
+      notes: Replaces the literal -50 of validate_energy_balance_conservation
+  validation.conservation.plausibility.bowen_ratio_abs_max:
+    value: 10.0
+    default: 10.0
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 2.0
+    - 50.0
+    category: validation_parameter
+    description: Upper plausibility limit of the magnitude of the Bowen ratio H/LE checked by the energy balance rule as |H| > limit * |LE| (no division; a sensible heat flux without latent heat is an infinite ratio); exceeding it raises a warning, not a budget failure
+    references:
+    - Peixoto, J.P. and Oort, A.H. (1992). Physics of Climate, AIP, chapter 10 (definition of the Bowen ratio)
+    - Model plausibility limit; no literature value was found in the codeliteraturedatabase (queried 2026-09-24)
+    tags:
+    - conservation
+    - plausibility
+    - energy_balance
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_plausibility_limit
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-24T00:00:00Z'
+      notes: Replaces the literal 10 and the division guard 1e-6 of validate_energy_balance_conservation
+  validation.conservation.stoichiometry.ratio_tolerance:
+    value: 0.2
+    default: 0.2
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 0.9
+    category: validation_parameter
+    description: Relative widening of the plausible C:N, C:P and N:P ranges of check_cnp_stoichiometry_impl; a ratio outside [low * (1 - tol), high * (1 + tol)] raises a warning
+    references:
+    - Model plausibility limit; no literature value was found in the codeliteraturedatabase (queried 2026-09-24)
+    tags:
+    - conservation
+    - plausibility
+    - stoichiometry
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_plausibility_limit
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-24T00:00:00Z'
+      notes: Replaces the stoich_tolerance and tolerance arguments (default 0.2) of the CNP checks
+  validation.conservation.stoichiometry.cn_ratio_range:
+    value:
+    - 8.0
+    - 20.0
+    default: null
+    units: dimensionless
+    dtype: list
+    bounds:
+    - - 4.0
+      - 12.0
+    - - 15.0
+      - 40.0
+    category: validation_parameter
+    description: Plausible range [low, high] of the C:N ratio of the summed carbon and nitrogen output fluxes checked by check_cnp_stoichiometry_impl
+    references:
+    - Model plausibility limit; no literature value was found in the codeliteraturedatabase (queried 2026-09-24)
+    tags:
+    - conservation
+    - plausibility
+    - stoichiometry
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_plausibility_limit
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-24T00:00:00Z'
+      notes: Replaces the literal range [8, 20] of check_cnp_stoichiometry_impl
+  validation.conservation.stoichiometry.cp_ratio_range:
+    value:
+    - 50.0
+    - 300.0
+    default: null
+    units: dimensionless
+    dtype: list
+    bounds:
+    - - 20.0
+      - 100.0
+    - - 150.0
+      - 600.0
+    category: validation_parameter
+    description: Plausible range [low, high] of the C:P ratio of the summed carbon and phosphorus output fluxes checked by check_cnp_stoichiometry_impl
+    references:
+    - Model plausibility limit; no literature value was found in the codeliteraturedatabase (queried 2026-09-24)
+    tags:
+    - conservation
+    - plausibility
+    - stoichiometry
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_plausibility_limit
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-24T00:00:00Z'
+      notes: Replaces the literal range [50, 300] of check_cnp_stoichiometry_impl
+  validation.conservation.stoichiometry.np_ratio_range:
+    value:
+    - 10.0
+    - 20.0
+    default: null
+    units: dimensionless
+    dtype: list
+    bounds:
+    - - 5.0
+      - 16.0
+    - - 16.0
+      - 40.0
+    category: validation_parameter
+    description: Plausible range [low, high] of the N:P ratio of the summed nitrogen and phosphorus output fluxes checked by check_cnp_stoichiometry_impl; it contains the Redfield N:P of 16
+    references:
+    - Redfield, A.C. (1934). On the proportions of organic derivatives in sea water and their relation to the composition of plankton (N:P = 16 lies within the range)
+    - Model plausibility limit; no literature value was found in the codeliteraturedatabase (queried 2026-09-24)
+    tags:
+    - conservation
+    - plausibility
+    - stoichiometry
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_plausibility_limit
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-24T00:00:00Z'
+      notes: Replaces the literal range [10, 20] of check_cnp_stoichiometry_impl
+creation_info:
+  created_by: Yuchong Long
+  created_at: '2024-01-01T00:00:00Z'
+  schema_version: 1.0.0
+  tier: relic
+quality_control:
+  validated_by: Scientific Review Panel
+  validation_date: '2024-01-01T00:00:00Z'
+  validation_criteria:
+  - Numerical stability verification
+  - Conservation principle compliance
+  - Cross-model consistency check

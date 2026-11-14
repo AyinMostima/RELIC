@@ -1,0 +1,177 @@
+certificate_version: '1.0'
+process_id: relic.scientific.biosphere.respiration.growth_respiration.GrowthRespiration
+module_name: GrowthRespiration
+canonical_role: reaction
+iphs_level: 2
+iphs_level_evidence:
+  classification: IPHS-wrapped reaction process certificate
+  compatible_basis: Reaction process is expressed through conserved or open stoichiometric ledgers
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: N_h r_h reaction-network state advance
+  level_2_limit: The canonical runtime wrapper is declared, but no executable typed-cochain or IPHS structural contribution is bound; strict level 4 or 5 evidence is not claimed.
+theory_document: docs\source\theory\respiration.md
+theory_document_status: updated
+legacy_formula: R_g = (1 - Ygrow) * max(0, GPP - R_m) * f_T * f_S
+literature_formula: R_g,potential = (1 - Ygrow) * max(0, GPP - R_m) * f_T * f_S; R_g = min(R_g,potential, max(0, GPP - R_m))
+iphs_formula: x_dot = N_h r_h with ParameterManager-backed process rates r_h and declared stoichiometric/output map N_h
+legacy_expression: R_g = min((1 - Ygrow) * max(0, GPP - R_m) * f_T * f_S, max(0, GPP - R_m))
+iphs_expression: x_dot = N_h r_h with ParameterManager-backed process rates r_h and declared stoichiometric/output map N_h
+input_variables:
+- gross_primary_productivity
+- maintenance_respiration_total
+- air_temperature
+- plant_nitrogen
+- plant_phosphorus
+- soluble_sugar
+output_variables:
+- growth_respiration_total
+- diagnostics.growth_respiration.growth_efficiency
+- diagnostics.growth_respiration.available_carbon
+- diagnostics.growth_respiration.np_ratio_effect
+- diagnostics.growth_respiration.temperature_factor
+- diagnostics.growth_respiration.substrate_factor
+- diagnostics.growth_respiration.carbon_limit_residual
+parameter_keys:
+- biosphere.respiration.growth.ygrow_base
+- biosphere.respiration.growth.np_response_coeff
+- biosphere.respiration.growth.np_half_sat
+- biosphere.respiration.growth.q10_growth
+- biosphere.respiration.growth.km_substrate_growth
+- biosphere.respiration.growth.min_growth_efficiency
+- biosphere.respiration.growth.max_growth_efficiency
+- biosphere.validation.epsilon.nutrient
+composition_ports:
+- farquhar_photosynthesis,maintenance_respiration
+references:
+- Gifford, R.M. (2003). Plant respiration in productivity models
+- CASA-CNP model documentation
+baseline_tests:
+- test\unit\biosphere\respiration\test_growth_respiration_l1.py
+- test\audit\phase8_scientific_inventory.test.py
+validation_tests:
+- test\unit\biosphere\respiration\test_growth_respiration_l1.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  gross_primary_productivity: gross_primary_productivity mapped to canonical Phase 8 cochain basis
+  maintenance_respiration_total: maintenance_respiration_total mapped to canonical Phase 8 cochain basis
+  air_temperature: canonical atmospheric temperature driver in K
+  plant_nitrogen: plant_nitrogen mapped to canonical Phase 8 cochain basis
+  plant_phosphorus: plant_phosphorus mapped to canonical Phase 8 cochain basis
+  soluble_sugar: canonical substrate pool in g C m-2
+parameter_map:
+  biosphere.respiration.growth.ygrow_base: Baseline growth efficiency [dimensionless]
+  biosphere.respiration.growth.np_response_coeff: N:P sensitivity of the growth efficiency [dimensionless]
+  biosphere.respiration.growth.np_half_sat: N:P half-saturation of the growth efficiency response [dimensionless]
+  biosphere.respiration.growth.q10_growth: Q10 of growth respiration [dimensionless]
+  biosphere.respiration.growth.km_substrate_growth: Soluble sugar half-saturation of growth [g C m-2]
+  biosphere.respiration.growth.min_growth_efficiency: Minimum growth efficiency [dimensionless]
+  biosphere.respiration.growth.max_growth_efficiency: Maximum growth efficiency [dimensionless]
+  biosphere.validation.epsilon.nutrient: Phosphorus denominator guard of the N:P ratio [g P m-2]
+operator_map:
+  N_h: declared stoichiometric or output incidence map for this reaction process
+  r_h: ParameterManager-backed process-rate vector evaluated by the production forward path
+unit_map:
+  growth_respiration_total: kg C m-2 s-1
+  diagnostics.growth_respiration.growth_efficiency: '1'
+  diagnostics.growth_respiration.available_carbon: kg C m-2 s-1
+  diagnostics.growth_respiration.np_ratio_effect: '1'
+  diagnostics.growth_respiration.temperature_factor: '1'
+  diagnostics.growth_respiration.substrate_factor: '1'
+  diagnostics.growth_respiration.carbon_limit_residual: kg C m-2 s-1
+input_output_map:
+  diagnostics.growth_respiration.available_carbon: carbon remaining after maintenance respiration
+  diagnostics.growth_respiration.carbon_limit_residual: unrealized potential created by the explicit carbon availability bound
+  diagnostics.growth_respiration.growth_efficiency: bounded construction efficiency observation
+  diagnostics.growth_respiration.np_ratio_effect: nutrient-ratio response observation
+  diagnostics.growth_respiration.substrate_factor: substrate response observation
+  diagnostics.growth_respiration.temperature_factor: Q10 response observation
+  gross_primary_productivity: same interface variable preserved between legacy and IPHS runtime contracts
+  growth_respiration_total: same interface variable preserved between legacy and IPHS runtime contracts
+  maintenance_respiration_total: same interface variable preserved between legacy and IPHS runtime contracts
+  plant_nitrogen: same interface variable preserved between legacy and IPHS runtime contracts
+  plant_phosphorus: same interface variable preserved between legacy and IPHS runtime contracts
+  air_temperature: canonical temperature input with no alias fallback
+  soluble_sugar: canonical substrate input with no runtime default
+interface_map:
+  forward_signature: forward(self, state, time, dt)
+  bridge_class: BiologicalProcessFunctor
+  abstraction_contract: BiologicalProcess
+  state_write_mode: all outputs use UpdateItem(REPLACE, per_timestep=False, element=None) with explicit units and writer provenance; the non-incrementable growth flux has accumulates null in its SCM contract
+  legacy_inputs:
+  - gross_primary_productivity
+  - maintenance_respiration_total
+  - air_temperature
+  - plant_nitrogen
+  - plant_phosphorus
+  - soluble_sugar
+  iphs_inputs:
+  - gross_primary_productivity
+  - maintenance_respiration_total
+  - air_temperature
+  - plant_nitrogen
+  - plant_phosphorus
+  - soluble_sugar
+  legacy_outputs:
+  - growth_respiration_total
+  - diagnostics.growth_respiration.growth_efficiency
+  - diagnostics.growth_respiration.available_carbon
+  - diagnostics.growth_respiration.np_ratio_effect
+  - diagnostics.growth_respiration.temperature_factor
+  - diagnostics.growth_respiration.substrate_factor
+  - diagnostics.growth_respiration.carbon_limit_residual
+  iphs_outputs:
+  - growth_respiration_total
+  - diagnostics.growth_respiration.growth_efficiency
+  - diagnostics.growth_respiration.available_carbon
+  - diagnostics.growth_respiration.np_ratio_effect
+  - diagnostics.growth_respiration.temperature_factor
+  - diagnostics.growth_respiration.substrate_factor
+  - diagnostics.growth_respiration.carbon_limit_residual
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: Existing ParameterManager-backed calculations define canonical IPHS operator coefficients, rates, ports, or observations.
+  no_legacy_mode: No selectable legacy runtime branch is exposed for Phase 8 completion.
+state_advancement_map:
+  potential_basis: declared RELIC state, port, or observation cochain basis
+  effort_variable: ParameterManager-backed thermodynamic effort, driver, or diagnostic input used by the module
+  state_advancer: x_dot = N_h r_h with explicit stoichiometric_N and rates evaluated by advance_reaction_network
+  runtime_usage: GrowthRespiration.forward calls advance_reaction_network with declared stoichiometric_N and rates before emitting canonical outputs.
+  explicit_stoichiometric_usage: GrowthRespiration.forward materializes stoichiometric_N and rates, then lowers x_dot=N_h r_h through advance_reaction_network.
+parameter_management_map:
+  biosphere.respiration.growth.ygrow_base:
+    source: ParameterManager YAML
+  biosphere.respiration.growth.np_response_coeff:
+    source: ParameterManager YAML
+  biosphere.respiration.growth.np_half_sat:
+    source: ParameterManager YAML
+  biosphere.respiration.growth.q10_growth:
+    source: ParameterManager YAML
+  biosphere.respiration.growth.km_substrate_growth:
+    source: ParameterManager YAML
+  biosphere.respiration.growth.min_growth_efficiency:
+    source: ParameterManager YAML
+  biosphere.respiration.growth.max_growth_efficiency:
+    source: ParameterManager YAML
+  biosphere.validation.epsilon.nutrient:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares interfaces, execution phase, and conservation semantics
+  state_contract: existing simulator state update path is preserved
+  validation_rule: phase8 scientific inventory and equivalence certificate checks
+dependency_interconnection_map:
+  dependencies: farquhar_photosynthesis,maintenance_respiration
+  direct_functor_calls: none declared by certificate
+overflow_routing_map:
+  diagnostic_residuals: diagnostics.growth_respiration.carbon_limit_residual reports unrealized potential above the available-carbon bound
+  discarded_residuals: growth_respiration_total is capped by available carbon and exported through the atmosphere-facing carbon port; unrealized potential is exported in full as diagnostics.growth_respiration.carbon_limit_residual
+conservation_map:
+  conserved_quantities: carbon
+  balance_expression: 0 <= R_g <= max(GPP - R_m, 0); R_g is routed through the declared open atmosphere port
+physical_constant_ssot:
+  reference_temperature: get_physical_constant("reference_temperature")
+entropy_audit:
+  operator_sign: rates, mobilities, or diagnostic maps are non-negative or checked by existing validation hooks where physically required
+  sigma_expression: canonical entropy production is non-negative for dissipative subexpressions
+equivalence_type: thermodynamic_embedding

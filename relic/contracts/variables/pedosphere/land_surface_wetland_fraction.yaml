@@ -1,0 +1,42 @@
+variable: land_surface.wetland_fraction
+title: "Wetland Fraction of the Grid Cell"
+description: "Wetland fractional cover of the grid cell, dimensionless in [0, 1]; required by methane_production and methane_scale_coupling. No relic Functor writes it (supplied as forcing)."
+kind: forcing
+dimension:
+  udunits: "1"
+  cf_standard_name: null
+support:
+  spatial_kind: grid_cell
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Zhu, Q. et al. (2014). Modelling methane emissions from natural wetlands by development and application of the TRIPLEX-GHG model. Geosci. Model Dev. 7, 981-999"
+numerics:
+  # Area fraction in [0, 1]; both readers reject values outside it.
+  lower_bound: 0.0
+  upper_bound: 1.0
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies: []
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/pedosphere/methane/production.py"
+  runtime_role: "wetland_area_fraction_forcing"
+  runtime_writer: null
+  note: "Readers: MethaneProductionFunctor and MethaneScaleCouplingFunctor (metadata input_variables; a missing value raises naming it; values outside [0, 1] raise). No RELIC Functor writes land_surface.wetland_fraction."

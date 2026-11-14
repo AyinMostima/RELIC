@@ -1,0 +1,184 @@
+schema_version: 2.0.0
+tier: relic
+namespace: coupling.scales.soil_vegetation
+description: Parameters controlling soil-vegetation water exchange and root uptake
+metadata:
+  version: 1.0.0
+parameters:
+  coupling.scales.soil_vegetation.distribution_type:
+    value: exponential
+    default: exponential
+    units: dimensionless
+    dtype: string
+    bounds: null
+    allowed_values:
+    - exponential
+    - linear
+    - beta
+    - jackson
+    category: model_option
+    description: Functional form for root distribution
+    references:
+    - RELIC coupling audit 2025-12-02
+    tags:
+    - root_distribution
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.soil_vegetation.root_depth_max:
+    value: 2.0
+    default: 2.0
+    units: m
+    dtype: float32
+    bounds:
+    - 0.5
+    - 15.0
+    category: root_distribution
+    description: Maximum rooting depth
+    references:
+    - Jackson et al. (1996)
+    - Canadell et al. (1996)
+    tags:
+    - root_distribution
+    - pft_variable
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.soil_vegetation.shape_parameter:
+    value: 2.0
+    default: 2.0
+    units: m-1
+    dtype: float32
+    bounds:
+    - 0.5
+    - 10.0
+    category: root_distribution
+    description: Shape parameter for exponential root profile
+    references:
+    - Jackson et al. (1996)
+    tags:
+    - root_distribution
+    - pft_variable
+    dimension: inverse_length
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.soil_vegetation.linear_distribution_coeff:
+    value: 2.0
+    default: 2.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 4.0
+    category: root_distribution
+    description: Linear root profile coefficient beta(z) = c (1 - z/D)
+    references:
+    - Jackson et al. (1996)
+    tags:
+    - root_distribution
+    - parameterized_profile
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-12T00:00:00Z'
+  coupling.scales.soil_vegetation.beta_q_parameter:
+    value: 2.0
+    default: 2.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 5.0
+    category: root_distribution
+    description: Shape coefficient q for beta-distributed root profiles
+    references:
+    - Jackson et al. (1996)
+    tags:
+    - root_distribution
+    - parameterized_profile
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-12T00:00:00Z'
+  coupling.scales.soil_vegetation.wilting_point_potential:
+    value: -1500000.0
+    default: -1500000.0
+    units: Pa
+    dtype: float32
+    bounds:
+    - -3000000.0
+    - -1000000.0
+    category: physical_limit
+    description: Soil water potential at permanent wilting point
+    references:
+    - Feddes et al. (1978)
+    tags:
+    - water_stress
+    - pft_variable
+    dimension: pressure
+    requires_grad: false
+    provenance:
+      source: feddes_model
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.soil_vegetation.anaerobic_point:
+    value: -1000.0
+    default: -1000.0
+    units: Pa
+    dtype: float32
+    bounds:
+    - -5000.0
+    - -100.0
+    category: physical_limit
+    description: Soil water potential threshold for anaerobic stress
+    references:
+    - RELIC coupling audit 2025-12-02
+    tags:
+    - water_stress
+    dimension: pressure
+    requires_grad: false
+    provenance:
+      source: feddes_model
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.soil_vegetation.optimal_range:
+    value:
+    - -100000.0
+    - -10000.0
+    default: null
+    units: Pa
+    dtype: list
+    bounds: null
+    category: physical_bounds
+    description: Optimal soil water potential range with minimal stress
+    references:
+    - RELIC coupling audit 2025-12-02
+    tags:
+    - water_stress
+    dimension: pressure
+    requires_grad: false
+    provenance:
+      source: feddes_model
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'

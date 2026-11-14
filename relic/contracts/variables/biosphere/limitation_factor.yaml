@@ -1,0 +1,47 @@
+variable: diagnostics.photosynthesis.limitation_factor
+title: "Farquhar Limiting-Rate Selector Diagnostic"
+description: "Categorical code of the biochemical rate that limits gross assimilation, evaluated on the leaf-level candidate rates before stress, VPD and canopy scaling. C3 path, A = min(Ac, Aj): 0 = Rubisco (carboxylation) limited, 1 = electron-transport (RuBP regeneration) limited where Aj < Ac. C4 path (Collatz et al. 1992), A = min(Ap, Aj, Ae): 0 = PEP-carboxylation limited, 1 = electron-transport limited where Aj < Ap, 2 = Rubisco (bundle-sheath carboxylation) limited where Ae < Ap and Ae < Aj (2 takes precedence over 1). Ties resolve to the lower code. Dimensionless integer code stored as a float, not a fraction. Namespaced REPLACE diagnostic of farquhar_photosynthesis; no Functor reads it and it is never committed as state."
+kind: diagnostic
+dimension:
+  udunits: "1"
+  cf_standard_name: null
+support:
+  spatial_kind: leaf
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: "farquhar_photosynthesis"
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Farquhar, G.D., von Caemmerer, S. and Berry, J.A. (1980). A biochemical model of photosynthetic CO2 assimilation in leaves of C3 species. Planta 149, 78-90"
+  - "Collatz, G.J., Ribas-Carbo, M. and Berry, J.A. (1992). Coupled photosynthesis-stomatal conductance model for leaves of C4 plants. Aust. J. Plant Physiol. 19, 519-538"
+numerics:
+  # Discrete code set {0, 1} (C3) or {0, 1, 2} (C4); exact comparison.
+  lower_bound: 0.0
+  upper_bound: 2.0
+  atol: 0.0
+  rtol: 0.0
+writers:
+  increments: []
+  tendencies:
+    - name: "farquhar_photosynthesis"
+      module: "relic.scientific.biosphere.photosynthesis.farquhar"
+      provides: ["diagnostics.photosynthesis.limitation_factor"]
+      unit: "dimensionless"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 0.0
+      rtol: 0.0
+provenance:
+  source_file: "relic/scientific/biosphere/photosynthesis/farquhar.py"
+  runtime_role: "limiting_rate_selector_diagnostic"
+  runtime_writer: "farquhar_photosynthesis"
+  note: "Declared output farquhar.py:252; C3 code (aj < ac) at :1175; C4 codes 0/1/2 at :1342-1348; emitted at :932 with unit 'dimensionless' (:943), equivalent to '1', as UpdateItem REPLACE (:957). The former placeholder named the bare key limitation_factor, which no relic Functor reads or writes."

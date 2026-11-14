@@ -1,0 +1,187 @@
+certificate_version: '1.0'
+process_id: relic.scientific.hydrosphere.transport.capillary_rise.CapillaryRiseTransport
+module_name: capillary_rise_transport
+canonical_role: transport
+iphs_level: 3
+iphs_level_evidence:
+  classification: IPHS-structured transport process certificate
+  compatible_basis: Process declares composition-safe IPHS or DEC structure
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: DEC/IPHS transport operator with conservative flux routing
+  structural_contribution: Cochain, Hodge, flux, and port structures are declared for assembly audit
+  assembly_participation: Certificate participates in Phase 8 inventory and GraphIR structural audit
+  level_3_limit: Typed form, Hodge, port, or related structure is declared, but no runtime-linked IPHSStructureSpec contribution and executable level 4 or 5 certificate binding is present.
+theory_document: docs\source\theory\hydrosphere_capillary_rise.md
+theory_document_status: updated
+legacy_formula: w = B*a/Z^b with capillary height, saturated conductivity, and saturation constraints.
+literature_formula: Gardner-Eagleson steady capillary rise from a water table, derived as a steady upward flux approximation for Richards equation boundary transport.
+iphs_formula: m_dot = G_cap u_cap; u_cap = star_cap u_vol; u_vol = max(0, min(Ks, B*a/Z^b)) [m s-1]; star_cap = diag(rho_w) [kg m-3] > 0 maps u_vol to the mass flux [kg m-2 s-1]; the Ks cap belongs to u_vol, not to star_cap.
+legacy_expression: w = B*a/Z^b; capillary_rise_flux = rho_w * clamp(w, 0, Ks).
+iphs_expression: m_dot = G_cap u_cap; u_cap = rho_w * max(0, min(Ks, B*a/Z^b)); sigma = u_vol.T star_cap u_vol >= 0 with u_vol the volumetric flux cochain [m s-1].
+input_variables:
+- water_table_depth
+- soil_moisture_profile
+output_variables:
+- capillary_rise_flux
+- diagnostics.capillary_rise
+- diagnostics.capillary_rise.conductivity_clipping_residual
+- diagnostics.capillary_rise.saturation_constraint_residual
+parameter_keys:
+- hydrosphere.transport.max_capillary_height
+- hydrosphere.transport.brooks_corey_pore_size_index
+- hydrosphere.transport.air_entry_pressure
+- hydrosphere.groundwater.surface_porosity
+- hydrosphere.groundwater.porosity_decay_length
+- hydrosphere.transport.capillary_saturation_threshold_factor
+- hydrosphere.transport.capillary_saturation_bandwidth_factor
+- hydrosphere.transport.hydraulic_parameterization_method
+- hydrosphere.soil_moisture.saturated_hydraulic_conductivity
+- hydrosphere.soil_moisture.alpha_vg
+- hydrosphere.soil_moisture.n_vg
+- hydrosphere.transport.enable_capillary_depth_profile
+- hydrosphere.transport.capillary_profile_layer_count
+- hydrosphere.transport.capillary_profile_layer_thickness
+composition_ports:
+- capillary_groundwater_boundary_flux
+references:
+- Gardner, W.R. (1958). Some steady-state solutions of the unsaturated moisture flow equation. Soil Science, 85(4), 228-232.
+- 'Eagleson, P.S. (1978). Climate, soil, and vegetation: A reduced-order model of soil moisture movement in the liquid phase. Water Resources Research, 14(5), 722-730.'
+- Richards, L.A. (1931). Capillary conduction of liquids through porous mediums. Journal of Applied Physics, 1, 318-333.
+- Hirani, A.N. (2003). Discrete Exterior Calculus.
+baseline_tests:
+- test\scientific\hydrosphere\transport\capillary_rise.test.py
+validation_tests:
+- test\scientific\hydrosphere\transport\capillary_rise.test.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  water_table_depth: boundary effort cochain Z_h [m]
+  soil_moisture_profile: optional saturation limiter state cochain theta_h [m3 m-3]
+  capillary_rise_flux: port flow u_cap after density conversion [kg m-2 s-1]
+  diagnostics.capillary_rise: read-only diagnostic payload
+  diagnostics.capillary_rise.conductivity_clipping_residual: rho_w * max(B*a/Z^b - Ks, 0)
+  diagnostics.capillary_rise.saturation_constraint_residual: diagnostic rho_w * (unconstrained q(z) profile - constrained q(z) profile); not a boundary-flow or system mass-balance residual
+parameter_map:
+  hydrosphere.transport.max_capillary_height: maximum active capillary depth Zmax [m]
+  hydrosphere.transport.brooks_corey_pore_size_index: Brooks-Corey lambda in b = 2 + 3 lambda [dimensionless]
+  hydrosphere.transport.air_entry_pressure: air entry head psi_ae [m]
+  hydrosphere.groundwater.surface_porosity: surface porosity n0 [dimensionless]
+  hydrosphere.groundwater.porosity_decay_length: porosity decay length p [m]
+  hydrosphere.transport.capillary_saturation_threshold_factor: threshold factor for saturation limiter [dimensionless]
+  hydrosphere.transport.capillary_saturation_bandwidth_factor: bandwidth factor for saturation limiter [dimensionless]
+  hydrosphere.transport.hydraulic_parameterization_method: Brooks-Corey or van Genuchten branch selector
+  hydrosphere.soil_moisture.saturated_hydraulic_conductivity: Ks cap on the upward volumetric flux u_vol [m s-1]; runtime limiter only, not a star_cap entry
+  hydrosphere.soil_moisture.alpha_vg: van Genuchten alpha [m-1]
+  hydrosphere.soil_moisture.n_vg: van Genuchten n [dimensionless]
+  hydrosphere.transport.enable_capillary_depth_profile: depth-profile calculation switch
+  hydrosphere.transport.capillary_profile_layer_count: default structural/profile layer count
+  hydrosphere.transport.capillary_profile_layer_thickness: default profile layer thickness [m]
+operator_map:
+  G_cap: capillary_groundwater_boundary_flux port incidence
+  star_cap: build_hodge_contract and build_hodge_terms HodgeStarSpec with matrix diag(rho_w), operator_units kg m-3, domain m s-1, codomain kg m-2 s-1
+  gardner_flux: _compute_gardner_flux_with_residuals implements B*a/Z^b with cap and positivity projection
+  saturation_limiter: _apply_saturation_constraints
+unit_map:
+  water_table_depth: m
+  soil_moisture_profile: m3 m-3
+  capillary_rise_flux: kg m-2 s-1
+  diagnostics.capillary_rise.conductivity_clipping_residual: kg m-2 s-1
+  diagnostics.capillary_rise.saturation_constraint_residual: kg m-2 s-1
+input_output_map:
+  water_table_depth: same boundary state read by literature-equivalent and IPHS entrypoints
+  soil_moisture_profile: same optional limiter input read by both entrypoints
+  capillary_rise_flux: same mass-flux output emitted as UpdateItem(REPLACE, per_timestep=False)
+  diagnostics.capillary_rise: same diagnostic payload with explicit residual additions
+  diagnostics.capillary_rise.conductivity_clipping_residual: flat UpdateItem(REPLACE, per_timestep=False), the only output path of the conductivity residual [kg m-2 s-1]
+  diagnostics.capillary_rise.saturation_constraint_residual: flat UpdateItem(REPLACE, per_timestep=False), the only output path of the saturation profile residual [kg m-2 s-1]
+interface_map:
+  forward_signature: forward(self, state, time, dt, **kwargs)
+  bridge_class: TransportMechanismFunctor
+  abstraction_contract: TransportMechanism
+  state_write_mode: capillary_rise_flux and flat residual observations use UpdateItem(REPLACE, per_timestep=False); residuals are diagnostics and never water updates
+  legacy_inputs:
+  - water_table_depth
+  - soil_moisture_profile
+  iphs_inputs:
+  - water_table_depth
+  - soil_moisture_profile
+  legacy_outputs:
+  - capillary_rise_flux
+  - diagnostics.capillary_rise
+  - diagnostics.capillary_rise.conductivity_clipping_residual
+  - diagnostics.capillary_rise.saturation_constraint_residual
+  iphs_outputs:
+  - capillary_rise_flux
+  - diagnostics.capillary_rise
+  - diagnostics.capillary_rise.conductivity_clipping_residual
+  - diagnostics.capillary_rise.saturation_constraint_residual
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: _compute_iphs_capillary_rise_update
+  preserved_numerics: The existing Gardner-Eagleson flux law is the canonical port-flow calculation.
+  no_legacy_mode: No runtime flag exposes a separate pre-Phase 8 capillary branch.
+state_advancement_map:
+  potential_basis: capillary source port cochain u_cap
+  effort_variable: water_table_boundary_head [m] on the port; star_cap is the volumetric-to-mass conversion Hodge and is not a head-to-flux mobility
+  state_advancer: structural port incidence only; no local storage state is advanced; u_cap = rho_w * max(0, min(Ks, B*a/Z^b))
+  runtime_usage: _compute_iphs_capillary_rise_update evaluates the canonical capillary port flow and routes clipping residuals.
+parameter_management_map:
+  hydrosphere.transport.max_capillary_height:
+    source: ParameterManager YAML
+  hydrosphere.transport.brooks_corey_pore_size_index:
+    source: ParameterManager YAML
+  hydrosphere.transport.air_entry_pressure:
+    source: ParameterManager YAML
+  hydrosphere.groundwater.surface_porosity:
+    source: ParameterManager YAML
+  hydrosphere.groundwater.porosity_decay_length:
+    source: ParameterManager YAML
+  hydrosphere.transport.capillary_saturation_threshold_factor:
+    source: ParameterManager YAML
+  hydrosphere.transport.capillary_saturation_bandwidth_factor:
+    source: ParameterManager YAML
+  hydrosphere.transport.hydraulic_parameterization_method:
+    source: ParameterManager YAML
+  hydrosphere.soil_moisture.saturated_hydraulic_conductivity:
+    source: ParameterManager YAML
+  hydrosphere.soil_moisture.alpha_vg:
+    source: ParameterManager YAML
+  hydrosphere.soil_moisture.n_vg:
+    source: ParameterManager YAML
+  hydrosphere.transport.enable_capillary_depth_profile:
+    source: ParameterManager YAML
+  hydrosphere.transport.capillary_profile_layer_count:
+    source: ParameterManager YAML
+  hydrosphere.transport.capillary_profile_layer_thickness:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares transport role and hydrosphere coupling interfaces
+  structural_protocol: declared_forms, required_parameters, build_hodge_terms, dissipative_structure, ports
+  state_contract: existing TransportMechanismFunctor and StateManager UpdateItem path
+  ports:
+  - capillary_groundwater_boundary_flux producer endpoint uses out_of_system for capillary_rise_flux [kg m-2 s-1]
+dependency_interconnection_map:
+  dependencies: get_dependencies declares lagged groundwater_dynamics so the accepted start-of-step water-table state drives the current transfer without a same-step dependency cycle
+  direct_functor_calls: none; lagged groundwater state drives the boundary flow and no GroundwaterDynamics instance is called
+  chain_maps:
+  - water_table_depth boundary cochain to capillary_groundwater_boundary_flux effort
+  - capillary_rise_flux producer flow to the reciprocal Richards into_system soil-boundary endpoint through existing state graph
+  required_input_policy: water_table_depth must be supplied by the canonical state port; groundwater_depth aliases, kwargs, and parameter defaults are rejected
+overflow_routing_map:
+  conductivity_limit: rho_w * max(B*a/Z^b - Ks, 0) is emitted as diagnostics.capillary_rise.conductivity_clipping_residual
+  positivity_projection: rho_w * max(-min(B*a/Z^b, Ks), 0) is emitted as negative_flux_projection_residual
+  saturation_limit: diagnostic q(z) profile difference is emitted as diagnostics.capillary_rise.saturation_constraint_residual and does not modify the canonical boundary flow
+  inactive_depth: Z <= 0 or Z > Zmax closes the capillary port and emits zero flux by domain definition
+  discarded_residuals: conductivity_clipping_residual, negative_flux_projection_residual, and saturation_constraint_residual explicitly retain all projections, while invalid required state is rejected
+conservation_map:
+  conserved_quantity: water mass
+  balance_expression: capillary_rise_flux is the sole upward open-boundary input; raw positive candidate equals retained boundary flux plus conductivity clipping residual
+  local_check: process-specific mass hook validates F_candidate = F_capillary + R_K - R_negative in kg m-2 s-1; it does not apply the generic closed-system output sum
+  port_balance: producer endpoint is out_of_system and the Richards soil endpoint is into_system; no groundwater storage debit is claimed until its canonical owner consumes the same flux
+physical_constant_ssot:
+  water_density: get_physical_constant("water_density") from relic physical constants YAML [kg m-3]
+entropy_audit:
+  dissipative_operator: star_cap and M_h equal diag(rho_w) and are symmetric positive definite for positive rho_w
+  sigma_expression: sigma = u_vol.T star_cap u_vol >= 0 with u_vol the volumetric flux cochain [m s-1]
+  validation_hook: build_hodge_contract(strict=True), dissipative_structure eigenvalue checks, and the process-specific open-port limiter mass ledger
+equivalence_type: port_equivalent

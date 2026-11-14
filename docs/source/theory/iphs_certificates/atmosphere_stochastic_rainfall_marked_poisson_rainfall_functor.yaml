@@ -1,0 +1,183 @@
+certificate_version: '1.0'
+process_id: relic.scientific.atmosphere.stochastic_rainfall.MarkedPoissonRainfallFunctor
+module_name: MarkedPoissonRainfallFunctor
+canonical_role: field
+iphs_level: 2
+iphs_level_evidence:
+  classification: IPHS-wrapped marked-jump field process certificate (external forcing events, category marked_jump)
+  compatible_basis: Two prognostic cochains on the cell basis, the event count stochastic_rainfall_event_count [1] and the accumulated depth stochastic_rainfall_depth [mm], with ParameterManager-backed arrival rate and mean mark
+  runtime_replacement: forward samples the arrivals of one fixed step through the existing relic.stochastic.gillespie.GillespieSSA direct method (one zero-order channel) and the exponential marks from the same Functor-owned substream exposed through module extra state; no legacy branch exists
+  canonical_operator: dN = R N(dt, dz) with R = [[1]] on the count, dH = sum_{i<=dN} z_i with z_i ~ Exp(alpha); compensators lambda dt and lambda alpha dt reported as diagnostics
+  level_2_limit: The canonical marked-jump runtime wrapper is declared and executed, but no typed-cochain IPHS structure, Hamiltonian, entropy, or fluctuation-dissipation relation is claimed; strict level 4 or 5 evidence is not applicable to this external-forcing event model.
+theory_document: docs\source\theory\atmosphere_stochastic_rainfall.md
+theory_document_status: updated
+legacy_formula: dN = N(dt) ~ Poisson(lambda dt); dH = sum z_i, z_i ~ Exp(alpha)
+literature_formula: Marked Poisson rainfall with exponential depths (Rodriguez-Iturbe et al. 1999; Laio et al. 2001), compound Poisson moments (Karlin and Taylor 1981), direct SSA event clock (Gillespie 1977)
+iphs_formula: dx = h(x^-, z) N(dt, dz) with h = (1, z) on (N, H), compensator lambda nu(dz) dt; no IPHS operator is claimed
+legacy_expression: dN = N(dt), N ~ Poisson(lambda dt); dH = sum_{i<=dN} z_i
+iphs_expression: Delta N = k, k ~ Poisson(lambda dt) via direct SSA; Delta H = alpha sum_{i<=k} E_i, E_i ~ Exp(1); Functor-owned event substream
+input_variables:
+- stochastic_rainfall_event_count
+- stochastic_rainfall_depth
+output_variables:
+- stochastic_rainfall_event_count
+- stochastic_rainfall_depth
+- diagnostics.stochastic_rainfall.event_count_increment
+- diagnostics.stochastic_rainfall.depth_increment
+- diagnostics.stochastic_rainfall.compensator_count
+- diagnostics.stochastic_rainfall.compensator_depth
+parameter_keys:
+- stochastic.weather.rainfall.event_rate
+- stochastic.weather.rainfall.mean_depth
+composition_ports: []
+references:
+- Rodriguez-Iturbe, I., Porporato, A., Ridolfi, L., Isham, V. & Cox, D.R. (1999). Proc. R. Soc. A 455, 3789-3805
+- Laio, F., Porporato, A., Ridolfi, L. & Rodriguez-Iturbe, I. (2001). Adv. Water Resour. 24, 707-723
+- Gillespie, D.T. (1977). J. Phys. Chem. 81, 2340-2361
+- Karlin, S. & Taylor, H.M. (1981). A Second Course in Stochastic Processes, Academic Press
+baseline_tests:
+- test\unit\atmosphere\test_stochastic_rainfall.py
+- test\audit\phase8_scientific_inventory.test.py
+validation_tests:
+- test\unit\atmosphere\test_stochastic_rainfall.py
+- test\integration\test_stochastic_rainfall_integration.py
+- test\integration\stochastic\workflows.test.py
+- test\unit\validation\framework\rules\stochastic_sdae_structure.test.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  stochastic_rainfall_event_count: prognostic counting state N [1]; input state and accumulated arrivals
+  stochastic_rainfall_depth: prognostic accumulated depth H [mm]; input state and accumulated exponential marks
+  diagnostics.stochastic_rainfall.event_count_increment: arrivals k of the emitted step [1]
+  diagnostics.stochastic_rainfall.depth_increment: sum of the exponential marks of the emitted step [mm]
+  diagnostics.stochastic_rainfall.compensator_count: predictable compensator lambda dt of the counting measure [1]
+  diagnostics.stochastic_rainfall.compensator_depth: predictable compensator lambda alpha dt of the depth increment [mm]
+parameter_map:
+  stochastic.weather.rainfall.event_rate: Poisson arrival rate lambda from ParameterManager [day-1]
+  stochastic.weather.rainfall.mean_depth: mean alpha of the exponential depth mark from ParameterManager [mm]
+operator_map:
+  event_clock: constant-hazard direct SSA (Gillespie 1977) over one fixed step in days on the Functor-owned generator; the per-cell arrival cap mu + 12 sqrt(mu) + 64 is a fail-closed guard
+  mark_law: exponential depth marks z = alpha E, E ~ Exp(1), drawn in cell order from the same generator; alpha keeps its autograd graph
+  compensator: lambda dt and lambda alpha dt emitted as REPLACE diagnostics; the compensated representation must add them as drift
+  time_conversion: the simulator step in seconds is converted once to days through the SSOT time constant SECONDS_PER_DAY
+unit_map:
+  stochastic_rainfall_event_count: '1'
+  stochastic_rainfall_depth: mm
+  diagnostics.stochastic_rainfall.event_count_increment: '1'
+  diagnostics.stochastic_rainfall.depth_increment: mm
+  diagnostics.stochastic_rainfall.compensator_count: '1'
+  diagnostics.stochastic_rainfall.compensator_depth: mm
+input_output_map:
+  stochastic_rainfall_event_count: canonical state input and UpdateItem ACCUMULATE increment in 1, per_timestep true
+  stochastic_rainfall_depth: canonical state input and UpdateItem ACCUMULATE increment in mm, per_timestep true
+  diagnostics.stochastic_rainfall.event_count_increment: canonical REPLACE observation of the step arrivals
+  diagnostics.stochastic_rainfall.depth_increment: canonical REPLACE observation of the step depth increment
+  diagnostics.stochastic_rainfall.compensator_count: canonical REPLACE observation of the count compensator
+  diagnostics.stochastic_rainfall.compensator_depth: canonical REPLACE observation of the depth compensator
+interface_map:
+  forward_signature: forward(self, state, time, dt, **kwargs)
+  bridge_class: PhysicalFieldFunctor
+  abstraction_contract: PhysicalField
+  constructor_selection: "MarkedPoissonRainfallFunctor(config={'seed': integer})"
+  state_write_mode: UpdateItem ACCUMULATE with per_timestep true for the count and depth and REPLACE observations for diagnostics
+  legacy_inputs:
+  - stochastic_rainfall_event_count
+  - stochastic_rainfall_depth
+  iphs_inputs:
+  - stochastic_rainfall_event_count
+  - stochastic_rainfall_depth
+  legacy_outputs:
+  - stochastic_rainfall_event_count
+  - stochastic_rainfall_depth
+  - diagnostics.stochastic_rainfall.event_count_increment
+  - diagnostics.stochastic_rainfall.depth_increment
+  - diagnostics.stochastic_rainfall.compensator_count
+  - diagnostics.stochastic_rainfall.compensator_depth
+  iphs_outputs:
+  - stochastic_rainfall_event_count
+  - stochastic_rainfall_depth
+  - diagnostics.stochastic_rainfall.event_count_increment
+  - diagnostics.stochastic_rainfall.depth_increment
+  - diagnostics.stochastic_rainfall.compensator_count
+  - diagnostics.stochastic_rainfall.compensator_depth
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward -> relic.stochastic.gillespie.GillespieSSA.sample
+  preserved_numerics: The single forward path samples the arrivals of the step with the direct SSA and the marks from the same substream and emits the exact increments; no alternative event branch exists.
+  no_legacy_mode: No selectable legacy runtime branch is exposed; the Functor was introduced directly on the canonical SSA owner.
+  non_strict_reason: Level 2 declares the canonical marked-jump runtime wrapper; no IPHS structure, Hamiltonian, entropy, or fluctuation-dissipation claim is made for external forcing events.
+state_advancement_map:
+  potential_basis: prognostic count and depth states on the declared cell basis; no storage functional is claimed
+  effort_variable: none; arrivals follow a constant hazard and marks an exponential law, not a variational effort
+  state_advancer: Delta N = k from one GillespieSSA.sample call with final_time = dt in days and Delta H = alpha sum_{i<=k} E_i from the Functor-owned generator
+  runtime_usage: MarkedPoissonRainfallFunctor.forward validates both states and the step, converts dt to days, samples the arrivals per cell with the direct SSA, draws the exponential marks in cell order, increments the substream draw count, and emits two ACCUMULATE increments plus four REPLACE diagnostics; a rejected step leaves the substream position unchanged.
+parameter_management_map:
+  stochastic.weather.rainfall.event_rate:
+    source: ParameterManager YAML
+  stochastic.weather.rainfall.mean_depth:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares two state inputs, two state outputs, four diagnostics, no dependencies, and no conservation law
+  state_contract: SCM contracts stochastic_rainfall_event_count (1, state) and stochastic_rainfall_depth (mm, state) and the four diagnostics.stochastic_rainfall.* contracts type the GraphIR ports
+  validation_rule: stochastic_sdae_check with the marked_jump execution binding, phase8 scientific inventory, and equivalence certificate checks
+  public_entrypoints: relic.stochastic.workflows.build_bound_marked_jump_graph / execute_bound_marked_jump serve POST /stochastic/gillespie and the CLI command stochastic gillespie; both fail closed for unbound process names, arbitrary reaction declarations, and per-run parameter overrides
+dependency_interconnection_map:
+  dependencies: no Functor dependencies; get_dependencies() returns an empty list
+  direct_functor_calls: none; only the canonical GillespieSSA owner is invoked
+overflow_routing_map:
+  invalid_state_route: missing, non-tensor, non-floating, non-finite, fractional, or negative count states fail before any draw or UpdateItem
+  inadmissible_timestep_route: a non-positive or non-finite step fails before any draw; a step whose expected arrivals exceed the admissible SSA cap fails before sampling
+  arrival_cap_route: a cell that reaches the per-step arrival cap rejects the step instead of truncating the count
+  substream_route: the event substream advances only when a step is emitted; rollback restores the module extra state
+  discarded_residuals: no residual is discarded; every rejected input or step fails before a draw or an UpdateItem is emitted
+conservation_map:
+  conserved_quantities: none; the count and depth are external forcing states entering through the open port route
+  balance_expression: E[Delta N] = lambda dt and E[Delta H] = lambda alpha dt for the emitted step; Var[Delta N] = lambda dt and Var[Delta H] = 2 lambda alpha^2 dt
+entropy_audit:
+  operator_sign: lambda > 0 and alpha > 0 by ParameterManager bounds; every arrival adds a nonnegative depth
+  sigma_expression: no entropy-production or fluctuation-dissipation claim is made; the events are an external forcing closure
+stochastic_sdae_map:
+  runtime_owner: relic.stochastic.gillespie.GillespieSSA
+  declares_stochastic_terms: false
+  requires_noise_covariance: false
+  declares_fdt_noise: false
+  requires_conservative_noise_flux: false
+  requires_descriptor_constraint: false
+  requires_jump_reset: true
+  execution_binding:
+    functor_class: relic.scientific.atmosphere.stochastic_rainfall.MarkedPoissonRainfallFunctor
+    forward_owner: relic.scientific.atmosphere.stochastic_rainfall.MarkedPoissonRainfallFunctor.forward
+    solver_owner: relic.stochastic.gillespie.GillespieSSA
+    rng_state_scope: functor_extra_state
+    validation_test: test\unit\atmosphere\test_stochastic_rainfall.py
+jump_reset_map:
+  rainfall_arrival:
+    reset_map:
+    - - 1.0
+    conservation_matrix:
+    - - 1.0
+    ledger_behavior: open
+    open_system_route: port
+    open_ledger_change:
+    - - 1.0
+    open_ledger_units: '1'
+    propensity_keys:
+    - stochastic.weather.rainfall.event_rate
+    state_vars:
+    - stochastic_rainfall_event_count
+    - stochastic_rainfall_depth
+    mark_space: exponential depth mark z >= 0 [mm] with mean stochastic.weather.rainfall.mean_depth
+    event_clock: direct_ssa_fixed_step
+stochastic_reproducibility_map:
+  random_seed: 7
+  noise_type: marked_poisson
+  solver_method: direct_ssa
+  uses_ensemble: false
+  jump_propensities:
+  - stochastic.weather.rainfall.event_rate
+  checkpoint_owner: relic.core.simulator.checkpoint
+  rng_state_owner: relic.core.simulator.checkpoint
+  rng_substream: stochastic_rainfall
+  restart_policy: restore_and_replay
+  time_step_mode: fixed
+equivalence_type: exact

@@ -1,0 +1,34 @@
+variable: livestock_carbon_intake_flux
+title: "Livestock Carbon Intake Flux"
+kind: flux
+dimension:
+  udunits: "kg C m-2 s-1"
+  cf_standard_name: null
+owner: "grazing_management"
+aliases: []
+incrementable: false
+accumulates: carbon.total
+numerics:
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "grazing_management"
+      module: "relic.scientific.anthroposphere.management.grazing"
+      provides: ["livestock_carbon_intake_flux"]
+      unit: "kg C m-2 s-1"
+flux_contract:
+  allowed_in: ["grazing_management"]
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/anthroposphere/management/grazing.py"
+  runtime_role: "vegetation_to_livestock_carbon_intake_boundary"
+  runtime_writer: "grazing_management"

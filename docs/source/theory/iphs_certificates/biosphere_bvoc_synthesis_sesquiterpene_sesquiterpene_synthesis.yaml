@@ -1,0 +1,252 @@
+certificate_version: '1.0'
+process_id: relic.scientific.biosphere.bvoc.synthesis.sesquiterpene.SesquiterpeneSynthesis
+module_name: SesquiterpeneSynthesis
+canonical_role: reaction
+iphs_level: 2
+iphs_level_evidence:
+  classification: IPHS-wrapped reaction process certificate
+  compatible_basis: Reaction process is expressed through conserved or open stoichiometric ledgers
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: N_h r_h reaction-network state advance
+  level_2_limit: The canonical runtime wrapper is declared, but no executable typed-cochain or IPHS structural contribution is bound; strict level 4 or 5 evidence is not claimed.
+theory_document: docs\source\theory\bvoc_emissions.md
+theory_document_status: updated
+legacy_formula: >-
+  gamma_T = (1 - LDF_SQT) exp(beta_SQT (T - T_s)) + LDF_SQT E_opt C_T2 exp(C_T1 x)
+  / (C_T2 - C_T1 (1 - exp(C_T2 x))), x = (1/T_opt - 1/T) / R;
+  gamma_L = (1 - LDF_SQT) + LDF_SQT alpha C_L PPFD / sqrt(1 + alpha^2 PPFD^2);
+  gamma_stress = min(supplied stress factors in [0, 1]);
+  E_leaf = EF gamma_T gamma_L gamma_stress;
+  E_area = E_leaf LAI k_f / seconds_per_hour;
+  F_SQT = convert(E_area / MW_SQT, umol m-2 s-1, mol m-2 s-1);
+  F_C,alloc = convert(F_SQT MW_SQT f_C, g C m-2 s-1,
+  kg C m-2 s-1).
+literature_formula: >-
+  The light factor is Guenther et al. (2012) Eq. (3) with the Table 4
+  sesquiterpene light-dependent fraction and the Eq. (4) light-dependent
+  activity; the temperature factor is the Eq. (7) blend of the Eq. (11) exponential
+  about the MEGAN standard temperature T_s and the Eq. (8) light-dependent response,
+  with the Table 4 Other Sesquiterpenes row; stress is the most limiting supplied
+  factor. The RELIC
+  reduced closure converts a dry-leaf-mass-normalized factor through LAI k_f;
+  it is not the canonical MEGAN2.1 vegetation-type, ground-area emission-factor
+  formulation. Stored-emitter literature requires synthesis and release to
+  remain distinct when storage is represented; this no-storage closure reports
+  emitted compound carbon only as an explicit allocation proxy.
+iphs_formula: x_dot = N_h r_h with ParameterManager-backed process rates r_h and declared stoichiometric/output map N_h
+legacy_expression: >-
+  The reduced empirical closure evaluates one nonnegative leaf-mass emission
+  factor, maps canonical RELIC leaf area to effective dry-leaf mass with LAI
+  times k_f, converts the result to the canonical molar atmosphere port, and
+  exposes the corresponding emitted-compound carbon as a positive allocation
+  proxy. It owns no storage pool and claims neither canonical MEGAN2.1
+  equivalence nor synthesis-release equivalence for stored emitters.
+iphs_expression: x_dot = N_h r_h with ParameterManager-backed process rates r_h and declared stoichiometric/output map N_h
+input_variables:
+- temperature
+- leaf_area_index
+- ppfd
+- soil_moisture
+- water_stress_factor
+- temperature_stress_factor
+- nutrient_stress_factor
+output_variables:
+- sesquiterpenes_emission
+- bvoc_carbon_allocation_flux
+- diagnostics.bvoc.sesquiterpene.emission_rate_molar
+- diagnostics.bvoc.sesquiterpene.gamma_temperature
+- diagnostics.bvoc.sesquiterpene.gamma_light
+- diagnostics.bvoc.sesquiterpene.gamma_stress
+- diagnostics.bvoc.sesquiterpene.gamma_total
+parameter_keys:
+- biosphere.bvoc.default.sesquiterpenes
+- biosphere.bvoc.megan.beta_sesquiterpenes
+- biosphere.bvoc.molecular_weights.sesquiterpenes
+- biosphere.bvoc.carbon_fraction.sesquiterpenes
+- biosphere.bvoc.foliar_density_factor
+- biosphere.bvoc.t_standard
+- biosphere.bvoc.megan.alpha_light
+- biosphere.bvoc.megan.cl_light
+- biosphere.bvoc.megan.ldf_sesquiterpenes
+- biosphere.bvoc.megan.eopt_sesquiterpenes
+- biosphere.bvoc.megan.ct1_sesquiterpenes
+- biosphere.bvoc.megan.topt
+- biosphere.bvoc.megan.ct2
+- relic.physical.constants.universal.gas_constant
+composition_ports:
+- sesquiterpenes_emission
+- bvoc_carbon_allocation_flux
+- temperature
+- leaf_area_index
+- ppfd
+- soil_moisture
+- water_stress_factor
+- temperature_stress_factor
+- nutrient_stress_factor
+references:
+- Guenther et al. (2012). MEGAN2.1. Geosci. Model Dev. 5, 1471-1492.
+- 'Duhl et al. (2008). Sesquiterpene emissions from vegetation: a review.'
+- Niinemets et al. (2014). Bidirectional exchange of biogenic volatiles with vegetation. Plant, Cell & Environment 37, 1790-1809.
+baseline_tests:
+- test\audit\phase8_scientific_inventory.test.py
+- test\unit\biosphere\bvoc\test_sesquiterpene_synthesis_l1.py
+validation_tests:
+- test\audit\phase8_scientific_inventory.test.py
+- test\unit\biosphere\bvoc\test_sesquiterpene_synthesis_l1.py
+state_map:
+  temperature: required canopy temperature input in K
+  leaf_area_index: required finite nonnegative canonical RELIC leaf area index in m2 leaf m-2 ground
+  ppfd: optional photon-flux input in umol photons m-2 s-1
+  soil_moisture: optional dimensionless soil-moisture stress driver
+  water_stress_factor: optional dimensionless water-stress factor
+  temperature_stress_factor: optional dimensionless temperature-stress factor
+  nutrient_stress_factor: optional dimensionless nutrient-stress factor
+parameter_map:
+  biosphere.bvoc.default.sesquiterpenes: Base sesquiterpene emission factor at the MEGAN standard temperature T_s [ug g-1 DW h-1]
+  biosphere.bvoc.megan.beta_sesquiterpenes: Temperature coefficient beta of the delegated Eq. (11) term [K-1]
+  biosphere.bvoc.molecular_weights.sesquiterpenes: Molecular weight of sesquiterpenes (C15H24) [g mol-1]
+  biosphere.bvoc.carbon_fraction.sesquiterpenes: Carbon mass fraction of representative C15H24 sesquiterpenes [dimensionless]
+  biosphere.bvoc.foliar_density_factor: Effective dry-leaf mass per unit canonical RELIC LAI leaf area [g DW m-2]
+  biosphere.bvoc.t_standard: MEGAN standard temperature T_s of the delegated Eq. (11) term [K]
+  biosphere.bvoc.megan.alpha_light: PPFD response slope alpha of the delegated Eq. (4) light activity [m2 s umol-1]
+  biosphere.bvoc.megan.cl_light: Light scaling coefficient C_L of the delegated Eq. (4) light activity [dimensionless]
+  biosphere.bvoc.megan.ldf_sesquiterpenes: Sesquiterpene light-dependent fraction LDF of the delegated Eq. (3) and Eq. (7) blends [dimensionless]
+  biosphere.bvoc.megan.eopt_sesquiterpenes: Optimum activity E_opt (Table 4 C_eo) of the delegated Eq. (8) temperature activity [dimensionless]
+  biosphere.bvoc.megan.ct1_sesquiterpenes: Activation energy C_T1 of the delegated Eq. (8) temperature activity [J mol-1]
+  biosphere.bvoc.megan.topt: Class-independent optimum temperature T_opt of the delegated Eq. (8) temperature activity [K]
+  biosphere.bvoc.megan.ct2: Class-independent deactivation energy C_T2 of the delegated Eq. (8) temperature activity [J mol-1]
+  relic.physical.constants.universal.gas_constant: Molar gas constant R of the delegated Eq. (8) temperature activity [J mol-1 K-1]
+operator_map:
+  N_h: declared stoichiometric or output incidence map for this reaction process
+  r_h: ParameterManager-backed process-rate vector evaluated by the production forward path
+unit_map:
+  sesquiterpenes_emission: mol m-2 s-1
+  bvoc_carbon_allocation_flux: kg C m-2 s-1
+  diagnostics.bvoc.sesquiterpene.emission_rate_molar: umol m-2 s-1
+  diagnostics.bvoc.sesquiterpene.gamma_temperature: '1'
+  diagnostics.bvoc.sesquiterpene.gamma_light: '1'
+  diagnostics.bvoc.sesquiterpene.gamma_stress: '1'
+  diagnostics.bvoc.sesquiterpene.gamma_total: '1'
+input_output_map:
+  temperature: required input to the Eq. (7) temperature activity
+  leaf_area_index: required nonnegative area state that maps to effective dry-leaf mass through k_f
+  ppfd: optional input to the delegated light response
+  soil_moisture: optional environmental stress input
+  water_stress_factor: optional explicit water-stress input
+  temperature_stress_factor: optional explicit temperature-stress input
+  nutrient_stress_factor: optional explicit nutrient-stress input
+  sesquiterpenes_emission: canonical open atmospheric molar-flux port
+  bvoc_carbon_allocation_flux: positive no-storage plant-carbon allocation proxy equal to emitted sesquiterpene carbon
+  diagnostics.bvoc.sesquiterpene.emission_rate_molar: species-resolved molar diagnostic
+  diagnostics.bvoc.sesquiterpene.gamma_temperature: Eq. (7) temperature activity diagnostic
+  diagnostics.bvoc.sesquiterpene.gamma_light: optional light activity diagnostic
+  diagnostics.bvoc.sesquiterpene.gamma_stress: combined environmental stress diagnostic
+  diagnostics.bvoc.sesquiterpene.gamma_total: product of the three activity diagnostics
+interface_map:
+  forward_signature: forward(self, state, time, dt)
+  forward_contract: scientific inputs come only from state (the forward takes no environment argument) and outputs are dictionary-only, while compatibility kwargs and alternate return types are not exposed
+  bridge_class: BiologicalProcessFunctor
+  abstraction_contract: BiologicalProcess
+  temperature_function: gamma_T = (1 - LDF) exp(beta_SQT (T - T_s)) + LDF gamma_T,LDF of Guenther et al. (2012) Eq. (7), with the Eq. (8) gamma_T,LDF and the Table 4 Other Sesquiterpenes row (beta 0.17 K-1, LDF 0.5, C_T1 130 kJ mol-1, C_eo 2.37), evaluated by the shared megan_temperature_activity law and returned by temperature_function; the generic bridge Q10, Arrhenius, optimum, moisture and pH parameters are not declared
+  state_write_mode: existing RELIC simulator and StateManager update path
+  legacy_inputs:
+  - temperature
+  - leaf_area_index
+  - ppfd
+  - soil_moisture
+  - water_stress_factor
+  - temperature_stress_factor
+  - nutrient_stress_factor
+  iphs_inputs:
+  - temperature
+  - leaf_area_index
+  - ppfd
+  - soil_moisture
+  - water_stress_factor
+  - temperature_stress_factor
+  - nutrient_stress_factor
+  legacy_outputs:
+  - sesquiterpenes_emission
+  - bvoc_carbon_allocation_flux
+  - diagnostics.bvoc.sesquiterpene.emission_rate_molar
+  - diagnostics.bvoc.sesquiterpene.gamma_temperature
+  - diagnostics.bvoc.sesquiterpene.gamma_light
+  - diagnostics.bvoc.sesquiterpene.gamma_stress
+  - diagnostics.bvoc.sesquiterpene.gamma_total
+  iphs_outputs:
+  - sesquiterpenes_emission
+  - bvoc_carbon_allocation_flux
+  - diagnostics.bvoc.sesquiterpene.emission_rate_molar
+  - diagnostics.bvoc.sesquiterpene.gamma_temperature
+  - diagnostics.bvoc.sesquiterpene.gamma_light
+  - diagnostics.bvoc.sesquiterpene.gamma_stress
+  - diagnostics.bvoc.sesquiterpene.gamma_total
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: Existing ParameterManager-backed calculations define canonical IPHS operator coefficients, rates, ports, or observations.
+  no_legacy_mode: Scientific inputs come only from the state dictionary (no environment argument exists) and outputs are dictionary-only, while compatibility_mode and alternate scalar/tensor paths are absent.
+state_advancement_map:
+  potential_basis: declared RELIC state, port, or observation cochain basis
+  effort_variable: ParameterManager-backed thermodynamic effort, driver, or diagnostic input used by the module
+  state_advancer: x_dot = N_h r_h with explicit stoichiometric_N and rates evaluated by advance_reaction_network
+  runtime_usage: SesquiterpeneSynthesis.forward validates the declared state ports, evaluates one MEGAN-family empirical response rate, maps the mass-normalized rate through required LAI and ParameterManager-backed k_f, converts it through the existing UnitConverter, derives the positive no-storage plant-carbon allocation proxy, calls advance_reaction_network with explicit stoichiometric_N and rates, and emits the canonical molar and carbon ports plus namespaced diagnostics.
+  explicit_stoichiometric_usage: SesquiterpeneSynthesis.forward materializes stoichiometric_N and rates, then lowers x_dot = N_h r_h through advance_reaction_network with open_system_route=port.
+parameter_management_map:
+  biosphere.bvoc.default.sesquiterpenes:
+    source: ParameterManager YAML
+  biosphere.bvoc.megan.beta_sesquiterpenes:
+    source: ParameterManager YAML
+  biosphere.bvoc.molecular_weights.sesquiterpenes:
+    source: ParameterManager YAML
+  biosphere.bvoc.carbon_fraction.sesquiterpenes:
+    source: ParameterManager YAML
+  biosphere.bvoc.foliar_density_factor:
+    source: ParameterManager YAML
+  biosphere.bvoc.t_standard:
+    source: ParameterManager YAML
+  biosphere.bvoc.megan.alpha_light:
+    source: ParameterManager YAML
+  biosphere.bvoc.megan.cl_light:
+    source: ParameterManager YAML
+  biosphere.bvoc.megan.ldf_sesquiterpenes:
+    source: ParameterManager YAML
+  biosphere.bvoc.megan.eopt_sesquiterpenes:
+    source: ParameterManager YAML
+  biosphere.bvoc.megan.ct1_sesquiterpenes:
+    source: ParameterManager YAML
+  biosphere.bvoc.megan.topt:
+    source: ParameterManager YAML
+  biosphere.bvoc.megan.ct2:
+    source: ParameterManager YAML
+  relic.physical.constants.universal.gas_constant:
+    source: ParameterManager physical constants SSOT via get_physical_constant
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares interfaces, execution phase, and conservation semantics
+  state_contract: existing simulator state update path is preserved
+  physical_constant_ssot: seconds_per_hour is resolved only through get_physical_constant
+  unit_conversion_owner: the existing UnitConverter owns the umol m-2 s-1 to mol m-2 s-1 and g C m-2 s-1 to kg C m-2 s-1 conversions
+  response_owner: BVOCResponseIntegrator composes the megan_model module-level laws (Guenther et al. 2012 Eqs. 3, 4, 7, 8 and 11) and is the sole runtime reader of beta_sesquiterpenes, t_standard, alpha_light, cl_light, ldf_sesquiterpenes, eopt_sesquiterpenes, ct1_sesquiterpenes, topt, ct2 and the physical-constant gas constant; the synthesis Functor does not cache a duplicate coefficient
+  validation_rule: phase8 scientific inventory and equivalence certificate checks
+dependency_interconnection_map:
+  dependencies:
+  - water_stress_factor
+  - thermal_stress
+  - nutrient_stress_factor
+  direct_functor_calls: none_no_direct_functor_calls
+overflow_routing_map:
+  diagnostic_residuals: no storage clipping or overflow is performed by this open flux process
+  discarded_residuals: none; no floor or clamp is applied, an illegal emission factor raises, and the output is routed to the atmospheric port
+conservation_map:
+  conserved_quantities:
+  - carbon_boundary
+  open_system_route: port
+  balance_expression: R_C = F_C,alloc - convert(F_SQT MW_SQT f_C, g C m-2 s-1 to kg C m-2 s-1); carbon_boundary = ||R_C||_inf. This is an open species-to-carbon map and not a closed local stock claim.
+  local_check: check_conservation_laws requires finite floating tensors with identical shapes, reuses the existing UnitConverter and ParameterManager-backed molecular weight and carbon fraction, and reports the infinity norm of the mapping residual.
+entropy_audit:
+  operator_sign: rates, mobilities, or diagnostic maps are non-negative or checked by existing validation hooks where physically required
+  sigma_expression: canonical entropy production is non-negative for dissipative subexpressions
+equivalence_type: reaction_network
+physical_constant_ssot:
+  seconds_per_hour: get_physical_constant("seconds_per_hour")

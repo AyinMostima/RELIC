@@ -1,0 +1,115 @@
+certificate_version: '1.0'
+process_id: relic.scientific.pedosphere.carbon_pools.carbon_pools_functor.CarbonPoolsFunctor
+module_name: CarbonPoolsFunctor
+canonical_role: observation
+iphs_level: 1
+iphs_level_evidence:
+  classification: IPHS-compatible state-neutral carbon-pool observation
+  compatible_basis: Canonical pool states are projected to a diagnostic vector without advancing or replacing state
+  runtime_replacement: Production forward uses a single state-neutral observation path; strict IPHS level 4 or 5 is not claimed.
+  canonical_operator: O_h diagnostic observation projection
+theory_document: docs\source\theory\decomposition.md
+theory_document_status: updated
+legacy_formula: C_total = sum_i C_i
+literature_formula: C_total = sum_i C_i
+iphs_formula: z_h = O_h x_h and C_total = 1^T z_h over the pool axis (one stock per grid cell) with no state advancement
+legacy_expression: C_total = sum_i C_i
+iphs_expression: z_h = O_h x_h; delta_x = 0
+input_variables:
+- metabolic_litter_c
+- structural_litter_c
+- fast_som_c
+- slow_som_c
+- passive_som_c
+output_variables:
+- diagnostics.carbon_pools_snapshot
+- diagnostics.total_carbon_stock
+parameter_keys: []
+parameter_free: true
+composition_ports:
+- canonical carbon-pool observation port
+references:
+- Parton, W.J. et al. (1987). Soil carbon pools (CENTURY model).
+- Coleman, K. & Jenkinson, D.S. (1996). RothC soil carbon model.
+baseline_tests:
+- test\unit\pedosphere\carbon_pools\test_carbon_pools_functor_l1.py
+- test\audit\phase8_scientific_inventory.test.py
+validation_tests:
+- test\unit\pedosphere\carbon_pools\test_carbon_pools_functor_l1.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  metabolic_litter_c: metabolic_litter_c mapped to canonical Phase 8 cochain basis
+  structural_litter_c: structural_litter_c mapped to canonical Phase 8 cochain basis
+  fast_som_c: fast_som_c mapped to canonical Phase 8 cochain basis
+  slow_som_c: slow_som_c mapped to canonical Phase 8 cochain basis
+  passive_som_c: passive_som_c mapped to canonical Phase 8 cochain basis
+  diagnostics.carbon_pools_snapshot: O_h projection of the ordered canonical pool basis
+  diagnostics.total_carbon_stock: per-cell sum of the observed canonical pool vector over the pool axis
+parameter_map: {}
+operator_map:
+  O_h: parameter-free stacking projection over the declared canonical pool order
+unit_map:
+  metabolic_litter_c: g C m-2
+  structural_litter_c: g C m-2
+  fast_som_c: g C m-2
+  slow_som_c: g C m-2
+  passive_som_c: g C m-2
+  diagnostics.carbon_pools_snapshot: g C m-2
+  diagnostics.total_carbon_stock: g C m-2
+input_output_map:
+  canonical_pool_basis: diagnostics.carbon_pools_snapshot
+  sum_of_canonical_pool_basis: diagnostics.total_carbon_stock
+interface_map:
+  forward_signature: forward(self, state, time, dt)
+  bridge_class: BiologicalProcessFunctor
+  abstraction_contract: BiologicalProcess
+  state_write_mode: diagnostics only; simulator initial-state configuration and the selected decomposition model retain state ownership
+  legacy_inputs:
+  - metabolic_litter_c
+  - structural_litter_c
+  - fast_som_c
+  - slow_som_c
+  - passive_som_c
+  iphs_inputs:
+  - metabolic_litter_c
+  - structural_litter_c
+  - fast_som_c
+  - slow_som_c
+  - passive_som_c
+  legacy_outputs:
+  - diagnostics.carbon_pools_snapshot
+  - diagnostics.total_carbon_stock
+  iphs_outputs:
+  - diagnostics.carbon_pools_snapshot
+  - diagnostics.total_carbon_stock
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: State values are read from the complete canonical StateManager basis and projected without numerical modification.
+  no_legacy_mode: No initializer write, selectable runtime mode, mixed state-parameter fallback, fallback formula, or alternate pool owner remains.
+state_advancement_map:
+  potential_basis: declared canonical pedosphere carbon-pool state basis
+  effort_variable: not applicable to a state-neutral observation projection
+  state_advancer: none; z_h = O_h x_h is diagnostic only
+  runtime_usage: CarbonPoolsFunctor.forward stacks canonical pool values and reports their per-cell sum over the pool axis without emitting state updates.
+parameter_management_map: {}
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares canonical pool inputs and diagnostic-only outputs
+  state_contract: StateManager and the existing SCM contracts authorize only the selected decomposition writer; this observer is diagnostic-only
+  validation_rule: phase8 scientific inventory and equivalence certificate checks
+dependency_interconnection_map:
+  dependencies: none; the observer reads the simulator state snapshot directly
+  alternative_models: exactly one of PoolsMatrix, FirstOrderDecomposition, or MicrobialEnzymeDecomposition may provide runtime tendencies
+  direct_functor_calls: none; this observer reads the state snapshot and does not instantiate any alternative carbon process
+overflow_routing_map:
+  incomplete_pool_basis: rejected before diagnostic projection; no ParameterManager state fallback is allowed
+  diagnostic_residuals: none; the observation applies no clipping or residual correction
+  discarded_residuals: incomplete, negative, or non-finite pool basis is rejected and the observer performs no stock, flux, or response clipping
+conservation_map:
+  conserved_quantities: none; the observation is state neutral
+  balance_expression: delta_state = 0
+entropy_audit:
+  operator_sign: not applicable to a state-neutral observation projection
+  sigma_expression: not applicable
+equivalence_type: diagnostic

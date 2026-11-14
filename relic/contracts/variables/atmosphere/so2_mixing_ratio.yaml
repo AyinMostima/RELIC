@@ -1,0 +1,36 @@
+variable: so2_mixing_ratio
+title: "Atmospheric SO2 Mixing Ratio"
+kind: state
+dimension:
+  udunits: "mol mol-1"
+  cf_standard_name: "mole_fraction_of_sulfur_dioxide_in_air"
+owner: null
+aliases: []
+incrementable: true
+accumulates: null
+numerics:
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-15
+  rtol: 1.0e-9
+writers:
+  increments:
+    - name: "dry_deposition_aggregator"
+      module: "relic.scientific.atmosphere.transport.dry_deposition_aggregator"
+      provides:
+        - "so2_mixing_ratio"
+      unit: "mol mol-1"
+  tendencies: []
+flux_contract:
+  allowed_in: []
+  allowed_out:
+    - "dry_deposition_aggregator"
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-15
+      rtol: 1.0e-9
+provenance:
+  source_file: "relic/scientific/atmosphere/transport/dry_deposition_aggregator.py"
+  runtime_role: "additive_atmospheric_so2_state_ledger"
+  runtime_writer: null

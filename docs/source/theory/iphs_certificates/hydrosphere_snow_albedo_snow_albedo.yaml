@@ -1,0 +1,245 @@
+certificate_version: "1.0"
+process_id: "relic.scientific.hydrosphere.snow.albedo.SnowAlbedo"
+module_name: "snow_albedo"
+canonical_role: "observation"
+iphs_level: 1
+iphs_level_evidence:
+  classification: "IPHS-compatible diagnostic or observation certificate"
+  compatible_basis: "Read-only observation or diagnostic contract with declared Hodge, radiation port power audit, and no independent water or energy storage ownership"
+theory_document: "docs\\source\\theory\\hydrosphere_snow_albedo.md"
+theory_document_status: "updated"
+legacy_formula: "SnowAlbedo computes dynamic surface albedo from snow age, snow temperature, solar zenith angle, snow depth, and fresh snowfall reset rules."
+literature_formula: "BATS snow albedo evolves snow surface age with temperature, melt/refreeze, and dust terms, then computes broadband albedo from visible and near-infrared components; age-based mode uses alpha = alpha_old + (alpha_fresh - alpha_old) exp(-age/tau)."
+iphs_formula: "alpha_s is a typed diagnostic 0-cochain, absorbed shortwave fraction is q_rad = star_alpha I_sw with star_alpha = diag(1 - alpha_s) >= 0, and port power is P_rad = I_sw * (1 - alpha_s)."
+legacy_expression: "alpha_s = clamp(Phi_age(age,T,theta_z), alpha_min, alpha_max), with no-snow bare-ground continuation alpha_old * bare_ground_albedo_factor."
+iphs_expression: "q_rad = star_alpha I_sw, P_rad = I_sw * (1 - alpha_s), and d age_s/dt = (age_s_next - age_s_start) / dt; clipping, no-snow projection, port-power, and age-tendency residuals are routed through diagnostics.snow_albedo."
+input_variables:
+  - "snowfall"
+  - "snow_surface_temperature"
+  - "air_temperature"
+  - "solar_zenith_angle"
+  - "snow_depth"
+  - "shortwave_down"
+output_variables:
+  - "surface_albedo"
+  - "snow_surface_age"
+  - "snow_nondimensional_age"
+  - "diagnostics.snow_albedo"
+parameter_keys:
+  - "hydrosphere.numerical.epsilon_small"
+  - "hydrosphere.snow.albedo_scheme"
+  - "hydrosphere.snow.fresh_snow_albedo"
+  - "hydrosphere.snow.old_snow_albedo"
+  - "hydrosphere.snow.bare_ground_albedo_factor"
+  - "hydrosphere.snow.snow_reset_threshold"
+  - "hydrosphere.snow.bats_b_parameter"
+  - "hydrosphere.snow.dust_soot_factor"
+  - "hydrosphere.snow.albedo_decay_rate_cold"
+  - "hydrosphere.snow.albedo_decay_rate_warm"
+  - "hydrosphere.snow.temperature_threshold_warm"
+  - "hydrosphere.snow.bats_grain_growth_temperature_factor"
+  - "hydrosphere.snow.age_based_temperature_sensitivity"
+  - "hydrosphere.snow.bats_reference_temperature"
+  - "hydrosphere.snow.bats_temperature_epsilon"
+  - "hydrosphere.snow.bats_cos_zenith_threshold"
+  - "hydrosphere.snow.bats_albedo_vis_base"
+  - "hydrosphere.snow.bats_albedo_vis_age_factor"
+  - "hydrosphere.snow.bats_albedo_nir_base"
+  - "hydrosphere.snow.bats_albedo_nir_age_factor"
+  - "hydrosphere.snow.bats_albedo_zenith_factor"
+  - "hydrosphere.snow.bats_albedo_average_weight"
+  - "hydrosphere.snow.aging_time_scale"
+  - "hydrosphere.snow.minimum_snow_depth"
+  - "hydrosphere.snow.albedo_clamp_min"
+  - "hydrosphere.snow.albedo_clamp_max"
+  - "hydrosphere.snow.hodge_reference_surface_albedo"
+  - "hydrosphere.snow.temperature_clamp_min"
+  - "hydrosphere.snow.temperature_clamp_max"
+composition_ports:
+  - "snow_albedo_radiation_port"
+references:
+  - "Dickinson, R.E., Henderson-Sellers, A., Kennedy, P.J. (1993). Biosphere-Atmosphere Transfer Scheme (BATS) Version 1e as Coupled to the NCAR Community Climate Model."
+  - "Warren, S.G. (1982). Optical properties of snow. Reviews of Geophysics and Space Physics, 20, 67-89."
+  - "Wiscombe, W.J. and Warren, S.G. (1980). A model for the spectral albedo of snow. Journal of the Atmospheric Sciences, 37, 2712-2733."
+  - "Molotch, N.P. and Bales, R.C. (2006). SNTHERM model validation using laboratory experiments. Journal of Geophysical Research, 111, D23105."
+baseline_tests:
+  - "test\\scientific\\hydrosphere\\snow\\snow_albedo.test.py"
+  - "test\\unit\\hydrosphere\\snow\\test_snow_albedo_l1.py"
+validation_tests:
+  - "test\\scientific\\hydrosphere\\snow\\snow_albedo.test.py"
+  - "test\\unit\\hydrosphere\\snow\\test_snow_albedo_l1.py"
+  - "test\\audit\\phase8_scientific_inventory.test.py"
+state_map:
+  snowfall: "fresh snow reset driver [kg m-2 s-1]"
+  snow_surface_temperature: "BATS snow surface temperature driver [K]"
+  air_temperature: "age-based snow aging temperature driver [K]"
+  solar_zenith_angle: "solar zenith angle theta_z [rad]"
+  snow_depth: "snow presence mask depth [m]"
+  shortwave_down: "optional shortwave port effort I_sw, surface downwelling shortwave flux [W m-2]"
+  surface_albedo: "diagnostic snow surface albedo alpha_s [dimensionless]"
+  snow_surface_age: "age-based scheme snow age state t_age [day]"
+  snow_nondimensional_age: "BATS scheme nondimensional snow age state tau_s [dimensionless]"
+  diagnostics.snow_albedo: "read-only aging, snow presence, shortwave partition, port-power, and residual diagnostics"
+parameter_map:
+  hydrosphere.numerical.epsilon_small: "floor of the absorbed fraction of the static Hodge contract"
+  hydrosphere.snow.albedo_scheme: "selected albedo parameterization"
+  hydrosphere.snow.fresh_snow_albedo: "fresh snow albedo alpha_fresh [dimensionless]"
+  hydrosphere.snow.old_snow_albedo: "aged snow albedo alpha_old [dimensionless]"
+  hydrosphere.snow.bare_ground_albedo_factor: "bare ground continuation factor [dimensionless]"
+  hydrosphere.snow.snow_reset_threshold: "snowfall reset threshold [kg m-2 s-1]"
+  hydrosphere.snow.bats_b_parameter: "BATS solar zenith factor [dimensionless]"
+  hydrosphere.snow.dust_soot_factor: "dust and soot aging contribution [dimensionless]"
+  hydrosphere.snow.albedo_decay_rate_cold: "cold aging rate [s-1]"
+  hydrosphere.snow.albedo_decay_rate_warm: "warm aging rate [s-1]"
+  hydrosphere.snow.temperature_threshold_warm: "warm aging threshold [K]"
+  hydrosphere.snow.bats_grain_growth_temperature_factor: "BATS grain temperature factor [K]"
+  hydrosphere.snow.age_based_temperature_sensitivity: "age-based warm aging sensitivity kappa [K-1]"
+  hydrosphere.snow.bats_reference_temperature: "BATS reference temperature [K]"
+  hydrosphere.snow.bats_temperature_epsilon: "BATS temperature denominator offset [K]"
+  hydrosphere.snow.bats_cos_zenith_threshold: "BATS zenith threshold [dimensionless]"
+  hydrosphere.snow.bats_albedo_vis_base: "visible base albedo [dimensionless]"
+  hydrosphere.snow.bats_albedo_vis_age_factor: "visible age factor [dimensionless]"
+  hydrosphere.snow.bats_albedo_nir_base: "near-infrared base albedo [dimensionless]"
+  hydrosphere.snow.bats_albedo_nir_age_factor: "near-infrared age factor [dimensionless]"
+  hydrosphere.snow.bats_albedo_zenith_factor: "BATS zenith multiplier [dimensionless]"
+  hydrosphere.snow.bats_albedo_average_weight: "visible/NIR averaging weight [dimensionless]"
+  hydrosphere.snow.aging_time_scale: "age-based decay timescale [day]"
+  hydrosphere.snow.minimum_snow_depth: "minimum snow depth for snow-present mask [m]"
+  hydrosphere.snow.albedo_clamp_min: "minimum albedo bound [dimensionless]"
+  hydrosphere.snow.albedo_clamp_max: "maximum albedo bound [dimensionless]"
+  hydrosphere.snow.hodge_reference_surface_albedo: "reference aged-snow albedo of the static absorption Hodge contract [dimensionless]"
+  hydrosphere.snow.temperature_clamp_min: "minimum valid snow temperature [K]"
+  hydrosphere.snow.temperature_clamp_max: "maximum valid snow temperature [K]"
+operator_map:
+  star_alpha: "build_hodge_contract and build_hodge_terms HodgeStarSpec for shortwave absorption fraction"
+  bats_age: "temperature, melt/refreeze, and dust aging law"
+  spectral_average: "visible and near-infrared BATS albedo combination"
+  age_decay: "exponential age-based albedo decay"
+  projection: "albedo bound clipping residual routing"
+unit_map:
+  snowfall: "kg m-2 s-1"
+  snow_surface_temperature: "K"
+  air_temperature: "K"
+  solar_zenith_angle: "rad"
+  snow_depth: "m"
+  surface_albedo: "dimensionless"
+  snow_surface_age: "day"
+  snow_nondimensional_age: "dimensionless"
+  diagnostics.snow_albedo.albedo_clipping_residual: "dimensionless"
+  diagnostics.snow_albedo.snow_absorbed_shortwave_fraction: "dimensionless"
+  diagnostics.snow_albedo.snow_albedo_radiation_port_power: "W m-2"
+  diagnostics.snow_albedo.snow_age_tendency: "day s-1"
+  diagnostics.snow_albedo.snow_nondimensional_age_tendency: "s-1"
+input_output_map:
+  snowfall: "same fresh snowfall reset input enters legacy and IPHS forms"
+  snow_surface_temperature: "same BATS temperature input enters legacy and IPHS forms"
+  air_temperature: "same age-based temperature input enters legacy and IPHS forms"
+  solar_zenith_angle: "same solar geometry input enters legacy and IPHS forms"
+  snow_depth: "same snow-present mask input enters legacy and IPHS forms"
+  shortwave_down: "optional IPHS port effort used to audit P_rad without changing the albedo observation law"
+  surface_albedo: "same albedo output is emitted through wrap_update(UpdateMode.REPLACE)"
+  snow_surface_age: "age-based scheme age state emitted through wrap_update(UpdateMode.REPLACE); untouched under bats"
+  snow_nondimensional_age: "BATS scheme nondimensional age state emitted through wrap_update(UpdateMode.REPLACE); untouched under age_based"
+  diagnostics.snow_albedo: "same diagnostics map includes residual, radiation partition, port-power, and age-tendency diagnostics"
+interface_map:
+  forward_signature: "forward(self, state, time, dt, **kwargs)"
+  bridge_class: "PhysicalFieldFunctor"
+  abstraction_contract: "PhysicalField"
+  state_write_mode: "outputs use wrap_update(UpdateMode.REPLACE) through existing StateManager path"
+  legacy_inputs:
+    - "snowfall"
+    - "snow_surface_temperature"
+    - "air_temperature"
+    - "solar_zenith_angle"
+    - "snow_depth"
+    - "shortwave_down"
+  iphs_inputs:
+    - "snowfall"
+    - "snow_surface_temperature"
+    - "air_temperature"
+    - "solar_zenith_angle"
+    - "snow_depth"
+    - "shortwave_down"
+  legacy_outputs:
+    - "surface_albedo"
+    - "snow_surface_age"
+    - "snow_nondimensional_age"
+    - "diagnostics.snow_albedo"
+  iphs_outputs:
+    - "surface_albedo"
+    - "snow_surface_age"
+    - "snow_nondimensional_age"
+    - "diagnostics.snow_albedo"
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: "forward"
+  preserved_numerics: "The existing BATS and age-based albedo calculations are the canonical IPHS diagnostic observation law."
+  no_legacy_mode: "No runtime flag exposes a separate pre-Phase 8 SnowAlbedo branch."
+state_advancement_map:
+  potential_basis: "snow optical state cochain x_alpha"
+  effort_variable: "shortwave radiation input I_sw with albedo metric star_alpha"
+  state_advancer: "q_rad = star_alpha I_sw; star_alpha = diag(max(1 - alpha_s, epsilon))"
+  runtime_usage: "forward applies the canonical snow-albedo observation law and routes clipping, no-snow, radiation port-power, and age-tendency diagnostics."
+parameter_management_map:
+  hydrosphere.numerical.epsilon_small: {source: "ParameterManager YAML"}
+  hydrosphere.snow.albedo_scheme: {source: "ParameterManager YAML"}
+  hydrosphere.snow.fresh_snow_albedo: {source: "ParameterManager YAML"}
+  hydrosphere.snow.old_snow_albedo: {source: "ParameterManager YAML"}
+  hydrosphere.snow.bare_ground_albedo_factor: {source: "ParameterManager YAML"}
+  hydrosphere.snow.snow_reset_threshold: {source: "ParameterManager YAML"}
+  hydrosphere.snow.bats_b_parameter: {source: "ParameterManager YAML"}
+  hydrosphere.snow.dust_soot_factor: {source: "ParameterManager YAML"}
+  hydrosphere.snow.albedo_decay_rate_cold: {source: "ParameterManager YAML"}
+  hydrosphere.snow.albedo_decay_rate_warm: {source: "ParameterManager YAML"}
+  hydrosphere.snow.temperature_threshold_warm: {source: "ParameterManager YAML"}
+  hydrosphere.snow.bats_grain_growth_temperature_factor: {source: "ParameterManager YAML"}
+  hydrosphere.snow.age_based_temperature_sensitivity: {source: "ParameterManager YAML"}
+  hydrosphere.snow.bats_reference_temperature: {source: "ParameterManager YAML"}
+  hydrosphere.snow.bats_temperature_epsilon: {source: "ParameterManager YAML"}
+  hydrosphere.snow.bats_cos_zenith_threshold: {source: "ParameterManager YAML"}
+  hydrosphere.snow.bats_albedo_vis_base: {source: "ParameterManager YAML"}
+  hydrosphere.snow.bats_albedo_vis_age_factor: {source: "ParameterManager YAML"}
+  hydrosphere.snow.bats_albedo_nir_base: {source: "ParameterManager YAML"}
+  hydrosphere.snow.bats_albedo_nir_age_factor: {source: "ParameterManager YAML"}
+  hydrosphere.snow.bats_albedo_zenith_factor: {source: "ParameterManager YAML"}
+  hydrosphere.snow.bats_albedo_average_weight: {source: "ParameterManager YAML"}
+  hydrosphere.snow.aging_time_scale: {source: "ParameterManager YAML"}
+  hydrosphere.snow.minimum_snow_depth: {source: "ParameterManager YAML"}
+  hydrosphere.snow.albedo_clamp_min: {source: "ParameterManager YAML"}
+  hydrosphere.snow.albedo_clamp_max: {source: "ParameterManager YAML"}
+  hydrosphere.snow.hodge_reference_surface_albedo: {source: "ParameterManager YAML"}
+  hydrosphere.snow.temperature_clamp_min: {source: "ParameterManager YAML"}
+  hydrosphere.snow.temperature_clamp_max: {source: "ParameterManager YAML"}
+composition_management_map:
+  functor_metadata: "existing FunctorMetadata declares PhysicalField role and radiation/energy coupling interfaces"
+  structural_protocol: "declared_forms, required_parameters, build_hodge_terms, dissipative_structure, ports"
+  state_contract: "existing PhysicalFieldFunctor and StateManager UpdateItem path"
+  physical_constant_ssot: "seconds per day is resolved only through get_physical_constant"
+  ports:
+    - "snow_albedo_radiation_port"
+dependency_interconnection_map:
+  dependencies: "lagged dependency on snow_pack; every forcing input and the scheme-owned age state (snow_nondimensional_age for bats, snow_surface_age for age_based) are required state keys: a missing one raises and no state default is substituted"
+  direct_functor_calls: "none; snow_pack is a lagged state dependency and no SnowPack instance is called"
+  chain_maps:
+    - "snow_depth and snowfall enter the snow-present and fresh-snow reset masks"
+    - "surface_albedo and the scheme-owned age state (snow_nondimensional_age for bats, snow_surface_age for age_based) leave through existing state graph"
+overflow_routing_map:
+  albedo_clipping: "alpha bound projection residual is routed to diagnostics.snow_albedo.albedo_clipping_residual"
+  shortwave_partition: "absorbed shortwave fraction 1 - alpha_s is routed to diagnostics.snow_albedo.snow_absorbed_shortwave_fraction"
+  radiation_port_power: "P_rad = I_sw * (1 - alpha_s) is routed to diagnostics.snow_albedo.snow_albedo_radiation_port_power when the port effort is present"
+  snow_age_tendency: "the active age tendency is routed to diagnostics.snow_albedo.snow_nondimensional_age_tendency [s-1] for bats or diagnostics.snow_albedo.snow_age_tendency [day s-1] for age_based"
+  discarded_residuals: "albedo_clipping_residual is explicit, absorbed shortwave and radiation-port power are routed diagnostics, and snow-age tendency is retained"
+conservation_map:
+  conserved_quantity: "surface shortwave energy diagnostic partition"
+  balance_expression: "I_abs = (1 - alpha_s) I_sw, I_ref = alpha_s I_sw, and P_rad = I_sw * (1 - alpha_s)"
+  local_check: "FunctorMetadata.conservation_laws includes energy; SnowAlbedo.check_conservation_laws returns r_E = max|alpha_s + a_sw - 1| as the partition closure residual"
+  port_balance: "snow_albedo_radiation_port carries incoming shortwave effort and absorbed fraction flow"
+entropy_audit:
+  dissipative_operator: "star_alpha and M_h are symmetric positive semidefinite for 0 <= alpha_s <= 1"
+  sigma_expression: "sigma = I_sw.T star_alpha I_sw / T_surface >= 0 for I_sw >= 0 and T_surface > 0; sigma_age = (d a_s/dt)^2 >= 0 is emitted as a diagnostic tendency audit for the scheme-owned age state"
+  validation_hook: "build_hodge_contract(strict=True) and dissipative_structure eigenvalue checks"
+equivalence_type: "diagnostic"
+physical_constant_ssot:
+  seconds_per_day: 'get_physical_constant("seconds_per_day")'
+

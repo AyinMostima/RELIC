@@ -1,0 +1,66 @@
+simulation:
+  start_date: "2014-06-01T00:00:00"
+  end_date: "2014-06-16T15:00:00"
+  dt_seconds: 3600
+  num_sites: 1
+  spatial_scale: "point"
+  device: "cpu"
+  require_gpu: false
+  output_dir: "output"
+  resample_rule: "30min_to_1hr_mean_precip_sum"
+  force_steps: 375
+  strict_dependencies: false
+  strict_conservation_enabled: false
+  irf_specs_path: "config/irf_specs.yaml"
+  irf_strict: true
+  # Point-site case: no source/target grid geometry is declared for remapping.
+  enable_auto_scale: false
+  strict_scale_detection: false
+  allow_bucket_surface_coexistence: true
+  # Units of case-level initial-state inputs that no SCM contract or SSOT entry
+  # declares (the simulator infers no units from names). precipitation and
+  # co2_intercellular are the loader's copies of precipitation_flux and
+  # co2_concentration, surface_pressure is read from the forcing file; the
+  # units follow the processed forcing NetCDF attributes. canopy_height follows
+  # case.site.canopy_height in case_parameters.yaml.
+  state_units:
+    precipitation: "kg m-2 s-1"
+    surface_pressure: "Pa"
+    co2_intercellular: "ppm"
+    canopy_height: "m"
+  include_end_timestamp: false
+  ml_surrogate:
+    enabled: true
+    soil_moisture: true
+    water_stress: true
+    stomatal: true
+    ozone_stress: true
+    diurnal_activity: true
+    isoprene_residual: true
+    train_from_physics: true
+    training_epochs: 200
+    training_acceleration:
+      enabled: true
+      device: "auto"
+      require_gpu: false
+      min_workload: 20000
+      eligible_functors:
+        - "ml_soil_moisture"
+        - "ml_stomatal"
+        - "ml_isoprene_residual"
+    observation_guidance:
+      enabled: true
+      epochs: 40
+      learning_rate: 0.0005
+      gradient_clip_norm: 1.0
+      teacher_regularization: 0.01
+      residual_smoothness: 0.02
+      isoprene_loss_mode: "log1p_mse"
+      loss_weights:
+        soil_moisture: 1.0
+        net_photosynthesis: 0.0
+        isoprene_emission: 1.0
+  monitoring:
+    enabled: true
+    log_interval_steps: 24
+    checkpoint_interval_steps: 24

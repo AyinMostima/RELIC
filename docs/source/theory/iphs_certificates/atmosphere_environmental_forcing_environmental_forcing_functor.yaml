@@ -1,0 +1,111 @@
+certificate_version: '1.0'
+process_id: relic.scientific.atmosphere.environmental_forcing.EnvironmentalForcingFunctor
+module_name: EnvironmentalForcingFunctor
+canonical_role: port
+iphs_level: 2
+iphs_level_evidence:
+  classification: IPHS-wrapped port process certificate
+  compatible_basis: Process declares composition-safe IPHS or DEC structure
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: G_h u_h port route with explicit boundary or external exchange
+  level_2_limit: The canonical runtime wrapper is declared, but no executable typed-cochain or IPHS structural contribution is bound; strict level 4 or 5 evidence is not claimed.
+theory_document: docs\source\theory\atmosphere_environmental_forcing.md
+theory_document_status: updated
+legacy_formula: VPD_kPa = max(es0 * exp(a*(T_K-T0)/(T_K-T0+b)) * (1-RH), 0)
+literature_formula: VPD_Pa = kPa_to_Pa(max(es0 * exp(a*T_C/(T_C+b)) * (1-RH), 0)); T_C = T_K - T0
+iphs_formula: y_h = G_h u_h through the declared external forcing and observation port map
+legacy_expression: VPD_kPa = max(es * (1-RH), 0)
+iphs_expression: vapor_pressure_deficit = G_h(air_temperature, relative_humidity)
+input_variables:
+- air_temperature
+- relative_humidity
+output_variables:
+- vapor_pressure_deficit
+parameter_keys:
+- atmosphere.environmental_forcing.vpd.es_coefficient
+- atmosphere.environmental_forcing.vpd.a_coefficient
+- atmosphere.environmental_forcing.vpd.b_coefficient
+composition_ports:
+- external_meteorological_forcing_port
+- vapor_pressure_deficit_observation_port
+references:
+- Allen et al. (1998) FAO Irrigation and Drainage Paper 56
+- Monteith & Unsworth (2008) Principles of Environmental Physics
+- Campbell & Norman (1998) Environmental Biophysics
+baseline_tests:
+- test\atmosphere\test_environmental_forcing_defaults.py
+- test\atmosphere\environmental_forcing_kelvin_offset_test.py
+- test\audit\phase8_scientific_inventory.test.py
+validation_tests:
+- test\atmosphere\test_environmental_forcing_defaults.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  air_temperature: required external air-temperature forcing [K]
+  relative_humidity: required external relative-humidity forcing [dimensionless]
+parameter_map:
+  atmosphere.environmental_forcing.vpd.es_coefficient: Magnus base coefficient from ParameterManager [kPa]
+  atmosphere.environmental_forcing.vpd.a_coefficient: Magnus slope coefficient from ParameterManager [dimensionless]
+  atmosphere.environmental_forcing.vpd.b_coefficient: Magnus denominator coefficient from ParameterManager [degC]
+operator_map:
+  G_h: declared port map
+  H_h: positive port metric or conversion Hodge map
+unit_map:
+  air_temperature: K
+  relative_humidity: dimensionless
+  vapor_pressure_deficit: Pa
+input_output_map:
+  air_temperature: external K forcing enters the VPD observation map
+  relative_humidity: validated unit-interval forcing enters the VPD observation map
+  vapor_pressure_deficit: sole canonical output in Pa
+interface_map:
+  forward_signature: forward(self, state, time, dt, **kwargs)
+  bridge_class: PhysicalFieldFunctor
+  abstraction_contract: PhysicalField
+  state_write_mode: UpdateItem(REPLACE, per_timestep=True) with unit Pa and source_functor provenance
+  legacy_inputs:
+  - air_temperature
+  - relative_humidity
+  iphs_inputs:
+  - air_temperature
+  - relative_humidity
+  legacy_outputs:
+  - vapor_pressure_deficit
+  iphs_outputs:
+  - vapor_pressure_deficit
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: Existing ParameterManager-backed calculations define canonical IPHS operator coefficients, rates, ports, or observations.
+  no_legacy_mode: No selectable legacy runtime branch is exposed for Phase 8 completion.
+state_advancement_map:
+  potential_basis: external air-temperature and relative-humidity forcing port basis
+  effort_variable: validated external meteorological forcing values
+  state_advancer: y_h = G_h u_h as a derived VPD observation with no local storage advance
+  runtime_usage: EnvironmentalForcingFunctor.forward evaluates one Magnus VPD path, converts kPa to Pa through UnitConverter, and returns only vapor_pressure_deficit.
+parameter_management_map:
+  atmosphere.environmental_forcing.vpd.es_coefficient:
+    source: ParameterManager YAML
+  atmosphere.environmental_forcing.vpd.a_coefficient:
+    source: ParameterManager YAML
+  atmosphere.environmental_forcing.vpd.b_coefficient:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares interfaces, execution phase, and conservation semantics
+  state_contract: forward emits only vapor_pressure_deficit through the existing StateManager update path; external inputs are never echoed
+  physical_constant_ssot: Celsius-to-Kelvin offset is resolved only through get_physical_constant
+  unit_conversion_ssot: kPa-to-Pa conversion uses the existing UnitConverter.kpa_to_pa path
+  validation_rule: phase8 scientific inventory and equivalence certificate checks
+dependency_interconnection_map:
+  dependencies: external forcing adapter supplies required air_temperature and relative_humidity through StateManager
+  direct_functor_calls: none declared by certificate
+overflow_routing_map:
+  diagnostic_residuals: validated RH in [0,1] makes the VPD lower-bound operation inactive except for floating-point roundoff; invalid inputs and non-finite computed Pa outputs fail fast without clipping or replacement
+  discarded_residuals: valid relative humidity makes saturation vapor pressure times one minus RH non-negative; invalid RH and non-finite VPD are rejected before update, and this observation advances no storage
+conservation_map:
+  conserved_quantities: none; VPD is a derived open-port observation and advances no mass or energy storage
+  balance_expression: output is an instantaneous observation independent of dt
+entropy_audit:
+  operator_sign: VPD is non-negative over the validated RH domain
+  sigma_expression: no entropy-production claim is made for this non-strict observation map
+equivalence_type: port_equivalent

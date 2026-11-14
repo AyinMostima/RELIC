@@ -1,0 +1,377 @@
+certificate_version: '1.0'
+process_id: relic.scientific.hydrosphere.evapotranspiration.penman_monteith.PenmanMonteithET
+module_name: penman_monteith_et
+canonical_role: transport
+iphs_level: 3
+iphs_level_evidence:
+  classification: IPHS-structured transport process certificate
+  compatible_basis: Process declares composition-safe IPHS or DEC structure
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: DEC/IPHS transport operator with conservative flux routing
+  structural_contribution: Cochain, Hodge, flux, and port structures are declared for assembly audit
+  assembly_participation: Certificate participates in Phase 8 inventory and GraphIR structural audit
+  level_3_limit: Typed form, Hodge, port, or related structure is declared, but no runtime-linked IPHSStructureSpec contribution and executable level 4 or 5 certificate binding is present.
+theory_document: docs\source\theory\hydrosphere_penman_monteith.md
+theory_document_status: updated
+legacy_formula: Penman-Monteith evapotranspiration combines available energy, vapor pressure deficit, aerodynamic conductance, and canopy conductance to produce water vapor flux and latent heat flux.
+literature_formula: ET = [Delta(Rn - G) + rho_a cp VPD ga] / [lambda(Delta + gamma(1 + ga/gc))], following Penman, Monteith, and FAO-56.
+iphs_formula: q_v = star_ET X_v with X_v = VPD and star_ET = diag(g_eff / lambda) >= 0; latent heat port L_E = lambda q_v.
+legacy_expression: ET = [Delta(Rn-G) + rho_a cp VPD ga] / [lambda(Delta + gamma(1 + ga/gc))], then ET is projected to nonnegative flux and optional canopy interception partitions ET.
+iphs_expression: q_v = star_ET X_v plus energy port L_E = lambda q_v; projection residuals are routed as diagnostics without hidden sinks.
+input_variables:
+- net_radiation
+- soil_heat_flux
+- air_temperature
+- wind_speed
+- atmospheric_pressure
+- relative_humidity
+- vapor_pressure_deficit
+- surface_resistance
+- canopy_conductance
+- aerodynamic_resistance
+- precipitation_flux
+- canopy_storage
+- leaf_area_index
+- air_temperature_max
+- air_temperature_min
+- actual_vapor_pressure
+- canopy_conductance_daylight_samples
+- shortwave_net
+- latitude
+- day_of_year
+output_variables:
+- evapotranspiration_flux
+- latent_heat_flux
+- diagnostics.vapor_pressure_deficit
+- diagnostics.aerodynamic_conductance
+- diagnostics.canopy_conductance
+- canopy_storage
+- diagnostics.evapotranspiration
+parameter_keys:
+- hydrosphere.evapotranspiration.soil_heat_flux_source
+- hydrosphere.evapotranspiration.roughness_length
+- hydrosphere.evapotranspiration.displacement_height
+- hydrosphere.evapotranspiration.minimum_conductance
+- hydrosphere.evapotranspiration.reference_height
+- hydrosphere.evapotranspiration.enable_canopy_interception
+- hydrosphere.evapotranspiration.interception_capacity_per_LAI
+- hydrosphere.evapotranspiration.canopy_evaporation_efficiency
+- hydrosphere.evapotranspiration.hodge_reference_aerodynamic_conductance
+- hydrosphere.physical.soil_heat_flux_ratio_daytime
+- hydrosphere.physical.soil_heat_flux_ratio_nighttime
+- hydrosphere.physical.soil_heat_flux_hourly_max_step
+- hydrosphere.physical.reference_surface_resistance
+- hydrosphere.physical.heat_to_momentum_roughness_ratio
+- hydrosphere.physical.maximum_lai_factor
+- hydrosphere.physical.moderate_lai_factor
+- hydrosphere.physical.atmospheric_pressure_min
+- hydrosphere.physical.atmospheric_pressure_max
+- hydrosphere.numerical.temperature_bounds
+- hydrosphere.numerical.net_radiation_bounds
+- hydrosphere.numerical.minimum_wind_speed_offset
+- hydrosphere.numerical.aerodynamic_conductance_bounds
+- hydrosphere.numerical.evapotranspiration_flux_clamp_min
+- hydrosphere.numerical.minimum_wind_speed
+- hydrosphere.numerical.canopy_storage_bounds
+- hydrosphere.numerical.mass_conservation_tolerance_mm
+- hydrosphere.numerical.critical_mass_balance_error_threshold
+- hydrosphere.numerical.minimum_drainage_flux
+- validation.numerical.clamp_min_zero
+composition_ports:
+- penman_monteith_vapor_flux
+- penman_monteith_latent_heat_flux
+references:
+- Penman, H.L. (1948). Natural evaporation from open water, bare soil and grass. Proceedings of the Royal Society A, 193, 120-145.
+- Monteith, J.L. (1965). Evaporation and environment. Symposia of the Society for Experimental Biology, 19, 205-234.
+- Allen, R.G., Pereira, L.S., Raes, D., and Smith, M. (1998). Crop evapotranspiration. FAO Irrigation and Drainage Paper 56.
+- Rutter, A.J. et al. (1971). A predictive model of rainfall interception in forests. Agricultural Meteorology, 9, 367-384.
+- Gash, J.H.C. (1979). An analytical model of rainfall interception by forests. Quarterly Journal of the Royal Meteorological Society, 105, 43-55.
+baseline_tests:
+- test\scientific\hydrosphere\evapotranspiration\penman_monteith.test.py
+- test\unit\hydrosphere\evapotranspiration\test_penman_monteith_comprehensive.py
+validation_tests:
+- test\scientific\hydrosphere\evapotranspiration\penman_monteith.test.py
+- test\unit\hydrosphere\evapotranspiration\test_penman_monteith_comprehensive.py
+- test\scientific\hydrosphere\evapotranspiration_parameter_dimension.test.py
+- test\audit\conservation_laws_policy.spec.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  net_radiation: net radiation Rn [W m-2]
+  soil_heat_flux: signed surface G, positive into soil; required only with soil_heat_flux_source state [W m-2]
+  air_temperature: air temperature T [K]
+  wind_speed: wind speed u [m s-1]
+  atmospheric_pressure: surface atmospheric pressure P [Pa]
+  relative_humidity: relative humidity RH [dimensionless]
+  vapor_pressure_deficit: vapor pressure deficit VPD [Pa]
+  surface_resistance: canopy (surface) resistance r_s, read only with canopy_resistance_source state [s m-1]
+  canopy_conductance: canopy conductance g_c, r_s = 1 / g_c when surface_resistance is absent; read only with canopy_resistance_source state [m s-1]
+  aerodynamic_resistance: aerodynamic resistance r_a [s m-1]
+  precipitation_flux: precipitation water flux P, read only with canopy interception enabled [kg m-2 s-1]
+  leaf_area_index: leaf area index LAI, read only with canopy interception enabled [m2 m-2]
+  evapotranspiration_flux: water vapor mass flux q_v [kg m-2 s-1]
+  latent_heat_flux: latent heat flux lambda q_v [W m-2]
+  canopy_storage: interception storage [mm]
+  diagnostics.evapotranspiration: read-only aerodynamic, psychrometric, and residual diagnostics
+  air_temperature_max: daily maximum air temperature, read with temporal_support daily (FAO-56 Eq. 12 e_s) and daylight_gauss (diurnal course T_k)
+  air_temperature_min: daily minimum air temperature, read with temporal_support daily (FAO-56 Eq. 12 e_s) and daylight_gauss (diurnal course T_k)
+  actual_vapor_pressure: actual vapour pressure e_a, read only with temporal_support daylight_gauss
+  canopy_conductance_daylight_samples: per-sample canopy conductance g_c,k, read only with temporal_support daylight_gauss
+  shortwave_net: daily net shortwave S_n redistributed over the daylight samples, read only with temporal_support daylight_gauss
+  latitude: latitude of the cell, read only with temporal_support daylight_gauss
+  day_of_year: day of year, read only with temporal_support daylight_gauss
+parameter_map:
+  hydrosphere.evapotranspiration.soil_heat_flux_source: explicit process fraction or required signed state G [dimensionless]
+  hydrosphere.evapotranspiration.roughness_length: momentum roughness length z0m [m]
+  hydrosphere.evapotranspiration.displacement_height: zero plane displacement d [m]
+  hydrosphere.evapotranspiration.minimum_conductance: lower bound applied to the canopy_conductance state g_c before r_s = 1 / g_c [m s-1]
+  hydrosphere.evapotranspiration.reference_height: meteorological reference height z [m]
+  hydrosphere.evapotranspiration.enable_canopy_interception: interception storage switch [dimensionless]
+  hydrosphere.evapotranspiration.interception_capacity_per_LAI: canopy storage capacity per LAI [mm]
+  hydrosphere.evapotranspiration.canopy_evaporation_efficiency: wet-canopy evaporation multiplier [dimensionless]
+  hydrosphere.evapotranspiration.hodge_reference_aerodynamic_conductance: reference aerodynamic conductance g_a of the static Hodge contract; never substituted for a runtime state [m s-1]
+  hydrosphere.physical.soil_heat_flux_ratio_daytime: hourly soil heat flux fraction G/Rn for Rn > 0, FAO-56 Eq. 45 [dimensionless]
+  hydrosphere.physical.soil_heat_flux_ratio_nighttime: hourly soil heat flux fraction G/Rn for Rn <= 0, FAO-56 Eq. 46 [dimensionless]
+  hydrosphere.physical.soil_heat_flux_hourly_max_step: longest step of the FAO-56 hourly G fractions; a longer step raises [s]
+  hydrosphere.physical.reference_surface_resistance: FAO-56 reference grass surface resistance r_s,ref, the canopy resistance of canopy_resistance_source fao56_reference_surface and of the reference ET diagnostic [s m-1]
+  hydrosphere.physical.heat_to_momentum_roughness_ratio: z0h/z0m roughness ratio [dimensionless]
+  hydrosphere.physical.maximum_lai_factor: upper representative LAI for the interception capacity check [m2 m-2]
+  hydrosphere.physical.moderate_lai_factor: representative LAI scaling the interception capacity [m2 m-2]
+  hydrosphere.physical.atmospheric_pressure_min: minimum valid atmospheric pressure [Pa]
+  hydrosphere.physical.atmospheric_pressure_max: maximum valid atmospheric pressure [Pa]
+  hydrosphere.numerical.temperature_bounds: valid hydrosphere temperature bounds [K]
+  hydrosphere.numerical.net_radiation_bounds: valid net radiation bounds [W m-2]
+  hydrosphere.numerical.minimum_wind_speed_offset: wind-speed validation offset [m s-1]
+  hydrosphere.numerical.aerodynamic_conductance_bounds: aerodynamic conductance bounds [m s-1]
+  hydrosphere.numerical.evapotranspiration_flux_clamp_min: nonnegative ET projection lower bound [kg m-2 s-1]
+  hydrosphere.numerical.minimum_wind_speed: minimum wind speed in log profile [m s-1]
+  hydrosphere.numerical.canopy_storage_bounds: canopy storage capacity bounds [mm]
+  hydrosphere.numerical.mass_conservation_tolerance_mm: canopy water balance tolerance [mm]
+  hydrosphere.numerical.critical_mass_balance_error_threshold: critical canopy balance error [mm]
+  hydrosphere.numerical.minimum_drainage_flux: precipitation-rate threshold of the interception efficiency diagnostic, converted to a per-step depth by the liquid-water-equivalent rule [kg m-2 s-1]
+  validation.numerical.clamp_min_zero: shared zero lower bound for residual projections
+operator_map:
+  star_ET: build_hodge_contract and build_hodge_terms HodgeStarSpec for vapor transport mobility
+  psychrometrics: Tetens saturation vapor pressure, saturation slope, and psychrometric constant
+  aerodynamic_closure: logarithmic wind profile or externally supplied aerodynamic resistance
+  moist_air_density: rho_a = (p - (1 - epsilon) e_a) / (R_d T) from compute_moist_air_density (Holton and Hakim 2012 Eqs. 2.63-2.64; FAO-56 Annex 3) in the aerodynamic term of the actual and the reference ET
+  soil_heat_flux: 'Explicit source: state consumes finite signed surface G; fraction uses G = c_day Rn if Rn > 0, else G = c_night Rn (FAO-56 Eqs. 45-46). Both retain soil_heat_flux_hourly_max_step and feed one PM law.'
+  canopy_resistance: declared canopy_resistance_source; state uses surface_resistance or 1 / canopy_conductance, fao56_reference_surface uses the FAO-56 reference grass r_s; no implicit default
+  canopy_partition: optional Rutter/Gash-style interception storage partition
+  projection: nonnegative ET and canopy storage residual routing
+unit_map:
+  net_radiation: W m-2
+  soil_heat_flux: W m-2
+  air_temperature: K
+  wind_speed: m s-1
+  atmospheric_pressure: Pa
+  relative_humidity: dimensionless
+  vapor_pressure_deficit: Pa
+  surface_resistance: s m-1
+  canopy_conductance: m s-1
+  aerodynamic_resistance: s m-1
+  precipitation_flux: kg m-2 s-1
+  leaf_area_index: m2 m-2
+  evapotranspiration_flux: kg m-2 s-1
+  latent_heat_flux: W m-2
+  canopy_storage: mm
+  diagnostics.evapotranspiration.soil_heat_flux: W m-2
+  diagnostics.evapotranspiration.available_energy: W m-2
+  diagnostics.evapotranspiration.available_energy_residual: W m-2
+  diagnostics.evapotranspiration.canopy_storage_residual: mm
+  diagnostics.evapotranspiration.negative_et_projection_residual: kg m-2 s-1
+  air_temperature_max: K
+  air_temperature_min: K
+  actual_vapor_pressure: Pa
+  canopy_conductance_daylight_samples: m s-1
+  shortwave_net: W m-2
+  latitude: degrees_north
+  day_of_year: '1'
+input_output_map:
+  net_radiation: same radiative driver is used by legacy and IPHS expressions
+  soil_heat_flux: explicitly selected signed state input or process-specific fraction enters Rn-G; no missing-input fallback or new state writer
+  vapor_pressure_deficit: same humidity gradient drives vapor transport; RH is converted to VPD when supplied
+  canopy_resistance_source: required constructor configuration without default; state reads surface_resistance, else r_s = 1 / canopy_conductance (both absent raises); fao56_reference_surface uses r_s = hydrosphere.physical.reference_surface_resistance and declares neither state input
+  surface_resistance: same canopy resistance r_s enters both forms (canopy_resistance_source state)
+  canopy_conductance: same canopy conductance enters both forms as r_s = 1 / g_c when surface_resistance is absent (canopy_resistance_source state)
+  aerodynamic_resistance: same external resistance is preferred over internal closure when supplied
+  precipitation_flux: same precipitation input feeds the interception store when canopy interception is enabled
+  leaf_area_index: same LAI scales the interception capacity when canopy interception is enabled
+  evapotranspiration_flux: same vapor mass flux is emitted through an explicit UpdateItem(REPLACE) with canonical unit and writer provenance
+  latent_heat_flux: same ET flux multiplied by lambda is emitted through an explicit UpdateItem(REPLACE) with canonical unit and writer provenance
+  canopy_storage: same interception storage update is emitted through an explicit UpdateItem(REPLACE) with canonical unit and writer provenance
+interface_map:
+  forward_signature: forward(self, state, time, dt, **kwargs)
+  bridge_class: TransportMechanismFunctor
+  abstraction_contract: TransportMechanism
+  state_write_mode: formal outputs use explicit UpdateItem(REPLACE) values through the existing StateManager path
+  legacy_inputs:
+  - net_radiation
+  - soil_heat_flux
+  - air_temperature
+  - wind_speed
+  - atmospheric_pressure
+  - relative_humidity
+  - vapor_pressure_deficit
+  - surface_resistance
+  - canopy_conductance
+  - aerodynamic_resistance
+  - precipitation_flux
+  - canopy_storage
+  - leaf_area_index
+  - air_temperature_max
+  - air_temperature_min
+  - actual_vapor_pressure
+  - canopy_conductance_daylight_samples
+  - shortwave_net
+  - latitude
+  - day_of_year
+  iphs_inputs:
+  - net_radiation
+  - soil_heat_flux
+  - air_temperature
+  - wind_speed
+  - atmospheric_pressure
+  - relative_humidity
+  - vapor_pressure_deficit
+  - surface_resistance
+  - canopy_conductance
+  - aerodynamic_resistance
+  - precipitation_flux
+  - canopy_storage
+  - leaf_area_index
+  - air_temperature_max
+  - air_temperature_min
+  - actual_vapor_pressure
+  - canopy_conductance_daylight_samples
+  - shortwave_net
+  - latitude
+  - day_of_year
+  legacy_outputs:
+  - evapotranspiration_flux
+  - latent_heat_flux
+  - diagnostics.vapor_pressure_deficit
+  - diagnostics.aerodynamic_conductance
+  - diagnostics.canopy_conductance
+  - canopy_storage
+  - diagnostics.evapotranspiration
+  iphs_outputs:
+  - evapotranspiration_flux
+  - latent_heat_flux
+  - diagnostics.vapor_pressure_deficit
+  - diagnostics.aerodynamic_conductance
+  - diagnostics.canopy_conductance
+  - canopy_storage
+  - diagnostics.evapotranspiration
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: The existing FAO-56 Penman-Monteith calculation realizes the canonical IPHS vapor transport relation with explicit ports and residual diagnostics.
+  no_legacy_mode: No runtime flag exposes a separate pre-Phase 8 ET branch.
+state_advancement_map:
+  potential_basis: surface vapor and available-energy state cochain x_v
+  effort_variable: aerodynamic-surface resistance effort X_v with positive ET mobility star_ET
+  state_advancer: q_v = star_ET X_v; L_E = lambda q_v; water_storage_dot = -q_v
+  runtime_usage: forward applies the canonical FAO-56 ET port relation and routes water and energy residual diagnostics.
+parameter_management_map:
+  hydrosphere.evapotranspiration.soil_heat_flux_source:
+    source: ParameterManager YAML
+  hydrosphere.evapotranspiration.roughness_length:
+    source: ParameterManager YAML
+  hydrosphere.evapotranspiration.displacement_height:
+    source: ParameterManager YAML
+  hydrosphere.evapotranspiration.minimum_conductance:
+    source: ParameterManager YAML
+  hydrosphere.evapotranspiration.reference_height:
+    source: ParameterManager YAML
+  hydrosphere.evapotranspiration.enable_canopy_interception:
+    source: ParameterManager YAML
+  hydrosphere.evapotranspiration.interception_capacity_per_LAI:
+    source: ParameterManager YAML
+  hydrosphere.evapotranspiration.canopy_evaporation_efficiency:
+    source: ParameterManager YAML
+  hydrosphere.evapotranspiration.hodge_reference_aerodynamic_conductance:
+    source: ParameterManager YAML
+  hydrosphere.physical.soil_heat_flux_ratio_daytime:
+    source: ParameterManager YAML
+  hydrosphere.physical.soil_heat_flux_ratio_nighttime:
+    source: ParameterManager YAML
+  hydrosphere.physical.soil_heat_flux_hourly_max_step:
+    source: ParameterManager YAML
+  hydrosphere.physical.reference_surface_resistance:
+    source: ParameterManager YAML
+  hydrosphere.physical.heat_to_momentum_roughness_ratio:
+    source: ParameterManager YAML
+  hydrosphere.physical.maximum_lai_factor:
+    source: ParameterManager YAML
+  hydrosphere.physical.moderate_lai_factor:
+    source: ParameterManager YAML
+  hydrosphere.physical.atmospheric_pressure_min:
+    source: ParameterManager YAML
+  hydrosphere.physical.atmospheric_pressure_max:
+    source: ParameterManager YAML
+  hydrosphere.numerical.temperature_bounds:
+    source: ParameterManager YAML
+  hydrosphere.numerical.net_radiation_bounds:
+    source: ParameterManager YAML
+  hydrosphere.numerical.minimum_wind_speed_offset:
+    source: ParameterManager YAML
+  hydrosphere.numerical.aerodynamic_conductance_bounds:
+    source: ParameterManager YAML
+  hydrosphere.numerical.evapotranspiration_flux_clamp_min:
+    source: ParameterManager YAML
+  hydrosphere.numerical.minimum_wind_speed:
+    source: ParameterManager YAML
+  hydrosphere.numerical.canopy_storage_bounds:
+    source: ParameterManager YAML
+  hydrosphere.numerical.mass_conservation_tolerance_mm:
+    source: ParameterManager YAML
+  hydrosphere.numerical.critical_mass_balance_error_threshold:
+    source: ParameterManager YAML
+  hydrosphere.numerical.minimum_drainage_flux:
+    source: ParameterManager YAML
+  validation.numerical.clamp_min_zero:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares hydrosphere transport role and soil/energy/photosynthesis coupling interfaces
+  structural_protocol: declared_forms, required_parameters, build_hodge_terms, dissipative_structure, ports
+  state_contract: existing TransportMechanismFunctor and StateManager UpdateItem path
+  physical_constant_ssot: molecular, thermodynamic, psychrometric, temperature-conversion, turbulence, and time constants are resolved only through get_physical_constant
+  ports:
+  - penman_monteith_vapor_flux
+  - penman_monteith_latent_heat_flux
+dependency_interconnection_map:
+  dependencies: lagged soil moisture providers can supply water stress; meteorological forcing enters by the declared state keys only (no environment keyword channel)
+  direct_functor_calls: none; meteorology and optional lagged water-stress or aerodynamic state enter through graph ports
+  chain_maps:
+  - relative_humidity or vapor_pressure_deficit enters the vapor-pressure effort
+  - aerodynamic_resistance can be supplied by turbulence coupling through existing state graph
+  - evapotranspiration_flux and latent_heat_flux leave through existing state graph
+overflow_routing_map:
+  nonnegative_et_projection: negative raw ET is routed to negative_et_projection_residual
+  available_energy_identity: Rn - G - available_energy is emitted as available_energy_residual; it is a construction identity, not a complete surface-energy closure
+  canopy_storage_projection: negative canopy storage projection is emitted as canopy_storage_residual
+  discarded_residuals: negative ET, canopy-storage projection, and available-energy identity are exposed respectively as negative_et_projection_residual, canopy_storage_residual, and available_energy_residual
+conservation_map:
+  conserved_quantity: latent_heat_boundary open constitutive ledger; no closed soil-water or complete surface-energy balance is claimed
+  balance_expression: latent_heat_boundary audits L_E = lambda q_v for the outward evapotranspiration and latent-heat ports
+  local_check: FunctorMetadata.conservation_laws includes latent_heat_boundary with fail-fast tensor evidence
+  port_balance: vapor flux and latent heat flux carry outgoing matter and energy; reservoir closure remains assigned to coupled soil, canopy, atmosphere, sensible-heat, and storage ledgers
+entropy_audit:
+  dissipative_operator: star_ET and M_h are symmetric positive semidefinite for positive conductance and lambda
+  sigma_expression: sigma = X_v.T star_ET X_v / T >= 0
+  validation_hook: build_hodge_contract(strict=True) and dissipative_structure eigenvalue checks
+equivalence_type: port_equivalent
+physical_constant_ssot:
+  water_molecular_weight: get_physical_constant("water_molecular_weight")
+  air_molecular_weight: get_physical_constant("air_molecular_weight")
+  universal_gas_constant: get_physical_constant("gas_constant")
+  latent_heat_vaporization: get_physical_constant("latent_heat_vaporization")
+  air_specific_heat_cp: get_physical_constant("air_specific_heat_cp")
+  von_karman_constant: get_physical_constant("von_karman_constant")
+  tetens_base_pressure: get_physical_constant("relic.physical.constants.psychrometrics.tetens_base_pressure")
+  tetens_coefficient_a: get_physical_constant("relic.physical.constants.psychrometrics.tetens_coefficient_a")
+  tetens_coefficient_b: get_physical_constant("relic.physical.constants.psychrometrics.tetens_coefficient_b")
+  saturation_vapor_pressure_slope_coeff: get_physical_constant("relic.physical.constants.psychrometrics.saturation_vapor_pressure_slope_coeff")
+  celsius_to_kelvin: get_physical_constant("celsius_to_kelvin")
+  seconds_per_hour: get_physical_constant("seconds_per_hour")

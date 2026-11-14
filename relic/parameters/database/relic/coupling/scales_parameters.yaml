@@ -1,0 +1,1372 @@
+﻿schema_version: 2.0.0
+tier: relic
+namespace: coupling.scales
+description: Unified parameters for multi-scale coupling operations in RELIC framework
+metadata:
+  version: 1.1.0
+  created: '2025-10-10T00:00:00Z'
+  created_by: Yuchong Long
+  last_modified: '2025-10-10T00:00:00Z'
+  source: RELIC scale coupling framework
+parameters:
+  coupling.scales.temporal.preserve_peaks:
+    value: false
+    default: false
+    units: dimensionless
+    dtype: bool
+    allowed_values:
+    - false
+    - true
+    bounds: null
+    category: temporal_flag
+    description: Whether to preserve peak values in temporal aggregation
+    references:
+    - 'CF Conventions 1.8: Cell methods for temporal aggregation'
+    tags:
+    - temporal
+    - aggregation
+    - peaks
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-10T00:00:00Z'
+  coupling.scales.temporal.coverage_threshold:
+    value: 0.8
+    default: 0.8
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 1.0
+    category: quality_control
+    description: Minimum valid temporal coverage fraction for a period or series to be accepted. TemporalAggregator returns NaN for targets whose valid coverage is below it; QualityController (QualityConfig.coverage_threshold) flags series whose coverage is below it.
+    references:
+    - WMO Guide to Climatological Practices (2018). Coverage recommendations for climatological means.
+    tags:
+    - temporal
+    - aggregation
+    - quality_control
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-15T00:00:00Z'
+  coupling.scales.temporal.disaggregation.allow_negative:
+    value: false
+    default: false
+    units: dimensionless
+    dtype: bool
+    bounds:
+    - false
+    - true
+    category: physical_constraint
+    description: Whether disaggregation is allowed to produce negative values
+    references:
+    - Hydrological downscaling guidelines
+    tags:
+    - temporal
+    - disaggregation
+    - constraint
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-02T00:00:00Z'
+  coupling.scales.temporal.disaggregation.use_physical_constraints:
+    value: true
+    default: true
+    units: dimensionless
+    dtype: bool
+    bounds:
+    - false
+    - true
+    category: physical_constraint
+    description: Apply physical constraints (non-negativity, bounds) during disaggregation
+    references:
+    - Hydrological downscaling numerical stability
+    tags:
+    - temporal
+    - disaggregation
+    - constraint
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-02T00:00:00Z'
+  coupling.scales.temporal.disaggregation.time_dim:
+    value: 0
+    default: 0
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 0
+    - 3
+    category: configuration
+    description: Time dimension index used during temporal disaggregation
+    references:
+    - PyTorch tensor dimension conventions
+    tags:
+    - temporal
+    - disaggregation
+    - configuration
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-02T00:00:00Z'
+  coupling.scales.temporal.quality_control.max_gap_length:
+    value: 7
+    default: 7
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 0
+    - 1000
+    category: quality_control
+    description: Maximum number of consecutive missing time samples that GapFiller fills; longer gaps are left missing and logged. Counted in samples of the supplied series, not in days. The upper bound is a sanity guard, not a physical limit.
+    references:
+    - WMO Guide to Climatological Practices, WMO-No. 100 (2018), Chapter 3 (estimation of missing data)
+    - WMO Guidelines on the Calculation of Climate Normals, WMO-No. 1203 (2017), rules limiting consecutive missing values
+    tags:
+    - temporal
+    - quality_control
+    - gap_filling
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Former Python default QualityConfig.max_gap_length in relic/coupling/scales/temporal/quality_control.py; not derived from a WMO rule
+      schema_version: 2.0.0
+      created_by: MA-21 temporal repair
+      last_modified: '2026-09-23T00:00:00Z'
+  coupling.scales.temporal.quality_control.gap_filling_method:
+    value: linear
+    default: linear
+    units: dimensionless
+    dtype: string
+    allowed_values:
+    - linear
+    - nearest
+    - climatological
+    - none
+    bounds: null
+    category: quality_control
+    description: Gap filling method used by GapFiller (QualityController). Only implemented methods are allowed; seasonal and spline are rejected by QualityConfig.
+    references:
+    - WMO Guide to Climatological Practices, WMO-No. 100 (2018), Chapter 3 (estimation of missing data)
+    tags:
+    - temporal
+    - quality_control
+    - gap_filling
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Former Python default QualityConfig.gap_filling_method in relic/coupling/scales/temporal/quality_control.py
+      schema_version: 2.0.0
+      created_by: MA-21 temporal repair
+      last_modified: '2026-09-23T00:00:00Z'
+  coupling.scales.temporal.quality_control.outlier_method:
+    value: zscore
+    default: zscore
+    units: dimensionless
+    dtype: string
+    allowed_values:
+    - zscore
+    - modified_zscore
+    - iqr
+    - none
+    bounds: null
+    category: quality_control
+    description: Outlier detection method used by OutlierDetector (QualityController). Only implemented methods are allowed; isolation_forest is rejected by QualityConfig.
+    references:
+    - Iglewicz, B. and Hoaglin, D. C. (1993). How to Detect and Handle Outliers. ASQC Quality Press.
+    - Tukey, J. W. (1977). Exploratory Data Analysis. Addison-Wesley (IQR fences).
+    tags:
+    - temporal
+    - quality_control
+    - outlier
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Former Python default QualityConfig.outlier_method in relic/coupling/scales/temporal/quality_control.py
+      schema_version: 2.0.0
+      created_by: MA-21 temporal repair
+      last_modified: '2026-09-23T00:00:00Z'
+  coupling.scales.temporal.quality_control.outlier_threshold:
+    value: 3.0
+    default: 3.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 10.0
+    category: quality_control
+    description: Absolute score above which OutlierDetector flags a value, applied to the z-score |x - mean| / std or to the modified z-score 0.6745 |x - median| / MAD. Not used by the IQR method. Iglewicz and Hoaglin (1993) recommend 3.5 for the modified z-score; 3.0 is the retained RELIC setting.
+    references:
+    - Iglewicz, B. and Hoaglin, D. C. (1993). How to Detect and Handle Outliers. ASQC Quality Press.
+    tags:
+    - temporal
+    - quality_control
+    - outlier
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Former Python default QualityConfig.outlier_threshold in relic/coupling/scales/temporal/quality_control.py
+      schema_version: 2.0.0
+      created_by: MA-21 temporal repair
+      last_modified: '2026-09-23T00:00:00Z'
+  coupling.scales.temporal.quality_control.outlier_min_valid_samples:
+    value: 10
+    default: 10
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 2
+    - 100000
+    category: quality_control
+    description: Minimum number of finite samples a series needs before OutlierDetector evaluates it; shorter series report no outliers. With the z-score method the largest attainable score is (n - 1) / sqrt(n) (Shiffler 1988), so n must exceed 10 for a score above 3.0.
+    references:
+    - Shiffler, R. E. (1988). Maximum Z scores and outliers. The American Statistician, 42(1), 79-80.
+    - Iglewicz, B. and Hoaglin, D. C. (1993). How to Detect and Handle Outliers. ASQC Quality Press.
+    tags:
+    - temporal
+    - quality_control
+    - outlier
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Former Python literal (10) in OutlierDetector.detect_outliers, relic/coupling/scales/temporal/quality_control.py; RELIC convention
+      schema_version: 2.0.0
+      created_by: MA-21 temporal repair
+      last_modified: '2026-09-23T00:00:00Z'
+  coupling.scales.temporal.quality_control.iqr_fence_factor:
+    value: 1.5
+    default: 1.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 10.0
+    category: quality_control
+    description: Multiplier k of the interquartile range for the IQR outlier fences Q1 - k IQR and Q3 + k IQR used by OutlierDetector.
+    references:
+    - Tukey, J. W. (1977). Exploratory Data Analysis. Addison-Wesley (inner fences with k = 1.5).
+    tags:
+    - temporal
+    - quality_control
+    - outlier
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Former Python literal (1.5) in OutlierDetector._iqr_outliers, relic/coupling/scales/temporal/quality_control.py
+      schema_version: 2.0.0
+      created_by: MA-21 temporal repair
+      last_modified: '2026-09-23T00:00:00Z'
+  coupling.scales.temporal.quality_control.grade_excellent_min_fraction:
+    value: 0.95
+    default: 0.95
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: quality_control
+    description: Lower bound of the valid (or unflagged) sample fraction for QualityLevel.EXCELLENT. Grade cutoffs must satisfy 0 < poor < acceptable < good < excellent <= 1.
+    references:
+    - RELIC temporal quality-control grading convention (docs/source/theory/time_scaling.md, Section 5.2); no external standard prescribes these cutoffs.
+    tags:
+    - temporal
+    - quality_control
+    - grade
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Former Python literal (0.95) in CoverageEvaluator._determine_quality_level and QualityController.assess_quality
+      schema_version: 2.0.0
+      created_by: MA-21 temporal repair
+      last_modified: '2026-09-23T00:00:00Z'
+  coupling.scales.temporal.quality_control.grade_excellent_max_gap_length:
+    value: 1
+    default: 1
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 0
+    - 1000
+    category: quality_control
+    description: Longest run of consecutive missing samples still allowed for QualityLevel.EXCELLENT in coverage evaluation; must not exceed max_gap_length (the GOOD limit).
+    references:
+    - RELIC temporal quality-control grading convention (docs/source/theory/time_scaling.md, Section 5.2); no external standard prescribes these cutoffs.
+    tags:
+    - temporal
+    - quality_control
+    - grade
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Former Python literal (1) in CoverageEvaluator._determine_quality_level
+      schema_version: 2.0.0
+      created_by: MA-21 temporal repair
+      last_modified: '2026-09-23T00:00:00Z'
+  coupling.scales.temporal.quality_control.grade_good_min_fraction:
+    value: 0.8
+    default: 0.8
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: quality_control
+    description: Lower bound of the valid (or unflagged) sample fraction for QualityLevel.GOOD. Distinct from coupling.scales.temporal.coverage_threshold, which accepts or rejects a series rather than grading it.
+    references:
+    - RELIC temporal quality-control grading convention (docs/source/theory/time_scaling.md, Section 5.2); no external standard prescribes these cutoffs.
+    tags:
+    - temporal
+    - quality_control
+    - grade
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Former Python literal (0.8) in CoverageEvaluator._determine_quality_level and QualityController.assess_quality
+      schema_version: 2.0.0
+      created_by: MA-21 temporal repair
+      last_modified: '2026-09-23T00:00:00Z'
+  coupling.scales.temporal.quality_control.grade_acceptable_min_fraction:
+    value: 0.6
+    default: 0.6
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: quality_control
+    description: Lower bound of the valid (or unflagged) sample fraction for QualityLevel.ACCEPTABLE.
+    references:
+    - RELIC temporal quality-control grading convention (docs/source/theory/time_scaling.md, Section 5.2); no external standard prescribes these cutoffs.
+    tags:
+    - temporal
+    - quality_control
+    - grade
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Former Python literal (0.6) in CoverageEvaluator._determine_quality_level and QualityController.assess_quality
+      schema_version: 2.0.0
+      created_by: MA-21 temporal repair
+      last_modified: '2026-09-23T00:00:00Z'
+  coupling.scales.temporal.quality_control.grade_poor_min_fraction:
+    value: 0.4
+    default: 0.4
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: quality_control
+    description: Lower bound of the valid (or unflagged) sample fraction for QualityLevel.POOR; below it the level is UNACCEPTABLE.
+    references:
+    - RELIC temporal quality-control grading convention (docs/source/theory/time_scaling.md, Section 5.2); no external standard prescribes these cutoffs.
+    tags:
+    - temporal
+    - quality_control
+    - grade
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Former Python literal (0.4) in CoverageEvaluator._determine_quality_level and QualityController.assess_quality
+      schema_version: 2.0.0
+      created_by: MA-21 temporal repair
+      last_modified: '2026-09-23T00:00:00Z'
+  coupling.scales.spatial.aggregation_strategy:
+    value: area_weighted
+    default: area_weighted
+    units: dimensionless
+    dtype: string
+    allowed_values:
+    - area_weighted
+    - mean
+    - area_weighted_mean
+    - sum
+    - total
+    - area_weighted_sum
+    - conservative
+    bounds: null
+    category: aggregation_parameter
+    description: 'SpatialAggregation whole-support law selector: area_weighted applies the law of each declared spatial_basis (intensive and area_density area-weighted mean, cell_total sum, categorical area-weighted mode); mean and area_weighted_mean name the intensive and area-density law, sum, total and area_weighted_sum the cell-total law, conservative the law of every basis except categorical; a selector that conflicts with a variable basis raises'
+    references:
+    - 'RHESSys theory: Hierarchical spatial aggregation'
+    tags:
+    - spatial
+    - aggregation
+    - strategy
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-24T00:00:00Z'
+  coupling.scales.spatial.weighting_type:
+    value: area
+    default: area
+    units: dimensionless
+    dtype: string
+    allowed_values:
+    - area
+    bounds: null
+    category: weighting_parameter
+    description: 'Measure of the SpatialAggregation weights: area (cell areas or another area measure; CF cell_methods area: mean, area: sum, area: mode). The declared spatial_basis selects the law; an area density conserves its amount only with area weights, and intensive and categorical fields given no weights take equal weights. No mass-, volume- or separate uniform-weighted law exists (the hierarchical mass_weighted and volume_weighted strategies are area-weighted means).'
+    references:
+    - 'RHESSys theory: Hierarchical spatial aggregation'
+    tags:
+    - spatial
+    - weighting
+    - aggregation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-24T00:00:00Z'
+  coupling.scales.spatial.preserve_totals:
+    value: true
+    default: true
+    units: dimensionless
+    dtype: bool
+    allowed_values:
+    - false
+    - true
+    bounds: null
+    category: conservation_flag
+    description: Whether SpatialAggregation raises when the ledger residual of an amount variable exceeds coupling.scales.defaults.conservation_tolerance (otherwise the residual is reported); the result is never rescaled
+    references:
+    - Jones, P.W. (1999). Conservative remapping schemes for climate models
+    tags:
+    - spatial
+    - conservation
+    - flag
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-24T00:00:00Z'
+  coupling.scales.spatial.spatial_dims:
+    value: 2
+    default: 2
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 3
+    category: spatial_configuration
+    description: Number of spatial dimensions for spatial scaling operations
+    references:
+    - 'RHESSys theory: Hierarchical spatial aggregation'
+    tags:
+    - spatial
+    - configuration
+    - dimensions
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-10T00:00:00Z'
+  coupling.scales.spatial.extrapolation_tolerance:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: numerical_threshold
+    description: Fraction of grid spacing tolerated when treating target points as interior
+    references:
+    - ESMF regridding tolerance guidance
+    tags:
+    - spatial
+    - numerical_stability
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic.coupling.scales
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-12-05T00:00:00Z'
+  coupling.scales.spatial.boundary_handling_mode:
+    value: constant
+    default: constant
+    units: dimensionless
+    dtype: string
+    allowed_values:
+    - constant
+    - nearest
+    category: configuration
+    description: Default boundary handling of the bilinear and nearest-neighbour regridders.
+      constant covers a target only inside the source support (bilinear) or within the search
+      radius (nearest); nearest extends the edge values (bilinear) or gives every target its
+      nearest source node (nearest). Uncovered targets are missing (NaN) and counted in the
+      regridder coverage report; no fill value exists.
+    references:
+    - ESMF Regridding documentation
+    tags:
+    - spatial
+    - configuration
+    - boundary_condition
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic.coupling.scales
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-12-05T00:00:00Z'
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+  coupling.scales.spatial.regular_search_radius_cell_diagonals:
+    value: 2.0
+    default: 2.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1000000.0
+    category: spatial_configuration
+    description: Search radius of NearestNeighborRegridder with boundary_mode constant on a
+      regular source grid, in source cell diagonals (r = q sqrt(dx^2 + dy^2) with the largest node
+      spacings dx, dy); a target farther than r from every source node is uncovered (NaN, counted in
+      the coverage report). Irregular grids use coupling.scales.spatial.irregular.max_search_radius.
+    references:
+    - ESMF Reference Manual, unmapped destination points of a neighbour search
+    - Shepard, D. (1968). A two-dimensional interpolation function for irregularly-spaced data
+    tags:
+    - spatial
+    - regular
+    - boundary_condition
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic.coupling.scales
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-26T00:00:00Z'
+  coupling.scales.spatial.enforce_conservation:
+    value: true
+    default: true
+    units: dimensionless
+    dtype: bool
+    bounds:
+    - false
+    - true
+    category: conservation_flag
+    description: Default toggle for spatial regridders to enforce conservation checks
+    references:
+    - Jones, P.W. (1999). Conservative remapping schemes
+    - ESMF Regridding Guide
+    tags:
+    - spatial
+    - conservation
+    - configuration
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: coupling_defaults
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-12-08T00:00:00Z'
+  coupling.scales.spatial.coord_names:
+    value:
+      x: lon
+      y: lat
+      longitude: lon
+      latitude: lat
+    default: null
+    units: dimensionless
+    dtype: mapping
+    bounds: null
+    category: spatial_configuration
+    description: Default coordinate name mapping for grid descriptors.
+    references:
+    - 'CF Conventions 1.8: Coordinate variables'
+    tags:
+    - spatial
+    - coordinates
+    - configuration
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: coupling_defaults
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-29T00:00:00Z'
+  coupling.scales.spatial.irregular.use_kdtree:
+    value: false
+    default: false
+    units: dimensionless
+    dtype: bool
+    bounds:
+    - false
+    - true
+    category: spatial_configuration
+    description: Enable optional SciPy KDTree acceleration for irregular grids
+    references:
+    - Bentley (1975) KD-tree
+    tags:
+    - spatial
+    - irregular
+    - kdtree
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic.coupling.scales
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-29T00:00:00Z'
+  coupling.scales.spatial.irregular.kdtree_leaf_size:
+    value: 40
+    default: 40
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 10
+    - 200
+    category: spatial_configuration
+    description: Leaf size for KDTree construction on irregular grids
+    references:
+    - Bentley (1975) KD-tree
+    tags:
+    - spatial
+    - irregular
+    - kdtree
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic.coupling.scales
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-29T00:00:00Z'
+  coupling.scales.spatial.irregular.neighbor_count:
+    value: 4
+    default: 4
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 32
+    category: spatial_configuration
+    description: Number of neighbors used for irregular inverse-distance weighting
+    references:
+    - Shepard (1968)
+    tags:
+    - spatial
+    - irregular
+    - interpolation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic.coupling.scales
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-29T00:00:00Z'
+  coupling.scales.spatial.irregular.max_search_radius:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1000000.0
+    category: spatial_configuration
+    description: Neighbour search radius on irregular grids as a multiple of the typical source
+      spacing (the median distance from a source node to its nearest other node); used by
+      BilinearRegridder and NearestNeighborRegridder, so the result does not depend on the coordinate
+      unit
+    references:
+    - ESMF Regridding Guide
+    tags:
+    - spatial
+    - irregular
+    - boundary_condition
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic.coupling.scales
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-29T00:00:00Z'
+  coupling.scales.spatial.irregular.weight_power:
+    value: 2.0
+    default: 2.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 4.0
+    category: spatial_configuration
+    description: Power parameter for inverse-distance weighting on irregular grids
+    references:
+    - Shepard (1968)
+    tags:
+    - spatial
+    - irregular
+    - interpolation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic.coupling.scales
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-01-29T00:00:00Z'
+  coupling.scales.conservative.preserve_monotonicity:
+    value: true
+    default: true
+    units: dimensionless
+    dtype: bool
+    allowed_values:
+    - false
+    - true
+    bounds: null
+    category: constraint_flag
+    description: Whether to enforce monotonicity constraint in conservative remapping
+    references:
+    - Dukowicz, J.K. & Baumgardner, J. (2000). Conservative algorithms
+    tags:
+    - constraint
+    - monotonicity
+    - flag
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-10T00:00:00Z'
+  coupling.scales.conservative.clamp_min:
+    value: 0.0
+    default: 0.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0e+12
+    category: physical_constraint
+    description: Minimum allowed value for conservative remapping operations
+    references:
+    - Jones, P.W. (1999). Conservative remapping schemes for climate models
+    tags:
+    - constraint
+    - positivity
+    - physical
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-10T00:00:00Z'
+  coupling.scales.conservative.clamp_max:
+    value: 10000000000.0
+    default: 10000000000.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0e+12
+    category: physical_constraint
+    description: Maximum allowed value for conservative remapping operations
+    references:
+    - Jones, P.W. (1999). Conservative remapping schemes for climate models
+    tags:
+    - constraint
+    - physical
+    - upper_bound
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-10T00:00:00Z'
+  coupling.scales.numerical.convergence_tolerance:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-12
+    - 0.001
+    category: numerical_parameter
+    description: Convergence tolerance for iterative scaling operations
+    references:
+    - Hundsdorfer, W. & Verwer, J.G. (2003). Numerical Solution of Time-Dependent Advection-Diffusion-Reaction Equations
+    tags:
+    - numerical
+    - convergence
+    - tolerance
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-10T00:00:00Z'
+  coupling.scales.numerical.max_iterations:
+    value: 100
+    default: 100
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 10
+    - 1000
+    category: numerical_parameter
+    description: Maximum number of iterations for scaling operations
+    references:
+    - Hundsdorfer, W. & Verwer, J.G. (2003). Numerical Solution of Time-Dependent Advection-Diffusion-Reaction Equations
+    tags:
+    - numerical
+    - iterations
+    - limit
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-10T00:00:00Z'
+  coupling.scales.defaults.precision.strict_conservative.tolerance:
+    value: 1.0e-12
+    default: 1.0e-12
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 1.0e-14
+    - 1.0e-09
+    category: numerical_parameter
+    description: Relative conservation tolerance of the strict_conservative scaling mode (finite, in (0, 1)); the one source of the ScaleManager facade ledger tolerance of every call in this mode (hierarchical aggregate and disaggregate, regrid_variable) and of the per-call hierarchy index and aggregator; the facade regridders use it while strict_conservative is the default mode
+    references:
+    - RELIC scale coupling precision policy
+    - Numerical conservation constraints
+    tags:
+    - precision_policy
+    - scale_coupling
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-24T00:00:00Z'
+  coupling.scales.defaults.precision.strict_conservative.relative_tolerance:
+    value: 1.0e-12
+    default: 1.0e-12
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 1.0e-14
+    - 1.0e-09
+    category: numerical_parameter
+    description: Relative tolerance for strict conservative scaling mode.
+    references:
+    - RELIC scale coupling precision policy
+    tags:
+    - precision_policy
+    - scale_coupling
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-08T00:00:00Z'
+  coupling.scales.defaults.precision.strict_conservative.absolute_tolerance:
+    value: 1.0e-14
+    default: 1.0e-14
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 1.0e-16
+    - 1.0e-10
+    category: numerical_parameter
+    description: Absolute tolerance for strict conservative scaling mode.
+    references:
+    - RELIC scale coupling precision policy
+    tags:
+    - precision_policy
+    - scale_coupling
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-08T00:00:00Z'
+  coupling.scales.defaults.precision.strict_conservative.max_iterations:
+    value: 1000
+    default: 1000
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 100000
+    category: numerical_parameter
+    description: Maximum iterations for strict conservative scaling mode.
+    references:
+    - RELIC scale coupling precision policy
+    tags:
+    - precision_policy
+    - scale_coupling
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-08T00:00:00Z'
+  coupling.scales.defaults.precision.strict_conservative.enforce_conservation:
+    value: true
+    default: true
+    units: dimensionless
+    dtype: bool
+    bounds: null
+    category: conservation_flag
+    description: Whether to enforce conservation in strict conservative mode.
+    references:
+    - RELIC scale coupling precision policy
+    tags:
+    - precision_policy
+    - conservation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-08T00:00:00Z'
+  coupling.scales.defaults.precision.strict_conservative.dtype:
+    value: float64
+    default: float64
+    units: dimensionless
+    dtype: string
+    allowed_values:
+    - float64
+    bounds: null
+    category: numerical_parameter
+    description: Data type for strict conservative precision calculations.
+    references:
+    - RELIC scale coupling precision policy
+    tags:
+    - precision_policy
+    - dtype
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-08T00:00:00Z'
+  coupling.scales.defaults.precision.conservative.tolerance:
+    value: 1.0e-09
+    default: 1.0e-09
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 1.0e-12
+    - 1.0e-06
+    category: numerical_parameter
+    description: Relative conservation tolerance of the conservative scaling mode (finite, in (0, 1)); the one source of the ScaleManager facade ledger tolerance of every call in this mode (hierarchical aggregate and disaggregate, regrid_variable) and of the per-call hierarchy index and aggregator; the facade regridders use it while conservative is the default mode
+    references:
+    - RELIC scale coupling precision policy
+    tags:
+    - precision_policy
+    - scale_coupling
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-24T00:00:00Z'
+  coupling.scales.defaults.precision.conservative.relative_tolerance:
+    value: 1.0e-09
+    default: 1.0e-09
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 1.0e-12
+    - 1.0e-06
+    category: numerical_parameter
+    description: Relative tolerance for conservative scaling mode.
+    references:
+    - RELIC scale coupling precision policy
+    tags:
+    - precision_policy
+    - scale_coupling
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-08T00:00:00Z'
+  coupling.scales.defaults.precision.conservative.absolute_tolerance:
+    value: 1.0e-11
+    default: 1.0e-11
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 1.0e-13
+    - 1.0e-08
+    category: numerical_parameter
+    description: Absolute tolerance for conservative scaling mode.
+    references:
+    - RELIC scale coupling precision policy
+    tags:
+    - precision_policy
+    - scale_coupling
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-08T00:00:00Z'
+  coupling.scales.defaults.precision.conservative.max_iterations:
+    value: 500
+    default: 500
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 100000
+    category: numerical_parameter
+    description: Maximum iterations for conservative scaling mode.
+    references:
+    - RELIC scale coupling precision policy
+    tags:
+    - precision_policy
+    - scale_coupling
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-08T00:00:00Z'
+  coupling.scales.defaults.precision.conservative.enforce_conservation:
+    value: true
+    default: true
+    units: dimensionless
+    dtype: bool
+    bounds: null
+    category: conservation_flag
+    description: Whether to enforce conservation in conservative mode.
+    references:
+    - RELIC scale coupling precision policy
+    tags:
+    - precision_policy
+    - conservation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-08T00:00:00Z'
+  coupling.scales.defaults.precision.conservative.dtype:
+    value: float64
+    default: float64
+    units: dimensionless
+    dtype: string
+    allowed_values:
+    - float64
+    bounds: null
+    category: numerical_parameter
+    description: Data type for conservative precision calculations.
+    references:
+    - RELIC scale coupling precision policy
+    tags:
+    - precision_policy
+    - dtype
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-08T00:00:00Z'
+  coupling.scales.defaults.precision.balanced.tolerance:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-08
+    - 0.001
+    category: numerical_parameter
+    description: Relative conservation tolerance of the balanced scaling mode (finite, in (0, 1)); the one source of the ScaleManager facade ledger tolerance of every call in this mode (hierarchical aggregate and disaggregate, regrid_variable) and of the per-call hierarchy index and aggregator; the facade regridders use it while balanced is the default mode
+    references:
+    - RELIC scale coupling precision policy
+    tags:
+    - precision_policy
+    - scale_coupling
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-24T00:00:00Z'
+  coupling.scales.defaults.precision.balanced.relative_tolerance:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-08
+    - 0.001
+    category: numerical_parameter
+    description: Relative tolerance for balanced scaling mode.
+    references:
+    - RELIC scale coupling precision policy
+    tags:
+    - precision_policy
+    - scale_coupling
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-08T00:00:00Z'
+  coupling.scales.defaults.precision.balanced.absolute_tolerance:
+    value: 1.0e-08
+    default: 1.0e-08
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-10
+    - 0.0001
+    category: numerical_parameter
+    description: Absolute tolerance for balanced scaling mode.
+    references:
+    - RELIC scale coupling precision policy
+    tags:
+    - precision_policy
+    - scale_coupling
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-08T00:00:00Z'
+  coupling.scales.defaults.precision.balanced.max_iterations:
+    value: 100
+    default: 100
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 100000
+    category: numerical_parameter
+    description: Maximum iterations for balanced scaling mode.
+    references:
+    - RELIC scale coupling precision policy
+    tags:
+    - precision_policy
+    - scale_coupling
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-08T00:00:00Z'
+  coupling.scales.defaults.precision.balanced.enforce_conservation:
+    value: false
+    default: false
+    units: dimensionless
+    dtype: bool
+    bounds: null
+    category: conservation_flag
+    description: Whether to enforce conservation in balanced mode.
+    references:
+    - RELIC scale coupling precision policy
+    tags:
+    - precision_policy
+    - conservation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-08T00:00:00Z'
+  coupling.scales.defaults.precision.balanced.dtype:
+    value: float32
+    default: float32
+    units: dimensionless
+    dtype: string
+    allowed_values:
+    - float32
+    bounds: null
+    category: numerical_parameter
+    description: Data type for balanced precision calculations.
+    references:
+    - RELIC scale coupling precision policy
+    tags:
+    - precision_policy
+    - dtype
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-08T00:00:00Z'
+  coupling.scales.defaults.precision.fast_approx.tolerance:
+    value: 0.001
+    default: 0.001
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-05
+    - 0.1
+    category: numerical_parameter
+    description: Relative conservation tolerance of the fast_approx scaling mode (finite, in (0, 1)); the one source of the ScaleManager facade ledger tolerance of every call in this mode (hierarchical aggregate and disaggregate, regrid_variable) and of the per-call hierarchy index and aggregator; the facade regridders use it while fast_approx is the default mode
+    references:
+    - RELIC scale coupling precision policy
+    tags:
+    - precision_policy
+    - scale_coupling
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-24T00:00:00Z'
+  coupling.scales.defaults.precision.fast_approx.relative_tolerance:
+    value: 0.001
+    default: 0.001
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-05
+    - 0.1
+    category: numerical_parameter
+    description: Relative tolerance for fast approximate scaling mode.
+    references:
+    - RELIC scale coupling precision policy
+    tags:
+    - precision_policy
+    - scale_coupling
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-08T00:00:00Z'
+  coupling.scales.defaults.precision.fast_approx.absolute_tolerance:
+    value: 1.0e-05
+    default: 1.0e-05
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-07
+    - 0.001
+    category: numerical_parameter
+    description: Absolute tolerance for fast approximate scaling mode.
+    references:
+    - RELIC scale coupling precision policy
+    tags:
+    - precision_policy
+    - scale_coupling
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-08T00:00:00Z'
+  coupling.scales.defaults.precision.fast_approx.max_iterations:
+    value: 50
+    default: 50
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 100000
+    category: numerical_parameter
+    description: Maximum iterations for fast approximate scaling mode.
+    references:
+    - RELIC scale coupling precision policy
+    tags:
+    - precision_policy
+    - scale_coupling
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-08T00:00:00Z'
+  coupling.scales.defaults.precision.fast_approx.enforce_conservation:
+    value: false
+    default: false
+    units: dimensionless
+    dtype: bool
+    bounds: null
+    category: conservation_flag
+    description: Whether to enforce conservation in fast approximate mode.
+    references:
+    - RELIC scale coupling precision policy
+    tags:
+    - precision_policy
+    - conservation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-08T00:00:00Z'
+  coupling.scales.defaults.precision.fast_approx.dtype:
+    value: float32
+    default: float32
+    units: dimensionless
+    dtype: string
+    allowed_values:
+    - float32
+    bounds: null
+    category: numerical_parameter
+    description: Data type for fast approximate precision calculations.
+    references:
+    - RELIC scale coupling precision policy
+    tags:
+    - precision_policy
+    - dtype
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC framework
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-08T00:00:00Z'
+

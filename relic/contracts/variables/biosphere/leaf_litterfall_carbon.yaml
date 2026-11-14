@@ -1,0 +1,34 @@
+variable: leaf_litterfall_carbon
+title: "Leaf Litterfall Carbon Flux"
+kind: flux
+dimension:
+  udunits: "kg C m-2 s-1"
+  cf_standard_name: null
+owner: null
+aliases: []
+incrementable: false
+accumulates: carbon.total
+numerics:
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - {name: "static_phenology", module: "relic.scientific.biosphere.phenology.models", provides: ["leaf_litterfall_carbon"], unit: "kg C m-2 s-1"}
+    - {name: "gdd_phenology", module: "relic.scientific.biosphere.phenology.models", provides: ["leaf_litterfall_carbon"], unit: "kg C m-2 s-1"}
+    - {name: "gsi_phenology", module: "relic.scientific.biosphere.phenology.models", provides: ["leaf_litterfall_carbon"], unit: "kg C m-2 s-1"}
+    - {name: "crop_phenology", module: "relic.scientific.biosphere.phenology.models", provides: ["leaf_litterfall_carbon"], unit: "kg C m-2 s-1"}
+flux_contract:
+  allowed_in: []
+  allowed_out:
+    - "static_phenology"
+    - "gdd_phenology"
+    - "gsi_phenology"
+    - "crop_phenology"
+  budget_check: {guardian: null, tolerance: {atol: 1.0e-10, rtol: 1.0e-8}}
+provenance:
+  source_file: "relic/scientific/biosphere/phenology/base.py"
+  runtime_role: "phenology_carbon_boundary_export"
+  runtime_writer: "selected_canonical_phenology_owner"

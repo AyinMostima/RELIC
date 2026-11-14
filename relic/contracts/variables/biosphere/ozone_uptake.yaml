@@ -1,0 +1,47 @@
+variable: ozone_uptake
+title: "Stomatal Ozone Uptake Flux"
+description: "Stomatal ozone uptake flux per leaf area F_O3 = eta [O3] g_s / k_O3 of ozone_stress, with g_s the leaf stomatal conductance to water vapour [mol m-2 s-1], k_O3 = 1.67 the O3/H2O leaf resistance ratio (Sitch et al. 2007; Leung et al. 2020, Eq. 5), [O3] the ozone mole fraction and eta the uptake efficiency. Output of ozone_stress, not read by any relic Functor; positive into the leaf."
+kind: flux
+dimension:
+  udunits: "mol O3 m-2 s-1"
+  cf_standard_name: null
+support:
+  spatial_kind: leaf
+  area_basis: leaf_area
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: "ozone_stress"
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Sitch, S., Cox, P.M., Collins, W.J. and Huntingford, C. (2007). Indirect radiative forcing of climate change through ozone effects on the land-carbon sink. Nature 448, 791-794"
+  - "Leung, F. et al. (2020). Geosci. Model Dev. 13, 6201-6213, Eq. (5)"
+numerics:
+  # Positive into the leaf; F_O3 >= 0 for g_s >= 0 and [O3] >= 0.
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "ozone_stress"
+      module: "relic.scientific.biosphere.stress.ozone_stress"
+      provides: ["ozone_uptake"]
+      unit: "mol O3 m-2 s-1"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/biosphere/stress/ozone_stress.py"
+  runtime_role: "stomatal_ozone_uptake_flux"
+  runtime_writer: "ozone_stress"
+  note: "Written only by ozone_stress (OzoneStress metadata output_variables and get_provides; F_O3 = (g_s / k_O3) [O3] eta evaluated in the ozone reaction network, species_rate('ozone_uptake'), returned in mol O3 m-2 s-1). No relic Functor reads it."

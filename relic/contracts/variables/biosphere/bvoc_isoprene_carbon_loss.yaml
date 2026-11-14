@@ -1,0 +1,61 @@
+variable: bvoc_carbon_allocation_flux
+title: "BVOC Carbon Allocation Flux"
+kind: flux
+dimension:
+  udunits: "kg C m-2 s-1"
+  cf_standard_name: null
+support:
+  spatial_kind: grid_cell
+  area_basis: ground_area
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+numerics:
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "megan_bvoc_model"
+      module: "relic.scientific.biosphere.bvoc.megan_model"
+      provides: ["bvoc_carbon_allocation_flux"]
+      unit: "kg C m-2 s-1"
+    - name: "mechanistic_isoprene_synthesis"
+      module: "relic.scientific.biosphere.bvoc.synthesis.isoprene"
+      provides: ["bvoc_carbon_allocation_flux"]
+      unit: "kg C m-2 s-1"
+    - name: "mechanistic_monoterpene_synthesis"
+      module: "relic.scientific.biosphere.bvoc.synthesis.monoterpene"
+      provides: ["bvoc_carbon_allocation_flux"]
+      unit: "kg C m-2 s-1"
+    - name: "sesquiterpene_synthesis"
+      module: "relic.scientific.biosphere.bvoc.synthesis.sesquiterpene"
+      provides: ["bvoc_carbon_allocation_flux"]
+      unit: "kg C m-2 s-1"
+flux_contract:
+  allowed_in: []
+  allowed_out:
+    - "megan_bvoc_model"
+    - "mechanistic_isoprene_synthesis"
+    - "mechanistic_monoterpene_synthesis"
+    - "sesquiterpene_synthesis"
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/biosphere/bvoc/synthesis/isoprene.py"
+  runtime_role: "mutually_exclusive_bvoc_carbon_allocation_port_consumed_by_biomass_allocation"
+  runtime_writers:
+    - "megan_bvoc_model"
+    - "mechanistic_isoprene_synthesis"
+    - "mechanistic_monoterpene_synthesis"
+    - "sesquiterpene_synthesis"

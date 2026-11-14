@@ -1,0 +1,350 @@
+{
+  "certificate_version": "1.0",
+  "process_id": "relic.scientific.biosphere.photosynthesis.leaf_energy_balance.LeafEnergyBalance",
+  "module_name": "LeafEnergyBalance",
+  "canonical_role": "observation",
+  "iphs_level": 1,
+  "iphs_level_evidence": {
+    "classification": "IPHS-compatible diagnostic or observation certificate",
+    "compatible_basis": "Read-only diagnostic of the steady linearised big-leaf energy balance with declared interface and no prognostic state ownership",
+    "level_2_limit": "Level 2 would need a prognostic leaf heat store or an energy port pair with a Hodge map; this diagnostic solves the steady balance per call and owns no state"
+  },
+  "theory_document": "docs\\source\\theory\\biosphere_leaf_energy_balance.md",
+  "theory_document_status": "updated",
+  "legacy_formula": "A = R_n - G (daily G = 0); dT = [gamma (g_a + g_c) A / (rho c_p) - g_a g_c D] / (g_a [s g_c + gamma (g_a + g_c)]); T_leaf = T_air + dT, T_leaf = T_air where LAI <= 0; H = rho c_p g_a dT; lambda E = A - H; daily T_leaf,max = T_max + dT",
+  "literature_formula": "T_l - T_a = [r_HR (r_aW + r_c) gamma A / (rho c_p) - r_HR D] / [gamma (r_aW + r_c) + s r_HR] (Jones 2014, Chapter 9) with r_HR = r_aW = r_a; lambda E of Monteith (1965) and Allen et al. (1998) Eq. 3",
+  "iphs_formula": "y_h = O_h x_h through the declared observation operator",
+  "legacy_expression": "A = R_n - G (daily G = 0); dT = [gamma (g_a + g_c) A / (rho c_p) - g_a g_c D] / (g_a [s g_c + gamma (g_a + g_c)]); T_leaf = T_air + dT, T_leaf = T_air where LAI <= 0; H = rho c_p g_a dT; lambda E = A - H; daily T_leaf,max = T_max + dT",
+  "iphs_expression": "y_h = O_h x_h through the declared observation operator",
+  "input_variables": [
+    "air_temperature",
+    "vapor_pressure_deficit",
+    "wind_speed",
+    "atmospheric_pressure",
+    "net_radiation",
+    "canopy_conductance",
+    "leaf_area_index",
+    "air_temperature_max",
+    "air_temperature_min",
+    "soil_heat_flux",
+    "actual_vapor_pressure",
+    "canopy_conductance_daylight_samples",
+    "shortwave_net",
+    "latitude",
+    "day_of_year",
+    "longwave_down",
+    "surface_emissivity"
+  ],
+  "output_variables": [
+    "leaf_temperature",
+    "diagnostics.leaf_energy_balance.leaf_air_temperature_difference",
+    "diagnostics.leaf_energy_balance.sensible_heat_flux",
+    "diagnostics.leaf_energy_balance.latent_heat_flux",
+    "diagnostics.leaf_energy_balance.available_energy",
+    "diagnostics.leaf_energy_balance.aerodynamic_conductance",
+    "diagnostics.leaf_energy_balance.no_canopy",
+    "diagnostics.leaf_energy_balance.vapor_pressure_floor_active",
+    "leaf_temperature_max",
+    "leaf_temperature_daylight_samples",
+    "diagnostics.leaf_energy_balance.isothermal_net_radiation",
+    "diagnostics.leaf_energy_balance.canopy_energy_fraction",
+    "diagnostics.leaf_energy_balance.radiative_conductance",
+    "diagnostics.leaf_energy_balance.longwave_emission_change",
+    "diagnostics.leaf_energy_balance.stability_parameter",
+    "diagnostics.leaf_energy_balance.stability_iteration_residual",
+    "diagnostics.leaf_energy_balance.convective_velocity",
+    "diagnostics.leaf_energy_balance.gusty_wind_speed"
+  ],
+  "parameter_keys": [
+    "hydrosphere.evapotranspiration.roughness_length",
+    "hydrosphere.evapotranspiration.displacement_height",
+    "hydrosphere.evapotranspiration.reference_height",
+    "hydrosphere.physical.heat_to_momentum_roughness_ratio",
+    "hydrosphere.numerical.minimum_wind_speed",
+    "hydrosphere.numerical.aerodynamic_conductance_bounds",
+    "hydrosphere.numerical.temperature_bounds",
+    "hydrosphere.numerical.net_radiation_bounds",
+    "hydrosphere.physical.atmospheric_pressure_min",
+    "hydrosphere.physical.atmospheric_pressure_max"
+  ],
+  "composition_ports": [
+    "air_temperature",
+    "vapor_pressure_deficit",
+    "wind_speed",
+    "atmospheric_pressure",
+    "net_radiation",
+    "canopy_conductance",
+    "leaf_area_index",
+    "leaf_temperature",
+    "air_temperature_max",
+    "air_temperature_min",
+    "soil_heat_flux",
+    "leaf_temperature_max",
+    "actual_vapor_pressure",
+    "canopy_conductance_daylight_samples",
+    "shortwave_net",
+    "latitude",
+    "day_of_year",
+    "longwave_down",
+    "surface_emissivity",
+    "leaf_temperature_daylight_samples"
+  ],
+  "references": [
+    "Monteith, J.L. (1965). Evaporation and environment. Symp. Soc. Exp. Biol. 19, 205-224",
+    "Allen, R.G., Pereira, L.S., Raes, D. and Smith, M. (1998). Crop evapotranspiration. FAO Irrigation and Drainage Paper 56, Eqs. 3, 4, 8, 11-13 and 42",
+    "Jones, H.G. (2014). Plants and Microclimate, 3rd ed. Cambridge University Press, Chapter 9",
+    "Campbell, G.S. and Norman, J.M. (1998). An Introduction to Environmental Biophysics, 2nd ed. Springer, Chapter 14",
+    "Monteith, J.L. and Unsworth, M.H. (2013). Principles of Environmental Physics, 4th ed. Academic Press"
+  ],
+  "baseline_tests": [
+    "test\\unit\\biosphere\\photosynthesis\\leafEnergyBalance.test.py"
+  ],
+  "validation_tests": [
+    "test\\unit\\biosphere\\photosynthesis\\leafEnergyBalance.test.py",
+    "test\\orchestration\\leaf_energy_balance_daily_graph.test.py"
+  ],
+  "state_map": {
+    "air_temperature": "required StateManager port in K, the linearisation point of e_s",
+    "vapor_pressure_deficit": "required StateManager port in Pa, the deficit of the air at the reference height",
+    "wind_speed": "required StateManager port in m s-1 at the reference height (FAO-56 Eq. 4)",
+    "atmospheric_pressure": "required StateManager port in Pa",
+    "net_radiation": "required upstream StateManager port in W m-2, all of it available to the big leaf",
+    "canopy_conductance": "required upstream StateManager port in m s-1 (Medlyn g_s L_eff R T / P or forcing); 0 is the dry-leaf limit",
+    "leaf_area_index": "required StateManager port in m2 m-2; LAI <= 0 declares no canopy",
+    "air_temperature_max": "required StateManager port in K with temporal_support daily only (e_s of FAO-56 Eq. 12 and T_leaf,max)",
+    "air_temperature_min": "required StateManager port in K with temporal_support daily only (e_s of FAO-56 Eq. 12)",
+    "soil_heat_flux": "required signed StateManager port in W m-2 with temporal_support instantaneous only (daily G = 0, FAO-56 Eq. 42)",
+    "actual_vapor_pressure": "actual vapour pressure e_a, read only with temporal_support daylight_gauss (replaces vapor_pressure_deficit)",
+    "canopy_conductance_daylight_samples": "per-sample Medlyn canopy conductance g_c,k, read only with temporal_support daylight_gauss (replaces canopy_conductance)",
+    "shortwave_net": "net shortwave S_n, read with temporal_support daylight_gauss and with energy_balance_form radiative_canopy_share",
+    "latitude": "latitude of the cell, read only with temporal_support daylight_gauss",
+    "day_of_year": "day of year, read only with temporal_support daylight_gauss",
+    "longwave_down": "downward longwave L_down of the radiation owner, read only with energy_balance_form radiative_canopy_share (replaces net_radiation)",
+    "surface_emissivity": "surface emissivity eps of the radiation owner, read only with energy_balance_form radiative_canopy_share"
+  },
+  "parameter_map": {
+    "hydrosphere.evapotranspiration.roughness_length": "Momentum roughness length z0m of the logarithmic wind profile [m]",
+    "hydrosphere.evapotranspiration.displacement_height": "Zero-plane displacement height d of the logarithmic wind profile [m]",
+    "hydrosphere.evapotranspiration.reference_height": "Measurement height z of wind speed, temperature and humidity [m]",
+    "hydrosphere.physical.heat_to_momentum_roughness_ratio": "Ratio z0h/z0m of the heat and momentum roughness lengths [dimensionless]",
+    "hydrosphere.numerical.minimum_wind_speed": "Lower bound of the wind speed in the aerodynamic conductance [m s-1]",
+    "hydrosphere.numerical.aerodynamic_conductance_bounds": "Bounds [min, max] of the aerodynamic conductance g_a [m s-1]",
+    "hydrosphere.numerical.temperature_bounds": "Plausibility bounds [min, max] of the air temperature inputs [K]",
+    "hydrosphere.numerical.net_radiation_bounds": "Plausibility bounds [min, max] of the net radiation input [W m-2]",
+    "hydrosphere.physical.atmospheric_pressure_min": "Lower plausibility bound of the atmospheric pressure input [Pa]",
+    "hydrosphere.physical.atmospheric_pressure_max": "Upper plausibility bound of the atmospheric pressure input [Pa]"
+  },
+  "operator_map": {
+    "O_h": "declared steady linearised big-leaf energy-balance observation map",
+    "H_h": "diagnostic metric or identity Hodge map"
+  },
+  "unit_map": {
+    "air_temperature": "K",
+    "vapor_pressure_deficit": "Pa",
+    "wind_speed": "m s-1",
+    "atmospheric_pressure": "Pa",
+    "net_radiation": "W m-2",
+    "canopy_conductance": "m s-1",
+    "leaf_area_index": "m2 m-2",
+    "leaf_temperature": "K",
+    "diagnostics.leaf_energy_balance.leaf_air_temperature_difference": "K",
+    "diagnostics.leaf_energy_balance.sensible_heat_flux": "W m-2",
+    "diagnostics.leaf_energy_balance.latent_heat_flux": "W m-2",
+    "diagnostics.leaf_energy_balance.available_energy": "W m-2",
+    "diagnostics.leaf_energy_balance.aerodynamic_conductance": "m s-1",
+    "diagnostics.leaf_energy_balance.no_canopy": "1",
+    "diagnostics.leaf_energy_balance.vapor_pressure_floor_active": "1",
+    "air_temperature_max": "K",
+    "air_temperature_min": "K",
+    "soil_heat_flux": "W m-2",
+    "leaf_temperature_max": "K",
+    "actual_vapor_pressure": "Pa",
+    "canopy_conductance_daylight_samples": "m s-1",
+    "shortwave_net": "W m-2",
+    "latitude": "degrees_north",
+    "day_of_year": "1",
+    "longwave_down": "W m-2",
+    "surface_emissivity": "1",
+    "leaf_temperature_daylight_samples": "K",
+    "diagnostics.leaf_energy_balance.isothermal_net_radiation": "W m-2",
+    "diagnostics.leaf_energy_balance.canopy_energy_fraction": "1",
+    "diagnostics.leaf_energy_balance.radiative_conductance": "m s-1",
+    "diagnostics.leaf_energy_balance.longwave_emission_change": "W m-2",
+    "diagnostics.leaf_energy_balance.stability_parameter": "1",
+    "diagnostics.leaf_energy_balance.stability_iteration_residual": "K",
+    "diagnostics.leaf_energy_balance.convective_velocity": "m s-1",
+    "diagnostics.leaf_energy_balance.gusty_wind_speed": "m s-1"
+  },
+  "input_output_map": {
+    "canopy_conductance": "canonical required nonnegative input; enters the conductance form without division",
+    "leaf_temperature": "canonical leaf-support output T_air + dT, instantaneous REPLACE",
+    "diagnostics.leaf_energy_balance.leaf_air_temperature_difference": "signed dT of the linearised balance, 0 where no canopy",
+    "diagnostics.leaf_energy_balance.sensible_heat_flux": "H = rho c_p g_a dT, positive leaf to air",
+    "diagnostics.leaf_energy_balance.latent_heat_flux": "lambda E = A - H, the Penman-Monteith latent heat, not projected to nonnegative values",
+    "diagnostics.leaf_energy_balance.available_energy": "A = R_n - G",
+    "diagnostics.leaf_energy_balance.aerodynamic_conductance": "g_a of fao56_aerodynamic_conductance, shared with PenmanMonteithET",
+    "diagnostics.leaf_energy_balance.no_canopy": "boolean LAI <= 0",
+    "diagnostics.leaf_energy_balance.vapor_pressure_floor_active": "boolean e_s - D < 0, replaced by 0 in the air density only",
+    "leaf_temperature_max": "declared daily-maximum estimate T_max + dT, temporal_support daily only, instantaneous REPLACE",
+    "leaf_temperature_daylight_samples": "leaf temperature T_l,k at the daylight Gauss samples, temporal_support daylight_gauss only",
+    "diagnostics.leaf_energy_balance.isothermal_net_radiation": "R_ni = S_n + eps L_down - eps sigma T_a^4, radiative_canopy_share only",
+    "diagnostics.leaf_energy_balance.canopy_energy_fraction": "canopy share 1 - exp(-k LAI) of the available energy, radiative_canopy_share only",
+    "diagnostics.leaf_energy_balance.radiative_conductance": "g_R = 4 eps sigma T_a^3 / (rho c_p), radiative_canopy_share only",
+    "diagnostics.leaf_energy_balance.longwave_emission_change": "L = rho c_p g_R dT, radiative_canopy_share only",
+    "diagnostics.leaf_energy_balance.stability_parameter": "self-consistent Monin-Obukhov zeta of the bisection, radiative_canopy_share only",
+    "diagnostics.leaf_energy_balance.stability_iteration_residual": "|dT(final) - dT(zeta*)| of the stability solver, radiative_canopy_share only",
+    "diagnostics.leaf_energy_balance.convective_velocity": "U_c = beta w* (zeta < 0), free_convection beljaars only",
+    "diagnostics.leaf_energy_balance.gusty_wind_speed": "U = sqrt(u^2 + U_c^2), free_convection beljaars only"
+  },
+  "interface_map": {
+    "forward_signature": "forward(self, state, time, dt)",
+    "bridge_class": "BiologicalProcessFunctor",
+    "abstraction_contract": "BiologicalProcess",
+    "state_write_mode": "UpdateItem REPLACE with per_timestep false",
+    "legacy_inputs": [
+      "air_temperature",
+      "vapor_pressure_deficit",
+      "wind_speed",
+      "atmospheric_pressure",
+      "net_radiation",
+      "canopy_conductance",
+      "leaf_area_index",
+      "air_temperature_max",
+      "air_temperature_min",
+      "soil_heat_flux",
+      "actual_vapor_pressure",
+      "canopy_conductance_daylight_samples",
+      "shortwave_net",
+      "latitude",
+      "day_of_year",
+      "longwave_down",
+      "surface_emissivity"
+    ],
+    "iphs_inputs": [
+      "air_temperature",
+      "vapor_pressure_deficit",
+      "wind_speed",
+      "atmospheric_pressure",
+      "net_radiation",
+      "canopy_conductance",
+      "leaf_area_index",
+      "air_temperature_max",
+      "air_temperature_min",
+      "soil_heat_flux",
+      "actual_vapor_pressure",
+      "canopy_conductance_daylight_samples",
+      "shortwave_net",
+      "latitude",
+      "day_of_year",
+      "longwave_down",
+      "surface_emissivity"
+    ],
+    "legacy_outputs": [
+      "leaf_temperature",
+      "diagnostics.leaf_energy_balance.leaf_air_temperature_difference",
+      "diagnostics.leaf_energy_balance.sensible_heat_flux",
+      "diagnostics.leaf_energy_balance.latent_heat_flux",
+      "diagnostics.leaf_energy_balance.available_energy",
+      "diagnostics.leaf_energy_balance.aerodynamic_conductance",
+      "diagnostics.leaf_energy_balance.no_canopy",
+      "diagnostics.leaf_energy_balance.vapor_pressure_floor_active",
+      "leaf_temperature_max",
+      "leaf_temperature_daylight_samples",
+      "diagnostics.leaf_energy_balance.isothermal_net_radiation",
+      "diagnostics.leaf_energy_balance.canopy_energy_fraction",
+      "diagnostics.leaf_energy_balance.radiative_conductance",
+      "diagnostics.leaf_energy_balance.longwave_emission_change",
+      "diagnostics.leaf_energy_balance.stability_parameter",
+      "diagnostics.leaf_energy_balance.stability_iteration_residual",
+      "diagnostics.leaf_energy_balance.convective_velocity",
+      "diagnostics.leaf_energy_balance.gusty_wind_speed"
+    ],
+    "iphs_outputs": [
+      "leaf_temperature",
+      "diagnostics.leaf_energy_balance.leaf_air_temperature_difference",
+      "diagnostics.leaf_energy_balance.sensible_heat_flux",
+      "diagnostics.leaf_energy_balance.latent_heat_flux",
+      "diagnostics.leaf_energy_balance.available_energy",
+      "diagnostics.leaf_energy_balance.aerodynamic_conductance",
+      "diagnostics.leaf_energy_balance.no_canopy",
+      "diagnostics.leaf_energy_balance.vapor_pressure_floor_active",
+      "leaf_temperature_max",
+      "leaf_temperature_daylight_samples",
+      "diagnostics.leaf_energy_balance.isothermal_net_radiation",
+      "diagnostics.leaf_energy_balance.canopy_energy_fraction",
+      "diagnostics.leaf_energy_balance.radiative_conductance",
+      "diagnostics.leaf_energy_balance.longwave_emission_change",
+      "diagnostics.leaf_energy_balance.stability_parameter",
+      "diagnostics.leaf_energy_balance.stability_iteration_residual",
+      "diagnostics.leaf_energy_balance.convective_velocity",
+      "diagnostics.leaf_energy_balance.gusty_wind_speed"
+    ]
+  },
+  "runtime_replacement_map": {
+    "runtime_uses_iphs": false,
+    "legacy_removed": false,
+    "replacement_entrypoint": "forward",
+    "preserved_numerics": "Existing ParameterManager-backed calculations define canonical IPHS operator coefficients, rates, ports, or observations.",
+    "no_legacy_mode": "No selectable legacy runtime branch is exposed for Phase 8 completion."
+  },
+  "state_advancement_map": {
+    "potential_basis": "supplied air temperature, VPD, wind, pressure, net radiation, canopy conductance and LAI observation inputs",
+    "effort_variable": "not applicable to this level-1 steady diagnostic",
+    "state_advancer": "y_h = O_h x_h through the declared observation operator",
+    "runtime_usage": "LeafEnergyBalance.forward solves the steady linearised energy balance once per call and emits leaf_temperature (and on the daily support leaf_temperature_max) without advancing any heat or material pool."
+  },
+  "parameter_management_map": {
+    "hydrosphere.evapotranspiration.roughness_length": {
+      "source": "ParameterManager YAML"
+    },
+    "hydrosphere.evapotranspiration.displacement_height": {
+      "source": "ParameterManager YAML"
+    },
+    "hydrosphere.evapotranspiration.reference_height": {
+      "source": "ParameterManager YAML"
+    },
+    "hydrosphere.physical.heat_to_momentum_roughness_ratio": {
+      "source": "ParameterManager YAML"
+    },
+    "hydrosphere.numerical.minimum_wind_speed": {
+      "source": "ParameterManager YAML"
+    },
+    "hydrosphere.numerical.aerodynamic_conductance_bounds": {
+      "source": "ParameterManager YAML"
+    },
+    "hydrosphere.numerical.temperature_bounds": {
+      "source": "ParameterManager YAML"
+    },
+    "hydrosphere.numerical.net_radiation_bounds": {
+      "source": "ParameterManager YAML"
+    },
+    "hydrosphere.physical.atmospheric_pressure_min": {
+      "source": "ParameterManager YAML"
+    },
+    "hydrosphere.physical.atmospheric_pressure_max": {
+      "source": "ParameterManager YAML"
+    }
+  },
+  "composition_management_map": {
+    "functor_metadata": "existing FunctorMetadata declares interfaces, execution phase, EXCLUSIVE conflict policy and no conservation law",
+    "state_contract": "StateManager receives explicit REPLACE UpdateItems for leaf_temperature and, daily, leaf_temperature_max",
+    "validation_rule": "phase8 scientific inventory and equivalence certificate checks"
+  },
+  "dependency_interconnection_map": {
+    "dependencies": "no direct Functor dependency; canopy_conductance and net_radiation are StateManager ports bound by graph links",
+    "direct_functor_calls": "none; calls the shared law fao56_aerodynamic_conductance and the hydrosphere psychrometric helpers"
+  },
+  "overflow_routing_map": {
+    "diagnostic_residuals": "no-canopy cells and the vapour pressure floor of the air density are reported as diagnostics; nonfinite or out-of-domain inputs are refused, not clipped",
+    "discarded_residuals": "no material or energy residual; A = H + lambda E holds by construction on canopy cells"
+  },
+  "conservation_map": {
+    "conserved_quantities": "none owned; the steady balance partitions the supplied available energy",
+    "balance_expression": "R_n - G = H + lambda E per canopy cell and call, with lambda E the Penman-Monteith latent heat"
+  },
+  "entropy_audit": {
+    "operator_sign": "dT decreases monotonically with g_c for A >= 0 and D >= 0; H and lambda E carry the sign of their gradients",
+    "sigma_expression": "not applicable to this non-strict steady diagnostic"
+  },
+  "equivalence_type": "diagnostic"
+}

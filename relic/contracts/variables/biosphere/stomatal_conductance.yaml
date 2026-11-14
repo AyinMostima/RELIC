@@ -1,0 +1,55 @@
+variable: stomatal_conductance
+title: "Leaf Stomatal Conductance to Water Vapour"
+description: "Leaf-level stomatal conductance to water vapour in mol m-2 leaf s-1, read by ozone_stress and oxygen_18. Supply it as forcing or select exactly one tendency provider: the tutorial stomatal_proxy (declared clipped empirical law), or medlyn_stomatal_conductance (explicit canopy-air substitution, Farquhar effective-leaf-area inversion and disclosed dark/nonpositive-assimilation residual branches). FarquharPhotosynthesis itself outputs no conductance. A source in m s-1 converts with g_m P/(R T) using the existing context-dependent UnitConverter; no fixed factor is substituted. Canopy ground-area conductance is a different quantity. No CF standard name exists."
+kind: forcing
+dimension:
+  udunits: "mol m-2 s-1"
+  cf_standard_name: null
+support:
+  spatial_kind: leaf
+  area_basis: leaf_area
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Medlyn et al. (2011), Global Change Biology 17, 2134-2144, doi:10.1111/j.1365-2486.2010.02375.x; modern equation and declared branches as documented in docs/source/theory/photosynthesis.md"
+  - "Ball, J.T., Woodrow, I.E. and Berry, J.A. (1987). A model predicting stomatal conductance and its contribution to the control of photosynthesis under different environmental conditions. Progress in Photosynthesis Research IV, 221-224"
+  - "Nobel, P.S. (2009). Physicochemical and Environmental Plant Physiology, 4th ed. Academic Press (conductance unit conversion g = g_m P / (R T))"
+  - "Pearcy, R.W., Schulze, E.-D. and Zimmermann, R. (1989). Measurement of transpiration and leaf conductance. In Plant Physiological Ecology, Chapman and Hall, 137-160"
+  - "Murray, M. et al. (2019). Consistent relationship between field-measured stomatal conductance and theoretical maximum stomatal conductance in C3 woody angiosperms. Front. Plant Sci. 10, 558"
+numerics:
+  # The former 2.0 empirical guard is not a universal bound of the Medlyn law.
+  # No hidden state-level upper cap; provider-specific declared caps remain local.
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "stomatal_proxy"
+      module: "tutorial.case.functors.stomatal_proxy"
+      provides: ["stomatal_conductance"]
+      unit: "mol m-2 s-1"
+    - name: "medlyn_stomatal_conductance"
+      module: "relic.scientific.biosphere.photosynthesis.stomatal"
+      provides: ["stomatal_conductance"]
+      unit: "mol m-2 s-1"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/biosphere/stress/ozone_stress.py"
+  runtime_role: "leaf_stomatal_conductance_forcing_or_exclusive_diagnostic_provider"
+  runtime_writer: ["stomatal_proxy", "medlyn_stomatal_conductance"]
+  note: "Readers remain OzoneStress (g_O3=g_s/k_O3) and Oxygen18FractionationCalculator. Providers issue non-incrementable REPLACE updates; the Medlyn EXCLUSIVE policy prohibits concurrent proxy/Medlyn registration in either order. Both recover representative leaf assimilation with the same Farquhar L_eff. A lag is an execution-composition choice, not kernel behavior. The 2026-10-15 upper-bound correction removes the former 2.0 empirical guard because it is neither a universal physiological bound nor a Medlyn domain limit; >2 numerical admissibility is not observational validation. Lower bound and all tolerances are unchanged. The tutorial proxy retains its own explicit gmax."

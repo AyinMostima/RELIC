@@ -1,0 +1,61 @@
+%%{init: {'theme':'base', 'themeVariables':{'primaryColor':'#e8f4fd','primaryBorderColor':'#4a90d9','lineColor':'#78909c','fontSize':'13px'}}}%%
+flowchart TD
+    subgraph PHYSICS["Physics Baseline Path"]
+        direction LR
+        T["Turbulence\n(Monin-Obukhov)"]
+        PM["Penman-Monteith\n(Energy-balance ET)"]
+        PA["Precip Adapter\n(Throughfall)"]
+        SR["Surface Runoff\n(Saturation excess)"]
+        IB["Infiltration Bridge\n(Water routing)"]
+        BSM["Bucket Soil Moisture\n(Water balance)"]
+        TS["Thermal Stress\n(Temperature response)"]
+        SA["Stress Adapter\n(Linear water stress)"]
+        FQ["Farquhar\n(FvCB C3)"]
+        SP["Stomatal Proxy\n(Ball-Berry style)"]
+        OZ["Ozone Stress\n(Detoxification)"]
+        MG["MEGAN BVOC\n(Isoprene emission)"]
+
+        T -->|"u_star, r_a"| PM
+        PM -->|ET| PA
+        PA -->|throughfall| SR
+        SR -->|excess_water| IB
+        IB -->|infiltration| BSM
+        BSM -->|soil_moisture| SA
+        TS -->|temp_stress| FQ
+        SA -->|water_stress| FQ
+        FQ -->|A_n| SP
+        SP -->|g_s| OZ
+        OZ -->|O3_stress| MG
+    end
+
+    subgraph MLPATH["ML-Hybrid Comparison Path"]
+        direction LR
+        MSM["ML Soil Moisture\n(ResNet surrogate)"]
+        MWS["ML Water Stress\n(MLP surrogate)"]
+        FQ2["Farquhar\n(Shared core)"]
+        MGS["ML Stomatal\n(ResNet surrogate)"]
+        MO3["ML Ozone Stress\n(MLP surrogate)"]
+        MG2["MEGAN BVOC\n(Shared core)"]
+        MIR["ML Isoprene Residual\n(Bounded correction)"]
+
+        MSM -->|soil_moisture_ML| MWS
+        MWS -->|water_stress_ML| FQ2
+        FQ2 -->|A_n_ML| MGS
+        MGS -->|g_s_ML| MO3
+        MO3 -->|O3_stress_ML| MG2
+        MG2 -->|isoprene_chain_ML| MIR
+    end
+
+    BSM -.->|"soil_moisture (ref)"| MSM
+    SA -.->|"water_stress (fallback)"| MWS
+    FQ -.->|"net_photosynthesis (ref)"| MGS
+    SP -.->|"stomatal_cond (fallback)"| MO3
+    MG -.->|"mech_isoprene (baseline)"| MIR
+
+    classDef physics fill:#bbdefb,stroke:#1565c0,color:#0d47a1,stroke-width:1.5px
+    classDef ml fill:#ffe0b2,stroke:#e65100,color:#bf360c,stroke-width:1.5px
+    classDef core fill:#c8e6c9,stroke:#2e7d32,color:#1b5e20,stroke-width:2px
+
+    class T,PM,PA,SR,IB,BSM,TS,SA,SP,OZ physics
+    class MSM,MWS,MGS,MO3,MIR ml
+    class FQ,FQ2,MG,MG2 core

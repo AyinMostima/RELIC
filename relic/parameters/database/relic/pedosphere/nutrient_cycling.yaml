@@ -1,0 +1,415 @@
+﻿schema_version: 2.0.0
+tier: relic
+namespace: pedosphere.nutrient_cycling
+description: Nutrient cycling process parameters for pedosphere
+metadata:
+  created_by: RELIC Parameter System
+  last_modified: '2025-10-07T00:00:00Z'
+  version: 1.0.0
+parameters:
+  hodge_reference_soil_depth:
+    value: 1.0
+    default: 1.0
+    units: m
+    dtype: float32
+    bounds:
+    - 0.1
+    - 3.0
+    category: reference_constant
+    description: Reference soil depth of the static nitrate-leaching Hodge contract (NitrogenLeachingProcess.build_hodge_contract metric key); a structural reference, never the runtime depth, which is the soil_depth forcing input
+    references:
+    - Cameron and Haynes (1986), nitrate movement in soil
+    tags:
+    - hodge_reference
+    - structural_reference
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: structural_reference
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2026-09-26T00:00:00Z'
+      notes: Replaces soil_depth_default (2026-09-26); the runtime depth is the soil_depth input.
+  leaching_time_constant:
+    value: 3600.0
+    default: 3600.0
+    units: s
+    dtype: float32
+    bounds:
+    - 600.0
+    - 86400.0
+    category: process_rate
+    description: 'Time constant for maximum nitrogen leaching rate. Used to prevent unrealistic depletion of N pools in single
+      timestep. Typical value: 1 hour (3600 s).'
+    references:
+    - 'RHESSys compute_N_leached: Conservative limiting'
+    tags:
+    - nitrogen
+    - leaching
+    - numerical_stability
+    dimension: time
+    requires_grad: false
+    provenance:
+      source: Numerical stability constraint
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-10-06T00:00:00Z'
+  min_no3_pool:
+    value: 1.0e-08
+    units: g N m-2
+    dtype: float32
+    bounds:
+    - 0.0
+    - .inf
+    category: numerical_parameter
+    description: 'Minimum NO3 pool size for numerical stability. A pool floor cannot be negative; no physical upper limit is fixed, so the upper bound is open (inf).'
+    references:
+    - Numerical stability
+    tags:
+    - no3
+    - minimum
+    - stability
+    dimension: mass_areal_density
+    requires_grad: false
+    provenance:
+      source: Numerical stability
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-06T00:00:00Z'
+  k_microbial_death:
+    value: 1.388888888888889e-07
+    units: s-1
+    dtype: float32
+    bounds:
+    - 5.787037037037037e-08
+    - 8.101851851851852e-06
+    category: process_rate
+    description: First-order microbial biomass death and nitrogen turnover rate. The canonical value is the Schimel-Weintraub
+      linked C-N baseline of 0.012 d-1 converted once to s-1; dead microbial N returns to the organic N pool.
+    references:
+    - Manzoni & Porporato (2009). Soil Biology & Biochemistry, 41(7), 1355-1379
+    - Schimel & Weintraub (2003). Soil Biology & Biochemistry, 35(4), 549-563, Table 1, Kt = 0.012 d-1
+    - Van Veen et al. (1984). Protected and unprotected soil microbial biomass turnover bounds cited by Schimel & Weintraub
+    tags:
+    - nitrogen
+    - mineralization
+    - microbial_death
+    - turnover
+    dimension: frequency
+    requires_grad: true
+    provenance:
+      source: Schimel and Weintraub (2003) linked carbon-nitrogen model
+      source_value: 0.012 d-1
+      canonical_value: 1.388888888888889e-07 s-1
+      source_bounds: 0.005 to 0.70 d-1
+      conversion: Daily literature rate converted once to the canonical per-second parameter unit
+      schema_version: 2.0.0
+      created_by: RELIC Nitrogen Conservation Fix 2025-10-06
+      last_modified: '2026-07-17T00:00:00Z'
+      calibration_status: literature_derived
+  n_noy_fraction:
+    value: 0.6
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.3
+    - 0.8
+    category: nitrogen_partitioning
+    description: Fraction of total inorganic nitrogen in oxidized forms (NOy - NO3-, NO2-)
+    references:
+    - Davidson et al. (2000). Nitrogen gas partitioning in soils
+    - DNDC model nitrogen speciation
+    tags:
+    - nitrogen
+    - speciation
+    - partitioning
+    - noy
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Literature review and DNDC model
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Audit 2025-10-05
+      last_modified: '2025-10-06T00:00:00Z'
+  n_nhx_fraction:
+    value: 0.4
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.2
+    - 0.7
+    category: nitrogen_partitioning
+    description: Fraction of total inorganic nitrogen in reduced forms (NHx - NH4+, NH3)
+    references:
+    - Davidson et al. (2000). Nitrogen gas partitioning in soils
+    - DNDC model nitrogen speciation
+    tags:
+    - nitrogen
+    - speciation
+    - partitioning
+    - nhx
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Literature review and DNDC model
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Audit 2025-10-05
+      last_modified: '2025-10-06T00:00:00Z'
+  vmax_n:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: mol m-2 s-1
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.0001
+    category: uptake_parameter
+    description: Maximum nitrogen uptake rate per unit root surface area (Michaelis-Menten Vmax for N)
+    references:
+    - Barber, S.A. (1995). Soil Nutrient Bioavailability
+    - Clarkson, D.T. (1985). Factors affecting mineral nutrient acquisition by plants
+    tags:
+    - nitrogen
+    - uptake
+    - kinetics
+    - michaelis_menten
+    dimension: molar_flux
+    requires_grad: true
+    provenance:
+      source: Root uptake kinetics literature
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Audit 2025-10-05
+      last_modified: '2025-10-06T00:00:00Z'
+  vmax_p:
+    value: 1.0e-07
+    default: 1.0e-07
+    units: mol m-2 s-1
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0e-05
+    category: uptake_parameter
+    description: Maximum phosphorus uptake rate per unit root surface area (Michaelis-Menten Vmax for P)
+    references:
+    - Barber, S.A. (1995). Soil Nutrient Bioavailability
+    - Jungk, A. (2001). Root hairs and the acquisition of plant nutrients from soil
+    tags:
+    - phosphorus
+    - uptake
+    - kinetics
+    - michaelis_menten
+    dimension: molar_flux
+    requires_grad: true
+    provenance:
+      source: Root uptake kinetics literature
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Audit 2025-10-05
+      last_modified: '2025-10-06T00:00:00Z'
+  km_n:
+    value: 0.1
+    default: 0.1
+    units: mol m-3
+    dtype: float32
+    bounds:
+    - 0.0
+    - 10.0
+    category: uptake_parameter
+    description: Michaelis constant for nitrogen uptake (half-saturation concentration)
+    references:
+    - Barber, S.A. (1995). Soil Nutrient Bioavailability, Chapter 4
+    - Silberbush, M. & Barber, S.A. (1983). Plant and Soil, 74, 201-212
+    tags:
+    - nitrogen
+    - uptake
+    - kinetics
+    - half_saturation
+    dimension: amount_concentration
+    requires_grad: true
+    provenance:
+      source: Root uptake kinetics experiments
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Audit 2025-10-05
+      last_modified: '2025-10-06T00:00:00Z'
+  km_p:
+    value: 0.01
+    default: 0.01
+    units: mol m-3
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: uptake_parameter
+    description: Michaelis constant for phosphorus uptake (half-saturation concentration)
+    references:
+    - Barber, S.A. (1995). Soil Nutrient Bioavailability
+    - Jungk, A. (2001). Journal of Plant Nutrition and Soil Science
+    tags:
+    - phosphorus
+    - uptake
+    - kinetics
+    - half_saturation
+    dimension: amount_concentration
+    requires_grad: true
+    provenance:
+      source: Root uptake kinetics experiments
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Audit 2025-10-05
+      last_modified: '2025-10-06T00:00:00Z'
+  root_decay_coeff:
+    value: 2.0
+    default: 2.0
+    units: m-1
+    dtype: float32
+    bounds:
+    - 0.1
+    - 10.0
+    category: root_distribution
+    description: Exponential decay coefficient for root density with soil depth
+    references:
+    - Jackson, R.B. et al. (1996). Oecologia, 108, 389-411
+    - Schenk, H.J. & Jackson, R.B. (2002). Ecology Letters, 5, 235-241
+    tags:
+    - root
+    - distribution
+    - depth_profile
+    dimension: inverse_length
+    requires_grad: false
+    provenance:
+      source: Global root distribution meta-analysis
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Audit 2025-10-05
+      last_modified: '2025-10-06T00:00:00Z'
+  q10_value:
+    value: 2.0
+    default: 2.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 5.0
+    category: temperature_response
+    description: Q10 temperature coefficient for root nutrient uptake processes
+    references:
+    - Lloyd, J. & Taylor, J.A. (1994). Functional Ecology, 8, 315-323
+    - Atkin, O.K. & Tjoelker, M.G. (2003). Functional Ecology, 17, 747-754
+    tags:
+    - temperature
+    - response_function
+    - root
+    - uptake
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Temperature response literature
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Audit 2025-10-05
+      last_modified: '2025-10-06T00:00:00Z'
+  reference_temperature:
+    value: 298.15
+    units: K
+    dtype: float32
+    bounds:
+    - 273.15
+    - 323.15
+    category: temperature_response
+    description: Reference temperature for Q10 response function (25 Celsius = 298.15 K)
+    references:
+    - Lloyd & Taylor (1994). Standard reference temperature
+    tags:
+    - temperature
+    - reference
+    - response_function
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: Standard biochemical reference temperature
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Audit 2025-10-05
+      last_modified: '2025-10-06T00:00:00Z'
+  water_stress_enabled:
+    value: true
+    units: dimensionless
+    dtype: bool
+    bounds: null
+    category: model_switch
+    description: Enable water stress effect on root nutrient uptake
+    references:
+    - Model configuration option
+    tags:
+    - water_stress
+    - model_option
+    - uptake
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Model configuration defaults
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Audit 2025-10-05
+      last_modified: '2025-10-06T00:00:00Z'
+  demand_regulation_enabled:
+    value: true
+    units: dimensionless
+    dtype: bool
+    bounds: null
+    category: model_switch
+    description: Enable plant demand regulation of nutrient uptake (limits uptake to plant requirement)
+    references:
+    - Model configuration option
+    tags:
+    - demand
+    - model_option
+    - uptake
+    - regulation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Model configuration defaults
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Audit 2025-10-05
+      last_modified: '2025-10-06T00:00:00Z'
+  max_storage_n:
+    value: 10.0
+    units: mol m-2
+    dtype: float32
+    bounds:
+    - 0.0
+    - 100.0
+    category: plant_storage
+    description: Maximum plant nitrogen storage capacity
+    references:
+    - Chapin, F.S. et al. (1990). Annual Review of Ecology and Systematics, 21, 423-447
+    tags:
+    - nitrogen
+    - storage
+    - plant
+    - capacity
+    dimension: molar_areal_density
+    requires_grad: false
+    provenance:
+      source: Plant nutrient storage literature
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Audit 2025-10-05
+      last_modified: '2025-10-06T00:00:00Z'
+  max_storage_p:
+    value: 1.0
+    units: mol m-2
+    dtype: float32
+    bounds:
+    - 0.0
+    - 10.0
+    category: plant_storage
+    description: Maximum plant phosphorus storage capacity
+    references:
+    - Chapin, F.S. et al. (1990). Annual Review of Ecology and Systematics
+    tags:
+    - phosphorus
+    - storage
+    - plant
+    - capacity
+    dimension: molar_areal_density
+    requires_grad: false
+    provenance:
+      source: Plant nutrient storage literature
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Audit 2025-10-05
+      last_modified: '2025-10-06T00:00:00Z'

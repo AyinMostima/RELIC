@@ -1,0 +1,278 @@
+﻿schema_version: 2.0.0
+tier: relic
+namespace: pedosphere.nitrification
+description: Ammonia oxidation (nitrification) process parameters including kinetic constants, environmental response parameters,
+  and N2O production factors
+metadata:
+  created_by: RELIC Parameter System
+  last_modified: '2026-02-11T00:00:00Z'
+  schema_url: https://github.com/relic/parameter-schema/v2.0.0
+  version: 1.1.0
+functor_metadata:
+  spatial_scale: grid_cell
+  variable_kind: state
+  input_variables:
+    - nh4_nitrogen
+    - soil_temperature
+    - soil_moisture
+    - soil_ph
+  output_variables:
+    - nh4_nitrogen
+    - no3_nitrogen
+    - nitrification_flux
+    - n2o_flux
+  conservation_laws:
+    - nitrogen
+  references:
+    - Parton et al. (1996) Global Biogeochem Cycles
+    - Stark & Firestone (1995) Appl Environ Microbiol
+    - Bouwman et al. (2002) Global Biogeochem Cycles
+    - Firestone & Davidson (1989) Exchange of Trace Gases
+parameters:
+  pedosphere.nitrification.vmax_nitrification:
+    value: 2.0e-06
+    default: 2.0e-06
+    units: g N m-2 s-1
+    dtype: float32
+    bounds:
+    - 1.0e-07
+    - 1.0e-05
+    category: biological_parameter
+    description: Maximum nitrification rate
+    references:
+    - Parton et al. (1996)
+    - Stark & Firestone (1995)
+    tags:
+    - nitrification
+    - vmax
+    - kinetics
+    dimension: mass_flux
+    requires_grad: true
+    provenance:
+      source: Nitrification kinetics studies
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.nitrification.km_nh4:
+    value: 0.005
+    default: 0.005
+    units: g N m-2
+    dtype: float32
+    bounds:
+    - 0.001
+    - 0.02
+    category: biological_parameter
+    description: 'Areal NH4 half-saturation constant Km of the RELIC nitrification rate R = Vmax NH4/(Km + NH4) f_T f_O2 f_pH.'
+    references:
+    - RELIC convention value (areal NH4 half-saturation; no literature value)
+    tags:
+    - nitrification
+    - km
+    - nh4
+    - kinetics
+    dimension: mass_per_area
+    requires_grad: true
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-27T00:00:00Z'
+      notes: 'Round 53.2 check: no source found in the Century/DAYCENT nitrification of Parton et al. (1996, 2001) as documented in the CLM4.5 Technical Note (Oleson et al. 2013) Eq. 16.11 (first-order in NH4 with the decomposition temperature and moisture modifiers, no hard temperature limits) nor in the DNDC95 reference code. Measured half-saturation constants of ammonia oxidation are concentrations per soil mass or solution volume, not areal amounts; the areal value depends on the layer depth. The former reference "Michaelis-Menten kinetics for nitrification" named the form, not a source. Role: half-saturation of the areal Michaelis-Menten substrate term.'
+  pedosphere.nitrification.temperature_minimum:
+    value: 273.15
+    units: K
+    dtype: float32
+    bounds:
+    - 0.0
+    - .inf
+    category: reference_constant
+    description: 'Lower soil temperature limit of the nitrification temperature factor: below it f_T is multiplied by extreme_temperature_factor. An absolute (thermodynamic) temperature in K cannot be negative; the lower bound is 0 K.'
+    references:
+    - RELIC convention value (temperature factor limit at the freezing point; no literature value)
+    tags:
+    - temperature
+    - minimum
+    - threshold
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-27T00:00:00Z'
+      notes: 'Round 53.2 check: no source found in the Century/DAYCENT nitrification of Parton et al. (1996, 2001) as documented in the CLM4.5 Technical Note (Oleson et al. 2013) Eq. 16.11 (first-order in NH4 with the decomposition temperature and moisture modifiers, no hard temperature limits) nor in the DNDC95 reference code. E3SM ELM offers an optional switch no_frozen_nitrif_denitrif that stops nitrification in frozen soil, which is the same freezing-point limit as a model option, not a measured value. The former reference "Extreme temperature limits" was a placeholder. Role: freezing-point limit of f_T.'
+  pedosphere.nitrification.temperature_maximum:
+    value: 323.15
+    units: K
+    dtype: float32
+    bounds:
+    - 0.0
+    - .inf
+    category: reference_constant
+    description: 'Upper soil temperature limit of the nitrification temperature factor (50 degC): above it f_T is multiplied by extreme_temperature_factor. An absolute (thermodynamic) temperature in K cannot be negative; the lower bound is 0 K.'
+    references:
+    - RELIC convention value (temperature factor upper limit; no literature value)
+    tags:
+    - temperature
+    - maximum
+    - threshold
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-27T00:00:00Z'
+      notes: 'Round 53.2 check: no source found in the Century/DAYCENT nitrification of Parton et al. (1996, 2001) as documented in the CLM4.5 Technical Note (Oleson et al. 2013) Eq. 16.11 (first-order in NH4 with the decomposition temperature and moisture modifiers, no hard temperature limits) nor in the DNDC95 reference code. The former reference "High temperature inhibition" was a placeholder. Role: heat limit of f_T.'
+  pedosphere.nitrification.extreme_temperature_factor:
+    value: 0.001
+    default: 0.001
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0001
+    - 0.01
+    category: biological_parameter
+    description: 'Multiplier of the nitrification temperature factor f_T outside [temperature_minimum, temperature_maximum].'
+    references:
+    - RELIC convention value (temperature factor multiplier outside the limits; no literature value)
+    tags:
+    - temperature
+    - stress
+    - extreme
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-27T00:00:00Z'
+      notes: 'Round 53.2 check: no source found in the Century/DAYCENT nitrification of Parton et al. (1996, 2001) as documented in the CLM4.5 Technical Note (Oleson et al. 2013) Eq. 16.11 (first-order in NH4 with the decomposition temperature and moisture modifiers, no hard temperature limits) nor in the DNDC95 reference code. The former reference "Temperature stress response" was a placeholder. Role: near-zero activity outside the temperature limits.'
+  pedosphere.nitrification.ph_minimum_factor:
+    value: 0.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.01
+    - 0.3
+    category: biological_parameter
+    description: 'Floor of the nitrification pH response factor f_pH = clip(exp(-0.5 ((pH - pH_opt)/w_pH)^2), ph_minimum_factor, 1).'
+    references:
+    - RELIC convention value (pH response factor floor; no literature value)
+    tags:
+    - ph
+    - minimum
+    - inhibition
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-27T00:00:00Z'
+      notes: 'Round 53.2 check: no source found in the Century/DAYCENT nitrification of Parton et al. (1996, 2001) as documented in the CLM4.5 Technical Note (Oleson et al. 2013) Eq. 16.11 (first-order in NH4 with the decomposition temperature and moisture modifiers, no hard temperature limits) nor in the DNDC95 reference code. The former reference "pH inhibition" was a placeholder. Role: floor of the Gaussian pH response.'
+  pedosphere.nitrification.minimum_oxygen_factor:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.01
+    - 0.3
+    category: biological_parameter
+    description: 'Floor of the dimensionless nitrification oxygen response factor, f_O2 = max((1 - WFPS)/(1 - WFPS_opt), f_O2_min) above WFPS_opt = pedosphere.physical.wfps_nitrification_optimum; with the default 0.1 and 0.6 it binds only for WFPS > 0.96.'
+    references:
+    - RELIC convention value (oxygen response factor floor; no literature value)
+    tags:
+    - oxygen
+    - minimum
+    - waterlogging
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-27T00:00:00Z'
+      notes: 'Round 52.3 check: no source found in the Century/DAYCENT nitrification of Parton et al. (1996, 2001) as documented in the CLM4.5 Technical Note (Oleson et al. 2013) Eq. 16.11, which uses the decomposition temperature and moisture modifiers, nor in the DNDC95 reference code. The former reference "Severe waterlogging" was a placeholder. Round 53.1: the response is driven by water-filled pore space.'
+  pedosphere.nitrification.n2o_factor:
+    value: 0.02
+    default: 0.02
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.005
+    - 0.05
+    category: biological_parameter
+    description: Fraction of nitrified N converted to N2O
+    references:
+    - Bouwman et al. (2002)
+    - IPCC emission factors
+    tags:
+    - n2o
+    - production
+    - emission_factor
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: IPCC emission factors
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.nitrification.min_rate_threshold:
+    value: 0.001
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - .inf
+    category: numerical_parameter
+    description: 'Lower bound of the nitrification temperature factor f_T = clip(Q10^((T - T_ref)/10) * f_extreme, lower, upper). With the default parameters it binds only below temperature_minimum (273.15 K), where it holds f_T at 0.001. A floor of the temperature response factor cannot be negative; its upper limit is max_rate_factor, a relation between parameters that bounds cannot express, so the upper bound is open (inf).'
+    references:
+    - RELIC convention value (temperature factor lower bound; no literature value)
+    tags:
+    - rate
+    - minimum
+    - precision
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-27T00:00:00Z'
+      notes: 'Round 52.3 check: no source found in the Century/DAYCENT nitrification of Parton et al. (1996, 2001) as
+        documented in the CLM4.5 Technical Note (Oleson et al. 2013) Eq. 16.11, which uses the
+        decomposition temperature and moisture modifiers, nor in the DNDC95 reference code. With Q10 =
+        2.0, T_ref = 293.15 K and the 273.15-323.15 K range, f_T spans 0.25 to 8 inside the range,
+        so this bound is inactive there; below 273.15 K the raw factor 0.001 * 2^((T - 293.15)/10)
+        < 0.00025 is raised to 0.001. The former reference "Numerical precision" was a placeholder.'
+  pedosphere.nitrification.max_rate_factor:
+    value: 10.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 100.0
+    category: numerical_parameter
+    description: 'Upper bound of the nitrification temperature factor f_T. With the default
+      parameters it never binds (f_T <= 8 at 323.15 K, and 0.001 times the Q10 term above it), so it
+      is a protective bound; it binds inside the range only when Q10^((T_max - T_ref)/10) > 10, for
+      example Q10 = 2.5 above about 318.3 K.'
+    references:
+    - RELIC convention value (temperature factor upper bound; no literature value)
+    tags:
+    - rate
+    - maximum
+    - stability
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-27T00:00:00Z'
+      notes: 'Round 52.3 check: no source found in the Century/DAYCENT nitrification of Parton et al. (1996, 2001) as
+        documented in the CLM4.5 Technical Note (Oleson et al. 2013) Eq. 16.11, which uses the
+        decomposition temperature and moisture modifiers, nor in the DNDC95 reference code. The former
+        reference "Stability control" was a placeholder.'

@@ -1,0 +1,40 @@
+variable: gpp
+title: "Gross Primary Productivity (Molar Short Name)"
+description: "Gross primary productivity under the short name gpp: gross CO2 uptake per unit area in molar units, umol m-2 s-1, the unit of the SSOT scale catalog entry coupling.scales.defaults.variables.gpp that SSOTCatalog merges with this contract (a different unit string raises a contradiction). The hierarchical model declares the same quantity in carbon mass under the canonical name gross_primary_productivity (relic/models/individual.py EXPOSED_VARIABLES, kg C m-2 s-1); the two names convert only through UnitConverter carbon_flux (umol m-2 s-1 <-> kg C m-2 s-1 with the SSOT carbon molar mass), so each name keeps one unit. Non-negative gross uptake. No relic Functor or validation check reads or writes gpp: the canonical GPP flux is gross_primary_productivity [kg C m-2 s-1] written by farquhar_photosynthesis or simple_photosynthesis; the former reader, a NPP = GPP - R_a check on the water_carbon coupling outputs, was removed because that coupling emits no carbon fluxes."
+kind: flux
+dimension:
+  # umol m-2 s-1 is the unit of the SSOT scale catalog entry
+  # (coupling/scale_variables.yaml gpp); the carbon-mass form of the same
+  # quantity is gross_primary_productivity [kg C m-2 s-1].
+  udunits: "umol m-2 s-1"
+  cf_standard_name: null
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Farquhar, G.D., von Caemmerer, S. and Berry, J.A. (1980). A biochemical model of photosynthetic CO2 assimilation in leaves of C3 species. Planta 149, 78-90"
+  - "Chapin, F.S., Matson, P.A. and Vitousek, P.M. (2011). Principles of Terrestrial Ecosystem Ecology, 2nd ed., Springer"
+numerics:
+  # Sign convention: gross uptake magnitude, gpp >= 0 (carbon entering the
+  # ecosystem); no upper limit is declared.
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies: []
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/parameters/database/relic/coupling/scale_variables.yaml"
+  runtime_role: "external_gross_primary_productivity_short_name"
+  runtime_writer: null
+  note: "No RELIC Functor reads or writes gpp. The cross-domain water_carbon check that read it (NPP = GPP - R_a) was removed: WaterCarbonCoupling outputs only dimensionless modifiers (relic/coupling/internal/water_carbon.py:317-320), and autotrophic_respiration publishes the identity as diagnostics.autotrophic_respiration.carbon_balance_residual (relic/scientific/biosphere/respiration/autotrophic_respiration.py:256 computed, :292-293 published). Unit declarations of gpp: SSOT scale catalog umol m-2 s-1, leaf-level molar alias (relic/parameters/database/relic/coupling/scale_variables.yaml:621-627), and this contract; the former third declaration atmosphere.state_defaults.gpp (umol CO2 m-2 s-1, no reader) was removed. The hierarchical model builder (relic/coupling/scales/hierarchical/model_builder.py:346-353) reads the leaf-level GPP of relic/models/individual.py as gross_primary_productivity [kg C m-2 s-1]. The canonical flux gross_primary_productivity [kg C m-2 s-1] is read by WaterCarbonCoupling (relic/coupling/internal/water_carbon.py:312-316), which outputs neither npp nor autotrophic_respiration (:317-320)."

@@ -1,0 +1,44 @@
+variable: vapor_pressure_deficit
+title: "Atmospheric Vapor Pressure Deficit"
+description: "Atmospheric vapour pressure deficit D = e_s(T_a) - e_a [Pa], written by environmental_forcing from air_temperature and relative_humidity and read in Pa by Farquhar photosynthesis, Penman-Monteith evapotranspiration and the water-carbon coupling. The one RELIC variable of CF water_vapor_saturation_deficit_in_air (canonical units Pa)."
+kind: forcing
+dimension:
+  # CF Standard Name Table v94: water_vapor_saturation_deficit_in_air, the
+  # saturation minus the actual water vapour partial pressure, canonical Pa.
+  udunits: "Pa"
+  cf_standard_name: "water_vapor_saturation_deficit_in_air"
+support:
+  spatial_kind: grid_cell
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: "environmental_forcing"
+aliases: []
+incrementable: false
+accumulates: null
+numerics:
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "environmental_forcing"
+      module: "relic.scientific.atmosphere.environmental_forcing"
+      provides: ["vapor_pressure_deficit"]
+      unit: "Pa"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/atmosphere/environmental_forcing.py"
+  runtime_role: "derived_atmospheric_forcing"
+  runtime_writer: "environmental_forcing"

@@ -1,0 +1,188 @@
+certificate_version: '1.0'
+process_id: relic.scientific.anthroposphere.management.fertilization.FertilizationManagement
+module_name: fertilization_management
+canonical_role: port
+iphs_level: 2
+iphs_level_evidence:
+  classification: IPHS-wrapped managed matter boundary certificate
+  compatible_basis: Typed nitrogen and phosphorus flow cochains are connected through explicit input ports
+  runtime_replacement: Production forward uses one canonical managed-application boundary calculation; strict IPHS runtime replacement is not claimed
+  canonical_operator: G_h u_h managed matter port route
+  level_2_limit: No Hamiltonian, thermodynamic effort, dissipative operator, reaction stoichiometry, or GENERIC degeneracy evidence is claimed
+theory_document: docs\source\theory\anthroposphere_management_fertilization.md
+theory_document_status: updated
+legacy_formula: The retired runtime mixed fertilizer application with urea hydrolysis, nitrification, denitrification, volatilization, and direct N2O formulas.
+literature_formula: Delta M_q equals the sum over scheduled product mass times elemental mass fraction times exact timestep overlap divided by event duration, where q is N or P.
+iphs_formula: y_h = G_h u_h for declared nitrogen and phosphorus managed-boundary ports.
+legacy_expression: Retired process-law branches advanced fertilizer pools and atmospheric losses inside the management module.
+iphs_expression: Delta M_q = sum_e A_e f_q,e omega_e / tau_e; F_q = Delta M_q / dt; Delta P_available = F_P dt.
+input_variables:
+- day_of_year
+output_variables:
+- fertilizer_n_flux
+- fertilizer_p_flux
+- available_phosphorus
+- diagnostics.fertilization.nitrogen_boundary_residual
+- diagnostics.fertilization.phosphorus_boundary_residual
+- diagnostics.fertilization.canonical_iphs_runtime
+parameter_keys:
+- anthroposphere.management.fertilization.spring_urea_product_mass
+- anthroposphere.management.fertilization.spring_day
+- anthroposphere.management.fertilization.side_dress_ammonium_nitrate_product_mass
+- anthroposphere.management.fertilization.side_dress_day
+- anthroposphere.management.fertilization.spring_superphosphate_product_mass
+- anthroposphere.management.fertilization.phosphorus_day
+- anthroposphere.management.fertilization.urea.n_content
+- anthroposphere.management.fertilization.ammonium_nitrate.n_content
+- anthroposphere.management.fertilization.ammonium_sulfate.n_content
+- anthroposphere.management.fertilization.superphosphate.p2o5_mass_fraction
+composition_ports:
+- fertilization_nitrogen_input_port
+- fertilization_phosphorus_input_port
+references:
+- FAO (2000). Fertilizers and Their Use, 4th edition.
+- E3SM Project. ELM Flow of Agriculture Nitrogen design documentation.
+- CLM and CTSM history fields FERT_TO_SMINN and NFERTILIZATION.
+- BIPM (2019). SI Brochure, 9th edition.
+- IUPAC standard atomic weights.
+baseline_tests:
+- test\anthroposphere\management\test_fertilization_l1.py
+- test\anthroposphere\management\fertilization_phase8.test.py
+- test\scientific\anthroposphere\management\fertilization_reference_trajectory.test.py
+validation_tests:
+- test\anthroposphere\management\test_fertilization_l1.py
+- test\anthroposphere\management\fertilization_phase8.test.py
+- test\scientific\anthroposphere\management\fertilization_reference_trajectory.test.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  fertilization_nitrogen_boundary_flow: managed elemental nitrogen flow cochain [kg N m^-2 s^-1]
+  fertilization_phosphorus_boundary_flow: managed elemental phosphorus flow cochain [g P m^-2 s^-1]
+  available_phosphorus: integrated elemental phosphorus increment [g P m^-2]
+  diagnostics.fertilization.nitrogen_boundary_residual: scheduled nitrogen mass minus routed nitrogen mass [kg N m^-2]
+  diagnostics.fertilization.phosphorus_boundary_residual: scheduled phosphorus mass minus routed phosphorus mass [g P m^-2]
+  diagnostics.fertilization.canonical_iphs_runtime: canonical boundary runtime observation [1]
+parameter_map:
+  anthroposphere.management.fertilization.spring_urea_product_mass: spring urea product mass per ground area [kg product m^-2 event^-1]
+  anthroposphere.management.fertilization.spring_day: spring application day of year [day]
+  anthroposphere.management.fertilization.side_dress_ammonium_nitrate_product_mass: side-dress ammonium nitrate product mass [kg product m^-2 event^-1]
+  anthroposphere.management.fertilization.side_dress_day: side-dress application day of year [day]
+  anthroposphere.management.fertilization.spring_superphosphate_product_mass: spring superphosphate product mass [kg product m^-2 event^-1]
+  anthroposphere.management.fertilization.phosphorus_day: phosphorus application day of year [day]
+  anthroposphere.management.fertilization.urea.n_content: elemental nitrogen mass fraction of urea [kg N kg^-1 product]
+  anthroposphere.management.fertilization.ammonium_nitrate.n_content: elemental nitrogen mass fraction of ammonium nitrate [kg N kg^-1 product]
+  anthroposphere.management.fertilization.ammonium_sulfate.n_content: elemental nitrogen mass fraction of ammonium sulfate [kg N kg^-1 product]
+  anthroposphere.management.fertilization.superphosphate.p2o5_mass_fraction: P2O5-equivalent mass fraction of superphosphate [kg P2O5 kg^-1 product]
+operator_map:
+  G_N: managed nitrogen input incidence from scheduled product mass to the nitrogen boundary flow
+  G_P: managed phosphorus input incidence from scheduled product mass to the phosphorus boundary flow
+  J_h: not declared because management application is not a reversible internal process
+  M_h: not declared because management application is not a dissipative internal process
+  N_h: not declared because nutrient transformations are owned by pedosphere reaction Functors
+state_advancement_map:
+  potential_basis: No storage potential is claimed; the module maps an external managed event to typed boundary flows.
+  effort_variable: Scheduled product mass and composition define the managed boundary input.
+  state_advancer: y_h = G_h u_h through the declared nitrogen and phosphorus managed-matter ports.
+  runtime_usage: FertilizationManagement.forward computes exact event overlap, elemental boundary mass, boundary flux, and the phosphorus StateManager increment once.
+unit_map:
+  fertilizer_n_flux: kg N m-2 s-1
+  fertilizer_p_flux: g P m-2 s-1
+  available_phosphorus: g P m-2
+  diagnostics.fertilization.nitrogen_boundary_residual: kg N m-2
+  diagnostics.fertilization.phosphorus_boundary_residual: g P m-2
+  diagnostics.fertilization.canonical_iphs_runtime: '1'
+input_output_map:
+  day_of_year: selects scheduled event overlap without introducing a process-law fallback
+  fertilizer_n_flux: elemental nitrogen boundary flux routed to the nitrogen cycling consumer
+  fertilizer_p_flux: elemental phosphorus boundary flux associated with the available phosphorus transaction
+  available_phosphorus: timestep-integrated phosphorus increment routed through StateManager
+  diagnostics.fertilization.nitrogen_boundary_residual: exact nitrogen boundary closure observation
+  diagnostics.fertilization.phosphorus_boundary_residual: exact phosphorus boundary closure observation
+  diagnostics.fertilization.canonical_iphs_runtime: canonical boundary-path observation
+interface_map:
+  forward_signature: forward(self, state, time, dt, **kwargs)
+  bridge_class: TransportMechanismFunctor
+  abstraction_contract: TransportMechanism
+  state_write_mode: UpdateItem values are returned through the existing FunctorBase and StateManager path
+  legacy_inputs:
+  - day_of_year
+  iphs_inputs:
+  - day_of_year
+  legacy_outputs:
+  - fertilizer_n_flux
+  - fertilizer_p_flux
+  - available_phosphorus
+  - diagnostics.fertilization.nitrogen_boundary_residual
+  - diagnostics.fertilization.phosphorus_boundary_residual
+  - diagnostics.fertilization.canonical_iphs_runtime
+  iphs_outputs:
+  - fertilizer_n_flux
+  - fertilizer_p_flux
+  - available_phosphorus
+  - diagnostics.fertilization.nitrogen_boundary_residual
+  - diagnostics.fertilization.phosphorus_boundary_residual
+  - diagnostics.fertilization.canonical_iphs_runtime
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: Product mass, nutrient composition, exact event overlap, and unit conversion define the sole boundary calculation.
+  no_legacy_mode: No selectable legacy reaction, loss, or alternate fertilizer formula remains callable.
+parameter_management_map:
+  anthroposphere.management.fertilization.spring_urea_product_mass:
+    source: ParameterManager YAML
+  anthroposphere.management.fertilization.spring_day:
+    source: ParameterManager YAML
+  anthroposphere.management.fertilization.side_dress_ammonium_nitrate_product_mass:
+    source: ParameterManager YAML
+  anthroposphere.management.fertilization.side_dress_day:
+    source: ParameterManager YAML
+  anthroposphere.management.fertilization.spring_superphosphate_product_mass:
+    source: ParameterManager YAML
+  anthroposphere.management.fertilization.phosphorus_day:
+    source: ParameterManager YAML
+  anthroposphere.management.fertilization.urea.n_content:
+    source: ParameterManager YAML
+  anthroposphere.management.fertilization.ammonium_nitrate.n_content:
+    source: ParameterManager YAML
+  anthroposphere.management.fertilization.ammonium_sulfate.n_content:
+    source: ParameterManager YAML
+  anthroposphere.management.fertilization.superphosphate.p2o5_mass_fraction:
+    source: ParameterManager YAML
+  relic.physical.constants.time.seconds_per_day:
+    source: physical constants SSOT via get_physical_constant
+  relic.physical.constants.time.seconds_per_year:
+    source: physical constants SSOT via get_physical_constant
+  relic.physical.constants.conversions.kg_to_g:
+    source: physical constants SSOT via get_physical_constant
+  relic.physical.constants.molecular_weights.phosphorus:
+    source: physical constants SSOT via get_physical_constant
+  relic.physical.constants.molecular_weights.o2:
+    source: physical constants SSOT via get_physical_constant
+composition_management_map:
+  functor_metadata: FunctorMetadata declares the managed matter boundary interfaces, conservation quantities, and coupling target.
+  structural_protocol: declared_forms and ports provide typed nitrogen and phosphorus boundary cochains without a duplicate runtime.
+  state_contract: Existing StateManager consumes explicit REPLACE boundary flows and one ACCUMULATE phosphorus increment.
+  ports:
+  - fertilization_nitrogen_input_port
+  - fertilization_phosphorus_input_port
+dependency_interconnection_map:
+  dependencies: day_of_year is supplied through the declared state or scheduler time coordinate
+  direct_functor_calls: none; forward reads day_of_year and schedule state, calls only local event-scheduler helpers, and routes elemental N and P through declared StateManager ports
+  chain_maps:
+  - fertilizer_n_flux enters the existing nitrogen cycling management-input port
+  - fertilizer_p_flux and available_phosphorus form one phosphorus boundary transaction
+overflow_routing_map:
+  unsupported_products: products without complete elemental composition routes fail fast
+  atmospheric_losses: owned by downstream pedosphere reaction and transport Functors, not this boundary mapper
+  diagnostic_residuals: exact nitrogen and phosphorus boundary residuals are returned as observations
+  discarded_residuals: invalid schedules or incomplete product composition are rejected before commit, while nitrogen_boundary_residual and phosphorus_boundary_residual are returned explicitly
+conservation_map:
+  conserved_quantities: elemental nitrogen and elemental phosphorus across each managed boundary event
+  nitrogen_balance_expression: Delta M_N_scheduled - fertilizer_n_flux * dt = residual_N
+  phosphorus_balance_expression: Delta M_P_scheduled - fertilizer_p_flux * dt = residual_P
+  phosphorus_state_expression: Delta available_phosphorus = fertilizer_p_flux * dt
+  open_system_route: managed_application port from anthroposphere to pedosphere
+entropy_audit:
+  applicability: Not applicable to an externally prescribed managed matter input map.
+  strict_claim: No dissipative operator, entropy production, Hamiltonian, or GENERIC degeneracy claim is made.
+equivalence_type: port_equivalent

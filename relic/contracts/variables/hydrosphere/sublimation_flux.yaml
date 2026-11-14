@@ -1,0 +1,44 @@
+variable: sublimation_flux
+title: "Snow Sublimation Mass Flux"
+description: "Sublimation mass flux from the surface snowpack to the atmosphere in kg m-2 s-1, positive out of the snowpack: the water-vapour flux of the surface energy balance evaluated with the latent heat of sublimation (Noah-MP technical description Eq. 2-21). Required by snow_pack, which removes it from snow_water_equivalent after melt, capped at the remaining water equivalent (the excess is reported as a capacity residual). No relic Functor writes it: it is an externally supplied boundary flux. CF v94 surface_snow_sublimation_flux (kg m-2 s-1)."
+kind: flux
+dimension:
+  udunits: "kg m-2 s-1"
+  cf_standard_name: "surface_snow_sublimation_flux"
+support:
+  spatial_kind: grid_cell
+  area_basis: ground_area
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Anderson, E.A. (1976). A point energy and mass balance model of a snow cover. NOAA Technical Report NWS 19"
+  - "Yang, Z.-L. et al. (2011). The Community Noah Land Surface Model with Multi-Parameterization Options (Noah-MP): Technical Description. University of Texas at Austin, Eq. 2-21 (latent heat of sublimation below freezing)"
+  - "CF Standard Name Table v94: surface_snow_sublimation_flux (kg m-2 s-1)"
+numerics:
+  # Positive out of the snowpack (solid to vapour); the reader declares no sign check.
+  lower_bound: null
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies: []
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/hydrosphere/snow/snowpack.py"
+  runtime_role: "snow_sublimation_boundary_flux"
+  runtime_writer: null
+  note: "Reader: SnowPack (metadata input_variables; a missing value raises ValueError, no state default; converted kg m-2 s-1 -> mm s-1 by the UnitConverter; port unit kg m-2 s-1, direction out_of_snowpack_positive; capped at the SWE left after melt with the excess routed to the capacity residual). No RELIC Functor writes sublimation_flux."

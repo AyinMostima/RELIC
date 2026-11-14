@@ -1,0 +1,125 @@
+﻿{
+  "certificate_version": "1.0",
+  "process_id": "relic.scientific.biosphere.bvoc.synthesis.sesquiterpene.SesquiterpeneStressModel",
+  "module_name": "SesquiterpeneStressModel",
+  "canonical_role": "observation",
+  "iphs_level": 1,
+  "iphs_level_evidence": {
+    "classification": "IPHS-compatible diagnostic or observation certificate",
+    "compatible_basis": "Read-only observation or diagnostic contract with declared interface and no state ownership"
+  },
+  "theory_document": "docs\\source\\theory\\bvoc_emissions.md",
+  "theory_document_status": "updated",
+  "legacy_formula": "stress_response_factor = min(max(1 + max(S - S_th, 0) * A, 1), 1 + A); S = stress_level [1], one aggregated stress driver; S_th = biosphere.bvoc.sesquiterpene.stress_threshold [1]; A = biosphere.bvoc.sesquiterpene.stress_amplification [1]; algebraic in S, independent of dt, no recovery state",
+  "literature_formula": "f = min(max(1 + max(S - S_th, 0) * A, 1), 1 + A): RELIC reduced threshold-linear calibration of the stress dose-response documented in docs/source/theory/bvoc_emissions.md; per-stress weights and a recovery state are not part of the executed law",
+  "iphs_formula": "y_h = O_h x_h through the declared observation operator",
+  "legacy_expression": "stress_response_factor = min(max(1 + max(S - S_th, 0) * A, 1), 1 + A); S = stress_level [1], one aggregated stress driver; S_th = biosphere.bvoc.sesquiterpene.stress_threshold [1]; A = biosphere.bvoc.sesquiterpene.stress_amplification [1]; algebraic in S, independent of dt, no recovery state",
+  "iphs_expression": "y_h = O_h x_h through the declared observation operator",
+  "input_variables": [
+    "stress_level"
+  ],
+  "output_variables": [
+    "stress_response_factor"
+  ],
+  "parameter_keys": [
+    "biosphere.bvoc.sesquiterpene.stress_threshold",
+    "biosphere.bvoc.sesquiterpene.stress_amplification"
+  ],
+  "composition_ports": [
+    "phase8_runtime_port"
+  ],
+  "references": [
+    "Copolovici et al. (2012). Journal of Plant Physiology 169:664-672",
+    "Loreto & Schnitzler (2010). Trends in Plant Science 15:154-166",
+    "Niinemets et al. (2013). Frontiers in Plant Science 4:262"
+  ],
+  "baseline_tests": [
+    "test\\audit\\phase8_scientific_inventory.test.py",
+    "test\\unit\\biosphere\\bvoc\\test_sesquiterpene_synthesis_l1.py"
+  ],
+  "validation_tests": [
+    "test\\audit\\phase8_scientific_inventory.test.py",
+    "test\\unit\\biosphere\\bvoc\\test_sesquiterpene_synthesis_l1.py"
+  ],
+  "state_map": {
+    "stress_level": "stress_level mapped to canonical Phase 8 cochain basis"
+  },
+  "parameter_map": {
+    "biosphere.bvoc.sesquiterpene.stress_threshold": "Stress level above which sesquiterpene emission is amplified [dimensionless]",
+    "biosphere.bvoc.sesquiterpene.stress_amplification": "Amplification slope of the threshold-linear stress response [dimensionless]"
+  },
+  "operator_map": {
+    "O_h": "declared observation map",
+    "H_h": "diagnostic metric or identity Hodge map"
+  },
+  "unit_map": {
+    "stress_response_factor": "1"
+  },
+  "input_output_map": {
+    "stress_level": "same interface variable preserved between legacy and IPHS runtime contracts",
+    "stress_response_factor": "same interface variable preserved between legacy and IPHS runtime contracts"
+  },
+  "interface_map": {
+    "forward_signature": "forward(self, state, time, dt)",
+    "forward_contract": "scientific inputs come only from state (the forward takes no environment argument) and outputs are dictionary-only, while compatibility kwargs and alternate return types are not exposed",
+    "bridge_class": "BiologicalProcess",
+    "abstraction_contract": "BiologicalProcess",
+    "state_write_mode": "one UpdateItem(mode=REPLACE, unit=1, per_timestep=False) committed through the existing StateManager update path; the algebraic factor is never accumulated",
+    "legacy_inputs": [
+      "stress_level"
+    ],
+    "iphs_inputs": [
+      "stress_level"
+    ],
+    "legacy_outputs": [
+      "stress_response_factor"
+    ],
+    "iphs_outputs": [
+      "stress_response_factor"
+    ]
+  },
+  "runtime_replacement_map": {
+    "legacy_removed": false,
+    "runtime_uses_iphs": false,
+    "replacement_entrypoint": "forward",
+    "preserved_numerics": "Existing ParameterManager-backed calculations define canonical IPHS operator coefficients, rates, ports, or observations.",
+    "no_legacy_mode": "Scientific inputs come only from the state dictionary (no environment argument exists) and outputs are dictionary-only, while compatibility_mode and alternate scalar/tensor paths are absent."
+  },
+  "state_advancement_map": {
+    "potential_basis": "declared RELIC state, port, or observation cochain basis",
+    "effort_variable": "ParameterManager-backed thermodynamic effort, driver, or diagnostic input used by the module",
+    "state_advancer": "y_h = O_h x_h through the declared observation operator",
+    "runtime_usage": "SesquiterpeneStressModel.forward reads stress_level only from the declared state dictionary and returns the canonical stress_response_factor dictionary through the production output path."
+  },
+  "parameter_management_map": {
+    "biosphere.bvoc.sesquiterpene.stress_threshold": {
+      "source": "ParameterManager YAML"
+    },
+    "biosphere.bvoc.sesquiterpene.stress_amplification": {
+      "source": "ParameterManager YAML"
+    }
+  },
+  "composition_management_map": {
+    "functor_metadata": "existing FunctorMetadata declares interfaces, execution phase, and conservation semantics",
+    "state_contract": "existing simulator state update path is preserved",
+    "validation_rule": "phase8 scientific inventory and equivalence certificate checks"
+  },
+  "dependency_interconnection_map": {
+    "dependencies": "declared through existing metadata or no external dependency",
+    "direct_functor_calls": "none declared by certificate"
+  },
+  "overflow_routing_map": {
+    "diagnostic_residuals": "existing diagnostics and conservation checks route clipping or residual terms",
+    "discarded_residuals": "this observation advances no material or energy reservoir; thresholding and the configured upper bound define the complete stress_response_factor output, so no conservation residual is generated"
+  },
+  "conservation_map": {
+    "conserved_quantities": "none; the stress factor is a dimensionless algebraic multiplier and advances no carbon, water or energy reservoir (metadata conservation_laws is empty; the emission carbon boundary belongs to the synthesis Functors)",
+    "balance_expression": "not applicable: f = min(max(1 + max(S - S_th, 0) * A, 1), 1 + A) is algebraic in stress_level and independent of dt"
+  },
+  "entropy_audit": {
+    "operator_sign": "rates, mobilities, or diagnostic maps are non-negative or checked by existing validation hooks where physically required",
+    "sigma_expression": "canonical entropy production is non-negative for dissipative subexpressions"
+  },
+  "equivalence_type": "diagnostic"
+}
+

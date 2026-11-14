@@ -1,0 +1,60 @@
+variable: snowfall
+title: "Snowfall Mass Flux"
+description: "Solid precipitation (snowfall) mass flux reaching the land surface after the snow_pack rain/snow phase partition of precipitation_flux: P_snow = P * f_snow, f_snow = 1 when air_temperature <= rain_snow_temperature_threshold and 0 otherwise (Anderson 1976). It enters the snow_water_equivalent storage of snow_pack in the same step (snowpack accumulation port); snow_albedo reads it as the fresh-snow reset trigger P_snow > snow_reset_threshold. Non-negative magnitude, positive downward into the snowpack; CF v94 snowfall_flux (kg m-2 s-1)."
+kind: flux
+dimension:
+  udunits: "kg m-2 s-1"
+  cf_standard_name: "snowfall_flux"
+support:
+  spatial_kind: grid_cell
+  area_basis: ground_area
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+# No unique owner: snow_pack and the external adapters listed under writers are
+# alternative writers; registration admits one of them per configuration (the adapter
+# metadata declares ConflictResolutionPolicy.EXCLUSIVE).
+owner: null
+aliases: ["snowfall_flux"]
+incrementable: false
+accumulates: null
+references:
+  - "Anderson, E.A. (1976). A point energy and mass balance model of a snow cover. NOAA Technical Report NWS 19"
+  - "Dickinson, R.E. et al. (1993). Biosphere-Atmosphere Transfer Scheme (BATS) Version 1e. NCAR Technical Note NCAR/TN-387+STR"
+  - "CF Standard Name Table v94: snowfall_flux (kg m-2 s-1)"
+# Sign convention: non-negative downward magnitude. precipitation_flux is
+# bounded below by 0 and P_snow = P * f_snow with f_snow in {0, 1}.
+numerics:
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "snow_pack"
+      module: "relic.scientific.hydrosphere.snow.snowpack"
+      provides: ["snowfall"]
+      unit: "kg m-2 s-1"
+    - name: "CMIP6Adapter"
+      module: "relic.coupling.external.climate_models.cmip6_adapter"
+      provides: ["snowfall"]
+      unit: "kg m-2 s-1"
+flux_contract:
+  allowed_in:
+    - "snow_pack"
+    - "CMIP6Adapter"
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/hydrosphere/snow/snowpack.py"
+  runtime_role: "phase_partitioned_solid_precipitation_flux"
+  runtime_writer: "snow_pack"
+  note: "Written only by snow_pack as UpdateItem(REPLACE, per_timestep=False) in kg m-2 s-1 (snowpack.py:146 output_variables; :576 and :585 phase partition; :642 mm s-1 -> kg m-2 s-1; :672 update; accumulation port flow_var :457, into_system :461). The mass is added to snow_water_equivalent inside snow_pack (:619), so no other Functor receives it and allowed_out is empty. Read by snow_albedo in kg m-2 s-1 as the fresh-snow reset trigger only (albedo.py SnowAlbedo: metadata input_variables; forward compares it with hydrosphere.snow.snow_reset_threshold [kg m-2 s-1]). It is a required input: a missing value raises ValueError naming it and no state default is substituted (SnowAlbedo.forward)."
+  adapter_writers:
+    - "CMIP6Adapter"

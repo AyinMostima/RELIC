@@ -1,0 +1,50 @@
+variable: diagnostics.peclet_number
+title: "Maximum Cell Peclet Number"
+description: "Grid maximum of the local directional cell Peclet number Pe = max_i,k(|u_i,k| * dx_k / D_i) of the advection-diffusion step, the ratio of advective to diffusive transport across one grid cell (Patankar 1980; Hundsdorfer and Verwer 2003). Evaluated from the step input velocity, grid spacing and diffusivity. Dimensionless and non-negative because the velocity enters as |u| and the operator rejects negative diffusivity; undefined for zero diffusivity, so track_peclet=True with a zero diffusivity is rejected at construction (ValueError). Unsigned (no direction). Written only by advection_diffusion when constructed with track_peclet=True (default False), as a read-only step diagnostic that is partitioned out of the committed state; no relic Functor reads it."
+kind: diagnostic
+dimension:
+  udunits: "1"
+  cf_standard_name: null
+support:
+  spatial_kind: null
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: []
+owner: "advection_diffusion"
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Patankar, S.V. (1980). Numerical Heat Transfer and Fluid Flow, Hemisphere"
+  - "Hundsdorfer, W. & Verwer, J.G. (2003). Numerical Solution of Time-Dependent Advection-Diffusion-Reaction Equations, Springer"
+numerics:
+  # Pe >= 0: |u| * dx / D with dx > 0 and D > 0 (apply_diffusion rejects
+  # negative diffusivity; zero diffusivity leaves Pe undefined). No upper
+  # bound is declared: the transport.numerical.peclet_* thresholds are
+  # ParameterManager values that the writer does not enforce.
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "advection_diffusion"
+      module: "relic.scientific.transport.advection_diffusion"
+      provides: ["diagnostics.peclet_number"]
+      unit: "1"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/transport/advection_diffusion.py"
+  runtime_role: "advection_diffusion_cell_peclet_observation"
+  runtime_writer: "advection_diffusion"
+  note: "Scalar torch.max written as a raw diagnostics.* output only when track_peclet is True: advection_diffusion.py:110,161,166,237,660,860-868. Formula abs(u) * dx / D in _compute_max_peclet_number (relic/computation/operators/functional.py:2260-2331, 2325); zero diffusivity returns None (functional.py:2301-2302), which the writer excludes by rejecting track_peclet=True with D <= 0 in its constructor (advection_diffusion.py:238-254), so a None at run time is an operator omission and raises RuntimeError; called from advance_advection_diffusion (functional.py:3964,3978, documented [dimensionless] at 3676); negative diffusivity rejected by apply_diffusion (functional.py:1970-1971). Partitioned into the diagnostics channel by relic/core/state/types.py:162-173 and ingested per step by relic/core/simulator/execution_group.py:640-692 (ingest_module_diagnostics :688). No CF v94 standard name exists for a Peclet number."

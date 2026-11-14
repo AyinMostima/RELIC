@@ -1,0 +1,428 @@
+certificate_version: '1.0'
+process_id: relic.scientific.anthroposphere.emissions.species_mapping.SpeciesMapper
+module_name: species_mapping
+canonical_role: scale_coupling
+iphs_level: 3
+iphs_level_evidence:
+  classification: IPHS-structured scale coupling process certificate
+  compatible_basis: Process declares composition-safe IPHS or DEC structure
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: Typed chain-map or morphism composition operator
+  structural_contribution: Typed morphism or chain-map contribution is declared
+  assembly_participation: Certificate participates in Phase 8 inventory and GraphIR structural audit
+  level_3_limit: Typed form, Hodge, port, or related structure is declared, but no runtime-linked IPHSStructureSpec contribution and executable level 4 or 5 certificate binding is present.
+theory_document: docs\source\theory\anthroposphere_emissions_mapping.md
+theory_document_status: updated
+legacy_formula: Earlier runtime paths returned dynamic nested dictionaries and silently selected one sector profile.
+literature_formula: CMAQ/SMOKE-style emissions preprocessing applies sector-specific speciation before chemistry transport and keeps gas molar flux separate from aerosol mass flux.
+iphs_formula: F_gas,mol = star_MW_inv S_gas F_sector; F_aer,mass = S_aer F_sector.
+legacy_expression: Dynamic dictionary mapping with an implicit industry profile and mixed mass/molar payloads.
+iphs_expression: Fixed typed chain maps consume sector_emission_flux and emit separate gas-molar and aerosol-mass matter ports.
+input_variables:
+- sector_emission_flux
+output_variables:
+- mechanism_gas_molar_flux
+- mechanism_aerosol_mass_flux
+- diagnostics.species_mapping.total_input_mass_flux
+- diagnostics.species_mapping.total_output_mass_flux
+- diagnostics.species_mapping.inventory_equivalent_output_mass_flux
+- diagnostics.species_mapping.inventory_basis_adjustment_flux
+- diagnostics.species_mapping.relative_error
+- diagnostics.species_mapping.canonical_iphs_runtime
+parameter_keys:
+- anthroposphere.emissions.species_mapping.default_mechanism
+- anthroposphere.emissions.species_mapping.mass_balance_tolerance
+- anthroposphere.emissions.partition_factors.no_fraction
+- anthroposphere.emissions.molecular_weights.NO
+- anthroposphere.emissions.molecular_weights.NO2
+- anthroposphere.emissions.molecular_weights.NOx
+- relic.physical.constants.molecular_weights.co
+- anthroposphere.emissions.molecular_weights.SO2
+- anthroposphere.emissions.molecular_weights.NH3
+- anthroposphere.emissions.molecular_weights.PAR
+- anthroposphere.emissions.molecular_weights.OLE
+- anthroposphere.emissions.molecular_weights.TOL
+- anthroposphere.emissions.molecular_weights.XYL
+- relic.physical.constants.molecular_weights.hcho
+- anthroposphere.emissions.molecular_weights.ALD2
+- anthroposphere.emissions.speciation.voc_split_fractions.power_plant.PAR
+- anthroposphere.emissions.speciation.voc_split_fractions.power_plant.OLE
+- anthroposphere.emissions.speciation.voc_split_fractions.power_plant.TOL
+- anthroposphere.emissions.speciation.voc_split_fractions.power_plant.XYL
+- anthroposphere.emissions.speciation.voc_split_fractions.power_plant.FORM
+- anthroposphere.emissions.speciation.voc_split_fractions.power_plant.ALD2
+- anthroposphere.emissions.speciation.voc_split_fractions.transport.PAR
+- anthroposphere.emissions.speciation.voc_split_fractions.transport.OLE
+- anthroposphere.emissions.speciation.voc_split_fractions.transport.TOL
+- anthroposphere.emissions.speciation.voc_split_fractions.transport.XYL
+- anthroposphere.emissions.speciation.voc_split_fractions.transport.FORM
+- anthroposphere.emissions.speciation.voc_split_fractions.transport.ALD2
+- anthroposphere.emissions.speciation.voc_split_fractions.industrial.PAR
+- anthroposphere.emissions.speciation.voc_split_fractions.industrial.OLE
+- anthroposphere.emissions.speciation.voc_split_fractions.industrial.TOL
+- anthroposphere.emissions.speciation.voc_split_fractions.industrial.XYL
+- anthroposphere.emissions.speciation.voc_split_fractions.industrial.FORM
+- anthroposphere.emissions.speciation.voc_split_fractions.industrial.ALD2
+- anthroposphere.emissions.speciation.voc_split_fractions.residential.PAR
+- anthroposphere.emissions.speciation.voc_split_fractions.residential.OLE
+- anthroposphere.emissions.speciation.voc_split_fractions.residential.TOL
+- anthroposphere.emissions.speciation.voc_split_fractions.residential.XYL
+- anthroposphere.emissions.speciation.voc_split_fractions.residential.FORM
+- anthroposphere.emissions.speciation.voc_split_fractions.residential.ALD2
+- anthroposphere.emissions.speciation.voc_split_fractions.agriculture.PAR
+- anthroposphere.emissions.speciation.voc_split_fractions.agriculture.OLE
+- anthroposphere.emissions.speciation.voc_split_fractions.agriculture.TOL
+- anthroposphere.emissions.speciation.voc_split_fractions.agriculture.XYL
+- anthroposphere.emissions.speciation.voc_split_fractions.agriculture.FORM
+- anthroposphere.emissions.speciation.voc_split_fractions.agriculture.ALD2
+- anthroposphere.emissions.pm_composition.power.bc_fraction
+- anthroposphere.emissions.pm_composition.power.oc_fraction
+- anthroposphere.emissions.pm_composition.power.nitrate_fraction
+- anthroposphere.emissions.pm_composition.power.sulfate_fraction
+- anthroposphere.emissions.pm_composition.power.ammonium_fraction
+- anthroposphere.emissions.pm_composition.transport.bc_fraction
+- anthroposphere.emissions.pm_composition.transport.oc_fraction
+- anthroposphere.emissions.pm_composition.transport.nitrate_fraction
+- anthroposphere.emissions.pm_composition.transport.sulfate_fraction
+- anthroposphere.emissions.pm_composition.transport.ammonium_fraction
+- anthroposphere.emissions.pm_composition.industrial.bc_fraction
+- anthroposphere.emissions.pm_composition.industrial.oc_fraction
+- anthroposphere.emissions.pm_composition.industrial.nitrate_fraction
+- anthroposphere.emissions.pm_composition.industrial.sulfate_fraction
+- anthroposphere.emissions.pm_composition.industrial.ammonium_fraction
+- anthroposphere.emissions.pm_composition.residential.bc_fraction
+- anthroposphere.emissions.pm_composition.residential.oc_fraction
+- anthroposphere.emissions.pm_composition.residential.nitrate_fraction
+- anthroposphere.emissions.pm_composition.residential.sulfate_fraction
+- anthroposphere.emissions.pm_composition.residential.ammonium_fraction
+- anthroposphere.emissions.pm_composition.agriculture.bc_fraction
+- anthroposphere.emissions.pm_composition.agriculture.oc_fraction
+- anthroposphere.emissions.pm_composition.agriculture.nitrate_fraction
+- anthroposphere.emissions.pm_composition.agriculture.sulfate_fraction
+- anthroposphere.emissions.pm_composition.agriculture.ammonium_fraction
+composition_ports:
+- species_mapping_gas_molar_flux
+- species_mapping_aerosol_mass_flux
+references:
+- CMAQ User's Guide v5.3 (EPA, 2019).
+- Yarwood, G. et al. (2005). Updates to the CB05 chemical mechanism.
+- Kuenen, J. et al. (2014). TNO-MACC_II emission inventory.
+- Seinfeld, J.H. and Pandis, S.N. (2016). Atmospheric Chemistry and Physics.
+baseline_tests:
+- test\anthroposphere\emissions\test_species_mapping_l1.py::TestSpeciesMapperL1
+- test\anthroposphere\emissions\test_species_mapping_l1_improved.py::TestSpeciesMapperL1
+- test\anthroposphere\emissions\species_mapping_phase8.test.py
+- test\integration\anthroposphere\emissions\test_species_mapping_integration.py
+validation_tests:
+- test\anthroposphere\emissions\test_species_mapping_l1.py
+- test\anthroposphere\emissions\test_species_mapping_l1_improved.py
+- test\anthroposphere\emissions\species_mapping_phase8.test.py
+- test\integration\anthroposphere\emissions\test_species_mapping_integration.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  sector_emission_flux: fixed [power, transport, industry, buildings, agriculture] by [NOx, CO, SO2, VOC, NH3, PM25] mass-flux tensor [kg m-2 s-1]
+  mechanism_gas_molar_flux: fixed [NO, NO2, CO, SO2, NH3, PAR, OLE, TOL, XYL, FORM, ALD2] gas flux tensor [mol m-2 s-1]
+  mechanism_aerosol_mass_flux: fixed [BC, OC, NO3, SO4, NH4, OTHER] aerosol flux tensor [kg m-2 s-1]
+  diagnostics.species_mapping.total_input_mass_flux: total sector/species input mass flux [kg m-2 s-1]
+  diagnostics.species_mapping.total_output_mass_flux: reconstructed true gas plus aerosol output mass flux [kg m-2 s-1]
+  diagnostics.species_mapping.inventory_equivalent_output_mass_flux: output converted to the inventory NO2-equivalent basis [kg m-2 s-1]
+  diagnostics.species_mapping.inventory_basis_adjustment_flux: true output minus inventory-equivalent output [kg m-2 s-1]
+  diagnostics.species_mapping.relative_error: inventory-equivalent conservation residual [1]
+  diagnostics.species_mapping.canonical_iphs_runtime: marker for the single typed chain-map runtime [1]
+parameter_map:
+  anthroposphere.emissions.species_mapping.default_mechanism: Identifier of the default chemical mechanism [dimensionless]
+  anthroposphere.emissions.species_mapping.mass_balance_tolerance: Relative tolerance of the speciation mass balance [dimensionless]
+  anthroposphere.emissions.partition_factors.no_fraction: Fraction of NOx (NO2-equivalent mass) emitted as NO [dimensionless]
+  anthroposphere.emissions.molecular_weights.NO: Molecular weight of emitted NO [g mol-1]
+  anthroposphere.emissions.molecular_weights.NO2: Molecular weight of emitted NO2 [g mol-1]
+  anthroposphere.emissions.molecular_weights.NOx: Molecular weight of emitted NOx [g mol-1]
+  relic.physical.constants.molecular_weights.co: Molar mass of emitted CO from the physical-constant SSOT [g mol-1]
+  anthroposphere.emissions.molecular_weights.SO2: Molecular weight of emitted SO2 [g mol-1]
+  anthroposphere.emissions.molecular_weights.NH3: Molecular weight of emitted NH3 [g mol-1]
+  anthroposphere.emissions.molecular_weights.PAR: Molecular weight of emitted PAR [g mol-1]
+  anthroposphere.emissions.molecular_weights.OLE: Molecular weight of emitted OLE [g mol-1]
+  anthroposphere.emissions.molecular_weights.TOL: Molecular weight of emitted TOL [g mol-1]
+  anthroposphere.emissions.molecular_weights.XYL: Molecular weight of emitted XYL [g mol-1]
+  relic.physical.constants.molecular_weights.hcho: Molar mass of emitted FORM (formaldehyde) from the physical-constant SSOT [g mol-1]
+  anthroposphere.emissions.molecular_weights.ALD2: Molecular weight of emitted ALD2 [g mol-1]
+  anthroposphere.emissions.speciation.voc_split_fractions.power_plant.PAR: VOC split fraction of PAR in power_plant emissions [dimensionless]
+  anthroposphere.emissions.speciation.voc_split_fractions.power_plant.OLE: VOC split fraction of OLE in power_plant emissions [dimensionless]
+  anthroposphere.emissions.speciation.voc_split_fractions.power_plant.TOL: VOC split fraction of TOL in power_plant emissions [dimensionless]
+  anthroposphere.emissions.speciation.voc_split_fractions.power_plant.XYL: VOC split fraction of XYL in power_plant emissions [dimensionless]
+  anthroposphere.emissions.speciation.voc_split_fractions.power_plant.FORM: VOC split fraction of FORM in power_plant emissions [dimensionless]
+  anthroposphere.emissions.speciation.voc_split_fractions.power_plant.ALD2: VOC split fraction of ALD2 in power_plant emissions [dimensionless]
+  anthroposphere.emissions.speciation.voc_split_fractions.transport.PAR: VOC split fraction of PAR in transport emissions [dimensionless]
+  anthroposphere.emissions.speciation.voc_split_fractions.transport.OLE: VOC split fraction of OLE in transport emissions [dimensionless]
+  anthroposphere.emissions.speciation.voc_split_fractions.transport.TOL: VOC split fraction of TOL in transport emissions [dimensionless]
+  anthroposphere.emissions.speciation.voc_split_fractions.transport.XYL: VOC split fraction of XYL in transport emissions [dimensionless]
+  anthroposphere.emissions.speciation.voc_split_fractions.transport.FORM: VOC split fraction of FORM in transport emissions [dimensionless]
+  anthroposphere.emissions.speciation.voc_split_fractions.transport.ALD2: VOC split fraction of ALD2 in transport emissions [dimensionless]
+  anthroposphere.emissions.speciation.voc_split_fractions.industrial.PAR: VOC split fraction of PAR in industrial emissions [dimensionless]
+  anthroposphere.emissions.speciation.voc_split_fractions.industrial.OLE: VOC split fraction of OLE in industrial emissions [dimensionless]
+  anthroposphere.emissions.speciation.voc_split_fractions.industrial.TOL: VOC split fraction of TOL in industrial emissions [dimensionless]
+  anthroposphere.emissions.speciation.voc_split_fractions.industrial.XYL: VOC split fraction of XYL in industrial emissions [dimensionless]
+  anthroposphere.emissions.speciation.voc_split_fractions.industrial.FORM: VOC split fraction of FORM in industrial emissions [dimensionless]
+  anthroposphere.emissions.speciation.voc_split_fractions.industrial.ALD2: VOC split fraction of ALD2 in industrial emissions [dimensionless]
+  anthroposphere.emissions.speciation.voc_split_fractions.residential.PAR: VOC split fraction of PAR in residential emissions [dimensionless]
+  anthroposphere.emissions.speciation.voc_split_fractions.residential.OLE: VOC split fraction of OLE in residential emissions [dimensionless]
+  anthroposphere.emissions.speciation.voc_split_fractions.residential.TOL: VOC split fraction of TOL in residential emissions [dimensionless]
+  anthroposphere.emissions.speciation.voc_split_fractions.residential.XYL: VOC split fraction of XYL in residential emissions [dimensionless]
+  anthroposphere.emissions.speciation.voc_split_fractions.residential.FORM: VOC split fraction of FORM in residential emissions [dimensionless]
+  anthroposphere.emissions.speciation.voc_split_fractions.residential.ALD2: VOC split fraction of ALD2 in residential emissions [dimensionless]
+  anthroposphere.emissions.speciation.voc_split_fractions.agriculture.PAR: VOC split fraction of PAR in agriculture emissions [dimensionless]
+  anthroposphere.emissions.speciation.voc_split_fractions.agriculture.OLE: VOC split fraction of OLE in agriculture emissions [dimensionless]
+  anthroposphere.emissions.speciation.voc_split_fractions.agriculture.TOL: VOC split fraction of TOL in agriculture emissions [dimensionless]
+  anthroposphere.emissions.speciation.voc_split_fractions.agriculture.XYL: VOC split fraction of XYL in agriculture emissions [dimensionless]
+  anthroposphere.emissions.speciation.voc_split_fractions.agriculture.FORM: VOC split fraction of FORM in agriculture emissions [dimensionless]
+  anthroposphere.emissions.speciation.voc_split_fractions.agriculture.ALD2: VOC split fraction of ALD2 in agriculture emissions [dimensionless]
+  anthroposphere.emissions.pm_composition.power.bc_fraction: PM2.5 bc_fraction of power emissions [dimensionless]
+  anthroposphere.emissions.pm_composition.power.oc_fraction: PM2.5 oc_fraction of power emissions [dimensionless]
+  anthroposphere.emissions.pm_composition.power.nitrate_fraction: PM2.5 nitrate_fraction of power emissions [dimensionless]
+  anthroposphere.emissions.pm_composition.power.sulfate_fraction: PM2.5 sulfate_fraction of power emissions [dimensionless]
+  anthroposphere.emissions.pm_composition.power.ammonium_fraction: PM2.5 ammonium_fraction of power emissions [dimensionless]
+  anthroposphere.emissions.pm_composition.transport.bc_fraction: PM2.5 bc_fraction of transport emissions [dimensionless]
+  anthroposphere.emissions.pm_composition.transport.oc_fraction: PM2.5 oc_fraction of transport emissions [dimensionless]
+  anthroposphere.emissions.pm_composition.transport.nitrate_fraction: PM2.5 nitrate_fraction of transport emissions [dimensionless]
+  anthroposphere.emissions.pm_composition.transport.sulfate_fraction: PM2.5 sulfate_fraction of transport emissions [dimensionless]
+  anthroposphere.emissions.pm_composition.transport.ammonium_fraction: PM2.5 ammonium_fraction of transport emissions [dimensionless]
+  anthroposphere.emissions.pm_composition.industrial.bc_fraction: PM2.5 bc_fraction of industrial emissions [dimensionless]
+  anthroposphere.emissions.pm_composition.industrial.oc_fraction: PM2.5 oc_fraction of industrial emissions [dimensionless]
+  anthroposphere.emissions.pm_composition.industrial.nitrate_fraction: PM2.5 nitrate_fraction of industrial emissions [dimensionless]
+  anthroposphere.emissions.pm_composition.industrial.sulfate_fraction: PM2.5 sulfate_fraction of industrial emissions [dimensionless]
+  anthroposphere.emissions.pm_composition.industrial.ammonium_fraction: PM2.5 ammonium_fraction of industrial emissions [dimensionless]
+  anthroposphere.emissions.pm_composition.residential.bc_fraction: PM2.5 bc_fraction of residential emissions [dimensionless]
+  anthroposphere.emissions.pm_composition.residential.oc_fraction: PM2.5 oc_fraction of residential emissions [dimensionless]
+  anthroposphere.emissions.pm_composition.residential.nitrate_fraction: PM2.5 nitrate_fraction of residential emissions [dimensionless]
+  anthroposphere.emissions.pm_composition.residential.sulfate_fraction: PM2.5 sulfate_fraction of residential emissions [dimensionless]
+  anthroposphere.emissions.pm_composition.residential.ammonium_fraction: PM2.5 ammonium_fraction of residential emissions [dimensionless]
+  anthroposphere.emissions.pm_composition.agriculture.bc_fraction: PM2.5 bc_fraction of agriculture emissions [dimensionless]
+  anthroposphere.emissions.pm_composition.agriculture.oc_fraction: PM2.5 oc_fraction of agriculture emissions [dimensionless]
+  anthroposphere.emissions.pm_composition.agriculture.nitrate_fraction: PM2.5 nitrate_fraction of agriculture emissions [dimensionless]
+  anthroposphere.emissions.pm_composition.agriculture.sulfate_fraction: PM2.5 sulfate_fraction of agriculture emissions [dimensionless]
+  anthroposphere.emissions.pm_composition.agriculture.ammonium_fraction: PM2.5 ammonium_fraction of agriculture emissions [dimensionless]
+operator_map:
+  S_gas: forward applies sector-specific VOC and NOx split operators to fixed gas axes
+  S_aer: forward applies sector-specific PM composition to the fixed aerosol axis
+  star_MW_inv: build_hodge_contract positive molecular-weight inverse Hodge
+  O_h: numeric conservation and inventory-basis diagnostics returned by forward
+unit_map:
+  sector_emission_flux: kg m-2 s-1
+  mechanism_gas_molar_flux: mol m-2 s-1
+  mechanism_aerosol_mass_flux: kg m-2 s-1
+  diagnostics.species_mapping.total_input_mass_flux: kg m-2 s-1
+  diagnostics.species_mapping.total_output_mass_flux: kg m-2 s-1
+  diagnostics.species_mapping.inventory_equivalent_output_mass_flux: kg m-2 s-1
+  diagnostics.species_mapping.inventory_basis_adjustment_flux: kg m-2 s-1
+  diagnostics.species_mapping.relative_error: '1'
+  diagnostics.species_mapping.canonical_iphs_runtime: '1'
+input_output_map:
+  inventory_to_mechanism: sector_emission_flux is projected by fixed CB05 gas and aerosol maps
+  mass_to_molar: only the gas mass branch is converted by star_MW_inv
+  diagnostics: numeric tensors expose true mass, NO2-equivalent mass, basis adjustment, and relative residual
+interface_map:
+  forward_signature: forward(self, state, time, dt)
+  bridge_class: ScaleCouplingFunctor
+  abstraction_contract: ScaleCoupling
+  state_write_mode: physical ports are UpdateItem(REPLACE, per_timestep=False) values returned through the existing FunctorBase/StateManager path
+  legacy_inputs:
+  - sector_emission_flux
+  iphs_inputs:
+  - sector_emission_flux
+  legacy_outputs:
+  - mechanism_gas_molar_flux
+  - mechanism_aerosol_mass_flux
+  - diagnostics.species_mapping.total_input_mass_flux
+  - diagnostics.species_mapping.total_output_mass_flux
+  - diagnostics.species_mapping.inventory_equivalent_output_mass_flux
+  - diagnostics.species_mapping.inventory_basis_adjustment_flux
+  - diagnostics.species_mapping.relative_error
+  - diagnostics.species_mapping.canonical_iphs_runtime
+  iphs_outputs:
+  - mechanism_gas_molar_flux
+  - mechanism_aerosol_mass_flux
+  - diagnostics.species_mapping.total_input_mass_flux
+  - diagnostics.species_mapping.total_output_mass_flux
+  - diagnostics.species_mapping.inventory_equivalent_output_mass_flux
+  - diagnostics.species_mapping.inventory_basis_adjustment_flux
+  - diagnostics.species_mapping.relative_error
+  - diagnostics.species_mapping.canonical_iphs_runtime
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: ParameterManager-backed six-species VOC profiles, NOx nitrogen closure, and PM residual routing are evaluated by the only production chain-map path.
+  no_legacy_mode: No alternate legacy or simplified runtime mode is exposed.
+state_advancement_map:
+  potential_basis: sector-resolved inventory mass-flux cochain u_sector
+  effort_variable: fixed CB05 maps S_gas and S_aer plus molecular Hodge star_MW_inv
+  state_advancer: F_gas,mol = star_MW_inv S_gas u_sector; F_aer,mass = S_aer u_sector
+  runtime_usage: forward evaluates these fixed typed outputs and returns REPLACE UpdateItems.
+parameter_management_map:
+  anthroposphere.emissions.species_mapping.default_mechanism:
+    source: ParameterManager YAML
+  anthroposphere.emissions.species_mapping.mass_balance_tolerance:
+    source: ParameterManager YAML
+  anthroposphere.emissions.partition_factors.no_fraction:
+    source: ParameterManager YAML
+  anthroposphere.emissions.molecular_weights.NO:
+    source: ParameterManager YAML
+  anthroposphere.emissions.molecular_weights.NO2:
+    source: ParameterManager YAML
+  anthroposphere.emissions.molecular_weights.NOx:
+    source: ParameterManager YAML
+  relic.physical.constants.molecular_weights.co:
+    source: ParameterManager physical constants SSOT via get_physical_constant
+  anthroposphere.emissions.molecular_weights.SO2:
+    source: ParameterManager YAML
+  anthroposphere.emissions.molecular_weights.NH3:
+    source: ParameterManager YAML
+  anthroposphere.emissions.molecular_weights.PAR:
+    source: ParameterManager YAML
+  anthroposphere.emissions.molecular_weights.OLE:
+    source: ParameterManager YAML
+  anthroposphere.emissions.molecular_weights.TOL:
+    source: ParameterManager YAML
+  anthroposphere.emissions.molecular_weights.XYL:
+    source: ParameterManager YAML
+  relic.physical.constants.molecular_weights.hcho:
+    source: ParameterManager physical constants SSOT via get_physical_constant
+  anthroposphere.emissions.molecular_weights.ALD2:
+    source: ParameterManager YAML
+  anthroposphere.emissions.speciation.voc_split_fractions.power_plant.PAR:
+    source: ParameterManager YAML
+  anthroposphere.emissions.speciation.voc_split_fractions.power_plant.OLE:
+    source: ParameterManager YAML
+  anthroposphere.emissions.speciation.voc_split_fractions.power_plant.TOL:
+    source: ParameterManager YAML
+  anthroposphere.emissions.speciation.voc_split_fractions.power_plant.XYL:
+    source: ParameterManager YAML
+  anthroposphere.emissions.speciation.voc_split_fractions.power_plant.FORM:
+    source: ParameterManager YAML
+  anthroposphere.emissions.speciation.voc_split_fractions.power_plant.ALD2:
+    source: ParameterManager YAML
+  anthroposphere.emissions.speciation.voc_split_fractions.transport.PAR:
+    source: ParameterManager YAML
+  anthroposphere.emissions.speciation.voc_split_fractions.transport.OLE:
+    source: ParameterManager YAML
+  anthroposphere.emissions.speciation.voc_split_fractions.transport.TOL:
+    source: ParameterManager YAML
+  anthroposphere.emissions.speciation.voc_split_fractions.transport.XYL:
+    source: ParameterManager YAML
+  anthroposphere.emissions.speciation.voc_split_fractions.transport.FORM:
+    source: ParameterManager YAML
+  anthroposphere.emissions.speciation.voc_split_fractions.transport.ALD2:
+    source: ParameterManager YAML
+  anthroposphere.emissions.speciation.voc_split_fractions.industrial.PAR:
+    source: ParameterManager YAML
+  anthroposphere.emissions.speciation.voc_split_fractions.industrial.OLE:
+    source: ParameterManager YAML
+  anthroposphere.emissions.speciation.voc_split_fractions.industrial.TOL:
+    source: ParameterManager YAML
+  anthroposphere.emissions.speciation.voc_split_fractions.industrial.XYL:
+    source: ParameterManager YAML
+  anthroposphere.emissions.speciation.voc_split_fractions.industrial.FORM:
+    source: ParameterManager YAML
+  anthroposphere.emissions.speciation.voc_split_fractions.industrial.ALD2:
+    source: ParameterManager YAML
+  anthroposphere.emissions.speciation.voc_split_fractions.residential.PAR:
+    source: ParameterManager YAML
+  anthroposphere.emissions.speciation.voc_split_fractions.residential.OLE:
+    source: ParameterManager YAML
+  anthroposphere.emissions.speciation.voc_split_fractions.residential.TOL:
+    source: ParameterManager YAML
+  anthroposphere.emissions.speciation.voc_split_fractions.residential.XYL:
+    source: ParameterManager YAML
+  anthroposphere.emissions.speciation.voc_split_fractions.residential.FORM:
+    source: ParameterManager YAML
+  anthroposphere.emissions.speciation.voc_split_fractions.residential.ALD2:
+    source: ParameterManager YAML
+  anthroposphere.emissions.speciation.voc_split_fractions.agriculture.PAR:
+    source: ParameterManager YAML
+  anthroposphere.emissions.speciation.voc_split_fractions.agriculture.OLE:
+    source: ParameterManager YAML
+  anthroposphere.emissions.speciation.voc_split_fractions.agriculture.TOL:
+    source: ParameterManager YAML
+  anthroposphere.emissions.speciation.voc_split_fractions.agriculture.XYL:
+    source: ParameterManager YAML
+  anthroposphere.emissions.speciation.voc_split_fractions.agriculture.FORM:
+    source: ParameterManager YAML
+  anthroposphere.emissions.speciation.voc_split_fractions.agriculture.ALD2:
+    source: ParameterManager YAML
+  anthroposphere.emissions.pm_composition.power.bc_fraction:
+    source: ParameterManager YAML
+  anthroposphere.emissions.pm_composition.power.oc_fraction:
+    source: ParameterManager YAML
+  anthroposphere.emissions.pm_composition.power.nitrate_fraction:
+    source: ParameterManager YAML
+  anthroposphere.emissions.pm_composition.power.sulfate_fraction:
+    source: ParameterManager YAML
+  anthroposphere.emissions.pm_composition.power.ammonium_fraction:
+    source: ParameterManager YAML
+  anthroposphere.emissions.pm_composition.transport.bc_fraction:
+    source: ParameterManager YAML
+  anthroposphere.emissions.pm_composition.transport.oc_fraction:
+    source: ParameterManager YAML
+  anthroposphere.emissions.pm_composition.transport.nitrate_fraction:
+    source: ParameterManager YAML
+  anthroposphere.emissions.pm_composition.transport.sulfate_fraction:
+    source: ParameterManager YAML
+  anthroposphere.emissions.pm_composition.transport.ammonium_fraction:
+    source: ParameterManager YAML
+  anthroposphere.emissions.pm_composition.industrial.bc_fraction:
+    source: ParameterManager YAML
+  anthroposphere.emissions.pm_composition.industrial.oc_fraction:
+    source: ParameterManager YAML
+  anthroposphere.emissions.pm_composition.industrial.nitrate_fraction:
+    source: ParameterManager YAML
+  anthroposphere.emissions.pm_composition.industrial.sulfate_fraction:
+    source: ParameterManager YAML
+  anthroposphere.emissions.pm_composition.industrial.ammonium_fraction:
+    source: ParameterManager YAML
+  anthroposphere.emissions.pm_composition.residential.bc_fraction:
+    source: ParameterManager YAML
+  anthroposphere.emissions.pm_composition.residential.oc_fraction:
+    source: ParameterManager YAML
+  anthroposphere.emissions.pm_composition.residential.nitrate_fraction:
+    source: ParameterManager YAML
+  anthroposphere.emissions.pm_composition.residential.sulfate_fraction:
+    source: ParameterManager YAML
+  anthroposphere.emissions.pm_composition.residential.ammonium_fraction:
+    source: ParameterManager YAML
+  anthroposphere.emissions.pm_composition.agriculture.bc_fraction:
+    source: ParameterManager YAML
+  anthroposphere.emissions.pm_composition.agriculture.oc_fraction:
+    source: ParameterManager YAML
+  anthroposphere.emissions.pm_composition.agriculture.nitrate_fraction:
+    source: ParameterManager YAML
+  anthroposphere.emissions.pm_composition.agriculture.sulfate_fraction:
+    source: ParameterManager YAML
+  anthroposphere.emissions.pm_composition.agriculture.ammonium_fraction:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares emissions and chemical_mechanism coupling interfaces
+  structural_protocol: declared_forms, build_hodge_contract, build_hodge_terms, reversible_structure, dissipative_structure, ports
+  ports:
+  - species_mapping_gas_molar_flux
+  - species_mapping_aerosol_mass_flux
+dependency_interconnection_map:
+  dependencies: sector_emission_flux is declared in FunctorMetadata; SectorAllocation produces it as a DERIVED output that is never committed, so SpeciesMapper reads it only when SectorAllocation runs earlier in the same group call (or as caller-supplied input state); get_dependencies declares sector_allocation as an optional dependency, which orders the allocator first whenever it is registered, whatever the registration order
+  direct_functor_calls: none; SpeciesMapper consumes only the scheduler-provided tensor
+  chain_maps:
+  - sector-resolved inventory mass enters fixed S_gas and S_aer maps
+  - gas molar flux leaves through species_mapping_gas_molar_flux
+  - aerosol mass flux leaves through species_mapping_aerosol_mass_flux
+overflow_routing_map:
+  missing_species: missing or malformed sector_emission_flux fails fast
+  negative_flux: negative or non-finite sector mass flux raises ValueError
+  invalid_species: unknown molecular-weight lookup raises KeyError
+  discarded_residuals: none; PM remainder is OTHER and NOx oxygen-basis mass is inventory_basis_adjustment_flux
+conservation_map:
+  conserved_quantity: species mass for direct species and VOC/PM splits; nitrogen element for NOx NO2-equivalent partition
+  balance_expression: sum_i S_profile,ij = 1 for VOC and PM; NO and NO2 moles sum to the NO2-equivalent NOx mole flux
+  local_check: check_conservation_laws independently reconstructs inventory-equivalent mass from the gas-molar and aerosol-mass UpdateItems per grid cell; forward also checks the numeric relative-error diagnostic against the ParameterManager tolerance
+  port_balance: gas molar and aerosol mass leave on separate unit-consistent matter ports
+entropy_audit:
+  dissipative_operator: none; molecular-weight conversion is algebraic and is not claimed as dissipation
+  sigma_expression: not applicable to this non-strict algebraic scale coupling
+  validation_hook: build_hodge_contract validates the positive unit map without an entropy-production claim
+equivalence_type: exact

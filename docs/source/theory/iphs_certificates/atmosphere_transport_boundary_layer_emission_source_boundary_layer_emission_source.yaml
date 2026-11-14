@@ -1,0 +1,115 @@
+certificate_version: '1.0'
+process_id: relic.scientific.atmosphere.transport.boundary_layer_emission_source.BoundaryLayerEmissionSource
+module_name: BoundaryLayerEmissionSource
+canonical_role: transport
+iphs_level: 1
+iphs_level_evidence:
+  classification: IPHS-compatible descriptive algebraic transport certificate
+  compatible_basis: Runtime exposes unit-bound inputs, one governed state increment, and an executable column molar ledger without claiming DEC or IPHS operators.
+  level_2_limit: Runtime is an algebraic boundary source with a molar audit, not a canonical IPHS wrapper, typed DEC chain map, or IPHS state-advance operator.
+theory_document: docs\source\theory\atmosphere_boundary_layer_emission_source.md
+theory_document_status: updated
+legacy_formula: Delta chi = F dt R T / (P h)
+literature_formula: d(chi)/dt = F / (h n), n = P / (R T)
+iphs_formula: Level 1 compatibility records the executed source Delta chi = F dt R T / (P h) with F >= 0; no IPHS operator is claimed.
+legacy_expression: Delta chi = F dt R T / (P h)
+iphs_expression: The single runtime source satisfies Delta chi h n = F dt pointwise; no DEC morphism is asserted.
+input_variables:
+- isoprene_emission
+- pbl_height
+- air_temperature
+- atmospheric_pressure
+output_variables:
+- isoprene_mixing_ratio
+- diagnostics.boundary_layer_emission.relative_column_balance_residual
+parameter_keys: []
+parameter_free: true
+composition_ports:
+- isoprene_emission
+references:
+- Stull, R.B. (1988). An Introduction to Boundary Layer Meteorology. Kluwer Academic
+- 'Vila-Guerau de Arellano, J. et al. (2015). Atmospheric Boundary Layer: Integrating Air Chemistry and Land Interactions. Cambridge University Press'
+- Seinfeld, J.H. & Pandis, S.N. (2016). Atmospheric Chemistry and Physics, 3rd ed.
+- U.S. EPA (2019). CMAQ User's Guide, emissions conversion
+baseline_tests:
+- test\atmosphere\transport\boundary_layer_emission_source.test.py
+- test\audit\phase8_scientific_inventory.test.py
+validation_tests:
+- test\atmosphere\transport\boundary_layer_emission_source.test.py
+- test\orchestration\fixed_forest_boundary_layer_graph.test.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  isoprene_emission: surface isoprene molar flux on a ground-area basis [mol m-2 s-1]
+  pbl_height: well-mixed planetary boundary-layer height [m]
+  air_temperature: air temperature of the ideal-gas air molar density [K]
+  atmospheric_pressure: pressure of the ideal-gas air molar density [Pa]
+  isoprene_mixing_ratio: atmospheric isoprene state written as a timestep-integrated source increment [mol mol-1]
+  diagnostics.boundary_layer_emission.relative_column_balance_residual: column molar burden gained minus the amount crossing the lower boundary, relative to that amount [1]
+operator_map:
+  source_law: SpeciesMapper.flux_to_mixing_ratio evaluates Delta chi = F dt R T / (P h)
+  physical_constant: relic.physical.constants.universal.gas_constant
+unit_map:
+  isoprene_emission: mol m-2 s-1
+  pbl_height: m
+  air_temperature: K
+  atmospheric_pressure: Pa
+  isoprene_mixing_ratio: mol mol-1
+  diagnostics.boundary_layer_emission.relative_column_balance_residual: '1'
+input_output_map:
+  surface_to_box: one ground-area molar flux enters one well-mixed box pointwise
+  isoprene_mixing_ratio: receives the explicit timestep-integrated source increment
+  diagnostics.boundary_layer_emission.relative_column_balance_residual: pointwise relative column molar ledger, zero where the flux is zero
+interface_map:
+  forward_signature: forward(self, state, time, dt, **kwargs)
+  bridge_class: TransportMechanismFunctor
+  abstraction_contract: TransportMechanism
+  state_write_mode: isoprene_mixing_ratio uses UpdateItem(ACCUMULATE, per_timestep=True); the diagnostic is a read-only tensor
+  legacy_inputs:
+  - isoprene_emission
+  - pbl_height
+  - air_temperature
+  - atmospheric_pressure
+  iphs_inputs:
+  - isoprene_emission
+  - pbl_height
+  - air_temperature
+  - atmospheric_pressure
+  legacy_outputs:
+  - isoprene_mixing_ratio
+  - diagnostics.boundary_layer_emission.relative_column_balance_residual
+  iphs_outputs:
+  - isoprene_mixing_ratio
+  - diagnostics.boundary_layer_emission.relative_column_balance_residual
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: The single algebraic source is the existing SpeciesMapper.flux_to_mixing_ratio law; no second formula, limiter, or default value exists.
+  no_legacy_mode: No alternate runtime mode or duplicate source path is exposed.
+state_advancement_map:
+  potential_basis: not_applicable_algebraic_boundary_source_without_hamiltonian_potential
+  effort_variable: not_applicable_no_energy_or_entropy_effort
+  state_advancer: Delta chi = F dt R T / (P h) with F, h, P and T held at their values in the step
+  runtime_usage: BoundaryLayerEmissionSource.forward evaluates one mixing-ratio increment and returns it as one ACCUMULATE UpdateItem, which StateManager adds once.
+parameter_management_map: {}
+composition_management_map:
+  functor_metadata: FunctorMetadata declares the four inputs, the state output, the ledger diagnostic, and the mass law
+  state_contract: isoprene_mixing_ratio lists boundary_layer_emission_source under writers.increments and flux_contract.allowed_in
+  no_double_count: AtmosphereCoupling is not constructible and bvoc_emission_field_3d has no reader, so this is the only route of the surface flux into isoprene_mixing_ratio
+dependency_interconnection_map:
+  dependencies: megan_bvoc_model and mechanistic_isoprene_synthesis are optional same-step providers; without one of them isoprene_emission must be forcing
+  direct_functor_calls: none; the static SpeciesMapper.flux_to_mixing_ratio helper is called, not a SpeciesMapper instance
+overflow_routing_map:
+  missing_inputs: a missing input raises KeyError
+  invalid_inputs: non-finite inputs, F < 0, and non-positive h, P, T or dt raise ValueError before any UpdateItem is created
+  column_ledger: the complete pointwise residual is emitted as diagnostics.boundary_layer_emission.relative_column_balance_residual
+  discarded_residuals: none; the source has no limiter
+conservation_map:
+  conserved_quantities: isoprene column molar burden of the well-mixed box under an open lower boundary
+  balance_expression: r = (Delta chi h n - F dt) / (F dt), with r = 0 where F = 0
+  local_check: check_conservation_laws returns max(abs(r)) without cancellation across cells
+  open_system_route: port; the burden gained by the box crosses the boundary port isoprene_emission
+entropy_audit:
+  status: descriptive_level_1_without_entropy_formulation
+  reason: forward performs an algebraic boundary source and evaluates no energy functional, entropy effort, mobility, or entropy production
+equivalence_type: exact

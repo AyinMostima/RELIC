@@ -1,0 +1,268 @@
+certificate_version: '1.0'
+process_id: relic.scientific.anthroposphere.management.grazing.GrazingManagement
+module_name: grazing_management
+canonical_role: reaction
+iphs_level: 3
+iphs_level_evidence:
+  classification: IPHS-structured reaction process certificate
+  compatible_basis: Reaction process is expressed through conserved or open stoichiometric ledgers
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: N_h r_h reaction-network state advance
+  structural_contribution: Cochain, operator, port, conservation, or ledger structure is declared for Gate 0 assembly audit
+  assembly_participation: Certificate participates in Phase 8 inventory and GraphIR structural audit
+  level_3_limit: Typed form, Hodge, port, or related structure is declared, but no runtime-linked IPHSStructureSpec contribution and executable level 4 or 5 certificate binding is present.
+theory_document: docs\source\theory\anthroposphere_management_grazing.md
+theory_document_status: updated
+legacy_formula: Grazing biomass removal, intake limitation, trampling, dung return, and urine return were computed without a StateManager biomass update or explicit livestock export ports.
+literature_formula: Livestock grazing intake depends on body weight, stocking density, forage quality, and biomass availability; intake carbon and nitrogen are partitioned among excreta and managed livestock exports.
+iphs_formula: x_dot = N_h r_h(x_h, theta) + G_h u_grazing, with r_h := r_grazing; H_grazing = diag(w_i / sum_j w_j), w_i >= 0.
+legacy_expression: I = a W^b D Q (1 - exp(-k B)); N_return = I N_content (1 - N_retention).
+iphs_expression: The intake and excreta equations define entries of the standard reaction vector r_h inside the single IPHS biomass-return port map.
+input_variables:
+- aboveground_biomass
+- vegetation_quality
+- day_of_year
+- soil_moisture
+output_variables:
+- aboveground_biomass
+- grazing_flux
+- dung_c_flux
+- dung_n_flux
+- urine_n_flux
+- livestock_carbon_intake_flux
+- livestock_nitrogen_intake_flux
+- livestock_carbon_export_flux
+- livestock_nitrogen_export_flux
+- trampling_damage
+- grazing_active
+- current_stocking_rate
+- utilization_rate
+- cumulative_intake
+- days_grazed
+- diagnostics.grazing_pressure
+- diagnostics.grazing_management.canonical_iphs_runtime
+parameter_keys:
+- anthroposphere.management.clamp_min
+- anthroposphere.management.clamp_max
+- anthroposphere.management.grazing.base_efficiency
+- anthroposphere.management.grazing.digestibility_coefficient
+- anthroposphere.management.grazing.selectivity_factor
+- anthroposphere.management.grazing.max_utilization
+- anthroposphere.management.grazing.forage_carbon_fraction
+- anthroposphere.management.grazing.functional_response_scalar
+- anthroposphere.management.grazing.n_retention
+- anthroposphere.management.grazing.dung_partition
+- anthroposphere.management.grazing.urine_partition
+- anthroposphere.management.grazing.trampling_factor
+- anthroposphere.management.grazing.trampling_moisture_threshold
+- anthroposphere.management.grazing.trampling_moisture_scale
+- anthroposphere.management.grazing.trampling_stocking_normalization
+- anthroposphere.management.grazing.livestock.*
+- anthroposphere.management.grazing.default_schedule.*
+composition_ports:
+- grazing_biomass_return_port
+- grazing_dung_boundary
+- grazing_urine_boundary
+references:
+- 'Conant, R.T. et al. (2001). Grassland management and conversion into grassland: effects on soil carbon.'
+- Milchunas, D.G. and Lauenroth, W.K. (1993). Quantitative effects of grazing on vegetation and soils.
+- McNaughton, S.J. (1985). Ecology of a grazing ecosystem.
+- Saggar, S. et al. (2007). Modelling nitrous oxide emissions from grazed grasslands.
+- Ramirez, H. and Le Gorrec, Y. (2022). Irreversible port-Hamiltonian systems.
+baseline_tests:
+- test\anthroposphere\management\test_grazing_l1.py
+- test\anthroposphere\management\grazing_phase8.test.py
+validation_tests:
+- test\anthroposphere\management\test_grazing_l1.py
+- test\anthroposphere\management\grazing_phase8.test.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  grazing_biomass_pool: StateManager-owned available grazable aboveground biomass [kg DM m^-2]
+  grazing_return_flux: biomass removal, excreta return, and livestock export fluxes [kg m^-2 s^-1]
+  dung_n_flux: fecal organic nitrogen return boundary consumed only by litterfall_interface_mapper
+  urine_n_flux: separate urine mineral nitrogen boundary consumed only by the nitrogen cycling route
+  grazing_stocking_port: stocking pressure management input [animals ha^-1]
+  diagnostics.grazing_pressure: effective stocking density weighted by forage quality [animals ha^-1]
+  diagnostics.grazing_management.canonical_iphs_runtime: canonical IPHS runtime flag [1]
+parameter_map:
+  anthroposphere.management.clamp_min: Lower bound of the management response factors [dimensionless]
+  anthroposphere.management.clamp_max: Upper bound of the management response factors [dimensionless]
+  anthroposphere.management.grazing.base_efficiency: Baseline efficiency scalar of grazing management [dimensionless]
+  anthroposphere.management.grazing.digestibility_coefficient: Feed digestibility coefficient [dimensionless]
+  anthroposphere.management.grazing.selectivity_factor: Grazing selectivity effect [dimensionless]
+  anthroposphere.management.grazing.max_utilization: Maximum allowable fraction of aboveground biomass removed by grazing [dimensionless]
+  anthroposphere.management.grazing.forage_carbon_fraction: Forage carbon mass fraction [dimensionless]
+  anthroposphere.management.grazing.functional_response_scalar: Scalar k for intake functional response I = 1 - exp(-k * biomass_kg_ha) [ha kg-1]
+  anthroposphere.management.grazing.n_retention: Nitrogen retention in animal [dimensionless]
+  anthroposphere.management.grazing.dung_partition: Fraction of excreted nitrogen routed to dung [dimensionless]
+  anthroposphere.management.grazing.urine_partition: Fraction of excreted nitrogen routed to urine [dimensionless]
+  anthroposphere.management.grazing.trampling_factor: Vegetation damage from trampling [dimensionless]
+  anthroposphere.management.grazing.trampling_moisture_threshold: Soil moisture threshold where trampling damage increases [dimensionless]
+  anthroposphere.management.grazing.trampling_moisture_scale: Moisture scaling factor for trampling damage [dimensionless]
+  anthroposphere.management.grazing.trampling_stocking_normalization: Stocking rate normalization for trampling response [animals ha-1]
+  anthroposphere.management.grazing.livestock.*: Digestibility, intake rate, metabolism factor, N and P content and trampling impact per livestock type [units per key]
+  anthroposphere.management.grazing.default_schedule.*: Default spring and winter grazing events (start date, duration, stocking rate, body weight, supplement rate) [units per key]
+operator_map:
+  N_h: non-strict open-port map from biomass removal to carbon, nitrogen, excreta, livestock export, and trampling channels
+  r_h: ParameterManager-backed grazing intake, excreta return, livestock export, and trampling rate tensor passed to advance_reaction_network
+  H_grazing: PSD removal-return mobility built by build_hodge_contract
+  G_h: grazing_biomass_return_port stocking input map
+  O_h: canonical runtime and biomass-balance diagnostics
+state_advancement_map:
+  potential_basis: G_grazing(x_h)=0.5*x_h.T*H_grazing*x_h for grazable biomass and return ports
+  effort_variable: mu_grazing=dG_grazing/dx_h; stocking pressure, forage quality, and livestock traits define r_h entries
+  state_advancer: forward evaluates explicit x_dot=N_h r_h through advance_reaction_network in grazing biomass-return output assembly
+  runtime_usage: _assemble_grazing_reaction_outputs calls advance_reaction_network with declared N_h and r_h for intake, dung, urine, livestock export, and trampling ports
+  explicit_stoichiometric_usage: _assemble_grazing_reaction_outputs materializes stoichiometric_N and rates, then lowers x_dot=N_h r_h through advance_reaction_network.
+unit_map:
+  grazing_biomass_pool: kg m-2
+  grazing_return_flux: kg m-2 s-1
+  aboveground_biomass: kg m-2
+  grazing_flux: kg m-2 s-1
+  dung_c_flux: kg C m-2 s-1
+  dung_n_flux: kg N m-2 s-1
+  urine_n_flux: kg N m-2 s-1
+  livestock_carbon_intake_flux: kg C m-2 s-1
+  livestock_nitrogen_intake_flux: kg N m-2 s-1
+  livestock_carbon_export_flux: kg C m-2 s-1
+  livestock_nitrogen_export_flux: kg N m-2 s-1
+  trampling_damage: '1'
+  grazing_active: '1'
+  current_stocking_rate: animals ha-1
+  utilization_rate: '1'
+  cumulative_intake: kg m-2
+  days_grazed: day
+  diagnostics.grazing_pressure: animals ha-1
+  diagnostics.grazing_management.canonical_iphs_runtime: '1'
+input_output_map:
+  intake_to_removal: biomass, forage quality, and the stocking rate of the active grazing event define r_h entries
+  stocking_density: 'D is the stocking rate of the active grazing event (the herd whose livestock type and body weight the intake uses; DNDC grazing() keeps the animal heads on the grazing event); no state input supplies it'
+  removal_to_return: removed biomass carbon and nitrogen partition into dung, urine, and managed livestock export boundaries
+  state_update: integrated dry-matter intake is committed as a negative aboveground_biomass ACCUMULATE update
+  diagnostics: grazing pressure and canonical runtime diagnostics are returned through the existing Functor output path
+interface_map:
+  forward_signature: forward(self, state, time, dt, **kwargs)
+  bridge_class: BiologicalProcessFunctor
+  abstraction_contract: BiologicalProcess
+  state_write_mode: aboveground_biomass, cumulative_intake, and days_grazed use integrated ACCUMULATE updates; instantaneous ports use REPLACE
+  legacy_inputs:
+  - aboveground_biomass
+  - vegetation_quality
+  - day_of_year
+  - soil_moisture
+  iphs_inputs:
+  - aboveground_biomass
+  - vegetation_quality
+  - day_of_year
+  - soil_moisture
+  legacy_outputs:
+  - aboveground_biomass
+  - grazing_flux
+  - dung_c_flux
+  - dung_n_flux
+  - urine_n_flux
+  - livestock_carbon_intake_flux
+  - livestock_nitrogen_intake_flux
+  - livestock_carbon_export_flux
+  - livestock_nitrogen_export_flux
+  - trampling_damage
+  - grazing_active
+  - current_stocking_rate
+  - utilization_rate
+  - cumulative_intake
+  - days_grazed
+  - diagnostics.grazing_pressure
+  - diagnostics.grazing_management.canonical_iphs_runtime
+  iphs_outputs:
+  - aboveground_biomass
+  - grazing_flux
+  - dung_c_flux
+  - dung_n_flux
+  - urine_n_flux
+  - livestock_carbon_intake_flux
+  - livestock_nitrogen_intake_flux
+  - livestock_carbon_export_flux
+  - livestock_nitrogen_export_flux
+  - trampling_damage
+  - grazing_active
+  - current_stocking_rate
+  - utilization_rate
+  - cumulative_intake
+  - days_grazed
+  - diagnostics.grazing_pressure
+  - diagnostics.grazing_management.canonical_iphs_runtime
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: Grazing intake and excreta return equations define the canonical reaction vector r_h.
+  no_legacy_mode: No selectable legacy branch, alternate grazing law, or independent compute-rate law remains callable.
+parameter_management_map:
+  anthroposphere.management.clamp_min:
+    source: ParameterManager YAML
+  anthroposphere.management.clamp_max:
+    source: ParameterManager YAML
+  anthroposphere.management.grazing.base_efficiency:
+    source: ParameterManager YAML
+  anthroposphere.management.grazing.digestibility_coefficient:
+    source: ParameterManager YAML
+  anthroposphere.management.grazing.selectivity_factor:
+    source: ParameterManager YAML
+  anthroposphere.management.grazing.max_utilization:
+    source: ParameterManager YAML
+  anthroposphere.management.grazing.forage_carbon_fraction:
+    source: ParameterManager YAML
+  anthroposphere.management.grazing.functional_response_scalar:
+    source: ParameterManager YAML
+  anthroposphere.management.grazing.n_retention:
+    source: ParameterManager YAML
+  anthroposphere.management.grazing.dung_partition:
+    source: ParameterManager YAML
+  anthroposphere.management.grazing.urine_partition:
+    source: ParameterManager YAML
+  anthroposphere.management.grazing.trampling_factor:
+    source: ParameterManager YAML
+  anthroposphere.management.grazing.trampling_moisture_threshold:
+    source: ParameterManager YAML
+  anthroposphere.management.grazing.trampling_moisture_scale:
+    source: ParameterManager YAML
+  anthroposphere.management.grazing.trampling_stocking_normalization:
+    source: ParameterManager YAML
+  anthroposphere.management.grazing.livestock.*:
+    source: ParameterManager YAML
+  anthroposphere.management.grazing.default_schedule.*:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares biological process category and biosphere/pedosphere coupling
+  structural_protocol: declared_forms, build_hodge_contract, build_hodge_terms, reversible_structure, dissipative_structure, ports
+  physical_constant_ssot: seconds per day is resolved only through get_physical_constant
+  ports:
+  - grazing_biomass_return_port
+dependency_interconnection_map:
+  dependencies: biomass, forage quality, soil moisture, schedule, and stocking controls are declared through metadata and state keys
+  direct_functor_calls: none; forward reads declared biomass, forage, soil, schedule, and stocking state and calls only local grazing helpers
+  chain_maps:
+  - aboveground biomass enters N_h r_h
+  - stocking controls enter G_h u_grazing
+  - dung C and fecal organic N leave through grazing_dung_boundary to litterfall_interface_mapper
+  - urine N leaves separately through grazing_urine_boundary to the nitrogen cycling route
+overflow_routing_map:
+  retained_intake: retained animal product is represented by livestock carbon and nitrogen export ports
+  biomass_limit: intake is constrained by max_utilization and by available biomass over the requested dt
+  conservation_residual: check_conservation_laws computes normalized dry-matter, carbon, and nitrogen boundary residuals
+  discarded_residuals: intake limiters define actual grazing_flux and leave unconsumed biomass in the source pool; actual dry matter, carbon, and nitrogen are exhausted through animal-retention or export, dung, and urine ports, and check_conservation_laws exposes all three boundary residuals
+conservation_map:
+  system_status: open livestock offtake and excreta return port
+  metadata_laws:
+  - grazing_matter_boundary
+  conserved_quantity: grazed vegetation dry matter and explicitly partitioned carbon and nitrogen
+  balance_expression: DeltaB + I_step = 0; C_in = C_dung + C_export; N_in = N_dung + N_urine + N_export
+  local_check: check_conservation_laws validates UpdateItem semantics and returns the maximum normalized dry-matter, carbon, and nitrogen residual
+  port_balance: grazing_biomass_return_port declares open livestock removal and excreta return
+entropy_audit:
+  dissipative_operator: H_grazing is diagonal positive semidefinite for non-negative ParameterManager weights
+  sigma_expression: sigma = z.T H_grazing z >= 0
+  validation_hook: build_hodge_contract(strict=True)
+equivalence_type: exact
+physical_constant_ssot:
+  seconds_per_day: get_physical_constant("relic.physical.constants.time.seconds_per_day")

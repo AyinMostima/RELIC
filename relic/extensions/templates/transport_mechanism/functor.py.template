@@ -1,0 +1,68 @@
+from __future__ import annotations
+
+import torch
+from torch import Tensor
+
+from relic.core.functor import (
+    FunctorMetadata,
+    ProcessCategory,
+    SpatialScale,
+    TransportMechanismFunctor,
+    VariableKind,
+)
+
+
+class {{FUNCTOR_CLASS}}(TransportMechanismFunctor):
+    """Scaffolded transport mechanism functor."""
+
+    # Descriptive transport label (one of TransportMechanism.TRANSPORT_TYPES).
+    TRANSPORT_TYPE = "diffusion"
+
+    def __init__(self, config=None, name="{{EXTENSION_KEY}}", **kwargs):
+        metadata = FunctorMetadata(
+            name=name,
+            category=ProcessCategory.TRANSPORT_MECHANISM,
+            description="Scaffolded transport extension functor.",
+            references=[
+                "Fick (1855). Philosophical Magazine.",
+            ],
+            mathematical_expression="{{OUTPUT_VARIABLE}} = template_rate * concentration_gradient",
+            input_variables=["concentration_gradient"],
+            output_variables=["{{OUTPUT_VARIABLE}}"],
+            spatial_scale=SpatialScale.GRID_CELL,
+            variable_kind=VariableKind.FLUX,
+        )
+        super().__init__(name=name, config=config or {}, metadata=metadata, **kwargs)
+
+    def get_dependencies(self):
+        # Static Functor dependencies of this extension (Functor names, never
+        # state variables). FunctorBase merges them with config["dependencies"],
+        # set_dependencies and add_dependency; a bare list would drop those.
+        return self._merge_declared_dependencies([])
+
+    def forward(self, state, time, dt, **kwargs):
+        # References: Fick (1855).
+        # Mathematical expression: transport_flux = k * concentration_gradient.
+        # Parameters: k=template_rate [m s-1], concentration_gradient=[concentration m-1].
+        gradient = state.get("concentration_gradient")
+        if gradient is None:
+            gradient_tensor = torch.tensor(0.0, dtype=torch.float32)
+        elif isinstance(gradient, Tensor):
+            gradient_tensor = gradient
+        else:
+            gradient_tensor = torch.tensor(float(gradient), dtype=torch.float32)
+
+        rate_value = self.get_parameter_value("template_rate", required=False)
+        if rate_value is None:
+            raise ValueError("Missing parameter 'template_rate'. Define it in parameters.yaml.")
+        if isinstance(rate_value, Tensor):
+            rate_tensor = rate_value.to(device=gradient_tensor.device, dtype=gradient_tensor.dtype)
+        else:
+            rate_tensor = torch.tensor(
+                float(rate_value),
+                device=gradient_tensor.device,
+                dtype=gradient_tensor.dtype,
+            )
+
+        return {"{{OUTPUT_VARIABLE}}": rate_tensor * gradient_tensor}
+

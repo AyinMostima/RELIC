@@ -1,0 +1,49 @@
+﻿# Net ecosystem carbon mass-flux contract.
+variable: net_ecosystem_exchange
+title: "Net Ecosystem Exchange"
+description: "NEE = Reco - GPP; positive values transfer carbon from ecosystem to atmosphere."
+kind: flux
+dimension:
+  udunits: "kg C m-2 s-1"
+  cf_standard_name: null
+# Instantaneous REPLACE rate per unit ground area of the grid cell, written
+# with gross_primary_productivity from the same inputs
+# (simple_photosynthesis.py forward); same support as that flux.
+support:
+  spatial_kind: grid_cell
+  area_basis: ground_area
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: "simple_photosynthesis"
+aliases: []
+incrementable: false
+accumulates: null
+numerics:
+  lower_bound: null
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "simple_photosynthesis"
+      module: "relic.scientific.biosphere.surrogates.simple_photosynthesis"
+      provides:
+        - "net_ecosystem_exchange"
+      unit: "kg C m-2 s-1"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/biosphere/surrogates/simple_photosynthesis.py"
+  runtime_role: "net_ecosystem_carbon_mass_flux"
+  runtime_writer: "simple_photosynthesis"
+  orientation: "positive_to_atmosphere"
+

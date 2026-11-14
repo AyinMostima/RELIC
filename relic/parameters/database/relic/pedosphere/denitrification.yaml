@@ -1,0 +1,376 @@
+schema_version: 2.0.0
+tier: relic
+namespace: pedosphere.denitrification
+description: Denitrification process (NO3- -> NO2- -> NO -> N2O -> N2) parameters including kinetic constants, environmental
+  controls, and product distribution factors
+metadata:
+  created_by: RELIC Parameter System
+  last_modified: '2026-01-07T00:00:00Z'
+  schema_url: https://github.com/relic/parameter-schema/v2.0.0
+  version: 1.0.0
+parameters:
+  pedosphere.denitrification.vmax_denitrification:
+    value: 1.5e-06
+    units: g N m-2 s-1
+    dtype: float32
+    bounds:
+    - 1.0e-07
+    - 1.0e-05
+    category: biological_parameter
+    description: Maximum denitrification rate
+    references:
+    - Parton et al. (1996)
+    - Li et al. (1992)
+    tags:
+    - denitrification
+    - vmax
+    - kinetics
+    dimension: mass_flux
+    requires_grad: true
+    provenance:
+      source: Denitrification kinetics studies
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.denitrification.km_no3:
+    value: 0.002
+    units: g N m-2
+    dtype: float32
+    bounds:
+    - 0.0005
+    - 0.01
+    category: biological_parameter
+    description: Half-saturation constant for NO3
+    references:
+    - Michaelis-Menten kinetics for denitrification
+    tags:
+    - denitrification
+    - km
+    - no3
+    - kinetics
+    dimension: mass_per_area
+    requires_grad: true
+    provenance:
+      source: Michaelis-Menten kinetics
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.denitrification.anaerobic_transition_width:
+    value: 0.3
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 0.5
+    category: biological_parameter
+    description: 'Width w, in water-filled pore space, of the linear rise of the denitrification anaerobic factor from WFPS_thr to WFPS_thr + w (0.6 to 0.9 with the defaults), f_anoxic = max(clip((WFPS - WFPS_thr)/w, 0, 1), f_min).'
+    references:
+    - RELIC convention value (width of the linear WFPS ramp; no literature value)
+    tags:
+    - anaerobic
+    - transition
+    - width
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-27T00:00:00Z'
+      notes: 'MA-21 follow-up F2: a linear stand-in for the saturating DAYCENT WFPS function (Del Grosso et al. 2000), which reaches its plateau near saturation; no source gives the width. The former reference "Gradual anaerobic transition" was a placeholder. Role: WFPS span of the anaerobic ramp.'
+  pedosphere.denitrification.minimum_anaerobic_factor:
+    value: 0.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.01
+    - 0.3
+    category: biological_parameter
+    description: 'Floor f_min of the denitrification anaerobic factor at low water-filled pore space (anaerobic microsites), f_anoxic = max(clip((WFPS - WFPS_thr)/w, 0, 1), f_min).'
+    references:
+    - RELIC convention value (anaerobic factor floor; no literature value)
+    tags:
+    - anaerobic
+    - minimum
+    - background
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-27T00:00:00Z'
+      notes: 'MA-21 follow-up F2: no source gives the floor. The former reference "Background denitrification" was a placeholder. Role: background denitrification in anaerobic microsites below WFPS_thr.'
+  pedosphere.denitrification.carbon_half_saturation:
+    value: 0.05
+    units: g C m-2
+    dtype: float32
+    bounds:
+    - 0.01
+    - 0.2
+    category: biological_parameter
+    description: Half-saturation constant for labile carbon
+    references:
+    - Carbon limitation of denitrification
+    tags:
+    - carbon
+    - km
+    - limitation
+    dimension: mass_per_area
+    requires_grad: true
+    provenance:
+      source: Carbon limitation of denitrification
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.denitrification.ph_minimum_factor:
+    value: 0.2
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 0.5
+    category: biological_parameter
+    description: Minimum pH response factor
+    references:
+    - pH tolerance range
+    tags:
+    - ph
+    - minimum
+    - tolerance
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: pH tolerance range
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.denitrification.base_n2o_fraction:
+    value: 0.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.05
+    - 0.2
+    category: biological_parameter
+    description: Base N2O fraction (minimum)
+    references:
+    - Firestone & Davidson (1989)
+    tags:
+    - n2o
+    - fraction
+    - minimum
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: Firestone & Davidson (1989)
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.denitrification.max_n2o_fraction:
+    value: 0.7
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 0.9
+    category: biological_parameter
+    description: Maximum N2O fraction
+    references:
+    - High N2O production conditions
+    tags:
+    - n2o
+    - fraction
+    - maximum
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: High N2O production conditions
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.denitrification.n2o_no3_enhancement:
+    value: 0.6
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.3
+    - 0.8
+    category: biological_parameter
+    description: NO3 enhancement factor for N2O production
+    references:
+    - NO3 effect on N2O yield
+    tags:
+    - n2o
+    - no3
+    - enhancement
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: NO3 effect on N2O yield
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.denitrification.n2o_no3_threshold:
+    value: 0.001
+    units: g N m-2
+    dtype: float32
+    bounds:
+    - 0.0001
+    - 0.01
+    category: biological_parameter
+    description: NO3 threshold for N2O enhancement calculation
+    references:
+    - Low NO3 conditions
+    tags:
+    - n2o
+    - no3
+    - threshold
+    dimension: mass_per_area
+    requires_grad: true
+    provenance:
+      source: Low NO3 conditions
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.denitrification.n2o_ph_sensitivity:
+    value: 2.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 4.0
+    category: biological_parameter
+    description: pH sensitivity coefficient for N2O production
+    references:
+    - pH control of N2O reduction
+    tags:
+    - n2o
+    - ph
+    - sensitivity
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: pH control of N2O reduction
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.denitrification.n2o_ph_effect_min:
+    value: 0.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: biological_parameter
+    description: Minimum pH effect factor for N2O fraction calculation
+    references:
+    - Firestone & Davidson (1989)
+    tags:
+    - n2o
+    - ph
+    - minimum
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: pH control of N2O reduction
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.denitrification.n2o_ph_effect_max:
+    value: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: biological_parameter
+    description: Maximum pH effect factor for N2O fraction calculation
+    references:
+    - Firestone & Davidson (1989)
+    tags:
+    - n2o
+    - ph
+    - maximum
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: pH control of N2O reduction
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.denitrification.n2o_ph_reference:
+    value: 8.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 7.5
+    - 8.5
+    category: biological_parameter
+    description: Reference pH for N2O production calculation
+    references:
+    - Optimal pH for N2O reduction
+    tags:
+    - n2o
+    - ph
+    - reference
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: Optimal pH for N2O reduction
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.denitrification.min_rate_threshold:
+    value: 1.0e-12
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - .inf
+    category: numerical_parameter
+    description: 'Lower bound of the denitrification temperature factor f_T = clip(Q10^((T - T_ref)/10),
+      lower, upper) with Q10 = q10_denitrification and T_ref = reference_temperature. With the default
+      Q10 = 2.2 and T_ref = 293.15 K the raw factor reaches 1e-12 only 350 K below T_ref, so the bound
+      never binds at a physical soil temperature; it keeps f_T strictly positive. A floor of the
+      temperature response factor cannot be negative; its upper limit is max_rate_factor, a relation
+      between parameters that bounds cannot express, so the upper bound is open (inf).'
+    references:
+    - RELIC convention value (temperature factor lower bound; no literature value)
+    tags:
+    - rate
+    - minimum
+    - precision
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-27T00:00:00Z'
+      notes: 'Round 54.2: the only reader, DenitrificationProcess, clamps the dimensionless Q10
+        temperature factor with it (torch.clamp(f_T, min=min_rate_threshold, max=max_rate_factor)), so
+        the former units g N m-2 s-1 and dimension mass_flux misdeclared it. No source gives the bound;
+        the former reference "Numerical precision" was a placeholder. Role: positivity floor of f_T.'
+  pedosphere.denitrification.max_rate_factor:
+    value: 15.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 100.0
+    category: numerical_parameter
+    description: Maximum rate amplification factor
+    references:
+    - Stability control
+    tags:
+    - rate
+    - maximum
+    - stability
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Stability control
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-06T00:00:00Z'

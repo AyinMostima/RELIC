@@ -1,0 +1,2078 @@
+﻿schema_version: 2.0.0
+tier: relic
+namespace: pedosphere.phosphorus
+description: Phosphorus cycling parameters for pedosphere module including pool dynamics, transformations, inputs, outputs,
+  and environmental responses
+metadata:
+  created_by: RELIC Parameter System
+  last_modified: '2025-10-06T00:00:00Z'
+  schema_compliance: CF-1.8 and UDUNITS consistent
+  notes: Migrated from nested format to flat schema 2.0.0 structure. All parameters extracted from pools, transformations,
+    inputs, outputs, conservation, and environmental_factors sections.
+  version: 1.0.0
+parameters:
+  pedosphere.phosphorus.organic_p_initial:
+    value: 50.0
+    default: 50.0
+    units: g m-2
+    dtype: float32
+    bounds:
+    - 0.0
+    - 200.0
+    category: pool_initial_value
+    description: Initial value of total organic phosphorus in soil organic matter
+    references:
+    - Hedley et al. (1982). Changes in inorganic and organic soil phosphorus fractions. Soil Sci. Soc. Am. J.
+    - 'Wang et al. (2010). DOI: 10.1016/j.geoderma.2009.12.003'
+    tags:
+    - phosphorus
+    - pool
+    - organic
+    - initial_condition
+    dimension: mass_per_area
+    requires_grad: false
+    provenance:
+      source: Soil phosphorus fractionation studies
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.inorganic_p_initial:
+    value: 30.0
+    default: 30.0
+    units: g m-2
+    dtype: float32
+    bounds:
+    - 0.0
+    - 500.0
+    category: pool_initial_value
+    description: Initial value of total inorganic phosphorus (all mineral forms)
+    references:
+    - Hedley et al. (1982). Soil Sci. Soc. Am. J.
+    - 'Cross and Schlesinger (1995). DOI: 10.1007/BF00750025'
+    tags:
+    - phosphorus
+    - pool
+    - inorganic
+    - initial_condition
+    dimension: mass_per_area
+    requires_grad: false
+    provenance:
+      source: Soil phosphorus fractionation studies
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.available_p_initial:
+    value: 5.0
+    default: 5.0
+    units: g m-2
+    dtype: float32
+    bounds:
+    - 0.0
+    - 50.0
+    category: pool_initial_value
+    description: Initial value of plant-available phosphorus (solution plus exchangeable fractions)
+    references:
+    - Olsen et al. (1954). Estimation of available phosphorus in soils by extraction with sodium bicarbonate
+    - Hedley et al. (1982). Soil Sci. Soc. Am. J.
+    tags:
+    - phosphorus
+    - pool
+    - available
+    - plant_uptake
+    - initial_condition
+    dimension: mass_per_area
+    requires_grad: false
+    provenance:
+      source: Plant nutrition and soil test calibration studies
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.sorbed_p_initial:
+    value: 20.0
+    default: 20.0
+    units: g m-2
+    dtype: float32
+    bounds:
+    - 0.0
+    - 200.0
+    category: pool_initial_value
+    description: Initial value of phosphorus sorbed on soil mineral surfaces (reversible adsorption)
+    references:
+    - Barrow (1983). Soil Sci.
+    - 'Wang et al. (2010). DOI: 10.1016/j.geoderma.2009.12.003'
+    tags:
+    - phosphorus
+    - pool
+    - sorbed
+    - adsorption
+    - initial_condition
+    dimension: mass_per_area
+    requires_grad: false
+    provenance:
+      source: Soil adsorption isotherm studies
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.microbial_p_initial:
+    value: 8.0
+    default: 8.0
+    units: g m-2
+    dtype: float32
+    bounds:
+    - 0.0
+    - 40.0
+    category: pool_initial_value
+    description: Initial value of phosphorus in microbial biomass
+    references:
+    - Brookes et al. (1982). Soil Biology and Biochemistry
+    - 'Oberson and Joner (2005). DOI: 10.1079/9780851996790.0000'
+    tags:
+    - phosphorus
+    - pool
+    - microbial
+    - biomass
+    - initial_condition
+    dimension: mass_per_area
+    requires_grad: false
+    provenance:
+      source: Microbial biomass P measurements
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.occluded_p_initial:
+    value: 100.0
+    default: 100.0
+    units: g m-2
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1000.0
+    category: pool_initial_value
+    description: Initial value of occluded phosphorus in Fe and Al oxides (slowly available, resistant pool)
+    references:
+    - Hedley et al. (1982). Soil Sci. Soc. Am. J.
+    - 'Cross and Schlesinger (1995). DOI: 10.1007/BF00750025'
+    tags:
+    - phosphorus
+    - pool
+    - occluded
+    - recalcitrant
+    - initial_condition
+    dimension: mass_per_area
+    requires_grad: false
+    provenance:
+      source: Hedley P fractionation protocol
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.dissolved_p_initial:
+    value: 0.1
+    default: 0.1
+    units: g m-2
+    dtype: float32
+    bounds:
+    - 0.0
+    - 5.0
+    category: pool_initial_value
+    description: Initial value of dissolved phosphorus in soil solution (PO4 3- plus dissolved organic P)
+    references:
+    - 'Frossard et al. (2000). DOI: 10.1016/S0016-7061(99)00092-4'
+    - 'Wang et al. (2010). DOI: 10.1016/j.geoderma.2009.12.003'
+    tags:
+    - phosphorus
+    - pool
+    - dissolved
+    - solution
+    - initial_condition
+    dimension: mass_per_area
+    requires_grad: false
+    provenance:
+      source: Soil solution chemistry studies
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.mineralization_rate_constant:
+    value: 3.17e-08
+    default: 3.17e-08
+    units: s-1
+    dtype: float32
+    bounds:
+    - 1.0e-09
+    - 1.0e-06
+    category: process_rate
+    description: Base rate constant for organic phosphorus mineralization (decomposition of organic P to inorganic P)
+    references:
+    - McGill and Cole (1981). Geoderma
+    - Parton et al. (1988). CENTURY model documentation
+    tags:
+    - phosphorus
+    - mineralization
+    - decomposition
+    - rate_constant
+    - learnable
+    dimension: frequency
+    requires_grad: true
+    provenance:
+      source: Decomposition and mineralization kinetics studies
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.mineralization_q10:
+    value: 2.5
+    default: 2.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.5
+    - 4.0
+    category: environmental_response
+    description: Q10 temperature sensitivity coefficient for phosphorus mineralization
+    references:
+    - Lloyd and Taylor (1994). Functional Ecology
+    - Parton et al. (1988). CENTURY model
+    tags:
+    - phosphorus
+    - mineralization
+    - temperature
+    - q10
+    - learnable
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: Temperature response of soil processes
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.mineralization_reference_temperature:
+    value: 288.15
+    default: 288.15
+    units: K
+    dtype: float32
+    bounds:
+    - 273.15
+    - 303.15
+    category: reference_constant
+    description: Reference temperature for mineralization rate (15 degC)
+    references:
+    - Lloyd and Taylor (1994). Functional Ecology
+    tags:
+    - phosphorus
+    - mineralization
+    - temperature
+    - reference
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: Standard reference temperature for soil processes
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.mineralization_optimal_moisture:
+    value: 0.4
+    default: 0.4
+    units: m3 m-3
+    dtype: float32
+    bounds:
+    - 0.2
+    - 0.6
+    category: environmental_response
+    description: Optimal volumetric soil moisture content for maximum mineralization rate
+    references:
+    - Orchard and Cook (1983). Soil Biology and Biochemistry
+    - Parton et al. (1988). CENTURY model
+    tags:
+    - phosphorus
+    - mineralization
+    - moisture
+    - optimal
+    - learnable
+    dimension: volume_fraction
+    requires_grad: true
+    provenance:
+      source: Soil moisture response curves
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.mineralization_moisture_exponent:
+    value: 1.5
+    default: 1.5
+    units: m3 m-3
+    dtype: float32
+    bounds:
+    - 0.5
+    - 3.0
+    category: environmental_response
+    description: Exponent controlling moisture response curve shape for mineralization
+    references:
+    - Orchard and Cook (1983). Soil Biology and Biochemistry
+    tags:
+    - phosphorus
+    - mineralization
+    - moisture
+    - shape_parameter
+    dimension: volume_fraction
+    requires_grad: false
+    provenance:
+      source: Empirical moisture response fitting
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.mineralization_enzyme_efficiency:
+    value: 0.6
+    default: 0.6
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.3
+    - 0.9
+    category: biological_parameter
+    description: Efficiency of enzymatic conversion of organic P to inorganic P by phosphatases
+    references:
+    - Tarafdar and Claassen (1988). Biology and Fertility of Soils
+    - 'Oberson and Joner (2005). DOI: 10.1079/9780851996790.0000'
+    tags:
+    - phosphorus
+    - mineralization
+    - enzyme
+    - efficiency
+    - learnable
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: Soil phosphatase activity studies
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.immobilization_vmax:
+    value: 1.0e-07
+    default: 1.0e-07
+    units: g m-2 s-1
+    dtype: float32
+    bounds:
+    - 1.0e-09
+    - 1.0e-05
+    category: process_rate
+    description: Maximum rate of microbial phosphorus immobilization (Michaelis-Menten Vmax)
+    references:
+    - Brookes et al. (1984). Soil Biology and Biochemistry
+    - 'Oberson and Joner (2005). DOI: 10.1079/9780851996790.0000'
+    tags:
+    - phosphorus
+    - immobilization
+    - vmax
+    - michaelis_menten
+    - learnable
+    dimension: mass_flux
+    requires_grad: true
+    provenance:
+      source: Microbial P uptake kinetics
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.immobilization_km:
+    value: 2.0
+    default: 2.0
+    units: g m-2
+    dtype: float32
+    bounds:
+    - 0.5
+    - 10.0
+    category: process_rate
+    description: Half-saturation constant for microbial phosphorus immobilization (Michaelis-Menten Km)
+    references:
+    - Brookes et al. (1984). Soil Biology and Biochemistry
+    tags:
+    - phosphorus
+    - immobilization
+    - km
+    - michaelis_menten
+    - learnable
+    dimension: mass_per_area
+    requires_grad: true
+    provenance:
+      source: Microbial P uptake kinetics
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.immobilization_cnp_c:
+    value: 60.0
+    default: 60.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 40.0
+    - 100.0
+    category: stoichiometric_parameter
+    description: Carbon to phosphorus ratio in microbial biomass for immobilization calculations (C:N:P = 60:7:1)
+    references:
+    - 'Cleveland and Liptzin (2007). DOI: 10.1007/s10533-006-9050-x'
+    - 'Xu et al. (2013). DOI: 10.1890/12-0058.1'
+    tags:
+    - phosphorus
+    - stoichiometry
+    - cnp_ratio
+    - microbial
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Microbial biomass stoichiometry meta-analysis
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.immobilization_cnp_n:
+    value: 7.0
+    default: 7.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 5.0
+    - 12.0
+    category: stoichiometric_parameter
+    description: Nitrogen to phosphorus ratio in microbial biomass for immobilization calculations (C:N:P = 60:7:1)
+    references:
+    - 'Cleveland and Liptzin (2007). DOI: 10.1007/s10533-006-9050-x'
+    - 'Xu et al. (2013). DOI: 10.1890/12-0058.1'
+    tags:
+    - phosphorus
+    - stoichiometry
+    - cnp_ratio
+    - microbial
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Microbial biomass stoichiometry meta-analysis
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.immobilization_cnp_p:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 1.0
+    category: stoichiometric_parameter
+    description: Phosphorus reference value in microbial C:N:P ratio (C:N:P = 60:7:1)
+    references:
+    - 'Cleveland and Liptzin (2007). DOI: 10.1007/s10533-006-9050-x'
+    tags:
+    - phosphorus
+    - stoichiometry
+    - cnp_ratio
+    - microbial
+    - reference
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Stoichiometric normalization constant
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.immobilization_efficiency:
+    value: 0.4
+    default: 0.4
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.2
+    - 0.7
+    category: biological_parameter
+    description: Efficiency of microbial uptake and incorporation of inorganic P into biomass
+    references:
+    - Brookes et al. (1984). Soil Biology and Biochemistry
+    - 'Oberson and Joner (2005). DOI: 10.1079/9780851996790.0000'
+    tags:
+    - phosphorus
+    - immobilization
+    - efficiency
+    - microbial
+    - learnable
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: Microbial growth efficiency studies
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.sorption_kd_linear:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 2.0
+    category: process_rate
+    description: Linear distribution coefficient for phosphorus sorption (Kd in linear isotherm)
+    references:
+    - Barrow (1983). Soil Sci.
+    - 'Wang et al. (2010). DOI: 10.1016/j.geoderma.2009.12.003'
+    tags:
+    - phosphorus
+    - sorption
+    - kd
+    - linear_isotherm
+    - learnable
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: Soil P adsorption isotherm fitting
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.sorption_freundlich_kf:
+    value: 1.2
+    default: 1.2
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 5.0
+    category: process_rate
+    description: Freundlich isotherm coefficient Kf for phosphorus sorption
+    references:
+    - Barrow (1983). Soil Sci.
+    - 'Frossard et al. (2000). DOI: 10.1016/S0016-7061(99)00092-4'
+    tags:
+    - phosphorus
+    - sorption
+    - freundlich
+    - isotherm
+    - learnable
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: Freundlich isotherm fitting to soil P sorption data
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.sorption_freundlich_n:
+    value: 0.8
+    default: 0.8
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 1.5
+    category: process_rate
+    description: Freundlich isotherm exponent n controlling nonlinearity of P sorption
+    references:
+    - Barrow (1983). Soil Sci.
+    - 'Frossard et al. (2000). DOI: 10.1016/S0016-7061(99)00092-4'
+    tags:
+    - phosphorus
+    - sorption
+    - freundlich
+    - nonlinearity
+    - learnable
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: Freundlich isotherm fitting to soil P sorption data
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.sorption_langmuir_qmax:
+    value: 20.0
+    default: 20.0
+    units: g m-2
+    dtype: float32
+    bounds:
+    - 5.0
+    - 100.0
+    category: process_rate
+    description: Langmuir maximum sorption capacity Qmax for phosphorus
+    references:
+    - Barrow (1983). Soil Sci.
+    - 'Frossard et al. (2000). DOI: 10.1016/S0016-7061(99)00092-4'
+    tags:
+    - phosphorus
+    - sorption
+    - langmuir
+    - qmax
+    - capacity
+    - learnable
+    dimension: mass_per_area
+    requires_grad: true
+    provenance:
+      source: Langmuir isotherm fitting to soil P sorption data
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.sorption_langmuir_b:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.01
+    - 1.0
+    category: process_rate
+    description: Langmuir affinity coefficient b for phosphorus sorption
+    references:
+    - Barrow (1983). Soil Sci.
+    - 'Frossard et al. (2000). DOI: 10.1016/S0016-7061(99)00092-4'
+    tags:
+    - phosphorus
+    - sorption
+    - langmuir
+    - affinity
+    - learnable
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: Langmuir isotherm fitting to soil P sorption data
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.desorption_rate:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: s-1
+    dtype: float32
+    bounds:
+    - 1.0e-08
+    - 0.0001
+    category: process_rate
+    description: Rate constant for phosphorus desorption from soil surfaces back to solution
+    references:
+    - Barrow (1983). Soil Sci.
+    - 'Frossard et al. (2000). DOI: 10.1016/S0016-7061(99)00092-4'
+    tags:
+    - phosphorus
+    - desorption
+    - rate_constant
+    - learnable
+    dimension: frequency
+    requires_grad: true
+    provenance:
+      source: P desorption kinetics studies
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.weathering_base_rate:
+    value: 3.17e-10
+    default: 3.17e-10
+    units: s-1
+    dtype: float32
+    bounds:
+    - 1.0e-11
+    - 1.0e-08
+    category: process_rate
+    description: Base rate constant for primary mineral phosphorus weathering (release from apatite and other P minerals)
+    references:
+    - 'Guidry and Mackenzie (2003). DOI: 10.1016/S0016-7037(02)01138-1'
+    - 'Wang et al. (2012). DOI: 10.1029/2011GB004184'
+    tags:
+    - phosphorus
+    - weathering
+    - rate_constant
+    - geochemical
+    - learnable
+    dimension: frequency
+    requires_grad: true
+    provenance:
+      source: Mineral weathering kinetics studies
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.weathering_activation_energy:
+    value: 50000.0
+    default: 50000.0
+    units: J mol-1
+    dtype: float32
+    bounds:
+    - 30000.0
+    - 80000.0
+    category: reference_constant
+    description: Activation energy for phosphorus mineral weathering (Arrhenius equation)
+    references:
+    - 'Guidry and Mackenzie (2003). DOI: 10.1016/S0016-7037(02)01138-1'
+    - 'White and Brantley (2003). DOI: 10.2138/rmg.2003.54.4'
+    tags:
+    - phosphorus
+    - weathering
+    - activation_energy
+    - arrhenius
+    dimension: energy_per_amount
+    requires_grad: false
+    provenance:
+      source: Mineral dissolution activation energy database
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.weathering_ph_optimum:
+    value: 6.5
+    default: 6.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 5.0
+    - 8.0
+    category: environmental_response
+    description: Optimal soil pH for maximum phosphorus weathering rate
+    references:
+    - 'Guidry and Mackenzie (2003). DOI: 10.1016/S0016-7037(02)01138-1'
+    tags:
+    - phosphorus
+    - weathering
+    - ph
+    - optimal
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: pH-dependent mineral dissolution studies
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.weathering_ph_sensitivity:
+    value: 1.5
+    default: 1.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 3.0
+    category: environmental_response
+    description: Sensitivity coefficient for pH effect on weathering rate (controls response curve width)
+    references:
+    - 'Guidry and Mackenzie (2003). DOI: 10.1016/S0016-7037(02)01138-1'
+    tags:
+    - phosphorus
+    - weathering
+    - ph
+    - sensitivity
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: pH-dependent mineral dissolution studies
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.weathering_mineral_p_content:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 2.0
+    category: geochemical_parameter
+    description: Mass fraction of phosphorus in primary phosphate minerals (e.g., apatite Ca5(PO4)3(F,Cl,OH))
+    references:
+    - Newman (1995). Chemistry of clays and clay minerals
+    - 'Wang et al. (2012). DOI: 10.1029/2011GB004184'
+    tags:
+    - phosphorus
+    - weathering
+    - mineral_content
+    - apatite
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Mineral composition data
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.occlusion_rate_constant:
+    value: 1.0e-09
+    default: 1.0e-09
+    units: s-1
+    dtype: float32
+    bounds:
+    - 1.0e-11
+    - 1.0e-07
+    category: process_rate
+    description: Rate constant for phosphorus occlusion within Fe and Al oxide matrices (slow irreversible process)
+    references:
+    - Hedley et al. (1982). Soil Sci. Soc. Am. J.
+    - 'Cross and Schlesinger (1995). DOI: 10.1007/BF00750025'
+    tags:
+    - phosphorus
+    - occlusion
+    - rate_constant
+    - iron
+    - aluminum
+    - learnable
+    dimension: frequency
+    requires_grad: true
+    provenance:
+      source: Long-term P occlusion studies
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.occlusion_fe_al_effect:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 2.0
+    category: environmental_response
+    description: Multiplication factor for Fe and Al oxide content effect on occlusion rate (1.0 = default effect enabled)
+    references:
+    - Hedley et al. (1982). Soil Sci. Soc. Am. J.
+    tags:
+    - phosphorus
+    - occlusion
+    - iron
+    - aluminum
+    - oxide
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Fe/Al oxide impact on P fixation studies
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.occlusion_oxide_coefficient:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.01
+    - 1.0
+    category: geochemical_parameter
+    description: Coefficient relating oxide content to occlusion rate enhancement
+    references:
+    - 'Cross and Schlesinger (1995). DOI: 10.1007/BF00750025'
+    tags:
+    - phosphorus
+    - occlusion
+    - oxide
+    - coefficient
+    - learnable
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: Oxide-P interaction modeling
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.deposition_wet_annual:
+    value: 0.1
+    default: 0.1
+    units: g m-2 yr-1
+    dtype: float32
+    bounds:
+    - 0.01
+    - 1.0
+    category: boundary_condition
+    description: Total annual wet deposition of phosphorus (rainfall and snow)
+    references:
+    - 'Mahowald et al. (2008). DOI: 10.1029/2008GB003240'
+    - 'Wang et al. (2015). DOI: 10.5194/bg-12-6367-2015'
+    tags:
+    - phosphorus
+    - deposition
+    - wet
+    - atmospheric
+    - input
+    dimension: mass_flux
+    requires_grad: false
+    provenance:
+      source: Atmospheric deposition network measurements
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.deposition_dry_annual:
+    value: 0.05
+    default: 0.05
+    units: g m-2 yr-1
+    dtype: float32
+    bounds:
+    - 0.005
+    - 0.5
+    category: boundary_condition
+    description: Total annual dry deposition of phosphorus (dust particles)
+    references:
+    - 'Mahowald et al. (2008). DOI: 10.1029/2008GB003240'
+    - 'Wang et al. (2015). DOI: 10.5194/bg-12-6367-2015'
+    tags:
+    - phosphorus
+    - deposition
+    - dry
+    - atmospheric
+    - dust
+    - input
+    dimension: mass_flux
+    requires_grad: false
+    provenance:
+      source: Atmospheric deposition network measurements
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.deposition_po4_fraction:
+    value: 0.3
+    default: 0.3
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 0.6
+    category: phosphorus_partitioning
+    description: Fraction of deposited phosphorus in orthophosphate (PO4 3-) form versus particulate P
+    references:
+    - 'Mahowald et al. (2008). DOI: 10.1029/2008GB003240'
+    - 'Wang et al. (2015). DOI: 10.5194/bg-12-6367-2015'
+    tags:
+    - phosphorus
+    - deposition
+    - speciation
+    - po4
+    - partitioning
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Atmospheric deposition speciation studies
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.deposition_dust_fraction:
+    value: 0.7
+    default: 0.7
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.4
+    - 0.9
+    category: phosphorus_partitioning
+    description: Fraction of deposited phosphorus bound to dust particles (mineral-associated P)
+    references:
+    - 'Mahowald et al. (2008). DOI: 10.1029/2008GB003240'
+    tags:
+    - phosphorus
+    - deposition
+    - dust
+    - particulate
+    - partitioning
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Atmospheric deposition speciation studies
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.fertilization_application_rate:
+    value: 10.0
+    default: 10.0
+    units: g m-2 yr-1
+    dtype: float32
+    bounds:
+    - 0.0
+    - 100.0
+    category: management_parameter
+    description: Annual phosphorus fertilizer application rate
+    references:
+    - 'Roy et al. (2016). DOI: 10.1038/ngeo2801'
+    - 'Lu and Tian (2017). DOI: 10.5194/essd-9-51-2017'
+    tags:
+    - phosphorus
+    - fertilization
+    - management
+    - agriculture
+    - input
+    dimension: mass_flux
+    requires_grad: false
+    provenance:
+      source: Agricultural management databases
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.fertilization_soluble_fraction:
+    value: 0.8
+    default: 0.8
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.3
+    - 1.0
+    category: management_parameter
+    description: Fraction of applied fertilizer P that is immediately soluble and plant-available
+    references:
+    - 'Roy et al. (2016). DOI: 10.1038/ngeo2801'
+    tags:
+    - phosphorus
+    - fertilization
+    - solubility
+    - availability
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Fertilizer chemistry and dissolution studies
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.fertilization_release_rate:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: s-1
+    dtype: float32
+    bounds:
+    - 1.0e-08
+    - 0.0001
+    category: management_parameter
+    description: Release rate constant for slow-release fertilizer P (for insoluble fraction)
+    references:
+    - 'Shaviv (2001). DOI: 10.1016/S0065-2113(01)71011-5'
+    tags:
+    - phosphorus
+    - fertilization
+    - release_rate
+    - slow_release
+    dimension: frequency
+    requires_grad: false
+    provenance:
+      source: Slow-release fertilizer kinetics studies
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.litter_p_input:
+    value: 1.0e-08
+    default: 1.0e-08
+    units: g m-2 s-1
+    dtype: float32
+    bounds:
+    - 1.0e-10
+    - 1.0e-06
+    category: biological_parameter
+    description: Rate of phosphorus input from aboveground litter fall
+    references:
+    - Parton et al. (1988). CENTURY model documentation
+    - 'Cleveland et al. (2013). DOI: 10.1890/12-0107.1'
+    tags:
+    - phosphorus
+    - litter
+    - organic_input
+    - litterfall
+    dimension: mass_flux
+    requires_grad: false
+    provenance:
+      source: Litterfall P content measurements
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.root_p_input:
+    value: 5.0e-09
+    default: 5.0e-09
+    units: g m-2 s-1
+    dtype: float32
+    bounds:
+    - 1.0e-11
+    - 1.0e-06
+    category: biological_parameter
+    description: Rate of phosphorus input from fine root turnover
+    references:
+    - Parton et al. (1988). CENTURY model documentation
+    - 'Cleveland et al. (2013). DOI: 10.1890/12-0107.1'
+    tags:
+    - phosphorus
+    - root
+    - organic_input
+    - root_turnover
+    dimension: mass_flux
+    requires_grad: false
+    provenance:
+      source: Root turnover P content measurements
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.litter_cnp_c_ratio:
+    value: 50.0
+    default: 50.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 30.0
+    - 100.0
+    category: stoichiometric_parameter
+    description: Carbon to phosphorus ratio in litter (C:N:P = 50:10:1)
+    references:
+    - 'McGroddy et al. (2004). DOI: 10.1890/02-0615'
+    - 'Cleveland et al. (2013). DOI: 10.1890/12-0107.1'
+    tags:
+    - phosphorus
+    - stoichiometry
+    - litter
+    - cnp_ratio
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Litter stoichiometry meta-analysis
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.litter_cnp_n_ratio:
+    value: 10.0
+    default: 10.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 5.0
+    - 20.0
+    category: stoichiometric_parameter
+    description: Nitrogen to phosphorus ratio in litter (C:N:P = 50:10:1)
+    references:
+    - 'McGroddy et al. (2004). DOI: 10.1890/02-0615'
+    - 'Cleveland et al. (2013). DOI: 10.1890/12-0107.1'
+    tags:
+    - phosphorus
+    - stoichiometry
+    - litter
+    - cnp_ratio
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Litter stoichiometry meta-analysis
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.litter_cnp_p_ratio:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 1.0
+    category: stoichiometric_parameter
+    description: Phosphorus reference value in litter C:N:P ratio (C:N:P = 50:10:1)
+    references:
+    - 'McGroddy et al. (2004). DOI: 10.1890/02-0615'
+    tags:
+    - phosphorus
+    - stoichiometry
+    - litter
+    - cnp_ratio
+    - reference
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Stoichiometric normalization constant
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.root_cnp_c_ratio:
+    value: 80.0
+    default: 80.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 50.0
+    - 150.0
+    category: stoichiometric_parameter
+    description: Carbon to phosphorus ratio in fine roots (C:N:P = 80:12:1)
+    references:
+    - 'Gordon and Jackson (2000). DOI: 10.1890/0012-9658(2000)081[0737:NAOHOC]2.0.CO;2'
+    - 'Cleveland et al. (2013). DOI: 10.1890/12-0107.1'
+    tags:
+    - phosphorus
+    - stoichiometry
+    - root
+    - cnp_ratio
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Root stoichiometry meta-analysis
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.root_cnp_n_ratio:
+    value: 12.0
+    default: 12.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 8.0
+    - 20.0
+    category: stoichiometric_parameter
+    description: Nitrogen to phosphorus ratio in fine roots (C:N:P = 80:12:1)
+    references:
+    - 'Gordon and Jackson (2000). DOI: 10.1890/0012-9658(2000)081[0737:NAOHOC]2.0.CO;2'
+    - 'Cleveland et al. (2013). DOI: 10.1890/12-0107.1'
+    tags:
+    - phosphorus
+    - stoichiometry
+    - root
+    - cnp_ratio
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Root stoichiometry meta-analysis
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.root_cnp_p_ratio:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 1.0
+    category: stoichiometric_parameter
+    description: Phosphorus reference value in root C:N:P ratio (C:N:P = 80:12:1)
+    references:
+    - 'Gordon and Jackson (2000). DOI: 10.1890/0012-9658(2000)081[0737:NAOHOC]2.0.CO;2'
+    tags:
+    - phosphorus
+    - stoichiometry
+    - root
+    - cnp_ratio
+    - reference
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Stoichiometric normalization constant
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.leaching_base_coefficient:
+    value: 1.0e-08
+    default: 1.0e-08
+    units: s-1
+    dtype: float32
+    bounds:
+    - 1.0e-10
+    - 1.0e-06
+    category: process_rate
+    description: Base coefficient for phosphorus leaching loss from soil profile
+    references:
+    - 'Frossard et al. (2000). DOI: 10.1016/S0016-7061(99)00092-4'
+    - 'Wang et al. (2010). DOI: 10.1016/j.geoderma.2009.12.003'
+    tags:
+    - phosphorus
+    - leaching
+    - loss
+    - hydrological
+    - learnable
+    dimension: frequency
+    requires_grad: true
+    provenance:
+      source: Soil P leaching studies
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.leaching_flux_exponent:
+    value: 1.2
+    default: 1.2
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.8
+    - 2.0
+    category: process_rate
+    description: Exponent controlling nonlinear water flux effect on P leaching
+    references:
+    - 'Frossard et al. (2000). DOI: 10.1016/S0016-7061(99)00092-4'
+    tags:
+    - phosphorus
+    - leaching
+    - nonlinearity
+    - water_flux
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: P leaching model calibration
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.leaching_max_concentration:
+    value: 0.1
+    default: 0.1
+    units: g m-3
+    dtype: float32
+    bounds:
+    - 0.01
+    - 1.0
+    category: physical_limit
+    description: Maximum phosphorus concentration in leachate (saturation limit)
+    references:
+    - 'Frossard et al. (2000). DOI: 10.1016/S0016-7061(99)00092-4'
+    tags:
+    - phosphorus
+    - leaching
+    - concentration
+    - maximum
+    dimension: mass_concentration
+    requires_grad: false
+    provenance:
+      source: Soil solution P concentration measurements
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.leaching_dissolved_mobility:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 1.0
+    category: transport_parameter
+    description: Relative mobility of dissolved phosphorus in leaching (1.0 = moves with water)
+    references:
+    - 'Frossard et al. (2000). DOI: 10.1016/S0016-7061(99)00092-4'
+    tags:
+    - phosphorus
+    - leaching
+    - mobility
+    - dissolved
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: P transport modeling
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.leaching_available_mobility:
+    value: 0.3
+    default: 0.3
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 0.8
+    category: transport_parameter
+    description: Relative mobility of available (labile) phosphorus in leaching
+    references:
+    - 'Frossard et al. (2000). DOI: 10.1016/S0016-7061(99)00092-4'
+    tags:
+    - phosphorus
+    - leaching
+    - mobility
+    - available
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: P transport modeling
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.leaching_sorbed_mobility:
+    value: 0.05
+    default: 0.05
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.01
+    - 0.2
+    category: transport_parameter
+    description: Relative mobility of sorbed phosphorus in leaching (low mobility)
+    references:
+    - 'Frossard et al. (2000). DOI: 10.1016/S0016-7061(99)00092-4'
+    tags:
+    - phosphorus
+    - leaching
+    - mobility
+    - sorbed
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: P transport modeling
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.leaching_organic_mobility:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.01
+    - 0.5
+    category: transport_parameter
+    description: Relative mobility of organic phosphorus in leaching (particulate transport)
+    references:
+    - 'Frossard et al. (2000). DOI: 10.1016/S0016-7061(99)00092-4'
+    tags:
+    - phosphorus
+    - leaching
+    - mobility
+    - organic
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: P transport modeling
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.plant_uptake_base_rate:
+    value: 5.0e-08
+    default: 5.0e-08
+    units: g m-2 s-1
+    dtype: float32
+    bounds:
+    - 1.0e-09
+    - 1.0e-06
+    category: biological_parameter
+    description: Base rate of plant phosphorus uptake from soil
+    references:
+    - Barber (1995). Soil nutrient bioavailability
+    - 'Silberbush and Barber (1983). DOI: 10.1104/pp.72.2.454'
+    tags:
+    - phosphorus
+    - plant_uptake
+    - root_uptake
+    - rate
+    - learnable
+    dimension: mass_flux
+    requires_grad: true
+    provenance:
+      source: Root nutrient uptake kinetics studies
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.plant_uptake_km:
+    value: 1.0
+    default: 1.0
+    units: g m-2
+    dtype: float32
+    bounds:
+    - 0.1
+    - 10.0
+    category: biological_parameter
+    description: Michaelis-Menten Km for plant phosphorus uptake (half-saturation concentration)
+    references:
+    - Barber (1995). Soil nutrient bioavailability
+    - 'Silberbush and Barber (1983). DOI: 10.1104/pp.72.2.454'
+    tags:
+    - phosphorus
+    - plant_uptake
+    - km
+    - michaelis_menten
+    - learnable
+    dimension: mass_per_area
+    requires_grad: true
+    provenance:
+      source: Root nutrient uptake kinetics studies
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.plant_uptake_root_effect:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 2.0
+    category: biological_parameter
+    description: Multiplication factor for root biomass effect on P uptake (1.0 = default root effect enabled)
+    references:
+    - Barber (1995). Soil nutrient bioavailability
+    tags:
+    - phosphorus
+    - plant_uptake
+    - root_effect
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Root-soil nutrient acquisition modeling
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.temperature_reference:
+    value: 288.15
+    default: 288.15
+    units: K
+    dtype: float32
+    bounds:
+    - 273.15
+    - 303.15
+    category: reference_constant
+    description: Reference temperature for all P cycling processes (15 degC, 288.15 K)
+    references:
+    - Lloyd and Taylor (1994). Functional Ecology
+    tags:
+    - phosphorus
+    - temperature
+    - reference
+    - environmental
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: Standard reference temperature for soil biogeochemistry
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.temperature_q10_immobilization:
+    value: 2.0
+    default: 2.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.3
+    - 3.5
+    category: environmental_response
+    description: Q10 temperature sensitivity for microbial P immobilization
+    references:
+    - Lloyd and Taylor (1994). Functional Ecology
+    tags:
+    - phosphorus
+    - immobilization
+    - temperature
+    - q10
+    - learnable
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: Microbial activity temperature response
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.temperature_q10_weathering:
+    value: 1.8
+    default: 1.8
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.2
+    - 2.5
+    category: environmental_response
+    description: Q10 temperature sensitivity for mineral weathering
+    references:
+    - 'White and Brantley (2003). DOI: 10.2138/rmg.2003.54.4'
+    tags:
+    - phosphorus
+    - weathering
+    - temperature
+    - q10
+    - learnable
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: Mineral dissolution temperature dependence
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.temperature_q10_sorption:
+    value: 1.2
+    default: 1.2
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 1.8
+    category: environmental_response
+    description: Q10 temperature sensitivity for P sorption kinetics
+    references:
+    - Barrow (1983). Soil Sci.
+    tags:
+    - phosphorus
+    - sorption
+    - temperature
+    - q10
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Adsorption kinetics temperature dependence
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.temperature_min:
+    value: 263.15
+    default: 263.15
+    units: K
+    dtype: float32
+    bounds:
+    - 253.15
+    - 273.15
+    category: physical_limit
+    description: Minimum temperature for P cycling processes (-10 degC, processes cease below this)
+    references:
+    - Parton et al. (1988). CENTURY model
+    tags:
+    - phosphorus
+    - temperature
+    - minimum
+    - limit
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: Soil biogeochemical process temperature limits
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.temperature_max:
+    value: 323.15
+    default: 323.15
+    units: K
+    dtype: float32
+    bounds:
+    - 313.15
+    - 333.15
+    category: physical_limit
+    description: Maximum temperature for P cycling processes (50 degC, processes inhibited above this)
+    references:
+    - Parton et al. (1988). CENTURY model
+    tags:
+    - phosphorus
+    - temperature
+    - maximum
+    - limit
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: Soil biogeochemical process temperature limits
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.moisture_optimal:
+    value: 0.4
+    default: 0.4
+    units: m3 m-3
+    dtype: float32
+    bounds:
+    - 0.2
+    - 0.6
+    category: environmental_response
+    description: Optimal volumetric soil moisture for P cycling processes (general optimum)
+    references:
+    - Orchard and Cook (1983). Soil Biology and Biochemistry
+    tags:
+    - phosphorus
+    - moisture
+    - optimal
+    - environmental
+    dimension: volume_fraction
+    requires_grad: false
+    provenance:
+      source: Soil moisture response meta-analysis
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.moisture_minimum:
+    value: 0.1
+    default: 0.1
+    units: m3 m-3
+    dtype: float32
+    bounds:
+    - 0.05
+    - 0.2
+    category: physical_limit
+    description: Minimum volumetric soil moisture for P cycling (processes cease below this)
+    references:
+    - Orchard and Cook (1983). Soil Biology and Biochemistry
+    tags:
+    - phosphorus
+    - moisture
+    - minimum
+    - limit
+    dimension: volume_fraction
+    requires_grad: false
+    provenance:
+      source: Soil moisture limitation studies
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.moisture_curve_shape:
+    value: 1.5
+    default: 1.5
+    units: m3 m-3
+    dtype: float32
+    bounds:
+    - 0.5
+    - 3.0
+    category: environmental_response
+    description: Shape parameter for moisture response curve (controls curve steepness)
+    references:
+    - Orchard and Cook (1983). Soil Biology and Biochemistry
+    tags:
+    - phosphorus
+    - moisture
+    - shape_parameter
+    dimension: volume_fraction
+    requires_grad: false
+    provenance:
+      source: Empirical moisture response curve fitting
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.ph_optimal:
+    value: 6.5
+    default: 6.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 5.5
+    - 7.5
+    category: environmental_response
+    description: Optimal soil pH for general P availability and cycling
+    references:
+    - Penn and Camberato (2019). Soil pH and nutrient availability
+    tags:
+    - phosphorus
+    - ph
+    - optimal
+    - environmental
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Soil pH-nutrient availability studies
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.ph_optimal_range_min:
+    value: 6.0
+    default: 6.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 5.0
+    - 6.5
+    category: environmental_response
+    description: Minimum pH of optimal range for P availability
+    references:
+    - Penn and Camberato (2019). Soil pH and nutrient availability
+    tags:
+    - phosphorus
+    - ph
+    - optimal_range
+    - minimum
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Soil pH-nutrient availability studies
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.ph_optimal_range_max:
+    value: 7.0
+    default: 7.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 6.5
+    - 8.0
+    category: environmental_response
+    description: Maximum pH of optimal range for P availability
+    references:
+    - Penn and Camberato (2019). Soil pH and nutrient availability
+    tags:
+    - phosphorus
+    - ph
+    - optimal_range
+    - maximum
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Soil pH-nutrient availability studies
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.ph_sorption_effect:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 2.0
+    category: environmental_response
+    description: Enable/disable pH effect on P sorption (1.0 = enabled, 0.0 = disabled)
+    references:
+    - Barrow (1983). Soil Sci.
+    tags:
+    - phosphorus
+    - ph
+    - sorption
+    - switch
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: pH-dependent P sorption modeling
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.ph_sorption_coefficient:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.01
+    - 0.5
+    category: environmental_response
+    description: Coefficient quantifying pH effect strength on P sorption
+    references:
+    - Barrow (1983). Soil Sci.
+    tags:
+    - phosphorus
+    - ph
+    - sorption
+    - coefficient
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: pH-dependent P sorption modeling
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.enable_conservation_check:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: model_configuration
+    description: Enable P conservation checking (1.0 = enabled, 0.0 = disabled)
+    references:
+    - RELIC conservation framework documentation
+    tags:
+    - phosphorus
+    - conservation
+    - validation
+    - configuration
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Model conservation validation system
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.conservation_tolerance:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: g m-2
+    dtype: float32
+    bounds:
+    - 1.0e-09
+    - 0.001
+    category: model_configuration
+    description: Tolerance threshold for P conservation violation detection
+    references:
+    - RELIC conservation framework documentation
+    tags:
+    - phosphorus
+    - conservation
+    - tolerance
+    - validation
+    dimension: mass_areal_density
+    requires_grad: false
+    provenance:
+      source: Model conservation validation system
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.max_correction_fraction:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.01
+    - 0.5
+    category: model_configuration
+    description: Maximum allowed fractional correction to pools when enforcing conservation
+    references:
+    - RELIC conservation framework documentation
+    tags:
+    - phosphorus
+    - conservation
+    - correction
+    - limit
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Model conservation correction algorithm
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.max_total_p:
+    value: 1000.0
+    default: 1000.0
+    units: g m-2
+    dtype: float32
+    bounds:
+    - 500.0
+    - 5000.0
+    category: physical_limit
+    description: Maximum physically plausible total soil P content
+    references:
+    - 'Cross and Schlesinger (1995). DOI: 10.1007/BF00750025'
+    tags:
+    - phosphorus
+    - validation
+    - maximum
+    - total
+    dimension: mass_per_area
+    requires_grad: false
+    provenance:
+      source: Soil P content database
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.min_total_p:
+    value: 10.0
+    default: 10.0
+    units: g m-2
+    dtype: float32
+    bounds:
+    - 1.0
+    - 50.0
+    category: physical_limit
+    description: Minimum physically plausible total soil P content
+    references:
+    - 'Cross and Schlesinger (1995). DOI: 10.1007/BF00750025'
+    tags:
+    - phosphorus
+    - validation
+    - minimum
+    - total
+    dimension: mass_per_area
+    requires_grad: false
+    provenance:
+      source: Soil P content database
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.max_available_p:
+    value: 50.0
+    default: 50.0
+    units: g m-2
+    dtype: float32
+    bounds:
+    - 10.0
+    - 200.0
+    category: physical_limit
+    description: Maximum physically plausible available P pool size
+    references:
+    - Olsen et al. (1954). Estimation of available phosphorus in soils
+    tags:
+    - phosphorus
+    - validation
+    - maximum
+    - available
+    dimension: mass_per_area
+    requires_grad: false
+    provenance:
+      source: Soil test P database
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.max_microbial_p:
+    value: 100.0
+    default: 100.0
+    units: g m-2
+    dtype: float32
+    bounds:
+    - 20.0
+    - 300.0
+    category: physical_limit
+    description: Maximum physically plausible microbial P pool size
+    references:
+    - Brookes et al. (1982). Soil Biology and Biochemistry
+    tags:
+    - phosphorus
+    - validation
+    - maximum
+    - microbial
+    dimension: mass_per_area
+    requires_grad: false
+    provenance:
+      source: Microbial biomass P measurements
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.max_transformation_flux:
+    value: 1.0e-05
+    default: 1.0e-05
+    units: g m-2 s-1
+    dtype: float32
+    bounds:
+    - 1.0e-07
+    - 0.001
+    category: physical_limit
+    description: Maximum physically plausible P transformation flux (mineralization, immobilization, etc.)
+    references:
+    - McGill and Cole (1981). Geoderma
+    tags:
+    - phosphorus
+    - validation
+    - maximum
+    - flux
+    dimension: mass_flux
+    requires_grad: false
+    provenance:
+      source: P transformation rate measurements
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.max_leaching_flux:
+    value: 1.0e-07
+    default: 1.0e-07
+    units: g m-2 s-1
+    dtype: float32
+    bounds:
+    - 1.0e-09
+    - 1.0e-05
+    category: physical_limit
+    description: Maximum physically plausible P leaching flux
+    references:
+    - 'Frossard et al. (2000). DOI: 10.1016/S0016-7061(99)00092-4'
+    tags:
+    - phosphorus
+    - validation
+    - maximum
+    - leaching
+    dimension: mass_flux
+    requires_grad: false
+    provenance:
+      source: P leaching measurements
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Migration
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.p_po4_fraction:
+    value: 0.3
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 0.6
+    category: phosphorus_partitioning
+    description: Fraction of total inorganic phosphorus as orthophosphate (PO4 3-) in soil solution.
+    references:
+    - Wang et al. (2010). Soil phosphorus fractionation and bioavailability
+    - 'DOI: 10.1016/j.geoderma.2009.12.003'
+    tags:
+    - phosphorus
+    - speciation
+    - partitioning
+    - po4
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Literature review and soil P fractionation studies
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Audit 2025-10-05
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.phosphorus.p_dust_fraction:
+    value: 0.7
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.4
+    - 0.9
+    category: phosphorus_partitioning
+    description: Fraction of total inorganic phosphorus bound to mineral/dust particles (sorbed plus occluded).
+    references:
+    - Wang et al. (2010). Soil phosphorus fractionation and bioavailability
+    - Hedley fractionation scheme
+    tags:
+    - phosphorus
+    - speciation
+    - adsorption
+    - dust
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Hedley P fractionation protocol
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Audit 2025-10-05
+      last_modified: '2025-10-06T00:00:00Z'

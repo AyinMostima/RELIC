@@ -1,0 +1,238 @@
+schema_version: 2.0.0
+tier: relic
+namespace: optimization.sensitivity
+description: Sample sizes, Morris grid and convergence tolerance of the Morris and Sobol sensitivity analyzers
+  (relic.optimization.sensitivity) used when a configuration does not state them
+metadata:
+  version: 1.0.0
+  created_by: relic
+  last_modified: '2026-09-26T00:00:00Z'
+parameters:
+  optimization.sensitivity.morris.n_trajectories:
+    value: 50
+    default: 50
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 100000
+    category: numerical_parameter
+    description: Number r of random one-at-a-time Morris trajectories (r (k + 1) model runs for k factors). Campolongo et
+      al. (2007) use r = 20 (Sect. 3.1) and r = 10 (test case) in their examples; the value 50 is a RELIC convention
+      value, not a literature recommendation.
+    references:
+    - Campolongo, F., Cariboni, J. & Saltelli, A. (2007). An effective screening design for sensitivity analysis of large
+      models. Environ. Model. Softw. 22, 1509-1518 (r = 10 and r = 20 in the examples)
+    - RELIC convention value (documented as an operational choice)
+    tags:
+    - optimization
+    - sensitivity
+    - morris
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  optimization.sensitivity.morris.n_levels:
+    value: 4
+    default: 4
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 2
+    - 1000
+    category: numerical_parameter
+    description: Number p of levels of the Morris grid on each factor range. Campolongo et al. (2007, Sect. 2) name p even
+      as the convenient choice (after Morris 1991) and use p = 4, the grid {0, 1/3, 2/3, 1}, in their examples (Sect.
+      3.1).
+    references:
+    - Morris, M.D. (1991). Factorial sampling plans for preliminary computational experiments. Technometrics 33, 161-174
+    - Campolongo, F., Cariboni, J. & Saltelli, A. (2007). Environ. Model. Softw. 22, 1509-1518, Sect. 2 and 3.1
+    tags:
+    - optimization
+    - sensitivity
+    - morris
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  optimization.sensitivity.morris.grid_jump:
+    value: 2
+    default: 2
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 500
+    category: numerical_parameter
+    description: Morris step in grid levels, grid_jump = Delta (p - 1). Campolongo et al. (2007, Sect. 2) give the
+      convenient choice p even and Delta = p / [2 (p - 1)] (after Morris 1991); for p = 4 this is Delta = 2/3, i.e. 2 grid
+      levels of width 1/3. The code requires 2 grid_jump <= p so every step stays on the grid.
+    references:
+    - Morris, M.D. (1991). Technometrics 33, 161-174
+    - Campolongo, F., Cariboni, J. & Saltelli, A. (2007). Environ. Model. Softw. 22, 1509-1518, Sect. 2 (Delta = p / [2 (p
+      - 1)])
+    tags:
+    - optimization
+    - sensitivity
+    - morris
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  optimization.sensitivity.sobol.n_samples:
+    value: 1000
+    default: 1000
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 2
+    - 100000000
+    category: numerical_parameter
+    description: Base sample size N of the Saltelli A/B/AB_i design (N (k + 2) model runs for k factors). The value 1000 is
+      a RELIC convention value; the design and estimators follow Saltelli et al. (2010), which is not the source of the
+      value.
+    references:
+    - Saltelli, A., Annoni, P., Azzini, I., Campolongo, F., Ratto, M. & Tarantola, S. (2010). Variance based sensitivity
+      analysis of model output. Design and estimator for the total sensitivity index. Comput. Phys. Commun. 181, 259-270
+      (design; not the source of the value)
+    - RELIC convention value (documented as an operational choice)
+    tags:
+    - optimization
+    - sensitivity
+    - sobol
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  optimization.sensitivity.sobol.skip_values:
+    value: 1000
+    default: 1000
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 0
+    - 100000000
+    category: numerical_parameter
+    description: Number of initial points of the (scrambled) Sobol sequence skipped by fast_forward before the A and B
+      matrices are drawn; 0 skips none. The value 1000 is a RELIC convention value.
+    references:
+    - RELIC convention value (documented as an operational choice)
+    tags:
+    - optimization
+    - sensitivity
+    - sobol
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  optimization.sensitivity.convergence_tolerance:
+    value: 0.05
+    default: 0.05
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 1.0e-12
+    - 1.0
+    category: numerical_parameter
+    description: Tolerance of the Sobol convergence check on the absolute change of the first- and total-order indices
+      between the last two declared base sample sizes. Sarrazin et al. (2016, Sect. 2.1.1) judge the convergence of
+      normalized indices on an absolute scale and found 0.05 a reasonable threshold for their statistic (the maximum
+      width of the bootstrap 95% confidence interval); RELIC applies the same absolute value to a different statistic
+      (the change between two sample sizes), so the value is adopted, not derived.
+    references:
+    - Sarrazin, F., Pianosi, F. & Wagener, T. (2016). Global Sensitivity Analysis of environmental models. Convergence and
+      validation. Environ. Model. Softw. 79, 135-152, Sect. 2.1.1
+    tags:
+    - optimization
+    - sensitivity
+    - convergence
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_adapted
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  optimization.sensitivity.finite_difference.zero_parameter_scale:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 1.0e-12
+    - 1.0e+12
+    category: numerical_parameter
+    description: Curvature scale x_c of the default finite-difference step of
+      BiologicalProcess.parameter_sensitivity at a parameter value of zero. The step is h = eps_m^(1/2) x_c (forward
+      difference) or h = eps_m^(1/3) x_c (central difference) with eps_m the machine epsilon of the perturbed tensor's
+      dtype (Press et al. 1992, Sect. 5.7); x_c = |theta| for theta != 0 and this floor for theta = 0, where |theta|
+      gives no scale. The value is one unit of the perturbed parameter (the number carries the parameter's own units);
+      it follows the mixed-scale floor principle of Hairer et al. (1993, Sect. II.4) and is a RELIC convention value,
+      not a literature value. An explicit absolute_eps and relative_eps of the caller take precedence.
+    references:
+    - Press, W.H., Teukolsky, S.A., Vetterling, W.T. & Flannery, B.P. (1992). Numerical Recipes in C, 2nd ed.,
+      Cambridge University Press, Sect. 5.7 (step size of numerical derivatives, curvature scale x_c)
+    - Hairer, E., Norsett, S.P. & Wanner, G. (1993). Solving Ordinary Differential Equations I, 2nd ed., Springer,
+      Sect. II.4 (mixed absolute/relative scale)
+    - RELIC convention value (no literature value for the floor; documented as an operational choice)
+    tags:
+    - optimization
+    - sensitivity
+    - finite_difference
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  optimization.sensitivity.sobol.convergence_sample_divisors:
+    value:
+    - 4
+    - 2
+    - 1
+    default:
+    - 4
+    - 2
+    - 1
+    units: dimensionless
+    dtype: list
+    bounds:
+    - 1
+    - 1000000
+    category: numerical_parameter
+    description: Divisors d_j of the Sobol convergence check when SobolConfig.convergence_samples is not stated; the
+      indices are re-estimated at the base sample sizes N_j = N // d_j (N = n_samples), i.e. N/4, N/2 and N, and
+      compared. The divisors must be strictly decreasing and end with 1 (the full sample). A RELIC convention value;
+      Sarrazin et al. (2016) assess convergence by re-estimating the indices at increasing sample sizes but
+      prescribe no sizes.
+    references:
+    - 'Sarrazin, F., Pianosi, F. & Wagener, T. (2016). Global Sensitivity Analysis of environmental models: Convergence and validation. Environ. Model. Softw. 79, 135-152 (Sect. 2.1)'
+    - RELIC convention value (documented as an operational choice)
+    tags:
+    - optimization
+    - sensitivity
+    - sobol
+    - convergence
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'

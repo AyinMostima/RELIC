@@ -1,0 +1,42 @@
+variable: stress_level
+title: "Aggregated Sesquiterpene Stress Driver"
+description: "Dimensionless aggregated stress driver S of the sesquiterpene stress amplification: sesquiterpene_stress_model compares S with the threshold S_th and returns stress_response_factor in [1, 1 + A]. Required input; no relic Functor writes it (supplied as forcing)."
+kind: forcing
+dimension:
+  udunits: "1"
+  cf_standard_name: null
+support:
+  spatial_kind: leaf
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Duhl, T.R., Helmig, D. and Guenther, A. (2008). Sesquiterpene emissions from vegetation: a review. Biogeosciences 5, 761-777"
+numerics:
+  # No range is declared: the reader applies no bound to S; the output is clamped to [1, 1 + A].
+  lower_bound: null
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies: []
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/biosphere/bvoc/synthesis/sesquiterpene.py"
+  runtime_role: "sesquiterpene_stress_driver_forcing"
+  runtime_writer: null
+  note: "Reader: SesquiterpeneStressModel (metadata input_variables; forward raises KeyError when stress_level is missing; S_th and A are dimensionless parameters in bvoc_parameters.yaml). No RELIC Functor writes stress_level."

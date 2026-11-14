@@ -1,0 +1,135 @@
+certificate_version: '1.0'
+process_id: relic.scientific.atmosphere.radiation.RadiationField
+module_name: RadiationField
+canonical_role: field
+iphs_level: 3
+iphs_level_evidence:
+  classification: IPHS-structured field process certificate
+  compatible_basis: Process declares composition-safe IPHS or DEC structure
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: Structured field update through IPHS-compatible operators
+  structural_contribution: Field state, operator, and audit maps are declared
+  assembly_participation: Certificate participates in Phase 8 inventory and GraphIR structural audit
+  level_3_limit: Typed form, Hodge, port, or related structure is declared, but no runtime-linked IPHSStructureSpec contribution and executable level 4 or 5 certificate binding is present.
+theory_document: docs\source\theory\radiation.md
+theory_document_status: updated
+legacy_formula: R(x,y,t) field interpolation and evolution; nabla R = (partial R/partial x, partial R/partial y)
+literature_formula: R(x,y,t) field interpolation and evolution; nabla R = (partial R/partial x, partial R/partial y)
+iphs_formula: R_dot = M_h e_R + G_h u_R with M_h = diag(R_max - R_min) >= 0 and boundary forcing routed through radiation_field_boundary_port
+legacy_expression: R(x,y,t) field interpolation and evolution; nabla R = (partial R/partial x, partial R/partial y)
+iphs_expression: R_dot = M_h e_R + G_h u_R; clipping residual = R_clipped - R_unclipped is exposed as diagnostics.radiation_field.clipping_residual
+input_variables:
+- grid_coordinates
+- radiation_field
+- source_coordinates
+output_variables:
+- radiation_field
+- diagnostics.radiation_field.gradient
+- diagnostics.radiation_field.clipping_residual
+- diagnostics.radiation_field.query_clipping_residual
+parameter_keys:
+- atmosphere.radiation.field_bounds.generic_min_radiation
+- atmosphere.radiation.field_bounds.generic_max_radiation
+- atmosphere.radiation.field_interpolation.idw_power
+- atmosphere.radiation.field_interpolation.coincident_tolerance
+composition_ports:
+- radiation_field_boundary_port
+references:
+- Brutsaert, W. (1975). On a derivable formula for long-wave radiation from clear skies.
+- Campbell, G.S. and Norman, J.M. (1998). An Introduction to Environmental Biophysics.
+baseline_tests:
+- test\atmosphere\test_radiation_field_forward.py
+- test\atmosphere\test_radiation_integration.py
+- test\audit\phase8_scientific_inventory.test.py
+validation_tests:
+- test\atmosphere\test_radiation_integration.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  grid_coordinates: grid_coordinates mapped to canonical Phase 8 cochain basis
+  radiation_field: radiation_field mapped to canonical Phase 8 cochain basis
+  source_coordinates: source_coordinates mapped to canonical Phase 8 cochain basis
+parameter_map:
+  atmosphere.radiation.field_bounds.generic_min_radiation: Lower physical projection bound of the field [W m-2]
+  atmosphere.radiation.field_bounds.generic_max_radiation: Upper physical projection bound of the field [W m-2]
+  atmosphere.radiation.field_interpolation.idw_power: Inverse-distance exponent [dimensionless]
+  atmosphere.radiation.field_interpolation.coincident_tolerance: Coincident-sample distance tolerance [m]
+operator_map:
+  J_h: zero reversible interconnection for this reduced field container
+  M_h: positive semidefinite bounded radiation field metric from R_max - R_min
+  G_h: radiation_field_boundary_port boundary map
+unit_map:
+  radiation_field: W m-2
+  diagnostics.radiation_field.gradient: W m-3
+  diagnostics.radiation_field.clipping_residual: W m-2
+  diagnostics.radiation_field.query_clipping_residual: W m-2
+input_output_map:
+  grid_coordinates: same interface variable preserved between legacy and IPHS runtime contracts
+  radiation_field: same interface variable preserved between legacy and IPHS runtime contracts
+  diagnostics.radiation_field.gradient: explicit optional spatial-gradient diagnostic
+  diagnostics.radiation_field.clipping_residual: explicit bounded-projection residual
+  diagnostics.radiation_field.query_clipping_residual: explicit interpolation-query clipping residual
+  source_coordinates: same interface variable preserved between legacy and IPHS runtime contracts
+interface_map:
+  forward_signature: forward(self, state, time, dt, **kwargs)
+  bridge_class: PhysicalFieldFunctor
+  abstraction_contract: PhysicalField
+  state_write_mode: radiation_field uses UpdateItem(REPLACE); diagnostics use explicit REPLACE updates
+  legacy_inputs:
+  - grid_coordinates
+  - radiation_field
+  - source_coordinates
+  iphs_inputs:
+  - grid_coordinates
+  - radiation_field
+  - source_coordinates
+  legacy_outputs:
+  - radiation_field
+  - diagnostics.radiation_field.gradient
+  - diagnostics.radiation_field.clipping_residual
+  - diagnostics.radiation_field.query_clipping_residual
+  iphs_outputs:
+  - radiation_field
+  - diagnostics.radiation_field.gradient
+  - diagnostics.radiation_field.clipping_residual
+  - diagnostics.radiation_field.query_clipping_residual
+  conditional_outputs:
+  - diagnostics.radiation_field.gradient
+  - diagnostics.radiation_field.clipping_residual
+  - diagnostics.radiation_field.query_clipping_residual
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: ParameterManager-backed field bounds and interpolation numerics are preserved while state advancement remains owned by the existing StateManager transaction.
+  no_legacy_mode: Production forward exposes only the state-driven field projection; source_terms, update_field selection, retained-old-field recovery, and nonfinite repair branches are rejected.
+state_advancement_map:
+  potential_basis: declared RELIC state, port, or observation cochain basis
+  effort_variable: radiation_field state supplied by the existing simulator and StateManager transaction
+  state_advancer: External StateManager transaction owns radiation_field evolution; forward validates, bounds, and interpolates that exact state without a second source-term advance.
+  runtime_usage: RadiationField.forward requires finite grid_coordinates and radiation_field cochains, rejects nonpositive dt, exposes bounded interpolation and clipping residuals, and does not claim an executable level-4 IPHS state advancer.
+parameter_management_map:
+  atmosphere.radiation.field_bounds.generic_min_radiation:
+    source: ParameterManager YAML
+  atmosphere.radiation.field_bounds.generic_max_radiation:
+    source: ParameterManager YAML
+  atmosphere.radiation.field_interpolation.idw_power:
+    source: ParameterManager YAML
+  atmosphere.radiation.field_interpolation.coincident_tolerance:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares interfaces, execution phase, and conservation semantics
+  state_contract: existing simulator state update path is preserved
+  validation_rule: phase8 scientific inventory and equivalence certificate checks
+dependency_interconnection_map:
+  dependencies: declared through existing metadata or no external dependency
+  direct_functor_calls: none declared by certificate
+overflow_routing_map:
+  diagnostic_residuals: diagnostics.radiation_field.clipping_residual and diagnostics.radiation_field.query_clipping_residual report bounded-projection residuals
+  discarded_residuals: none for field-bound clipping residuals
+conservation_map:
+  conserved_quantities: energy
+  balance_expression: radiation_field output equals clamp(input radiation_field, R_min, R_max), with every clipping residual returned explicitly
+entropy_audit:
+  operator_sign: M_h is diagonal with entries R_max - R_min >= 0 from ParameterManager-backed bounds
+  sigma_expression: sigma_h = R_h.T M_h R_h >= 0
+equivalence_type: exact

@@ -1,0 +1,421 @@
+schema_version: 2.0.0
+tier: relic
+namespace: atmosphere.transport
+description: Default atmospheric transport parameters used for deposition and boundary-layer schemes
+metadata:
+  created_by: RELIC Parameter System
+  last_modified: '2025-02-07T00:00:00Z'
+  schema_url: https://github.com/relic/parameter-schema/v2.0.0
+  notes: Reference values for near-surface meteorology and resistances applied in transport modules
+  version: 1.0.0
+parameters:
+  relative_humidity_default:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: atmospheric_state
+    description: Typical relative humidity used as default for deposition velocity estimation
+    references:
+    - Seinfeld & Pandis (2016) Atmospheric Chemistry and Physics
+    tags:
+    - default
+    - humidity
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: atmospheric_climatology
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-02-07T00:00:00Z'
+  sensible_heat_flux_default:
+    value: 0.0
+    default: 0.0
+    units: W m-2
+    dtype: float32
+    bounds:
+    - -500.0
+    - 500.0
+    category: flux_parameter
+    description: Neutral stratification sensible heat flux used when turbulence diagnostics are missing
+    references:
+    - Stull (1988) An Introduction to Boundary Layer Meteorology
+    tags:
+    - default
+    - turbulence
+    dimension: energy_flux
+    requires_grad: false
+    provenance:
+      source: boundary_layer_theory
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-02-07T00:00:00Z'
+  wind_component_default:
+    value: 0.0
+    default: 0.0
+    units: m s-1
+    dtype: float32
+    bounds:
+    - -50.0
+    - 50.0
+    category: atmospheric_state
+    description: Default wind component applied when meteorological vectors are missing
+    references:
+    - Stull (1988) An Introduction to Boundary Layer Meteorology
+    tags:
+    - default
+    - wind_field
+    - transport
+    dimension: velocity
+    requires_grad: false
+    provenance:
+      source: atmospheric_climatology
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-11-07T00:00:00Z'
+  roughness_length:
+    value: 0.1
+    default: 0.1
+    units: m
+    dtype: float32
+    bounds:
+    - 0.0001
+    - 10.0
+    category: surface_property
+    description: Representative roughness length used by dry deposition aggregator
+    references:
+    - Garratt (1992) The Atmospheric Boundary Layer
+    tags:
+    - roughness
+    - deposition
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: boundary_layer_theory
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-11-02T00:00:00Z'
+  aerodynamic_resistance_default:
+    value: 50.0
+    default: 50.0
+    units: s m-1
+    dtype: float32
+    bounds:
+    - 10.0
+    - 500.0
+    category: resistance_parameter
+    description: Default aerodynamic resistance applied when turbulence output is unavailable
+    references:
+    - Wesely (1989) Parameterization of surface resistances for pollutant deposition
+    tags:
+    - resistance
+    - default
+    dimension: resistance
+    requires_grad: false
+    provenance:
+      source: deposition_modeling
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-02-07T00:00:00Z'
+  enabled:
+    value: false
+    default: false
+    units: dimensionless
+    dtype: bool
+    category: configuration_flag
+    description: Enable or disable boundary-layer eddy diffusion transport functor
+    references:
+    - Stull (1988)
+    tags:
+    - eddy_diffusion
+    - configuration
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: transport_configuration
+      schema_version: 2.0.0
+      created_by: parameter_consolidation
+      last_modified: '2025-11-02T00:00:00Z'
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+  target_species:
+    value:
+    - 'no'
+    - no2
+    - o3
+    - isoprene
+    default: null
+    units: dimensionless
+    dtype: list
+    category: configuration_flag
+    description: Canonical ordered species schema transported by the eddy diffusion functor
+    references:
+    - Wesely (1989)
+    tags:
+    - eddy_diffusion
+    - species
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: transport_configuration
+      schema_version: 2.0.0
+      created_by: parameter_consolidation
+      last_modified: '2025-11-02T00:00:00Z'
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+  k_min:
+    value: 0.01
+    default: 0.01
+    units: m2 s-1
+    dtype: float32
+    bounds:
+    - 0.0001
+    - 1.0
+    category: numerical_stability
+    description: Minimum eddy diffusivity to maintain numerical stability
+    references:
+    - Garratt (1992)
+    tags:
+    - eddy_diffusion
+    - stability
+    dimension: diffusivity
+    requires_grad: false
+    provenance:
+      source: transport_configuration
+      schema_version: 2.0.0
+      created_by: parameter_consolidation
+      last_modified: '2025-11-02T00:00:00Z'
+  k_max:
+    value: 50.0
+    default: 50.0
+    units: m2 s-1
+    dtype: float32
+    bounds:
+    - 1.0
+    - 200.0
+    category: numerical_stability
+    description: Maximum eddy diffusivity to prevent runaway diffusion in unstable conditions
+    references:
+    - Stull (1988)
+    tags:
+    - eddy_diffusion
+    - stability
+    dimension: diffusivity
+    requires_grad: false
+    provenance:
+      source: transport_configuration
+      schema_version: 2.0.0
+      created_by: parameter_consolidation
+      last_modified: '2025-11-02T00:00:00Z'
+  z_over_L_limit:
+    value: 2.0
+    default: 2.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 5.0
+    category: numerical_stability
+    description: Stability limit for |z/L| used in MOST corrections
+    references:
+    - Stull (1988)
+    - Garratt (1992)
+    tags:
+    - eddy_diffusion
+    - stability
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: transport_configuration
+      schema_version: 2.0.0
+      created_by: parameter_consolidation
+      last_modified: '2026-01-29T00:00:00Z'
+  ustar_min:
+    value: 0.01
+    default: 0.01
+    units: m s-1
+    dtype: float32
+    bounds:
+    - 0.001
+    - 0.5
+    category: numerical_stability
+    description: Minimum friction velocity threshold for activating eddy diffusion
+    references:
+    - Businger et al. (1971)
+    tags:
+    - eddy_diffusion
+    - stability
+    dimension: velocity
+    requires_grad: false
+    provenance:
+      source: transport_configuration
+      schema_version: 2.0.0
+      created_by: parameter_consolidation
+      last_modified: '2025-11-02T00:00:00Z'
+  ustar_max:
+    value: 2.0
+    default: 2.0
+    units: m s-1
+    dtype: float32
+    bounds:
+    - 0.1
+    - 5.0
+    category: numerical_stability
+    description: Maximum friction velocity used to bound eddy diffusivity
+    references:
+    - Stull (1988)
+    - Garratt (1992)
+    tags:
+    - eddy_diffusion
+    - stability
+    dimension: velocity
+    requires_grad: false
+    provenance:
+      source: transport_configuration
+      schema_version: 2.0.0
+      created_by: parameter_consolidation
+      last_modified: '2026-01-29T00:00:00Z'
+  pbl_height_min:
+    value: 50.0
+    default: 50.0
+    units: m
+    dtype: float32
+    bounds:
+    - 10.0
+    - 500.0
+    category: numerical_stability
+    description: Minimum accepted PBL height for eddy diffusion transport.
+    references:
+    - Stull (1988)
+    tags:
+    - eddy_diffusion
+    - boundary_layer
+    - validation
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: transport_configuration
+      schema_version: 2.0.0
+      created_by: atmosphere_audit_v5
+      last_modified: '2026-02-12T00:00:00Z'
+  pbl_height_max:
+    value: 3000.0
+    default: 3000.0
+    units: m
+    dtype: float32
+    bounds:
+    - 500.0
+    - 5000.0
+    category: numerical_stability
+    description: Maximum accepted PBL height for eddy diffusion transport.
+    references:
+    - Stull (1988)
+    tags:
+    - eddy_diffusion
+    - boundary_layer
+    - validation
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: transport_configuration
+      schema_version: 2.0.0
+      created_by: atmosphere_audit_v5
+      last_modified: '2026-02-12T00:00:00Z'
+  background_no_mixing_ratio:
+    value: 1.0e-10
+    default: 1.0e-10
+    units: mol mol-1
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0e-06
+    category: atmospheric_state
+    description: Free-tropospheric background NO mixing ratio for transport relaxation.
+    references:
+    - Seinfeld & Pandis (2016)
+    tags:
+    - eddy_diffusion
+    - background
+    - 'no'
+    dimension: concentration_ratio
+    requires_grad: false
+    provenance:
+      source: atmospheric_climatology
+      schema_version: 2.0.0
+      created_by: atmosphere_audit_v5
+      last_modified: '2026-02-12T00:00:00Z'
+  background_no2_mixing_ratio:
+    value: 5.0e-10
+    default: 5.0e-10
+    units: mol mol-1
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0e-05
+    category: atmospheric_state
+    description: Free-tropospheric background NO2 mixing ratio for transport relaxation.
+    references:
+    - Seinfeld & Pandis (2016)
+    tags:
+    - eddy_diffusion
+    - background
+    - no2
+    dimension: concentration_ratio
+    requires_grad: false
+    provenance:
+      source: atmospheric_climatology
+      schema_version: 2.0.0
+      created_by: atmosphere_audit_v5
+      last_modified: '2026-02-12T00:00:00Z'
+  background_o3_mixing_ratio:
+    value: 4.0e-08
+    default: 4.0e-08
+    units: mol mol-1
+    dtype: float32
+    bounds:
+    - 1.0e-09
+    - 1.0e-05
+    category: atmospheric_state
+    description: Free-tropospheric background O3 mixing ratio for transport relaxation.
+    references:
+    - Seinfeld & Pandis (2016)
+    - Logan (1985)
+    tags:
+    - eddy_diffusion
+    - background
+    - o3
+    dimension: concentration_ratio
+    requires_grad: false
+    provenance:
+      source: atmospheric_climatology
+      schema_version: 2.0.0
+      created_by: atmosphere_audit_v5
+      last_modified: '2026-02-12T00:00:00Z'
+  background_isoprene_mixing_ratio:
+    value: 1.0e-10
+    default: 1.0e-10
+    units: mol mol-1
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0e-06
+    category: atmospheric_state
+    description: Free-tropospheric background isoprene mixing ratio for transport relaxation.
+    references:
+    - Guenther et al. (2012)
+    tags:
+    - eddy_diffusion
+    - background
+    - isoprene
+    dimension: concentration_ratio
+    requires_grad: false
+    provenance:
+      source: atmospheric_climatology
+      schema_version: 2.0.0
+      created_by: atmosphere_audit_v5
+      last_modified: '2026-02-12T00:00:00Z'

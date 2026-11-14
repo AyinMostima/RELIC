@@ -1,0 +1,39 @@
+variable: diagnostics.snow_pack
+title: "Snow Pack Diagnostics Map"
+description: "Read-only diagnostics map emitted by the snow_pack Functor as its declared output diagnostics.snow_pack, a plain mapping rather than an UpdateItem. partition_outputs routes every diagnostics.* output to the diagnostics channel, so the map is never committed to StateManager state and no bound or writer check applies to it. Members carry their own units: snow_fraction [1], the 0 or 1 solid-phase switch at the rain-snow temperature threshold; melt_rate_mm_s and sublimation_rate_mm_s [mm s-1], the availability-limited melt and sublimation, positive when they remove snow water equivalent; swe_before and swe_after [mm], snow water equivalent at the start and end of the step; melt_capacity_residual_mm_s and sublimation_capacity_residual_mm_s [mm s-1], non-negative demand rejected because the pack could not supply it; swe_nonnegative_projection_residual_mm [mm], the non-negative amount removed by projecting a negative SWE to zero. The container unit dimensionless only labels this heterogeneous map and must not be used to convert a member."
+kind: diagnostic
+dimension:
+  udunits: "dimensionless"
+  cf_standard_name: null
+owner: "snow_pack"
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Anderson, E.A. (1976). A point energy and mass balance model of a snow cover. NOAA Technical Report NWS 19"
+  - "Hock, R. (2003). Temperature index melt modelling in mountain areas. Journal of Hydrology 282, 104-115"
+numerics:
+  lower_bound: null
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "snow_pack"
+      module: "relic.scientific.hydrosphere.snow.snowpack"
+      provides: ["diagnostics.snow_pack"]
+      unit: "dimensionless"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/hydrosphere/snow/snowpack.py"
+  runtime_role: "read_only_heterogeneous_diagnostic_mapping"
+  runtime_writer: "snow_pack"
+  note: "Declared output at snowpack.py:127; the map is built at snowpack.py:659-668 and returned at :688. diagnostics.* outputs are classified as diagnostics by partition_outputs (relic/core/state/types.py) and ingested by _clean_updates_and_collect_diagnostics (relic/core/simulator/execution_group.py). No relic code reads it."

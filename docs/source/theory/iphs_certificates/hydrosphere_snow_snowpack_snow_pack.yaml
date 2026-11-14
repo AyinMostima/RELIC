@@ -1,0 +1,182 @@
+certificate_version: '1.0'
+process_id: relic.scientific.hydrosphere.snow.snowpack.SnowPack
+module_name: snow_pack
+canonical_role: field
+iphs_level: 3
+iphs_level_evidence:
+  classification: IPHS-structured field process certificate
+  compatible_basis: Process declares composition-safe IPHS or DEC structure
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: Structured field update through IPHS-compatible operators
+  structural_contribution: Field state, operator, and audit maps are declared
+  assembly_participation: Certificate participates in Phase 8 inventory and GraphIR structural audit
+  level_3_limit: Typed form, Hodge, port, or related structure is declared, but no runtime-linked IPHSStructureSpec contribution and executable level 4 or 5 certificate binding is present.
+theory_document: docs\source\theory\hydrosphere_snowpack.md
+theory_document_status: updated
+legacy_formula: SnowPack partitions precipitation into snowfall and rain, computes degree-day melt, subtracts sublimation, and updates snow water equivalent and snow depth.
+literature_formula: dSWE/dt = P_snow - M - E_sub with M = DDF max(0, T_air - T_melt) / seconds_per_day, following Anderson (1976) and Hock (2003).
+iphs_formula: SWE is a typed storage 0-cochain and dSWE/dt = star_SWE (P_snow - M - E_sub), with star_SWE = diag(1000 / rho_w) >= 0.
+legacy_expression: SWE_new = max(0, SWE_old + (P_snow - M - E_sub) dt); snow_depth = SWE_mm / 1000 * rho_w / rho_snow.
+iphs_expression: dSWE/dt = star_SWE m_dot plus accumulation and melt matter ports; melt, sublimation, and nonnegative storage projection residuals are routed to diagnostics.snow_pack.
+input_variables:
+- precipitation_flux
+- air_temperature
+- snow_water_equivalent
+- sublimation_flux
+output_variables:
+- snow_water_equivalent
+- snow_depth
+- snow_melt_flux
+- rain_flux
+- snowfall
+- diagnostics.snow_pack
+parameter_keys:
+- hydrosphere.snow.degree_day_factor
+- hydrosphere.snow.temperature_threshold_warm
+- hydrosphere.snow.rain_snow_temperature_threshold
+- hydrosphere.snow.snow_density
+composition_ports:
+- snowpack_accumulation_port
+- snowpack_melt_release_port
+references:
+- Anderson, E.A. (1976). A point energy and mass balance model of a snow cover. NOAA Technical Report NWS 19.
+- Hock, R. (2003). Temperature index melt modeling in mountain areas. Journal of Hydrology, 282, 104-115.
+- RHESSys snowpack_daily_F.c implementation.
+- Biome-BGC snowmelt.c implementation.
+baseline_tests:
+- test\scientific\hydrosphere\snow\snowpack.test.py
+validation_tests:
+- test\scientific\hydrosphere\snow\snowpack.test.py
+- test\core\splitting_sub_flow_order.test.py
+- test\core\splitting_admissibility.test.py
+- test\core\splitting_checkpoint_restore.test.py
+- test\core\splitting_regression_digests.test.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  precipitation_flux: total precipitation mass flux [kg m-2 s-1]
+  air_temperature: air temperature controlling phase partition and melt [K]
+  snow_water_equivalent: snow water equivalent storage SWE [mm]
+  sublimation_flux: snow sublimation mass flux [kg m-2 s-1]
+  snow_depth: bulk-density snow depth estimate [m]
+  snow_melt_flux: meltwater release mass flux [kg m-2 s-1]
+  rain_flux: rainfall mass flux after phase partition [kg m-2 s-1]
+  snowfall: snowfall mass flux after phase partition [kg m-2 s-1]
+  diagnostics.snow_pack: read-only mass partition, storage, and residual diagnostics
+parameter_map:
+  hydrosphere.snow.degree_day_factor: degree-day melt factor DDF [mm K-1 day-1]
+  hydrosphere.snow.temperature_threshold_warm: melt threshold temperature T_melt [K]
+  hydrosphere.snow.rain_snow_temperature_threshold: rain-snow partition temperature [K]
+  hydrosphere.snow.snow_density: bulk snow density rho_snow [kg m-3]
+operator_map:
+  star_SWE: build_hodge_contract and build_hodge_terms HodgeStarSpec for mass-flux to SWE-rate conversion
+  precipitation_partition: temperature threshold partition between snowfall and rainfall
+  degree_day_melt: DDF max(0, T_air - T_melt) / seconds_per_day
+  storage_projection: nonnegative SWE projection and capacity residual routing
+unit_map:
+  precipitation_flux: kg m-2 s-1
+  air_temperature: K
+  snow_water_equivalent: mm
+  sublimation_flux: kg m-2 s-1
+  snow_depth: m
+  snow_melt_flux: kg m-2 s-1
+  rain_flux: kg m-2 s-1
+  snowfall: kg m-2 s-1
+  diagnostics.snow_pack.melt_capacity_residual_mm_s: mm s-1
+  diagnostics.snow_pack.sublimation_capacity_residual_mm_s: mm s-1
+  diagnostics.snow_pack.swe_nonnegative_projection_residual_mm: mm
+input_output_map:
+  precipitation_flux: same precipitation forcing enters legacy and IPHS forms
+  air_temperature: same temperature controls phase partition and degree-day melt
+  snow_water_equivalent: same storage input is updated by wrap_update(UpdateMode.REPLACE)
+  sublimation_flux: same sublimation forcing enters storage loss
+  snow_depth: same SWE and density conversion output is emitted
+  snow_melt_flux: same capacity-limited melt flux output is emitted
+  rain_flux: same temperature partition rain output is emitted
+  snowfall: same temperature partition snowfall output is emitted
+  diagnostics.snow_pack: same diagnostics map includes Phase 8 residuals
+interface_map:
+  forward_signature: forward(self, state, time, dt, **kwargs)
+  bridge_class: PhysicalFieldFunctor
+  abstraction_contract: PhysicalField
+  state_write_mode: outputs use wrap_update(UpdateMode.REPLACE) through existing StateManager path
+  legacy_inputs:
+  - precipitation_flux
+  - air_temperature
+  - snow_water_equivalent
+  - sublimation_flux
+  iphs_inputs:
+  - precipitation_flux
+  - air_temperature
+  - snow_water_equivalent
+  - sublimation_flux
+  legacy_outputs:
+  - snow_water_equivalent
+  - snow_depth
+  - snow_melt_flux
+  - rain_flux
+  - snowfall
+  - diagnostics.snow_pack
+  iphs_outputs:
+  - snow_water_equivalent
+  - snow_depth
+  - snow_melt_flux
+  - rain_flux
+  - snowfall
+  - diagnostics.snow_pack
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: The existing temperature-index SWE update realizes the canonical IPHS snowpack field balance.
+  no_legacy_mode: No runtime flag exposes a separate pre-Phase 8 SnowPack branch.
+state_advancement_map:
+  potential_basis: snow water equivalent state cochain SWE_h
+  effort_variable: accumulation and melt matter ports with SWE metric star_SWE
+  state_advancer: dSWE_dt = accumulation - melt - sublimation
+  runtime_usage: forward applies the canonical SWE field balance and routes melt, sublimation, and nonnegative projection residuals.
+  time_integration: sequential starting-inventory melt then sublimation caps, followed by snowfall addition and nonnegative SWE replacement; no second time multiplication
+  sub_flow_accuracy: FunctorMetadata.sub_flow_accuracy ORDER_1 conservatively for the complete update; fixed-input inactive-cap affine branches are exact to roundoff, while T11 demonstrates first-order replenishment error and a non-semigroup exported-flux partition at depletion
+  splitting_boundary: the existing S1 same-fast-group snowpack-to-bucket flux-coupling refusal remains; ORDER_1 is not global EXACT, second-order Strang or strict IPHS certification
+parameter_management_map:
+  hydrosphere.snow.degree_day_factor:
+    source: ParameterManager YAML
+  hydrosphere.snow.temperature_threshold_warm:
+    source: ParameterManager YAML
+  hydrosphere.snow.rain_snow_temperature_threshold:
+    source: ParameterManager YAML
+  hydrosphere.snow.snow_density:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares PhysicalField role and snow albedo, runoff, and energy coupling interfaces
+  structural_protocol: declared_forms, required_parameters, build_hodge_terms, dissipative_structure, ports
+  state_contract: existing PhysicalFieldFunctor and StateManager UpdateItem path
+  physical_constant_ssot: seconds per day and liquid water density are resolved only through get_physical_constant; the Hodge water-density key is structural provenance, not runtime ParameterManager access
+  ports:
+  - snowpack_accumulation_port
+  - snowpack_melt_release_port
+dependency_interconnection_map:
+  dependencies: no required upstream functor; precipitation, temperature, SWE, and sublimation enter by state keys
+  direct_functor_calls: none; precipitation, temperature, SWE, and sublimation enter through state ports and no upstream Functor instance is invoked
+  chain_maps:
+  - snowfall output feeds SnowAlbedo fresh-snow reset through existing state graph
+  - snow_melt_flux and rain_flux feed runoff or hydrologic routing through existing state graph
+  - snow_depth feeds SnowAlbedo and surface energy diagnostics through existing state graph
+overflow_routing_map:
+  melt_capacity: raw degree-day melt exceeding available SWE is routed to diagnostics.snow_pack.melt_capacity_residual_mm_s
+  sublimation_capacity: raw sublimation exceeding post-melt SWE is routed to diagnostics.snow_pack.sublimation_capacity_residual_mm_s
+  storage_projection: negative SWE projection is routed to diagnostics.snow_pack.swe_nonnegative_projection_residual_mm
+  discarded_residuals: melt_capacity_residual_mm_s, sublimation_capacity_residual_mm_s, and swe_nonnegative_projection_residual_mm explicitly retain every storage or capacity projection
+conservation_map:
+  conserved_quantity: snowpack water mass
+  balance_expression: SWE_new - SWE_old = (P_snow - M - E_sub) dt after explicit capacity residual routing
+  local_check: FunctorMetadata.conservation_laws includes mass
+  port_balance: accumulation and melt release ports carry incoming and outgoing water mass fluxes
+entropy_audit:
+  dissipative_operator: star_SWE and M_h are symmetric positive semidefinite for rho_w > 0
+  sigma_expression: sigma = m_dot.T star_SWE m_dot >= 0
+  validation_hook: build_hodge_contract(strict=True) and dissipative_structure eigenvalue checks
+equivalence_type: thermodynamic_embedding
+physical_constant_ssot:
+  seconds_per_day: 'get_physical_constant("seconds_per_day")'
+  water_density: 'get_physical_constant("water_density")'
+  hodge_structural_binding: relic.physical.constants.water.density_liquid is retained only in HodgeStarSpec.parameter_keys because that central contract requires a non-empty structural source tuple

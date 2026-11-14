@@ -1,0 +1,237 @@
+schema_version: "1.0.0"
+namespace: "cross_dimension"
+description: "Authorized cross-dimension unit conversions and required context"
+metadata:
+  created_by: "RELIC Unit System"
+  last_modified: "2026-07-14T00:00:00Z"
+  version: "1.0.0"
+
+rules:
+  - name: soil_moisture_volumetric_to_mass
+    lhs: "m3 m-3"
+    rhs: "kg m-2"
+    variables:
+      - soil_moisture_content
+    require_context:
+      soil_depth: "m"
+      water_density: "kg m-3"
+    transform: "volumetric_to_mass_soil_moisture"
+    forbid_if_missing_context: true
+
+  - name: soil_moisture_mass_to_volumetric
+    lhs: "kg m-2"
+    rhs: "m3 m-3"
+    variables:
+      - soil_moisture_content
+    require_context:
+      soil_depth: "m"
+      water_density: "kg m-3"
+    transform: "mass_to_volumetric_soil_moisture"
+    forbid_if_missing_context: true
+
+  # Liquid-water depth (rate) <-> areal mass (flux) pairs are not listed here: they
+  # use the single liquid-water-equivalent rule of UnitConverter
+  # (_liquid_water_equivalent_factor), selected by the declared variable family and
+  # using the physical-constant water.density_liquid, never a context density.
+
+  # Element-annotated mass <-> amount pairs (for example kg C m-2 <-> mol C m-2) are not
+  # listed here: they use the single element rule of UnitConverter
+  # (_element_mass_amount_factor) with the molar mass from the physical-constant SSOT.
+
+  - name: carbon_amount_flux_to_mass_flux
+    lhs: "umol m-2 s-1"
+    rhs: "kg C m-2 s-1"
+    variables:
+      - carbon_flux
+    require_context: {}
+    transform: "carbon_flux_umol_to_kg"
+    forbid_if_missing_context: false
+
+  - name: carbon_mass_flux_to_amount_flux_grams
+    lhs: "g m-2 s-1"
+    rhs: "umol m-2 s-1"
+    variables:
+      - carbon_flux
+    require_context: {}
+    transform: "carbon_flux_g_to_umol"
+    forbid_if_missing_context: false
+
+  - name: carbon_amount_flux_to_mass_flux_grams
+    lhs: "umol m-2 s-1"
+    rhs: "g m-2 s-1"
+    variables:
+      - carbon_flux
+    require_context: {}
+    transform: "carbon_flux_umol_to_g"
+    forbid_if_missing_context: false
+
+  - name: carbon_mass_flux_to_amount_flux
+    lhs: "kg C m-2 s-1"
+    rhs: "umol m-2 s-1"
+    variables:
+      - carbon_flux
+    require_context: {}
+    transform: "carbon_flux_kg_to_umol"
+    forbid_if_missing_context: false
+
+  - name: water_amount_flux_to_mass_flux
+    lhs: "mol m-2 s-1"
+    rhs: "kg m-2 s-1"
+    variables:
+      - water_flux
+    require_context: {}
+    transform: "water_flux_mol_to_kg"
+    forbid_if_missing_context: false
+
+  - name: water_mass_flux_to_amount_flux
+    lhs: "kg m-2 s-1"
+    rhs: "mol m-2 s-1"
+    variables:
+      - water_flux
+    require_context: {}
+    transform: "water_flux_kg_to_mol"
+    forbid_if_missing_context: false
+
+  - name: water_amount_flux_explicit_to_mass_flux
+    lhs: "mol H2O m-2 s-1"
+    rhs: "kg m-2 s-1"
+    variables:
+      - water_flux
+    require_context: {}
+    transform: "water_flux_mol_to_kg"
+    forbid_if_missing_context: false
+
+  - name: water_mass_flux_to_amount_flux_explicit
+    lhs: "kg m-2 s-1"
+    rhs: "mol H2O m-2 s-1"
+    variables:
+      - water_flux
+    require_context: {}
+    transform: "water_flux_kg_to_mol"
+    forbid_if_missing_context: false
+
+  - name: external_radiation_langley_to_energy_flux
+    lhs: "Ly day-1"
+    rhs: "W m-2"
+    variables:
+      - external_model
+    require_context: {}
+    transform: "external_radiation_langley_to_wm2"
+    forbid_if_missing_context: false
+
+  - name: external_radiation_calorie_to_energy_flux
+    lhs: "cal cm-2 day-1"
+    rhs: "W m-2"
+    variables:
+      - external_model
+    require_context: {}
+    transform: "external_radiation_cal_to_wm2"
+    forbid_if_missing_context: false
+
+  - name: conductance_mol_to_ms
+    lhs: "mol m-2 s-1"
+    rhs: "m s-1"
+    variables:
+      - stomatal_conductance
+      - canopy_conductance
+      - boundary_layer_conductance
+    require_context:
+      temperature: "K"
+      pressure: "Pa"
+    transform: "conductance_mol_to_ms"
+    forbid_if_missing_context: true
+
+  - name: conductance_ms_to_mol
+    lhs: "m s-1"
+    rhs: "mol m-2 s-1"
+    variables:
+      - stomatal_conductance
+      - canopy_conductance
+      - boundary_layer_conductance
+    require_context:
+      temperature: "K"
+      pressure: "Pa"
+    transform: "conductance_ms_to_mol"
+    forbid_if_missing_context: true
+
+  - name: co2_ppm_to_molar
+    lhs: "ppm"
+    rhs: "mol m-3"
+    variables:
+      - co2_concentration
+    require_context:
+      temperature: "K"
+      pressure: "Pa"
+    transform: "ppm_to_molar_concentration"
+    forbid_if_missing_context: true
+
+  - name: co2_molar_to_ppm
+    lhs: "mol m-3"
+    rhs: "ppm"
+    variables:
+      - co2_concentration
+    require_context:
+      temperature: "K"
+      pressure: "Pa"
+    transform: "molar_concentration_to_ppm"
+    forbid_if_missing_context: true
+
+  - name: co2_ppm_to_pa
+    lhs: "ppm"
+    rhs: "Pa"
+    variables:
+      - co2_concentration
+    require_context:
+      pressure: "Pa"
+    transform: "co2_ppm_to_pa"
+    forbid_if_missing_context: true
+
+  - name: co2_pa_to_ppm
+    lhs: "Pa"
+    rhs: "ppm"
+    variables:
+      - co2_concentration
+    require_context:
+      pressure: "Pa"
+    transform: "co2_pa_to_ppm"
+    forbid_if_missing_context: true
+
+  - name: co2_mole_fraction_to_pa
+    lhs: "mol mol-1"
+    rhs: "Pa"
+    variables:
+      - co2_concentration
+    require_context:
+      pressure: "Pa"
+    transform: "co2_mole_fraction_to_pa"
+    forbid_if_missing_context: true
+
+  - name: co2_pa_to_mole_fraction
+    lhs: "Pa"
+    rhs: "mol mol-1"
+    variables:
+      - co2_concentration
+    require_context:
+      pressure: "Pa"
+    transform: "co2_pa_to_mole_fraction"
+    forbid_if_missing_context: true
+
+  - name: co2_umol_mol_to_pa
+    lhs: "umol mol-1"
+    rhs: "Pa"
+    variables:
+      - co2_concentration
+    require_context:
+      pressure: "Pa"
+    transform: "co2_ppm_to_pa"
+    forbid_if_missing_context: true
+
+  - name: co2_pa_to_umol_mol
+    lhs: "Pa"
+    rhs: "umol mol-1"
+    variables:
+      - co2_concentration
+    require_context:
+      pressure: "Pa"
+    transform: "co2_pa_to_ppm"
+    forbid_if_missing_context: true

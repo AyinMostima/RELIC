@@ -1,0 +1,46 @@
+variable: canopy_conductance_daylight_samples
+title: "Canopy Conductance at the Daylight Gauss Samples"
+description: "Bulk canopy conductance g_c = g_s L_eff R T / P [m s-1] of medlyn_stomatal_conductance with canopy_conductance_upscaling and temporal_support daylight_gauss at each daylight Gauss instant and at the night sample (T the sample air temperature). Its weighted mean (daytime g_c times the daylight fraction plus night g_c times the night fraction) is the 24-hour mean written to canopy_conductance, which the daily Penman-Monteith reads. Read by leaf_energy_balance with temporal_support daylight_gauss (energy balance of the same instant) and by penman_monteith_et with temporal_support daylight_gauss (per-sample r_s = 1 / g_c,k of the combination equation). Trailing axis daylight_sample of length n + 1 (n = config daylight_gauss_nodes, 3 or 5): samples 0..n-1 are the Gauss-Legendre instants of the daylight period in time order (FAO-56 day length, Eq. 34), sample n is the night; the daily mean is sum_k W_k x_k with W_i = (N/24) w_i and W_night = 1 - N/24 (relic/scientific/atmosphere/daylight_quadrature.py; Goudriaan 1986)."
+kind: diagnostic
+dimension:
+  udunits: "m s-1"
+  cf_standard_name: null
+support:
+  spatial_kind: canopy
+  area_basis: ground_area
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell, daylight_sample]
+owner: "medlyn_stomatal_conductance"
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Monteith, J.L. (1965). Symp. Soc. Exp. Biol. 19, 205-224"
+  - "Goudriaan, J. (1986). Agricultural and Forest Meteorology 38, 249-254"
+numerics:
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "medlyn_stomatal_conductance"
+      module: "relic.scientific.biosphere.photosynthesis.stomatal"
+      provides: ["canopy_conductance_daylight_samples"]
+      unit: "m s-1"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/biosphere/photosynthesis/stomatal.py"
+  runtime_role: "daylight_gauss_canopy_conductance_samples"
+  runtime_writer: "medlyn_stomatal_conductance"
+  note: "Declared output of medlyn_stomatal_conductance only with config temporal_support daylight_gauss; UpdateItem(REPLACE, per_timestep=False) in m s-1. Readers: leaf_energy_balance (daylight_gauss), penman_monteith_et (daylight_gauss)."

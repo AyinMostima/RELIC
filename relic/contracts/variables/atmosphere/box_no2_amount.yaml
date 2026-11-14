@@ -1,0 +1,46 @@
+variable: box_no2_amount
+title: "Closed Box NO2 Molar Amount"
+kind: state
+dimension:
+  udunits: "mol"
+  cf_standard_name: null
+support:
+  spatial_kind: null
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: []
+owner: null
+aliases: []
+incrementable: true
+accumulates: null
+references:
+  - "Seinfeld, J.H. & Pandis, S.N. (2016). Atmospheric Chemistry and Physics, ideal-gas mixtures"
+  - "Kondepudi, D. & Prigogine, I. (1998). Modern Thermodynamics, ch. 9 reaction affinity"
+numerics:
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-30
+  rtol: 1.0e-12
+writers:
+  increments:
+    - name: "atmospheric_chemistry"
+      module: "relic.scientific.atmosphere.chemistry"
+      provides:
+        - "box_no2_amount"
+      unit: "mol"
+  tendencies: []
+flux_contract:
+  allowed_in: ["atmospheric_chemistry"]
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-30
+      rtol: 1.0e-12
+provenance:
+  source_file: "relic/scientific/atmosphere/chemistry.py"
+  runtime_role: "closed_constant_volume_box_no2_inventory"
+  runtime_writer: "atmospheric_chemistry"
+  note: "Scalar molar inventory of the closed adiabatic constant-volume NO+O3 box; strictly positive at runtime because the ideal-gas chemical potential domain excludes zero inventory. Nitrogen and oxygen atom ledgers are verified inside ChemistryFunctor with C_N nu = 0 and C_O nu = 0; the global C/N/P/water ledger does not track mol amounts."

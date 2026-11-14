@@ -1,0 +1,713 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C)
+# This file is distributed under the same license as the RELIC package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: RELIC 1.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-31 06:10-0700\n"
+"PO-Revision-Date: 2026-07-28 13:11+0800\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_Hans_CN\n"
+"Language-Team: zh_Hans_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:1
+msgid "Graph Validation and Execution"
+msgstr "Graph 验证与执行"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:3
+msgid "RELIC orchestration converts a declarative Graph Intermediate Representation (`GraphIR`) into an `ExecutionPlan`, then executes that plan through the existing `RELICSimulator`. The compiler does not create a parallel simulator, parameter manager, state manager, or validation registry."
+msgstr "RELIC 编排层将声明式图中间表示（Graph Intermediate Representation, `GraphIR`）编译为 `ExecutionPlan`，再交由既有 `RELICSimulator` 执行该计划。编译器不会另行创建平行的模拟器、参数管理器（ParameterManager）、状态管理器（StateManager）或校验注册表。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:8
+msgid "Orchestration pipeline"
+msgstr "orchestration管道"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:20
+msgid "Canonical owners are listed in [Orchestration](../orchestration.md) and [Orchestration and Validation API](../api/orchestration_validation.md)."
+msgstr "canonical owner 列表见 [Orchestration](../orchestration.md) 与 [Orchestration and Validation API](../api/orchestration_validation.md)。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:23
+msgid "Graph data classes"
+msgstr "数据类图"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Field"
+msgstr "字段"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Meaning"
+msgstr "含义"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`schema_version`"
+msgstr "`schema_version`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Version of the GraphIR serialization contract. It must be non-empty."
+msgstr "GraphIR序列化契约的版本号。它必须非空。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`nodes`"
+msgstr "`nodes`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Node identifier to `NodeSpec` mapping."
+msgstr "节点标识符到`NodeSpec`映射。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`links`"
+msgstr "`links`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Explicit typed-port connections. Links can also be inferred from node input link declarations."
+msgstr "显式类型port连接。节点输入连接声明也可以推断出连接。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`metadata`"
+msgstr "`metadata`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Workflow-level metadata, including optional input manifests and role hints."
+msgstr "工作流程级别metadata，包括可选的输入manifest和角色提示。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`assertion`"
+msgstr "`assertion`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Gate 0 structural assertion payload."
+msgstr "门0结构断言负载"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`class_type`"
+msgstr "`class_type`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Registered node type, importable Functor class, or supported scientific registry name."
+msgstr "注册节点类型，可导入的Functor类或支持的科学注册名。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`inputs`"
+msgstr "`inputs`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Literal inputs or links to upstream node ports."
+msgstr "Literal inputs或链接到上游节点端口的字面输入"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`outputs`"
+msgstr "`outputs`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Output names exposed by the node."
+msgstr "节点暴露的名称。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`config`"
+msgstr "`config`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Constructor and execution settings, including an optional `execution_group`."
+msgstr "构造和执行设置，包括可选的`execution_group`。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:57
+msgid "`GraphIR.from_dict(payload)` rejects a non-mapping payload, an empty schema version, non-mapping nodes, missing class types, invalid input/output shapes, or invalid metadata and assertion shapes."
+msgstr "`GraphIR.from_dict(payload)`拒绝非映射的负载、空schema版本、非映射节点、缺少类类型、无效的输入/输出形状、或无效的metadata和断言形状。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:61
+msgid "Load and save a graph"
+msgstr "加载和保存一个图"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:91
+msgid "The repository ships no example GraphIR file. JSON and YAML input are supported: a `.yaml` or `.yml` suffix selects YAML, and any other suffix JSON. JSON Schema validation is opt-in through `validate_schema=True` or the `RELIC_GRAPH_SCHEMA_VALIDATE` environment variable. YAML loading raises `RuntimeError` when PyYAML is unavailable. Malformed files propagate JSON, YAML, schema, type, or value errors. `save_graph()` writes JSON."
+msgstr "仓库未提供示例 GraphIR 文件。输入支持 JSON 和 YAML：`.yaml` 或 `.yml` 后缀选择 YAML，其他后缀选择 JSON。JSON Schema 验证需通过 `validate_schema=True` 或环境变量 `RELIC_GRAPH_SCHEMA_VALIDATE` 显式启用。PyYAML 不可用时，加载 YAML 抛出 `RuntimeError`。格式错误的文件传播 JSON、YAML、模式、类型或值错误。`save_graph()` 写出 JSON。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:99
+msgid "`SSOTCatalog`"
+msgstr "`SSOTCatalog`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:101
+msgid "`SSOTCatalog` resolves variable semantics from the Single Source of Truth (SSOT) parameter database and variable contracts."
+msgstr "`SSOTCatalog` 从单点事实源（Single Source of Truth, SSOT）参数数据库与变量契约中解析变量语义。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:115
+msgid "`SSOTCatalog.from_parameter_manager(manager=None)` loads, from the supplied `UnifiedParameterManager` or the global manager when omitted, the variable definitions (`coupling.external.variables.variable_definitions`), the scale defaults (`coupling.scales.defaults.variables`), the variable contracts of `ContractRegistry` with their aliases, and the optional alias table `coupling.external.variables.aliases`. Missing required SSOT payloads raise an exception. The catalog does not collect conflicts: loading raises `ValueError` when a variable is declared twice with contradicting fields, when two variables claim one Climate and Forecast (CF) identity (`standard_name` plus `cell_methods`), when an alias names another variable, is claimed by two variables, or targets an unknown variable, and when the contract registry reports conflicts. `get(name)` looks up a variable name, then an explicit alias, then the unqualified standard name. `get_by_standard_name(standard_name, *, cell_methods=None)` returns the one entry that holds that identity, or `None`. In the example, `entry` is `air_temperature` and `daily_max` is `air_temperature_max` (its alias `daily_maximum_air_temperature` resolves to it), both in K."
+msgstr "`SSOTCatalog.from_parameter_manager(manager=None)` 从传入的 `UnifiedParameterManager`（省略时使用全局管理器）加载变量定义（`coupling.external.variables.variable_definitions`）、尺度默认配置（`coupling.scales.defaults.variables`）、`ContractRegistry` 中的变量契约及其别名，以及可选别名表 `coupling.external.variables.aliases`。缺失必需的 SSOT 载荷时直接抛出异常。目录不累积冲突，遇到以下任一情形均在加载阶段抛出 `ValueError`：同一变量重复声明且字段矛盾；两个变量声明同一气候与预报（Climate and Forecast, CF）标识（`standard_name` 加 `cell_methods`）；别名与既有变量同名、被两个变量同时占用或指向未知变量；或者契约注册表报告冲突。`get(name)` 依次按变量名、显式别名与未限定标准名查找。`get_by_standard_name(standard_name, *, cell_methods=None)` 返回持有该标识的唯一条目，未命中时返回 `None`。示例中，`entry` 解析为 `air_temperature`，`daily_max` 解析为 `air_temperature_max`（由其别名 `daily_maximum_air_temperature` 映射而来），两者单位均为 K。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:133
+msgid "`NodeRegistry`"
+msgstr "`NodeRegistry`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Method"
+msgstr "方法"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Purpose"
+msgstr "用途"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Return value"
+msgstr "返回值"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`register_definition(node_type_id, definition)`"
+msgstr "`register_definition(node_type_id, definition)`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Register a typed node definition."
+msgstr "注册类型节点定义。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`None`"
+msgstr "`None`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`unregister_definition(node_type_id)`"
+msgstr "`unregister_definition(node_type_id)`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Remove a registered definition."
+msgstr "remove registered definition"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`bool`"
+msgstr "`bool`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`get_definition(node_type_id)`"
+msgstr "`get_definition(node_type_id)`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Look up a definition."
+msgstr "查找 definition。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`NodeDefinition` or `None`"
+msgstr "`NodeDefinition` 或 `None`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`register_functor_instance(functor, node_type_id=None)`"
+msgstr "`register_functor_instance(functor, node_type_id=None)`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Derive ports from `FunctorMetadata` and register the result."
+msgstr "从`FunctorMetadata`导出端口并注册结果。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`NodeDefinition`"
+msgstr "`NodeDefinition`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`resolve_class_type(class_type)`"
+msgstr "`resolve_class_type(class_type)`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Resolve a registered class type to an implementation class when available."
+msgstr "在有可用实现类时将注册的类类型解析为实现类。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Class or `None`"
+msgstr "`None`类"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:150
+msgid "A Functor without metadata cannot be registered and raises `ValueError`. The registry derives ports from declared input and output variables and the SSOT catalog; it does not infer missing scientific semantics from the Functor's implementation."
+msgstr "没有 metadata 的Functor无法注册，并引发 `ValueError`。注册从声明的输入和输出变量以及SSOT目录中获取端口；它不会从Functor的实现中推断出缺失的科学语义。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:155
+msgid "Validate a graph"
+msgstr "验证一个图"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:168
+msgid "`ValidationReport` contains:"
+msgstr "`ValidationReport`包含"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`errors`"
+msgstr "`errors`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Blocking `GraphValidationIssue` objects."
+msgstr "阻止`GraphValidationIssue`对象。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`warnings`"
+msgstr "`warnings`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Non-blocking validation issues."
+msgstr "非阻塞验证问题。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`assertion_audit`"
+msgstr "`assertion_audit`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Per-assertion Gate 0 evidence and results."
+msgstr "领域0证据和结果"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:176
+msgid "Check `report.errors` explicitly:"
+msgstr "检查`report.errors`："
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:190
+msgid "Validation covers registered node types, port existence, data types, units, quantities, semantics, write/update modes, scale compatibility, dependency structure, and declared structural assertions. `strict=False` can demote supported compatibility findings to warnings; it does not supply missing scientific structure."
+msgstr "Validation covers registered node types, port existence, data types, units, quantities, semantics, write/update modes, scale compatibility, dependency structure, and declared structural assertions. `strict=False` can demote supported compatibility findings to warnings; it does not supply missing scientific structure."
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:196
+msgid "Gate 0 structural assertions"
+msgstr "门0结构断言"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:198
+msgid "The current assertion operations are:"
+msgstr "当前的断言操作是："
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Assertion operation"
+msgstr "断言操作"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Contract checked"
+msgstr "契约审核通过"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`cochain_complex_check`"
+msgstr "`cochain_complex_check`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Discrete Exterior Calculus (DEC) cochain-complex structure and boundary composition."
+msgstr "离散外微分（Discrete Exterior Calculus, DEC）上链复形结构与边界算子复合。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`hodge_psd_check`"
+msgstr "`hodge_psd_check`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Hodge or dissipative operator positivity requirements."
+msgstr "Hodge 或 dissipative operator 的 positivity requirement。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`iphs_structure_check`"
+msgstr "`iphs_structure_check`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Declared Interconnected Port-Hamiltonian System (IPHS) interconnection, dissipation, ports, and structure."
+msgstr "已声明的互连端口哈密顿系统（Interconnected Port-Hamiltonian System, IPHS）互连关系、耗散项、端口与结构性质。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`chain_map_check`"
+msgstr "`chain_map_check`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Morphism or regridding compatibility between complexes."
+msgstr "复杂体之间的态射或重采样兼容性"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`entropy_step_check`"
+msgstr "`entropy_step_check`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Entropy-production sign and step-level evidence."
+msgstr "熵生产符号及步骤级证据"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`port_power_units_check`"
+msgstr "`port_power_units_check`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Effort-flow power-unit compatibility."
+msgstr "Effort-flow 功率单位兼容性"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`port_matching_check`"
+msgstr "`port_matching_check`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Declared port interconnection and direction compatibility."
+msgstr "声明port互连和方向兼容性。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`overflow_routing_check`"
+msgstr "`overflow_routing_check`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Explicit routing of clipping, overflow, or residual terms."
+msgstr "明确路由裁剪、溢出或余项。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`equivalence_certificate_check`"
+msgstr "`equivalence_certificate_check`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Migration certificate completeness and binding."
+msgstr "迁移证书的完整性和绑定."
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`reaction_network_check`"
+msgstr "`reaction_network_check`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Stoichiometry, rates, total affinity-rate power/dissipation, internal `C N = 0`, and any additional open exchange ledger. Without an explicit positive-temperature and unit binding, $A^{\\mathsf{T}} r$ is not a thermodynamic entropy-production rate."
+msgstr "化学计量矩阵、反应速率、总亲和势-速率功率/耗散、内部守恒约束 `C N = 0` 以及附加开放交换账本。若未显式绑定正温度场与物理单位，$A^{\\mathsf{T}} r$ 不代表热力学熵产生率。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`stochastic_sdae_check`"
+msgstr "`stochastic_sdae_check`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Declared stochastic differential-algebraic structure."
+msgstr "声明了随机微分代数结构。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`state_domain_check`"
+msgstr "`state_domain_check`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "State-variable domain and ownership declarations."
+msgstr "状态变量域和所有权声明。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`observation_diagnostic_check`"
+msgstr "`observation_diagnostic_check`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Observation and diagnostic separation from prognostic updates."
+msgstr "将 observation 和 diagnostic 与 prognostic 更新分离。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:216
+msgid "Strict requirements depend on process role:"
+msgstr "严格要求取决于流程角色："
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Process role"
+msgstr "过程角色"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Required assertion additions"
+msgstr "添加所需的断言增强项"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Ordinary dynamic process"
+msgstr "普通动态过程"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Cochain, Hodge, IPHS, entropy, power units, port matching, overflow, certificate, and state domain checks."
+msgstr "Cochain， Hodge， IPHS， 熵， 功率单位， port匹配， 越界检查， 状态域检查， 证书"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Reaction or matter transformation"
+msgstr "反应或物质转化"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Ordinary dynamic set plus `reaction_network_check`."
+msgstr "普通动态集加上`reaction_network_check`。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Coupling, regridding, or morphism"
+msgstr "耦合、重采样或态射"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Ordinary dynamic set plus `chain_map_check`."
+msgstr "普通动态集加上`chain_map_check`。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Stochastic process"
+msgstr "随机过程"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Ordinary dynamic set plus `stochastic_sdae_check`."
+msgstr "普通动态集加上`stochastic_sdae_check`。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Observation or diagnostic process"
+msgstr "观测或diagnostic过程"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Certificate, state domain, and `observation_diagnostic_check`."
+msgstr "证书，状态域，和`observation_diagnostic_check`。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:226
+msgid "An explicit `required_structural_assertions` declaration can add requirements. Passing Gate 0 establishes the declared structural checks; it does not by itself establish a strict IPHS level. IPHS level ownership remains with the equivalence certificate."
+msgstr "显式声明 `required_structural_assertions` 可追加结构断言要求。通过 Gate 0 仅表明已完成所声明的结构检查，其本身不构成严格的 IPHS 等级认定；IPHS 等级的判定权归属于等价性证书。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:231
+msgid "The reaction rule performs a bounded point audit. Constitutive-domain validity, open-route application, energy/entropy pairing, and time-integrated single-owner/no-double-count execution remain `[N]`."
+msgstr "反应规则执行有界的点审计。本构 domain 有效性、开放路由的应用、能量/熵配对，以及时间积分下的单 owner/不重复计数执行仍为 `[N]`。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:235
+msgid "Compile a graph"
+msgstr "编绘图表"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:251
+msgid "The compiler validates, optionally applies the supplied optimization passes, topologically sorts the graph, and returns:"
+msgstr "编译器验证，并可应用所供优化过载，拓扑排序图，然后返回："
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:261
+msgid "Each `ExecutionStep` contains `node_id`, `class_type`, `inputs`, `outputs`, and `config`. The compile report contains the validation report, adapter insertion descriptions, and audit metadata."
+msgstr "每个`ExecutionStep`包含`node_id`、`class_type`、`inputs`、`outputs`和`config`。编译报告包含验证报告、适配器插入描述和审计metadata。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:265
+msgid "Validation errors, failed strict structural audits, cycles, or unresolved dependencies raise `ValueError`. `RELICModelCompiler` is only a facade over `compile_graph()`:"
+msgstr "验证错误、失败的严格结构审核、循环或未解决的依赖关系引发`ValueError`。`RELICModelCompiler`只是`compile_graph()`的一个 facade:"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:284
+msgid "`ExecutionPlan` is a dataclass. It does not provide `execute()`, `build_simulator()`, or `to_dict()` methods. Use `GraphExecutor`, `compile_and_execute`, or the module-level `plan_to_dict()` function."
+msgstr "`ExecutionPlan`是数据类。它不提供`execute()`、`build_simulator()`或`to_dict()`方法。使用`GraphExecutor`、`compile_and_execute`，或模块级的`plan_to_dict()`函数。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:288
+msgid "Adapter registry and `unit_cast` lowering guard"
+msgstr "适配器注册表与 `unit_cast` 降级守卫"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:290
+msgid "`AdapterRegistry` (`relic\\orchestration\\adapters.py`) registers 7 adapter keys across 6 concrete `AdapterBase` subclasses, wrapped for runtime execution by `ExecutableAdapterFunctor`:"
+msgstr "`AdapterRegistry`（`relic\\orchestration\\adapters.py`）在 6 个具体 `AdapterBase` 子类上注册了 7 个适配器键，运行时由 `ExecutableAdapterFunctor` 封装执行："
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Registry key"
+msgstr "注册表键"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Adapter class"
+msgstr "适配器类"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`unit_cast`"
+msgstr "`unit_cast`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`UnitCastAdapter`"
+msgstr "`UnitCastAdapter`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Affine or multiplicative unit conversion through `UnitConverter`."
+msgstr "通过 `UnitConverter` 执行仿射或比例单位换算。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`temporal_resample`"
+msgstr "`temporal_resample`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`TemporalResampleAdapter`"
+msgstr "`TemporalResampleAdapter`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Explicit temporal aggregation or disaggregation across step frequencies."
+msgstr "跨步进频率的显式时间聚合或时间降尺度拆分。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`semantic_adapter`, `flux_to_increment`"
+msgstr "`semantic_adapter`、`flux_to_increment`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`SemanticAdapter`"
+msgstr "`SemanticAdapter`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Semantic conversion between per-second rates and per-step increments (`flux_to_increment` aliases `semantic_adapter`)."
+msgstr "每秒速率与单步增量之间的语义转换（`flux_to_increment` 为 `semantic_adapter` 的别名）。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`area_basis_transform`"
+msgstr "`area_basis_transform`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`AreaBasisTransformAdapter`"
+msgstr "`AreaBasisTransformAdapter`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Conversion between per-cell totals and per-area densities using explicit cell areas."
+msgstr "基于显式网格单元面积的单格总量与单位面积密度互转。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`surface_flux_to_volume_source`"
+msgstr "`surface_flux_to_volume_source`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`SurfaceFluxToVolumeSourceAdapter`"
+msgstr "`SurfaceFluxToVolumeSourceAdapter`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Conversion between surface fluxes and volumetric sources across layer thickness."
+msgstr "基于层厚的表面通量与体积源汇项互转。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`support_aggregation`"
+msgstr "`support_aggregation`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`SupportAggregationAdapter`"
+msgstr "`SupportAggregationAdapter`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Explicit spatial or vertical support aggregation with declared weights."
+msgstr "带显式声明权重的空间或垂向支撑域聚合。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:314
+msgid "When `auto_adapt=True`, `compile_graph()` records insertions in `plan.report.adapter_insertions` and automatically lowers only `unit_cast` insertions that satisfy all three guard conditions in `relic\\orchestration\\compiler.py`:"
+msgstr "当 `auto_adapt=True` 时，`compile_graph()` 会将插入记录写入 `plan.report.adapter_insertions`，且仅对同时满足 `relic\\orchestration\\compiler.py` 中全部三项守卫条件的 `unit_cast` 插入项执行自动降级："
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:318
+msgid "**Pure context-free unit contract**: only `unit_cast` is eligible, neither endpoint port declares `context_requirements`, all non-unit port contract fields match (`semantics`, `per_timestep`, `conservative`, and strict `can_connect` after substituting `target.units`), and `UnitConverter.convert` succeeds with `context=None`."
+msgstr "**纯无上下文单位契约**：仅 `unit_cast` 符合资格，两端端口均未声明 `context_requirements`，除单位外的全部端口契约字段完全一致（包括 `semantics`、`per_timestep`、`conservative`，以及代入 `target.units` 后的严格 `can_connect` 判定），且 `UnitConverter.convert` 在 `context=None` 条件下换算成功。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:323
+#, python-brace-format
+msgid "**Matching explicit `execution_group` on non-`State:` endpoints**: the source node is not a declarative `State:` boundary, both endpoint nodes declare an explicit `execution_group` in `{\"fast\", \"medium\", \"slow\"}`, and both groups are equal."
+msgstr "**非 `State:` 端点具备相同的显式 `execution_group`**：源节点不属于声明式 `State:` 边界节点，两端节点均在 `{\"fast\", \"medium\", \"slow\"}` 范围内显式声明了 `execution_group`，且两者的执行组完全相同。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:327
+msgid "**Distinct source and target port names**: `source_port` and `target_port` differ so single-writer state ownership is preserved without overwriting the upstream variable."
+msgstr "**源端口与目标端口名称不同**：`source_port` 与 `target_port` 互不相同，从而维持单写者状态归属权并避免覆盖上游状态变量。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:331
+msgid "Any other adapter type, cross-group link, context-dependent conversion, or same-name port pair raises `ValueError` during automatic lowering and must be inserted explicitly as a graph node."
+msgstr "其余任何适配器类型、跨执行组连接、依赖上下文的转换或同名端口对，均会在自动降级阶段抛出 `ValueError`，必须作为显式图节点手动插入。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:335
+msgid "Command-line orchestration"
+msgstr "命令行编排"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:337
+msgid "`relic\\orchestration\\__main__.py` exposes standalone validation and compilation from the shell without launching an execution session:"
+msgstr "`relic\\orchestration\\__main__.py` 提供无需启动模拟执行会话即可在命令行独立运行的图校验与编译入口："
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:345
+msgid "Execute a plan"
+msgstr "执行 plan"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Parameter"
+msgstr "参数"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`plan`"
+msgstr "`plan`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Validated, compiled `ExecutionPlan`."
+msgstr "已验证、编译`ExecutionPlan`。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`state_manager`"
+msgstr "`state_manager`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Optional state owner; a manager is created when omitted."
+msgstr "可选状态owner；省略时创建管理者。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`cache`"
+msgstr "`cache`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Optional `NodeCache`."
+msgstr "`NodeCache`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`output_dir`"
+msgstr "`output_dir`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Optional provenance output directory."
+msgstr "可选的 provenance 输出目录。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`registry`"
+msgstr "`registry`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Registry used to resolve classes and registered instances."
+msgstr "用于解析类和已注册实例的注册表。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`strategy`"
+msgstr "`strategy`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`PUSH` evaluates every node each time its rate group runs; `DIRTY` evaluates changed nodes."
+msgstr "`PUSH` 在节点所属速率组每次运行时评估每个节点；`DIRTY` 评估发生变化的节点。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`dirty_include_time`"
+msgstr "`dirty_include_time`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Include time in dirty-input hashing."
+msgstr "包含时间在污垢输入哈希中"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "`simulator_config`"
+msgstr "`simulator_config`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md
+msgid "Optional runtime mapping copied into each fresh `RELICSimulator`."
+msgstr "可选的运行时映射，会被复制到每个新建的 `RELICSimulator` 中。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:379
+msgid "`n_steps` and `dt` (seconds) are required; there is no default time step."
+msgstr "`n_steps` 和 `dt`（秒）必填；没有默认时间步长。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:381
+msgid "Execution first requires the strict compile-run witness, so a plan compiled without `strict=True` is refused. It then resets and initializes the state manager, creates the dependency resolver and a fresh simulator, resolves every plan step to a Functor, registers each Functor, advances `n_steps`, and returns the final managed state. Unknown or unimportable classes, invalid Functor construction, state-contract errors, and runtime execution errors are propagated."
+msgstr "执行首先要求严格的编译-运行见证，因此未使用 `strict=True` 编译的计划会被拒绝。随后它重置并初始化状态管理器，创建依赖解析器和一个新的模拟器，将每个计划步骤解析为 Functor，注册每个 Functor，推进 `n_steps`，并返回最终受管状态。未知或无法导入的类、无效的 Functor 构造、状态契约错误以及运行时执行错误都会向外传播。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:389
+msgid "Minimal orchestration example"
+msgstr "最小化编排示例"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:391
+msgid "This example exercises the complete graph plumbing without claiming a scientific process:"
+msgstr "这例程演示了完全图的管道操作而不声称科学过程："
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:430
+msgid "Expected output:"
+msgstr "预期输出："
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:437
+msgid "For a scientific graph, register real Functor definitions and provide the role-specific Gate 0 evidence before compilation."
+msgstr "为科学图表，注册真实Functor定义，并在编译前提供角色特定的Gate 0证据。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:440
+msgid "Convenience execution"
+msgstr "便捷执行"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:457
+msgid "`n_steps` and `dt` are required; the caller chooses the step count and interval. This function calls `compile_graph()`, constructs `GraphExecutor` with `simulator_config`, and returns the final state. It does not bypass validation or create an alternate runtime."
+msgstr "`n_steps` 和 `dt` 必填，由调用方选择步数与区间。该函数调用 `compile_graph()`，使用 `simulator_config` 构造 `GraphExecutor`，并返回最终状态，不绕过验证，也不创建其他运行时。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:462
+msgid "Related documentation"
+msgstr "相关文档"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:464
+msgid "[Architecture](../architecture.md)"
+msgstr "[架构](../architecture.md)"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:465
+msgid "[Orchestration](../orchestration.md)"
+msgstr "[Orchestration（编排）](../orchestration.md)"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:466
+msgid "[Orchestration and Validation API](../api/orchestration_validation.md)"
+msgstr "[Orchestration 与 Validation API](../api/orchestration_validation.md)"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:467
+msgid "[State, Functors, and Simulation](state_functors_and_simulation.md)"
+msgstr "[State、Functors 与模拟](state_functors_and_simulation.md)"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:468
+msgid "[Science index](../science/index.rst)"
+msgstr "[Science 索引](../science/index.rst)"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/graph_validation_and_execution.md:469
+msgid "[Theory: DEC, IPHS, and GENERIC](../theory/dec_iphs_generic.md)"
+msgstr "[Theory：DEC、IPHS 与 GENERIC](../theory/dec_iphs_generic.md)"
+

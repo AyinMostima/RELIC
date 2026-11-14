@@ -1,0 +1,704 @@
+schema_version: 2.0.0
+tier: relic
+namespace: computation.operators
+description: Core numerical operator default parameters for gradient, divergence, laplacian, and transport utilities
+metadata:
+  created_by: Yuchong Long
+  created_date: '2025-02-17'
+  last_modified: '2025-02-17'
+  version: 1.0.0
+  tags:
+  - computation
+  - operators
+  - numerical
+notes: 'Parameters defined here supply canonical defaults for the computation-layer operators so that all solvers access the
+  centralized ParameterManager instead of relying on hard-coded configuration.
+
+  '
+parameters:
+  computation.operators.gradient.dx:
+    value: 1.0
+    default: 1.0
+    units: m
+    dtype: float32
+    bounds:
+    - 1.0e-10
+    - 1.0e+6
+    category: numerical_parameter
+    description: Spatial grid spacing in the x-direction for gradient operators
+    references:
+    - LeVeque, R.J. (2007). Finite Difference Methods for ODEs and PDEs.
+    tags:
+    - gradient
+    - spacing
+    - discretization
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: computation.operators.gradient
+      schema_version: 2.0.0
+  computation.operators.gradient.dy:
+    value: 1.0
+    default: 1.0
+    units: m
+    dtype: float32
+    bounds:
+    - 1.0e-10
+    - 1.0e+6
+    category: numerical_parameter
+    description: Spatial grid spacing in the y-direction for gradient operators
+    references:
+    - LeVeque, R.J. (2007). Finite Difference Methods for ODEs and PDEs.
+    tags:
+    - gradient
+    - spacing
+    - discretization
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: computation.operators.gradient
+      schema_version: 2.0.0
+  computation.operators.gradient.dz:
+    value: 1.0
+    default: 1.0
+    units: m
+    dtype: float32
+    bounds:
+    - 1.0e-10
+    - 1.0e+6
+    category: numerical_parameter
+    description: Spatial grid spacing in the z-direction for gradient operators
+    references:
+    - LeVeque, R.J. (2007). Finite Difference Methods for ODEs and PDEs.
+    tags:
+    - gradient
+    - spacing
+    - discretization
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: computation.operators.gradient
+      schema_version: 2.0.0
+  computation.operators.gradient.order:
+    value: 2
+    default: 2
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 4
+    category: numerical_parameter
+    description: Finite difference accuracy order for gradient operators
+    references:
+    - Strang, G. (2007). Computational Science and Engineering.
+    tags:
+    - accuracy
+    - gradient
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: computation.operators.gradient
+      schema_version: 2.0.0
+  computation.operators.gradient.boundary_method:
+    value: zero
+    default: zero
+    units: dimensionless
+    dtype: string
+    category: boundary_parameter
+    description: 'Boundary closure of the gradient operators gradient.central_difference_1d/2d/3d, checked by OperatorBase against these allowed_values and applied by functional.compute_gradient_1d: zero sets the boundary derivative to zero, extrapolate uses one-sided first differences, periodic wraps the stencil. Changed on 2026-09-23 from [zero, periodic, dirichlet, neumann]: the gradient kernel never implemented dirichlet or neumann (rejected at apply), and the implemented extrapolate closure was missing.'
+    references:
+    - LeVeque, R.J. (2007). Finite Difference Methods for ODEs and PDEs.
+    tags:
+    - boundary
+    - gradient
+    dimension: dimensionless
+    requires_grad: false
+    allowed_values:
+    - zero
+    - extrapolate
+    - periodic
+    provenance:
+      source: computation.operators.gradient
+      schema_version: 2.0.0
+      last_modified: '2026-09-23T00:00:00Z'
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+  computation.operators.divergence.dx:
+    value: 1.0
+    default: 1.0
+    units: m
+    dtype: float32
+    bounds:
+    - 1.0e-10
+    - 1.0e+6
+    category: numerical_parameter
+    description: Spatial grid spacing in the x-direction for divergence operators
+    references:
+    - LeVeque, R.J. (2007). Finite Difference Methods for ODEs and PDEs.
+    tags:
+    - divergence
+    - spacing
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: computation.operators.divergence
+      schema_version: 2.0.0
+  computation.operators.divergence.dy:
+    value: 1.0
+    default: 1.0
+    units: m
+    dtype: float32
+    bounds:
+    - 1.0e-10
+    - 1.0e+6
+    category: numerical_parameter
+    description: Spatial grid spacing in the y-direction for divergence operators
+    references:
+    - LeVeque, R.J. (2007). Finite Difference Methods for ODEs and PDEs.
+    tags:
+    - divergence
+    - spacing
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: computation.operators.divergence
+      schema_version: 2.0.0
+  computation.operators.divergence.dz:
+    value: 1.0
+    default: 1.0
+    units: m
+    dtype: float32
+    bounds:
+    - 1.0e-10
+    - 1.0e+6
+    category: numerical_parameter
+    description: Spatial grid spacing in the z-direction for divergence operators
+    references:
+    - LeVeque, R.J. (2007). Finite Difference Methods for ODEs and PDEs.
+    tags:
+    - divergence
+    - spacing
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: computation.operators.divergence
+      schema_version: 2.0.0
+  computation.operators.divergence.boundary_method:
+    value: zero
+    default: zero
+    units: dimensionless
+    dtype: string
+    category: boundary_parameter
+    description: 'Boundary closure of the divergence operators divergence.finite_volume_2d/3d, checked by OperatorBase against these allowed_values; FiniteVolumeDivergence2D/3D evaluate functional.compute_divergence_2d/3d, whose component derivatives use the compute_gradient_1d closures zero, extrapolate and periodic. Changed on 2026-09-23 from [zero, periodic, dirichlet, neumann]: dirichlet and neumann were rejected by the kernel and the implemented extrapolate closure was missing.'
+    references:
+    - LeVeque, R.J. (2007). Finite Difference Methods for ODEs and PDEs.
+    tags:
+    - divergence
+    - boundary
+    dimension: dimensionless
+    requires_grad: false
+    allowed_values:
+    - zero
+    - extrapolate
+    - periodic
+    provenance:
+      source: computation.operators.divergence
+      schema_version: 2.0.0
+      last_modified: '2026-09-23T00:00:00Z'
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+  computation.operators.laplacian.dx:
+    value: 1.0
+    default: 1.0
+    units: m
+    dtype: float32
+    bounds:
+    - 1.0e-10
+    - 1.0e+6
+    category: numerical_parameter
+    description: Spatial grid spacing in the x-direction for laplacian operators
+    references:
+    - Crank, J. (1975). The Mathematics of Diffusion.
+    tags:
+    - laplacian
+    - spacing
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: computation.operators.laplacian
+      schema_version: 2.0.0
+  computation.operators.laplacian.dy:
+    value: 1.0
+    default: 1.0
+    units: m
+    dtype: float32
+    bounds:
+    - 1.0e-10
+    - 1.0e+6
+    category: numerical_parameter
+    description: Spatial grid spacing in the y-direction for laplacian operators
+    references:
+    - Crank, J. (1975). The Mathematics of Diffusion.
+    tags:
+    - laplacian
+    - spacing
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: computation.operators.laplacian
+      schema_version: 2.0.0
+  computation.operators.laplacian.dz:
+    value: 1.0
+    default: 1.0
+    units: m
+    dtype: float32
+    bounds:
+    - 1.0e-10
+    - 1.0e+6
+    category: numerical_parameter
+    description: Spatial grid spacing in the z-direction for laplacian operators
+    references:
+    - Crank, J. (1975). The Mathematics of Diffusion.
+    tags:
+    - laplacian
+    - spacing
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: computation.operators.laplacian
+      schema_version: 2.0.0
+  computation.operators.laplacian.boundary_method:
+    value: zero
+    default: zero
+    units: dimensionless
+    dtype: string
+    category: boundary_parameter
+    description: 'Boundary closure of the Laplacian operators laplacian.finite_difference_1d/2d/3d, checked by OperatorBase against these allowed_values and applied by functional.compute_laplacian_1d and compute_second_derivative_1d (zero, extrapolate and periodic closures). Changed on 2026-09-23 from [zero, periodic, dirichlet, neumann]: dirichlet and neumann were rejected by the kernel and the implemented extrapolate closure was missing.'
+    references:
+    - Crank, J. (1975). The Mathematics of Diffusion.
+    tags:
+    - laplacian
+    - boundary
+    dimension: dimensionless
+    requires_grad: false
+    allowed_values:
+    - zero
+    - extrapolate
+    - periodic
+    provenance:
+      source: computation.operators.laplacian
+      schema_version: 2.0.0
+      last_modified: '2026-09-23T00:00:00Z'
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+  computation.operators.transport.diffusivity:
+    value: 1.0e-05
+    default: 1.0e-05
+    units: m2 s-1
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.01
+    category: physical_parameter
+    description: Molecular diffusivity applied in transport operators
+    references:
+    - Crank, J. (1975). The Mathematics of Diffusion.
+    tags:
+    - diffusion
+    - transport
+    dimension: diffusivity
+    requires_grad: false
+    provenance:
+      source: computation.operators.transport
+      schema_version: 2.0.0
+  computation.operators.transport.spatial_dims:
+    value: 1
+    default: 1
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 3
+    category: numerical_parameter
+    description: Number of spatial dimensions handled by the operator
+    references:
+    - LeVeque, R.J. (2007). Finite Difference Methods for ODEs and PDEs.
+    tags:
+    - transport
+    - dimensionality
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: computation.operators.transport
+      schema_version: 2.0.0
+  computation.operators.transport.splitting_method:
+    value: symmetric
+    default: symmetric
+    units: dimensionless
+    dtype: string
+    category: numerical_parameter
+    description: 'Operator splitting of the AdvectionDiffusionOperator (functional.advance_advection_diffusion), checked by OperatorBase against these allowed_values: sequential is Lie splitting (advection, then diffusion), symmetric is Strang splitting (half diffusion, advection, half diffusion), combined is one unsplit explicit Euler step of the summed rates and requires euler time integration. Changed on 2026-09-23 from [symmetric, sequential, none]: none was never implemented, and combined (used by AtmosphericAdvectionDiffusionFunctor) was missing.'
+    references:
+    - Strang, G. (1968). On the construction and comparison of difference schemes.
+    tags:
+    - transport
+    - splitting
+    dimension: dimensionless
+    requires_grad: false
+    allowed_values:
+    - sequential
+    - symmetric
+    - combined
+    provenance:
+      source: computation.operators.transport
+      schema_version: 2.0.0
+      last_modified: '2026-09-23T00:00:00Z'
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+  computation.operators.transport.advection_scheme:
+    value: upwind
+    default: upwind
+    units: dimensionless
+    dtype: string
+    category: numerical_parameter
+    description: 'Advection flux scheme of the AdvectionDiffusionOperator (functional.apply_advection), checked by OperatorBase against these allowed_values: upwind (first order), lax_wendroff (second order, fully discrete), superbee and van_leer (flux limited, fully discrete; lax_wendroff, superbee and van_leer require euler time integration), central (requires an implicit time integration method). Changed on 2026-09-23 from [upwind, lax_wendroff, fromm]: fromm was never implemented, and the implemented superbee, van_leer and central schemes were missing.'
+    references:
+    - LeVeque, R.J. (2007). Finite Volume Methods for Hyperbolic Problems.
+    tags:
+    - transport
+    - advection
+    dimension: dimensionless
+    requires_grad: false
+    allowed_values:
+    - upwind
+    - lax_wendroff
+    - superbee
+    - van_leer
+    - central
+    provenance:
+      source: computation.operators.transport
+      schema_version: 2.0.0
+      last_modified: '2026-09-23T00:00:00Z'
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+  computation.operators.transport.boundary_method:
+    value: zero
+    default: zero
+    units: dimensionless
+    dtype: string
+    category: boundary_parameter
+    description: 'Boundary treatment of the DiffusionOperator and AdvectionDiffusionOperator (functional.apply_diffusion and apply_advection), checked by OperatorBase against these allowed_values. Diffusion: zero, neumann and open are zero-flux closures, extrapolate uses a linear ghost, periodic wraps, dirichlet requires an explicit boundary state. Advection: zero uses a zero ghost state, neumann a zero-gradient ghost, extrapolate a linear ghost, periodic wraps, dirichlet and open require an explicit inflow boundary state. Changed on 2026-09-23 from [zero, periodic, extrapolate]: dirichlet, neumann and open are implemented by both kernels.'
+    references:
+    - Crank, J. (1975). The Mathematics of Diffusion.
+    tags:
+    - transport
+    - boundary
+    dimension: dimensionless
+    requires_grad: false
+    allowed_values:
+    - zero
+    - extrapolate
+    - periodic
+    - dirichlet
+    - neumann
+    - open
+    provenance:
+      source: computation.operators.transport
+      schema_version: 2.0.0
+      last_modified: '2026-09-23T00:00:00Z'
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+  computation.operators.transport.advection.boundary_method:
+    value: extrapolate
+    default: extrapolate
+    units: dimensionless
+    dtype: string
+    category: boundary_parameter
+    description: 'Boundary treatment of the pure AdvectionOperator (functional.apply_advection), checked by OperatorBase against these allowed_values; the value extrapolate (linear ghost extrapolation) is the value in effect before strict parameter lookup. zero uses a zero ghost state, neumann a zero-gradient ghost, periodic wraps, dirichlet and open require an explicit inflow boundary state. computation.operators.transport.boundary_method applies to the diffusion and advection-diffusion operators. Changed on 2026-09-23 from [zero, periodic, extrapolate]: dirichlet, neumann and open are implemented by the kernel.'
+    references:
+    - LeVeque, R.J. (2002). Finite Volume Methods for Hyperbolic Problems.
+    tags:
+    - transport
+    - advection
+    - boundary
+    dimension: dimensionless
+    requires_grad: false
+    allowed_values:
+    - zero
+    - extrapolate
+    - periodic
+    - dirichlet
+    - neumann
+    - open
+    provenance:
+      source: computation.operators.transport
+      schema_version: 2.0.0
+      last_modified: '2026-09-23T00:00:00Z'
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+  computation.operators.transport.check_cfl:
+    value: true
+    default: true
+    units: dimensionless
+    dtype: bool
+    category: numerical_parameter
+    description: Enable CFL stability checking for pure advection operators
+    references:
+    - Courant, R. et al. (1928). On the partial difference equations of mathematical physics.
+    tags:
+    - transport
+    - stability
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: computation.operators.transport
+      schema_version: 2.0.0
+    bounds:
+    - 0.0
+    - 100
+  computation.operators.transport.check_stability:
+    value: true
+    default: true
+    units: dimensionless
+    dtype: bool
+    category: numerical_parameter
+    description: Enable stability checks for advection-diffusion operators
+    references:
+    - LeVeque, R.J. (2007). Finite Difference Methods for ODEs and PDEs.
+    tags:
+    - transport
+    - stability
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: computation.operators.transport
+      schema_version: 2.0.0
+    bounds:
+    - 0.0
+    - 100
+  computation.operators.transport.enforce_non_negative:
+    value: true
+    default: true
+    units: dimensionless
+    dtype: bool
+    category: constraint_parameter
+    description: Enforce non-negative scalar concentrations after transport updates
+    references:
+    - Hundsdorfer, W. & Verwer, J.G. (2003). Numerical Solution of Time-Dependent Advection-Diffusion-Reaction Equations.
+    tags:
+    - transport
+    - constraint
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: computation.operators.transport
+      schema_version: 2.0.0
+    bounds:
+    - 0.0
+    - 100
+  computation.operators.transport.max_cfl_allowed:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 10.0
+    category: numerical_parameter
+    description: Maximum allowed CFL number for transport operators
+    references:
+    - Courant, R. et al. (1928). On the partial difference equations of mathematical physics.
+    tags:
+    - transport
+    - stability
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: computation.operators.diagnostics
+      schema_version: 2.0.0
+  computation.operators.transport.scheme:
+    value: upwind
+    default: upwind
+    units: dimensionless
+    dtype: string
+    category: numerical_parameter
+    description: 'Advection flux scheme of the pure AdvectionOperator (functional.apply_advection), checked by OperatorBase against these allowed_values: upwind, lax_wendroff, superbee, van_leer and central, with the same time-integration requirements as computation.operators.transport.advection_scheme; the AdvectionOperator steps with its time_integration_method (transport.numerical.time_integration_method or the config key) and rejects at construction a pair that cannot step (central with euler, a fully discrete scheme with an implicit method). Changed on 2026-09-23 from [upwind, lax_wendroff, superbee]: the implemented van_leer and central schemes were missing.'
+    references:
+    - LeVeque, R.J. (2007). Finite Difference Methods for ODEs and PDEs.
+    tags:
+    - transport
+    - advection
+    dimension: dimensionless
+    requires_grad: false
+    allowed_values:
+    - upwind
+    - lax_wendroff
+    - superbee
+    - van_leer
+    - central
+    provenance:
+      source: computation.operators.transport
+      schema_version: 2.0.0
+      last_modified: '2026-09-23T00:00:00Z'
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+  computation.operators.diagnostics.max_stability_allowed:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 5000.0
+    category: numerical_parameter
+    description: 'Maximum diffusion stability number sigma = D dt sum_i 1/dx_i^2 that the StabilityChecker diagnostics operator accepts without warning (it warns above computation.operators.diagnostics.warn_threshold times this limit); 0.5 is the stability limit of explicit forward-time centred-space diffusion. The bounds still allow a larger configured value for implicit or coarse-step diagnostics. Changed from 3000.0 to 0.5 on 2026-09-23: the only runtime caller, AtmosphericAdvectionDiffusionFunctor, checks an explicit scheme and rejects steps above transport.numerical.cfl_diffusion_max = 0.5, and functional.compute_diffusion_stability documents sigma <= 0.5 for explicit schemes.'
+    references:
+    - Strikwerda, J.C. (2004). Finite Difference Schemes and PDEs.
+    - LeVeque, R.J. (2007). Finite Difference Methods for ODEs and PDEs.
+    - Crank, J. (1975). The Mathematics of Diffusion, 2nd ed.
+    tags:
+    - diagnostics
+    - stability
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: computation.operators.diagnostics
+      schema_version: 2.0.0
+      last_modified: '2026-09-23T00:00:00Z'
+  computation.operators.diagnostics.strict_mode:
+    value: false
+    default: false
+    units: dimensionless
+    dtype: bool
+    bounds: null
+    category: numerical_parameter
+    description: 'Blocking policy of the ConservationChecker diagnostics operator: true raises ValueError when the relative transport mass-conservation error exceeds computation.operators.diagnostics.tolerance, false only reports (and warns on) the error (boolean flag)'
+    references:
+    - 'LeVeque, R.J. (2007). Finite Difference Methods for Ordinary and Partial Differential Equations, SIAM'
+    tags:
+    - diagnostics
+    - conservation
+    - error_handling
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: computation.operators.diagnostics
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-23T00:00:00Z'
+  computation.operators.diagnostics.tolerance:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 1.0e-12
+    - 1.0e-03
+    category: numerical_parameter
+    description: 'Relative tolerance of the transport mass-conservation check error = |Delta M - dt integral(S dV)| / (|M_old| + 1e-12): the default of functional.check_conservation when no explicit tolerance is passed and the ParameterManager value requested by the ConservationChecker diagnostics operator (dimensionless fraction of the old mass)'
+    references:
+    - 'Byun, D.W. & Ching, J.K.S. (1999). Science Algorithms of the EPA Models-3 CMAQ Modeling System, EPA/600/R-99/030, ch. 7 (numerical transport algorithms)'
+    - 'LeVeque, R.J. (2007). Finite Difference Methods for Ordinary and Partial Differential Equations, SIAM'
+    tags:
+    - diagnostics
+    - conservation
+    - transport
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: computation.operators.diagnostics
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-23T00:00:00Z'
+  computation.operators.diagnostics.warn_threshold:
+    value: 0.9
+    default: 0.9
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: numerical_parameter
+    description: Warning threshold as a fraction of the maximum diagnostic limit.
+    references:
+    - LeVeque, R.J. (2002). Finite Volume Methods for Hyperbolic Problems.
+    tags:
+    - diagnostics
+    - stability
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: computation.operators.diagnostics
+      schema_version: 2.0.0
+  computation.operators.diagnostics.max_cfl_allowed:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 10.0
+    category: numerical_parameter
+    description: Maximum allowed Courant number |u| dt / dx of the CFLCalculator diagnostics operator; a larger CFL number raises, and computation.operators.diagnostics.warn_threshold times this limit warns
+    references:
+    - Courant, R., Friedrichs, K. and Lewy, H. (1928). Math. Ann. 100:32-74.
+    - LeVeque, R.J. (2002). Finite Volume Methods for Hyperbolic Problems.
+    tags:
+    - diagnostics
+    - stability
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: computation.operators.diagnostics
+      schema_version: 2.0.0
+  computation.operators.diagnostics.method:
+    value: clip
+    default: clip
+    units: dimensionless
+    dtype: string
+    category: numerical_parameter
+    description: Method of the NonNegativeConstraint operator; clip raises values below computation.operators.diagnostics.small_value to it, zero clamps at transport.numerical.non_negative_min_value
+    references:
+    - LeVeque, R.J. (2002). Finite Volume Methods for Hyperbolic Problems.
+    tags:
+    - diagnostics
+    - positivity
+    dimension: dimensionless
+    requires_grad: false
+    allowed_values:
+    - clip
+    - zero
+    provenance:
+      source: computation.operators.diagnostics
+      schema_version: 2.0.0
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+  computation.operators.diagnostics.small_value:
+    value: 1.0e-12
+    default: 1.0e-12
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1.0e-06
+    category: numerical_parameter
+    description: 'Strictly positive floor of the ''clip'' method of apply_non_negative_constraint (relic/computation/operators/functional.py), read only by the NonNegativeConstraint diagnostics operator (relic/computation/operators/diagnostics.py) when computation.operators.diagnostics.method is ''clip'': values below it are raised to it, in the units of the constrained field. It differs from transport.numerical.non_negative_min_value, the non-negativity bound of the ''zero'' method: clip keeps a field strictly positive (a model choice for fields that later enter logarithms or divisions), zero only removes negative values.'
+    references:
+    - LeVeque, R.J. (2002). Finite Volume Methods for Hyperbolic Problems.
+    tags:
+    - diagnostics
+    - positivity
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: computation.operators.diagnostics
+      schema_version: 2.0.0

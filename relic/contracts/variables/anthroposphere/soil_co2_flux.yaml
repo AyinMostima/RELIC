@@ -1,0 +1,37 @@
+variable: soil_co2_flux
+title: "Tillage Soil CO2 Flux"
+description: "CO2-mass form F_CO2 = F_C M_CO2 / M_C of carbon_loss_rate, the operation-step tillage carbon flush. It carries the same carbon as carbon_loss_rate and therefore joins no carbon ledger."
+kind: flux
+dimension:
+  udunits: "kg CO2 m-2 s-1"
+  cf_standard_name: null
+owner: "tillage_management"
+aliases: []
+incrementable: false
+accumulates: null
+numerics:
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-09
+writers:
+  increments: []
+  tendencies:
+    - name: "tillage_management"
+      module: "relic.scientific.anthroposphere.management.tillage"
+      provides:
+        - "soil_co2_flux"
+      unit: "kg CO2 m-2 s-1"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/anthroposphere/management/tillage.py"
+  runtime_role: "tillage_soil_co2_mass_flux_observation"
+  runtime_writer: "tillage_management"
+  note: "Computed in _compute_rate_core from carbon_loss_rate with the physical-constant molar masses, returned by TillageManagement.forward as UpdateItem(REPLACE, per_timestep=False, unit 'kg CO2 m-2 s-1') without an element label."

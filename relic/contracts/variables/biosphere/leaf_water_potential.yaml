@@ -1,0 +1,43 @@
+variable: leaf_water_potential
+title: "Leaf Water Potential"
+kind: forcing
+dimension:
+  udunits: "MPa"
+  cf_standard_name: null
+support:
+  spatial_kind: leaf
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: none
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Taiz, L., Moller, I.M., Murphy, A. and Zeiger, E. (2022). Plant Physiology and Development, 7th ed., Oxford University Press, Ch. 5 (water potential relative to pure free water; solutes and tension lower it below zero)"
+  - "Campbell, G.S. and Norman, J.M. (1998). An Introduction to Environmental Biophysics, 2nd ed., Springer, Ch. 9"
+  - "Tyree, M.T. and Zimmermann, M.H. (2002). Xylem Structure and the Ascent of Sap, 2nd ed., Springer"
+numerics:
+  # Sign convention: water potential Psi_l = Psi_p + Psi_s + Psi_g relative to
+  # pure free water (Psi = 0); a transpiring leaf is under tension, Psi_l <= 0.
+  # Only the sign is a physical bound; no lower limit is declared (-inf).
+  lower_bound: -.inf
+  upper_bound: 0.0
+  atol: 1.0e-9
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies: []
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-9
+      rtol: 1.0e-9
+provenance:
+  source_file: "external_forcing_adapter"
+  runtime_role: "external_leaf_water_potential_forcing"
+  runtime_writer: null
+  note: "No RELIC Functor writes leaf water potential; it is supplied with the initial state or as forcing."

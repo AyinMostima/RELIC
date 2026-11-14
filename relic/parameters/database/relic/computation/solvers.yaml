@@ -1,0 +1,658 @@
+schema_version: 2.0.0
+tier: relic
+namespace: computation.solvers
+description: Default parameter set for core numerical solvers (Backward Euler, Crank-Nicolson, RK4, Thomas)
+metadata:
+  created_by: Yuchong Long
+  created_date: '2025-02-17'
+  last_modified: '2025-02-17'
+  version: 1.0.0
+  tags:
+  - computation
+  - solvers
+  - numerical
+notes: 'These parameters ensure that all computation-layer solvers retrieve their configuration via the unified ParameterManager
+  rather than relying on hard-coded defaults.
+
+  '
+parameters:
+  computation.solvers.backward_euler.damping_factor:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: numerical_parameter
+    description: Damping factor applied to fixed-point updates in Backward Euler
+    references:
+    - Kelley, C.T. (2003). Solving Nonlinear Equations with Newton's Method.
+    tags:
+    - implicit
+    - solver
+    - relaxation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: computation.solvers.backward_euler
+      schema_version: 2.0.0
+  computation.solvers.backward_euler.max_iterations:
+    value: 50
+    default: 50
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 10000
+    category: numerical_parameter
+    description: Maximum iterations for Backward Euler implicit solve
+    references:
+    - Hairer, E. & Wanner, G. (1996). Solving Ordinary Differential Equations II.
+    tags:
+    - implicit
+    - solver
+    - convergence
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: computation.solvers.backward_euler
+      schema_version: 2.0.0
+  computation.solvers.backward_euler.rtol:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: dimensionless
+    dtype: float32
+    category: numerical_parameter
+    description: Relative convergence tolerance for Backward Euler iterations
+    references:
+    - Hairer, E. & Wanner, G. (1996). Solving Ordinary Differential Equations II.
+    tags:
+    - implicit
+    - solver
+    - tolerance
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: computation.solvers.backward_euler
+      schema_version: 2.0.0
+    bounds:
+    - 0.0
+    - 9.999999999999999e-05
+  computation.solvers.backward_euler.atol:
+    value: 1.0e-09
+    default: 1.0e-09
+    units: dimensionless
+    dtype: float32
+    category: numerical_parameter
+    description: Absolute convergence tolerance for Backward Euler iterations
+    references:
+    - Hairer, E. & Wanner, G. (1996). Solving Ordinary Differential Equations II.
+    tags:
+    - implicit
+    - solver
+    - tolerance
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: computation.solvers.backward_euler
+      schema_version: 2.0.0
+    bounds:
+    - 0.0
+    - 1.0000000000000001e-07
+  computation.solvers.crank_nicolson.theta:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: numerical_parameter
+    description: 'Dimensionless weight of the new-time slope in the theta-method y(n+1) = y(n) + dt*[theta*f(y(n+1)) + (1 - theta)*f(y(n))]; theta = 0.5 is Crank-Nicolson (second order), theta = 1 is Backward Euler'
+    references:
+    - Crank, J. & Nicolson, P. (1947). Proceedings of the Cambridge Philosophical Society.
+    tags:
+    - implicit
+    - solver
+    - theta_method
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: computation.solvers.crank_nicolson
+      schema_version: 2.0.0
+  computation.solvers.crank_nicolson.max_iterations:
+    value: 50
+    default: 50
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 10000
+    category: numerical_parameter
+    description: Maximum iterations for Crank-Nicolson implicit solve
+    references:
+    - Crank, J. & Nicolson, P. (1947). Proceedings of the Cambridge Philosophical Society.
+    - Hairer, E. & Wanner, G. (1996). Solving Ordinary Differential Equations II.
+    tags:
+    - implicit
+    - solver
+    - convergence
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: computation.solvers.crank_nicolson
+      schema_version: 2.0.0
+  computation.solvers.crank_nicolson.rtol:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: dimensionless
+    dtype: float32
+    category: numerical_parameter
+    description: Relative convergence tolerance for Crank-Nicolson iterations
+    references:
+    - Crank, J. & Nicolson, P. (1947). Proceedings of the Cambridge Philosophical Society.
+    - Hairer, E. & Wanner, G. (1996). Solving Ordinary Differential Equations II.
+    tags:
+    - implicit
+    - solver
+    - tolerance
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: computation.solvers.crank_nicolson
+      schema_version: 2.0.0
+    bounds:
+    - 0.0
+    - 9.999999999999999e-05
+  computation.solvers.crank_nicolson.atol:
+    value: 1.0e-09
+    default: 1.0e-09
+    units: dimensionless
+    dtype: float32
+    category: numerical_parameter
+    description: Absolute convergence tolerance for Crank-Nicolson iterations
+    references:
+    - Crank, J. & Nicolson, P. (1947). Proceedings of the Cambridge Philosophical Society.
+    - Hairer, E. & Wanner, G. (1996). Solving Ordinary Differential Equations II.
+    tags:
+    - implicit
+    - solver
+    - tolerance
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: computation.solvers.crank_nicolson
+      schema_version: 2.0.0
+    bounds:
+    - 0.0
+    - 1.0000000000000001e-07
+  computation.solvers.implicit_midpoint.max_iterations:
+    value: 100
+    default: 100
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 10000
+    category: numerical_parameter
+    description: 'Maximum fixed-point iterations of ImplicitMidpointSolver, y <- y_n + dt f((y_n + y)/2, t_n + dt/2); the map contracts with q = (dt/2) L (L the Lipschitz constant of f), so about ln(tol)/ln(q) iterations are needed, and exhaustion returns SolverStatus.MAX_ITERATIONS. Declared on 2026-09-23 so the solver namespace owns the value like the other registered solvers; the value is the one in effect before, when the solver fell through to relic.physical.constants.numerical.max_iterations_default. Distinct from transport.numerical.implicit_midpoint_max_iter and transport.numerical.implicit_midpoint_tolerance: the transport kernels (functional._integrate_rate_system) always pass those explicitly for their implicit midpoint and Crank-Nicolson steps, so this entry only serves callers that configure nothing (for example transactional_implicit_midpoint_step with an empty solver_config and solve_ode_system).'
+    references:
+    - Hairer, E., Lubich, C. & Wanner, G. (2006). Geometric Numerical Integration, 2nd ed. Springer.
+    - Hairer, E. & Wanner, G. (1996). Solving Ordinary Differential Equations II.
+    tags:
+    - implicit
+    - solver
+    - convergence
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: computation.solvers.implicit_midpoint
+      schema_version: 2.0.0
+      last_modified: '2026-09-23T00:00:00Z'
+  computation.solvers.implicit_midpoint.rtol:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 9.999999999999999e-05
+    category: numerical_parameter
+    description: 'Relative tolerance of the ImplicitMidpointSolver successive-iterate criterion ||y_new - y_prev||_inf < max(atol, rtol ||y_new||_inf). Declared on 2026-09-23 so the solver namespace owns the value like the other registered solvers; the value is the one in effect before, when the solver fell through to relic.physical.constants.numerical.tolerance_relative. Distinct from transport.numerical.implicit_midpoint_max_iter and transport.numerical.implicit_midpoint_tolerance: the transport kernels (functional._integrate_rate_system) always pass those explicitly for their implicit midpoint and Crank-Nicolson steps, so this entry only serves callers that configure nothing (for example transactional_implicit_midpoint_step with an empty solver_config and solve_ode_system).'
+    references:
+    - Hairer, E., Lubich, C. & Wanner, G. (2006). Geometric Numerical Integration, 2nd ed. Springer.
+    - Hairer, E. & Wanner, G. (1996). Solving Ordinary Differential Equations II.
+    tags:
+    - implicit
+    - solver
+    - tolerance
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: computation.solvers.implicit_midpoint
+      schema_version: 2.0.0
+      last_modified: '2026-09-23T00:00:00Z'
+  computation.solvers.implicit_midpoint.atol:
+    value: 1.0e-08
+    default: 1.0e-08
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0000000000000001e-07
+    category: numerical_parameter
+    description: 'Absolute tolerance of the ImplicitMidpointSolver successive-iterate criterion ||y_new - y_prev||_inf < max(atol, rtol ||y_new||_inf), in the units of the state (dimensionless for the registry default). Declared on 2026-09-23 so the solver namespace owns the value like the other registered solvers; the value is the one in effect before, when the solver fell through to relic.physical.constants.numerical.tolerance_absolute. Distinct from transport.numerical.implicit_midpoint_max_iter and transport.numerical.implicit_midpoint_tolerance: the transport kernels (functional._integrate_rate_system) always pass those explicitly for their implicit midpoint and Crank-Nicolson steps, so this entry only serves callers that configure nothing (for example transactional_implicit_midpoint_step with an empty solver_config and solve_ode_system).'
+    references:
+    - Hairer, E., Lubich, C. & Wanner, G. (2006). Geometric Numerical Integration, 2nd ed. Springer.
+    - Hairer, E. & Wanner, G. (1996). Solving Ordinary Differential Equations II.
+    tags:
+    - implicit
+    - solver
+    - tolerance
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: computation.solvers.implicit_midpoint
+      schema_version: 2.0.0
+      last_modified: '2026-09-23T00:00:00Z'
+  computation.solvers.rk4.max_iterations:
+    value: 50
+    default: 50
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 10000
+    category: numerical_parameter
+    description: Iteration cap that SolverBase resolves for every registered solver; classical RK4 is an explicit fixed-step method, so RK4Solver.solve performs no iteration and does not use this value
+    references:
+    - Butcher, J.C. (2008). Numerical Methods for Ordinary Differential Equations.
+    tags:
+    - explicit
+    - solver
+    - convergence
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: computation.solvers.rk4
+      schema_version: 2.0.0
+  computation.solvers.rk4.rtol:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: dimensionless
+    dtype: float32
+    category: numerical_parameter
+    description: Relative tolerance that SolverBase resolves for every registered solver (check_convergence); classical RK4 is an explicit fixed-step method, so RK4Solver.solve has no convergence test and does not use this value
+    references:
+    - Butcher, J.C. (2008). Numerical Methods for Ordinary Differential Equations.
+    tags:
+    - explicit
+    - solver
+    - tolerance
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: computation.solvers.rk4
+      schema_version: 2.0.0
+    bounds:
+    - 0.0
+    - 9.999999999999999e-05
+  computation.solvers.rk4.atol:
+    value: 1.0e-09
+    default: 1.0e-09
+    units: dimensionless
+    dtype: float32
+    category: numerical_parameter
+    description: Absolute tolerance that SolverBase resolves for every registered solver (check_convergence); classical RK4 is an explicit fixed-step method, so RK4Solver.solve has no convergence test and does not use this value
+    references:
+    - Butcher, J.C. (2008). Numerical Methods for Ordinary Differential Equations.
+    tags:
+    - explicit
+    - solver
+    - tolerance
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: computation.solvers.rk4
+      schema_version: 2.0.0
+    bounds:
+    - 0.0
+    - 1.0000000000000001e-07
+  computation.solvers.imex_euler.explicit_substeps:
+    value: 1
+    default: 1
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 100
+    category: numerical_parameter
+    description: Number of explicit substeps used for the non-stiff IMEX component
+    references:
+    - Ascher, U.M., Ruuth, S.J., and Spiteri, R.J. (1997). Applied Numerical Mathematics.
+    - Hairer, E. and Wanner, G. (1996). Solving Ordinary Differential Equations II.
+    tags:
+    - imex
+    - solver
+    - multirate
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: computation.solvers.imex_euler
+      schema_version: 2.0.0
+  computation.solvers.imex_euler.damping_factor:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: numerical_parameter
+    description: Fixed-point damping factor for implicit IMEX updates
+    references:
+    - Ascher, U.M., Ruuth, S.J., and Spiteri, R.J. (1997). Applied Numerical Mathematics.
+    - Hairer, E. and Wanner, G. (1996). Solving Ordinary Differential Equations II.
+    tags:
+    - imex
+    - solver
+    - relaxation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: computation.solvers.imex_euler
+      schema_version: 2.0.0
+  computation.solvers.imex_euler.max_iterations:
+    value: 50
+    default: 50
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 10000
+    category: numerical_parameter
+    description: Maximum iterations for IMEX Euler implicit solve
+    references:
+    - Ascher, U.M., Ruuth, S.J., and Spiteri, R.J. (1997). Applied Numerical Mathematics.
+    - Hairer, E. and Wanner, G. (1996). Solving Ordinary Differential Equations II.
+    tags:
+    - imex
+    - solver
+    - convergence
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: computation.solvers.imex_euler
+      schema_version: 2.0.0
+  computation.solvers.imex_euler.rtol:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: dimensionless
+    dtype: float32
+    category: numerical_parameter
+    description: Relative convergence tolerance for IMEX Euler iterations
+    references:
+    - Ascher, U.M., Ruuth, S.J., and Spiteri, R.J. (1997). Applied Numerical Mathematics.
+    - Hairer, E. and Wanner, G. (1996). Solving Ordinary Differential Equations II.
+    tags:
+    - imex
+    - solver
+    - tolerance
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: computation.solvers.imex_euler
+      schema_version: 2.0.0
+    bounds:
+    - 0.0
+    - 9.999999999999999e-05
+  computation.solvers.imex_euler.atol:
+    value: 1.0e-09
+    default: 1.0e-09
+    units: dimensionless
+    dtype: float32
+    category: numerical_parameter
+    description: Absolute convergence tolerance for IMEX Euler iterations
+    references:
+    - Ascher, U.M., Ruuth, S.J., and Spiteri, R.J. (1997). Applied Numerical Mathematics.
+    - Hairer, E. and Wanner, G. (1996). Solving Ordinary Differential Equations II.
+    tags:
+    - imex
+    - solver
+    - tolerance
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: computation.solvers.imex_euler
+      schema_version: 2.0.0
+    bounds:
+    - 0.0
+    - 1.0000000000000001e-07
+  computation.solvers.thomas.check_stability:
+    value: true
+    default: true
+    units: dimensionless
+    dtype: bool
+    category: diagnostic_parameter
+    description: Compute the Varah bound on cond_inf(A) (check_matrix_conditioning) for every 1-D tridiagonal solve and
+      record it in the result metadata (condition_number, is_well_conditioned); the solver keeps no state from a solve.
+      The pivot test is always on and does not depend on this flag;
+      a numerically singular pivot raises (the Thomas algorithm does not pivot, Press et al. 1992 Sect. 2.4), and there is
+      no pivot regularization.
+    references:
+    - Varah, J.M. (1975). A lower bound for the smallest singular value of a matrix. Linear Algebra Appl. 11, 3-5.
+    - Press, W.H. et al. (1992). Numerical Recipes in C, 2nd ed., Sect. 2.4 (tridag has no pivoting; use a pivoting band
+      solver when it fails).
+    tags:
+    - linear_solver
+    - stability
+    - diagnostics
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: computation.solvers.thomas
+      schema_version: 2.0.0
+      last_modified: '2026-09-26T00:00:00Z'
+    bounds:
+    - 0.0
+    - 100
+  computation.solvers.thomas.report_condition:
+    value: false
+    default: false
+    units: dimensionless
+    dtype: bool
+    category: diagnostic_parameter
+    description: Report estimated condition numbers for tridiagonal solves
+    references:
+    - Trefethen, L.N. & Bau, D. (1997). Numerical Linear Algebra.
+    tags:
+    - linear_solver
+    - diagnostics
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: computation.solvers.thomas
+      schema_version: 2.0.0
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+  computation.solvers.thomas.max_iterations:
+    value: 1
+    default: 1
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 1
+    category: numerical_parameter
+    description: Pass count that SolverBase resolves for every registered solver; the Thomas algorithm is a direct method with exactly one forward-elimination and back-substitution pass, so ThomasAlgorithmSolver.solve does not iterate
+    references:
+    - Thomas, L.H. (1949). Elliptic problems in linear difference equations over a network.
+    - Press, W.H. et al. (2007). Numerical Recipes, Section 2.4.
+    tags:
+    - linear_solver
+    - direct_solver
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: computation.solvers.thomas
+      schema_version: 2.0.0
+  computation.solvers.thomas.rtol:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 9.999999999999999e-05
+    category: numerical_parameter
+    description: Relative tolerance that SolverBase resolves for every registered solver (check_convergence); the Thomas algorithm is direct and ThomasAlgorithmSolver.solve has no convergence test, so it does not use this value
+    references:
+    - Thomas, L.H. (1949). Elliptic problems in linear difference equations over a network.
+    - Press, W.H. et al. (2007). Numerical Recipes, Section 2.4.
+    tags:
+    - linear_solver
+    - direct_solver
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: computation.solvers.thomas
+      schema_version: 2.0.0
+  computation.solvers.thomas.atol:
+    value: 1.0e-08
+    default: 1.0e-08
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0e-06
+    category: numerical_parameter
+    description: Absolute tolerance that SolverBase resolves for every registered solver (check_convergence); the Thomas algorithm is direct and ThomasAlgorithmSolver.solve has no convergence test, so it does not use this value
+    references:
+    - Thomas, L.H. (1949). Elliptic problems in linear difference equations over a network.
+    - Press, W.H. et al. (2007). Numerical Recipes, Section 2.4.
+    tags:
+    - linear_solver
+    - direct_solver
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: computation.solvers.thomas
+      schema_version: 2.0.0
+  computation.solvers.thomas.condition_number_limit:
+    value: 1.0e+12
+    default: 1.0e+12
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 1.0
+    - 1.0e+16
+    category: diagnostic_parameter
+    description: Upper limit of the Varah bound on cond_inf(A) below which check_matrix_conditioning reports a diagonally dominant tridiagonal matrix as well conditioned; ThomasAlgorithmSolver logs a warning above it when report_condition is true
+    references:
+    - Varah, J.M. (1975). A lower bound for the smallest singular value of a matrix. Linear Algebra Appl. 11:3-5.
+    - Higham, N.J. (2002). Accuracy and Stability of Numerical Algorithms, 2nd ed.
+    tags:
+    - linear_solver
+    - diagnostics
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: computation.solvers.thomas
+      schema_version: 2.0.0
+  computation.solvers.bracketed_bisection.max_iterations:
+    value: 80
+    default: 80
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 512
+    category: numerical_parameter
+    description: Maximum bracket contractions for independent scalar roots
+    references:
+    - Burden, R.L. and Faires, J.D. (2010). Numerical Analysis.
+    tags:
+    - nonlinear_solver
+    - bisection
+    - convergence
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: computation.solvers.bracketed_bisection
+      schema_version: 2.0.0
+  computation.solvers.bracketed_bisection.rtol:
+    value: 1.0e-10
+    default: 1.0e-10
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1.0e-04
+    category: numerical_parameter
+    description: Relative interval tolerance for bracketed scalar roots
+    references:
+    - Burden, R.L. and Faires, J.D. (2010). Numerical Analysis.
+    tags:
+    - nonlinear_solver
+    - bisection
+    - tolerance
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: computation.solvers.bracketed_bisection
+      schema_version: 2.0.0
+  computation.solvers.bracketed_bisection.atol:
+    value: 1.0e-10
+    default: 1.0e-10
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1.0e-04
+    category: numerical_parameter
+    description: Absolute interval tolerance in the solved variable units
+    references:
+    - Burden, R.L. and Faires, J.D. (2010). Numerical Analysis.
+    tags:
+    - nonlinear_solver
+    - bisection
+    - tolerance
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: computation.solvers.bracketed_bisection
+      schema_version: 2.0.0
+  computation.solvers.hybrid_events.transversality_tolerance:
+    value: 1.0e-12
+    default: 1.0e-12
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 1.0e-300
+    - 1.0e-03
+    category: numerical_parameter
+    description: 'Default absolute threshold of relic.computation.solvers.hybrid_events below which a guard crossing is
+      treated as grazing and refused (the event-time sensitivity and the saltation matrix divide by this quantity and are
+      undefined at a tangential crossing). It is compared with |g_start - g_end| in locate_guard_crossing (guard units) and
+      with |g_x f_minus + g_t| in event_time_sensitivity and saltation_matrix (guard units per second), always in the
+      caller''s units; a caller whose guard is not of order one passes transversality_tol explicitly. The transversality
+      condition itself follows Hiskens and Pai (2000); the value 1e-12, about 4.5e3 float64 machine epsilons for an order-one
+      guard, is a RELIC convention value.'
+    references:
+    - Hiskens, I.A. & Pai, M.A. (2000). Trajectory sensitivity analysis of hybrid systems. IEEE Trans. Circuits Syst. I 47,
+      204-220 (transversality condition of the saltation matrix)
+    - Shampine, L.F. & Thompson, S. (2000). Event location for ordinary differential equations. Comput. Math. Appl. 39,
+      43-54
+    - RELIC convention value (no literature value for the threshold; documented as an operational choice)
+    tags:
+    - hybrid_events
+    - tolerance
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'

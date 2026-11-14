@@ -1,0 +1,248 @@
+certificate_version: '1.0'
+process_id: relic.scientific.pedosphere.nutrient_cycling.denitrification.DenitrificationProcess
+module_name: denitrification_process
+canonical_role: reaction
+iphs_level: 2
+iphs_level_evidence:
+  classification: IPHS-wrapped reaction process certificate
+  compatible_basis: Reaction process is expressed through conserved or open stoichiometric ledgers
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: N_h r_h reaction-network state advance
+  level_2_limit: The canonical runtime wrapper is declared, but no executable typed-cochain or IPHS structural contribution is bound; strict level 4 or 5 evidence is not claimed.
+theory_document: docs\source\theory\denitrification.md
+theory_document_status: updated
+legacy_formula: R_den = Vmax * NO3 / (Km + NO3) * f_T * f_anaerobic * f_C * f_pH with direct pool deltas.
+literature_formula: Anaerobic nitrate reduction with Michaelis-Menten substrate limitation, carbon limitation, Q10 temperature response, a water-filled pore space anaerobic factor (DAYCENT basis, Del Grosso et al. 2000), pH response, and N2O:N2 product partitioning.
+iphs_formula: x_dot = N_h r_h(x_h, theta); x_h = [NO3, N2O, N2]^T.
+legacy_expression: dNO3 = -R_den dt; dN2O = R_den f_N2O dt; dN2 = R_den(1 - f_N2O)dt.
+iphs_expression: x_dot = N_h r_h; N_h = [[-1,-1],[1,0],[0,1]]; r_h = [r_N2O, r_N2]^T.
+input_variables:
+- no3_nitrogen
+- labile_carbon
+- water_filled_pore_space
+- soil_temperature
+- soil_ph
+output_variables:
+- no3_nitrogen
+- denitrification_flux
+- n2o_flux
+- n2_production
+- diagnostics.anaerobic_factor
+- diagnostics.carbon_factor
+- diagnostics.n2o_fraction
+- diagnostics.temperature_response
+- diagnostics.ph_factor
+- diagnostics.denitrification.step_seconds
+parameter_keys:
+- pedosphere.denitrification.vmax_denitrification
+- pedosphere.denitrification.km_no3
+- pedosphere.denitrification.carbon_half_saturation
+- pedosphere.physical.wfps_denitrification_threshold
+- pedosphere.denitrification.anaerobic_transition_width
+- pedosphere.denitrification.minimum_anaerobic_factor
+- pedosphere.denitrification.ph_minimum_factor
+- pedosphere.denitrification.min_rate_threshold
+- pedosphere.denitrification.max_rate_factor
+- pedosphere.denitrification.base_n2o_fraction
+- pedosphere.denitrification.max_n2o_fraction
+- pedosphere.denitrification.n2o_no3_threshold
+- pedosphere.denitrification.n2o_no3_enhancement
+- pedosphere.denitrification.n2o_ph_reference
+- pedosphere.denitrification.n2o_ph_sensitivity
+- pedosphere.denitrification.n2o_ph_effect_min
+- pedosphere.denitrification.n2o_ph_effect_max
+- pedosphere.physical.q10_denitrification
+- pedosphere.physical.reference_temperature
+- pedosphere.physical.ph_optimum_denitrification
+- pedosphere.physical.ph_response_width
+- validation.conservation.conservation_tolerance
+- validation.conservation.strict_conservation
+composition_ports:
+- anaerobic_respiration
+- gas_emissions
+references:
+- Parton, W.J. et al. (1996). Generalized model for N2 and N2O production.
+- Li, C. et al. (1992). DNDC denitrification model.
+- Tiedje, J.M. (1988). Ecology of denitrification and dissimilatory nitrate reduction to ammonium.
+- Feinberg, M. (2019). Foundations of Chemical Reaction Network Theory.
+baseline_tests:
+- test\pedosphere\nutrient_cycling\test_denitrification.py
+- test\unit\pedosphere\test_denitrification_process.py
+validation_tests:
+- test\pedosphere\nutrient_cycling\test_denitrification.py
+- test\unit\pedosphere\test_denitrification_process.py
+- test\audit\phase8_scientific_inventory.test.py
+- test\core\splitting_sub_flow_order.test.py
+state_map:
+  no3_nitrogen: state cochain x_h[0]
+  n2o_flux: open gas-output component x_h[1]
+  n2_production: open gas-output component x_h[2]
+  denitrification_flux: total NO3 reduction rate
+parameter_map:
+  pedosphere.denitrification.vmax_denitrification: Maximum denitrification rate [g N m-2 s-1]
+  pedosphere.denitrification.km_no3: Half-saturation for NO3 [g N m-2]
+  pedosphere.denitrification.carbon_half_saturation: Half-saturation constant of labile carbon [g C m-2]
+  pedosphere.physical.wfps_denitrification_threshold: Water-filled pore space above which the anaerobic factor rises [dimensionless]
+  pedosphere.denitrification.anaerobic_transition_width: Width of the anaerobic transition in water-filled pore space [dimensionless]
+  pedosphere.denitrification.minimum_anaerobic_factor: Minimum anaerobic activity factor under aerobic conditions [dimensionless]
+  pedosphere.denitrification.ph_minimum_factor: Minimum pH response factor [dimensionless]
+  pedosphere.denitrification.min_rate_threshold: Lower bound of the temperature factor f_T [dimensionless]
+  pedosphere.denitrification.max_rate_factor: Maximum rate amplification factor [dimensionless]
+  pedosphere.denitrification.base_n2o_fraction: Minimum N2O fraction of the denitrified N [dimensionless]
+  pedosphere.denitrification.max_n2o_fraction: Maximum N2O fraction of the denitrified N [dimensionless]
+  pedosphere.denitrification.n2o_no3_threshold: NO3 threshold of the N2O enhancement [g N m-2]
+  pedosphere.denitrification.n2o_no3_enhancement: NO3 enhancement factor of the N2O fraction [dimensionless]
+  pedosphere.denitrification.n2o_ph_reference: Reference pH of the N2O fraction [dimensionless]
+  pedosphere.denitrification.n2o_ph_sensitivity: PH sensitivity of the N2O fraction [dimensionless]
+  pedosphere.denitrification.n2o_ph_effect_min: Minimum pH effect on the N2O fraction [dimensionless]
+  pedosphere.denitrification.n2o_ph_effect_max: Maximum pH effect on the N2O fraction [dimensionless]
+  pedosphere.physical.q10_denitrification: Q10 of denitrification [dimensionless]
+  pedosphere.physical.reference_temperature: Reference temperature of the Q10 response [K]
+  pedosphere.physical.ph_optimum_denitrification: Optimum pH of denitrification [dimensionless]
+  pedosphere.physical.ph_response_width: Width of the Gaussian pH response [dimensionless]
+  validation.conservation.conservation_tolerance: General relative tolerance of the conservation checks [dimensionless]
+  validation.conservation.strict_conservation: Switch that makes a conservation violation raise [dimensionless]
+operator_map:
+  N_h: explicit stoichiometric matrix in advance_reaction_network
+  r_h: denitrification rate split into N2O and N2 reaction channels
+  substrate_limiter: min(R_den, NO3 / dt) applied before N_h r_h
+  time_integration: one explicit Euler step x(t + dt) = x(t) + N_h r_h(x(t)) dt per governed call with the soil drivers held at their call-start values; simulator sub-steps repeat the step
+  sub_flow_accuracy: FunctorMetadata.sub_flow_accuracy ORDER_1 (Hairer, Norsett and Wanner 1993, Sect. II.3) while the donor limit is inactive, R_den dt < NO3, i.e. Vmax f_T f_anoxic f_C f_pH dt < Km_NO3 + NO3; binding on the two coarse grids of CR-A-04 T11 exhausts the numerical pool and yields equal final donor error, while smaller inactive-limit steps recover first order (a finite-step characterization, not loss of asymptotic convergence); the clipped N2O fraction only partitions the released nitrogen
+unit_map:
+  no3_nitrogen: g N m-2
+  denitrification_flux: g N m-2 s-1
+  n2o_flux: g N m-2 s-1
+  n2_production: g N m-2 s-1
+  diagnostics.denitrification.step_seconds: s
+input_output_map:
+  no3_nitrogen: read as NO3 pool and advanced by N_h r_h
+  n2o_flux: written as N2O product rate from N_h r_h
+  n2_production: written as N2 product rate from N_h r_h
+interface_map:
+  forward_signature: forward(self, state, time, dt, **kwargs)
+  bridge_class: BiologicalProcessFunctor
+  abstraction_contract: BiologicalProcess
+  state_write_mode: RELICSimulator applies emitted deltas and replace-mode flux outputs
+  legacy_inputs:
+  - no3_nitrogen
+  - labile_carbon
+  - water_filled_pore_space
+  - soil_temperature
+  - soil_ph
+  iphs_inputs:
+  - no3_nitrogen
+  - labile_carbon
+  - water_filled_pore_space
+  - soil_temperature
+  - soil_ph
+  legacy_outputs:
+  - no3_nitrogen
+  - denitrification_flux
+  - n2o_flux
+  - n2_production
+  - diagnostics.anaerobic_factor
+  - diagnostics.carbon_factor
+  - diagnostics.n2o_fraction
+  - diagnostics.temperature_response
+  - diagnostics.ph_factor
+  - diagnostics.denitrification.step_seconds
+  iphs_outputs:
+  - no3_nitrogen
+  - denitrification_flux
+  - n2o_flux
+  - n2_production
+  - diagnostics.anaerobic_factor
+  - diagnostics.carbon_factor
+  - diagnostics.n2o_fraction
+  - diagnostics.temperature_response
+  - diagnostics.ph_factor
+  - diagnostics.denitrification.step_seconds
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: Environmental response functions define r_h; production pool deltas are computed through advance_reaction_network.
+  no_legacy_mode: No runtime flag exposes a separate pre-Phase 8 denitrification state-advance branch.
+state_advancement_map:
+  potential_basis: nitrogen species cochain x_h = [NO3, N2O, N2]^T
+  effort_variable: this required certificate slot records reaction-rate tensor r_h from ParameterManager-backed anaerobic kinetics; r_h is a rate vector and no thermodynamic effort is asserted
+  state_advancer: x_dot = N_h r_h with explicit N_h and r_h evaluated by advance_reaction_network
+  runtime_usage: DenitrificationProcess.forward calls advance_reaction_network before emitting NO3, N2O, and N2 outputs.
+  explicit_stoichiometric_usage: DenitrificationProcess.forward materializes stoichiometric_N and rates, then lowers x_dot=N_h r_h through advance_reaction_network.
+parameter_management_map:
+  pedosphere.denitrification.vmax_denitrification:
+    source: ParameterManager YAML
+  pedosphere.denitrification.km_no3:
+    source: ParameterManager YAML
+  pedosphere.denitrification.carbon_half_saturation:
+    source: ParameterManager YAML
+  pedosphere.physical.wfps_denitrification_threshold:
+    source: ParameterManager YAML
+  pedosphere.denitrification.anaerobic_transition_width:
+    source: ParameterManager YAML
+  pedosphere.denitrification.minimum_anaerobic_factor:
+    source: ParameterManager YAML
+  pedosphere.denitrification.ph_minimum_factor:
+    source: ParameterManager YAML
+  pedosphere.denitrification.min_rate_threshold:
+    source: ParameterManager YAML
+  pedosphere.denitrification.max_rate_factor:
+    source: ParameterManager YAML
+  pedosphere.denitrification.base_n2o_fraction:
+    source: ParameterManager YAML
+  pedosphere.denitrification.max_n2o_fraction:
+    source: ParameterManager YAML
+  pedosphere.denitrification.n2o_no3_threshold:
+    source: ParameterManager YAML
+  pedosphere.denitrification.n2o_no3_enhancement:
+    source: ParameterManager YAML
+  pedosphere.denitrification.n2o_ph_reference:
+    source: ParameterManager YAML
+  pedosphere.denitrification.n2o_ph_sensitivity:
+    source: ParameterManager YAML
+  pedosphere.denitrification.n2o_ph_effect_min:
+    source: ParameterManager YAML
+  pedosphere.denitrification.n2o_ph_effect_max:
+    source: ParameterManager YAML
+  pedosphere.physical.q10_denitrification:
+    source: ParameterManager YAML
+  pedosphere.physical.reference_temperature:
+    source: ParameterManager YAML
+  pedosphere.physical.ph_optimum_denitrification:
+    source: ParameterManager YAML
+  pedosphere.physical.ph_response_width:
+    source: ParameterManager YAML
+  validation.conservation.conservation_tolerance:
+    source: ParameterManager YAML
+  validation.conservation.strict_conservation:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares nitrogen conservation and gas-emission interfaces
+  structural_protocol: explicit N_h r_h reaction state advance
+  state_contract: existing simulator state update path consumes emitted deltas and flux outputs
+  ports:
+  - anaerobic_respiration
+  - gas_emissions
+dependency_interconnection_map:
+  dependencies: get_dependencies declares nitrification only; labile_carbon is a state cochain supplied by the single carbon decomposition closure selected by the compiled graph
+  mutually_exclusive_closures: first_order_decomposition and microbial_enzyme_decomposition are alternative carbon closures and are never simultaneous dependencies
+  direct_functor_calls: none; nitrification is scheduler-declared and labile carbon arrives from the graph-selected carbon closure
+  chain_maps:
+  - no3_nitrogen state cochain to denitrification reaction network
+  - labile_carbon state cochain from the graph-selected carbon closure to the kinetic coefficient
+  - N2O and N2 outputs to gas_emissions interface
+overflow_routing_map:
+  substrate_limiter: NO3 / dt limiter prevents overconsumption
+  conservation_residual: Functor-local nitrogen conservation check sees dNO3 + dN2O + dN2
+  discarded_residuals: potential rate is limited by nitrate availability per dt so unconsumed nitrate remains in state, accepted nitrogen is partitioned exactly to NO3, N2O, and N2, and check_conservation_laws exposes closure
+conservation_map:
+  conserved_quantity: nitrogen
+  balance_expression: dNO3 + dN2O + dN2 = 0 for the local reaction network
+  local_check: _enforce_forward_conservation on the internal per-step deltas; the public check_conservation_laws recomputes dNO3 + (F_N2O + F_N2) * dt from the returned UpdateItems using diagnostics.denitrification.step_seconds and raises on missing outputs
+entropy_audit:
+  rate_domain: reaction channels are non-negative after substrate limitation
+  strict_entropy_claim: none at Level 2; non-negative rates alone do not prove affinity-rate entropy production
+  validation_hook: reaction_network_check and unit tests validate stoichiometric state advance and nitrogen closure, not a GENERIC entropy inequality
+equivalence_type: reaction_network
+physical_constant_ssot:
+  q10_interval: get_physical_constant("relic.physical.constants.temperature.q10_interval")

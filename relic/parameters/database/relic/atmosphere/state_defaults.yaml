@@ -1,0 +1,321 @@
+schema_version: 2.0.0
+tier: relic
+namespace: atmosphere.state_defaults
+description: Default atmospheric state variables used when upstream modules have not yet provided boundary-layer conditions.
+metadata:
+  created_by: RELIC Parameter System
+  last_modified: '2025-11-17T00:00:00Z'
+  version: 1.0.0
+parameters:
+  surface_temperature:
+    value: 298.15
+    default: 298.15
+    units: K
+    dtype: float32
+    bounds:
+    - 273.15
+    - 323.15
+    category: state_default
+    description: Representative canopy-top surface temperature used in MOST closures.
+    references:
+    - Monteith & Unsworth (2008) Principles of Environmental Physics
+    - Garratt (1992) The Atmospheric Boundary Layer
+    tags:
+    - surface_layer
+    - temperature
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: WMO standard reference conditions
+      schema_version: 2.0.0
+      created_by: Atmosphere Hardcoded Cleanup
+      last_modified: '2025-11-17T00:00:00Z'
+  skin_temperature:
+    value: 299.15
+    default: 299.15
+    units: K
+    dtype: float32
+    bounds:
+    - 275.15
+    - 330.15
+    category: state_default
+    description: Default radiometric skin temperature applied when skin observations are absent.
+    references:
+    - Garratt (1992) The Atmospheric Boundary Layer
+    - Seidel et al. (2012) JGR Atmospheres 117:D17109
+    tags:
+    - skin_layer
+    - temperature
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: Boundary-layer energy balance studies
+      schema_version: 2.0.0
+      created_by: Atmosphere Hardcoded Cleanup
+      last_modified: '2025-11-17T00:00:00Z'
+  reference_height:
+    value: 10.0
+    default: 10.0
+    units: m
+    dtype: float32
+    bounds:
+    - 2.0
+    - 50.0
+    category: state_default
+    description: Measurement height for wind observations per WMO surface network standards.
+    references:
+    - WMO Guide to Instruments and Methods of Observation (2018)
+    - Stull (1988) Boundary Layer Meteorology
+    tags:
+    - observation_height
+    - surface_layer
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: WMO observing system standards
+      schema_version: 2.0.0
+      created_by: Atmosphere Hardcoded Cleanup
+      last_modified: '2025-11-17T00:00:00Z'
+  roughness_length_momentum:
+    value: 0.1
+    default: 0.1
+    units: m
+    dtype: float32
+    bounds:
+    - 0.0001
+    - 2.0
+    category: state_default
+    description: Momentum roughness length for closed-canopy temperate forests.
+    references:
+    - Garratt (1992) The Atmospheric Boundary Layer
+    - Massman (1997) Agricultural and Forest Meteorology
+    tags:
+    - roughness
+    - momentum
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: Temperate forest micrometeorology datasets
+      schema_version: 2.0.0
+      created_by: Atmosphere Hardcoded Cleanup
+      last_modified: '2025-11-17T00:00:00Z'
+  displacement_height:
+    value: 0.0
+    default: 0.0
+    units: m
+    dtype: float32
+    bounds:
+    - 0.0
+    - 10.0
+    category: state_default
+    description: Displacement height offset for neutral reference; zero when canopy data absent.
+    references:
+    - Stull (1988) Boundary Layer Meteorology
+    - Brutsaert (1982) Evaporation into the Atmosphere
+    tags:
+    - displacement_height
+    - canopy
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: Neutral conditions assumption for missing canopy structure
+      schema_version: 2.0.0
+      created_by: Atmosphere Hardcoded Cleanup
+      last_modified: '2025-11-17T00:00:00Z'
+  radiation:
+    value: 500.0
+    default: 500.0
+    units: W m-2
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1500.0
+    category: state_default
+    description: Representative midday shortwave radiation used when no radiative driver exists.
+    references:
+    - Monteith & Unsworth (2008) Principles of Environmental Physics
+    tags:
+    - solar
+    - forcing
+    dimension: energy_flux
+    requires_grad: false
+    provenance:
+      source: Typical clear-sky insolation
+      schema_version: 2.0.0
+      created_by: Atmosphere Hardcoded Cleanup
+      last_modified: '2025-11-17T00:00:00Z'
+  soil_water_potential:
+    value: -0.5
+    default: -0.5
+    units: MPa
+    dtype: float32
+    bounds:
+    - -10.0
+    - 0.0
+    category: state_default
+    description: Moderate water stress potential used by stomatal and phenology modules.
+    references:
+    - Hillel (2004) Introduction to Environmental Soil Physics
+    tags:
+    - soil
+    - water_status
+    dimension: pressure
+    requires_grad: false
+    provenance:
+      source: Temperate forest field studies
+      schema_version: 2.0.0
+      created_by: Atmosphere Hardcoded Cleanup
+      last_modified: '2025-11-17T00:00:00Z'
+  co2_concentration:
+    value: 420.0
+    default: 420.0
+    units: umol mol-1
+    dtype: float32
+    bounds:
+    - 180.0
+    - 800.0
+    category: state_default
+    description: Parameter-backed default for the canonical atmospheric_co2_ppm forcing state key.
+    references:
+    - Global Carbon Project (2024) Global CO2 update
+    tags:
+    - co2
+    - atmospheric_composition
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: NOAA Mauna Loa annual mean
+      schema_version: 2.0.0
+      created_by: Atmosphere Hardcoded Cleanup
+      last_modified: '2025-11-17T00:00:00Z'
+  wind_speed:
+    value: 2.0
+    default: 2.0
+    units: m s-1
+    dtype: float32
+    bounds:
+    - 0.0
+    - 50.0
+    category: state_default
+    description: Light breeze reference for turbulent exchange when observations are missing.
+    references:
+    - WMO Surface Observation Guide (2018)
+    tags:
+    - wind
+    dimension: velocity
+    requires_grad: false
+    provenance:
+      source: WMO observing standards
+      schema_version: 2.0.0
+      created_by: Atmosphere Hardcoded Cleanup
+      last_modified: '2025-11-17T00:00:00Z'
+  precipitation:
+    value: 0.0
+    default: 0.0
+    units: mm hr-1
+    dtype: float32
+    bounds:
+    - 0.0
+    - 200.0
+    category: state_default
+    description: Precipitation placeholder ensuring zero-flux baseline when hydrology inputs omit rainfall.
+    references:
+    - NOAA Climate Reference Network documentation
+    tags:
+    - precipitation
+    - forcing
+    dimension: velocity
+    requires_grad: false
+    provenance:
+      source: Driver gap-filling defaults
+      schema_version: 2.0.0
+      created_by: Atmosphere Hardcoded Cleanup
+      last_modified: '2025-11-17T00:00:00Z'
+  n_content_leaf:
+    value: 2.0
+    default: 2.0
+    units: g m-2
+    dtype: float32
+    bounds:
+    - 0.1
+    - 10.0
+    category: state_default
+    description: Leaf nitrogen default for respiration coupling when observation streams are empty.
+    references:
+    - Reich et al. (1997) Functional Ecology
+    tags:
+    - nitrogen
+    - leaf
+    dimension: mass_per_area
+    requires_grad: false
+    provenance:
+      source: TRY database climatology
+      schema_version: 2.0.0
+      created_by: Atmosphere Hardcoded Cleanup
+      last_modified: '2025-11-17T00:00:00Z'
+  p_content_leaf:
+    value: 0.2
+    default: 0.2
+    units: g m-2
+    dtype: float32
+    bounds:
+    - 0.01
+    - 2.0
+    category: state_default
+    description: Leaf phosphorus placeholder for phenology-gain calculations.
+    references:
+    - Reich & Oleksyn (2004) PNAS
+    tags:
+    - phosphorus
+    - leaf
+    dimension: mass_per_area
+    requires_grad: false
+    provenance:
+      source: TRY database climatology
+      schema_version: 2.0.0
+      created_by: Atmosphere Hardcoded Cleanup
+      last_modified: '2025-11-17T00:00:00Z'
+  n_content_soil:
+    value: 5.0
+    default: 5.0
+    units: g m-2
+    dtype: float32
+    bounds:
+    - 0.1
+    - 50.0
+    category: state_default
+    description: Mineral soil nitrogen pool used when nutrient forcings are absent.
+    references:
+    - Manzoni & Porporato (2009) Soil Biology & Biochemistry
+    tags:
+    - nitrogen
+    - soil
+    dimension: mass_per_area
+    requires_grad: false
+    provenance:
+      source: Temperate forest topsoil inventory
+      schema_version: 2.0.0
+      created_by: Atmosphere Hardcoded Cleanup
+      last_modified: '2025-11-17T00:00:00Z'
+  p_content_soil:
+    value: 0.5
+    default: 0.5
+    units: g m-2
+    dtype: float32
+    bounds:
+    - 0.01
+    - 5.0
+    category: state_default
+    description: Labile soil phosphorus default for respiration and coupling.
+    references:
+    - Johnson et al. (2003) Ecosystems
+    tags:
+    - phosphorus
+    - soil
+    dimension: mass_per_area
+    requires_grad: false
+    provenance:
+      source: Temperate forest nutrient budgets
+      schema_version: 2.0.0
+      created_by: Atmosphere Hardcoded Cleanup
+      last_modified: '2025-11-17T00:00:00Z'

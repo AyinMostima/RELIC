@@ -1,0 +1,223 @@
+optimization:
+  convergence_threshold: 1.0e-4
+  gradient_clip_norm: 1.0
+  de_preoptimization:
+    enabled: false
+    objective_steps: 48
+    strategy: best1bin
+    mutation_factor: [0.5, 1.0]
+    crossover_probability: 0.8
+    population_size_factor: 4
+    tolerance: 1.0e-3
+    seed: 42
+    parallel: false
+    phases:
+      phase1:
+        enabled: false
+      phase2:
+        enabled: false
+      phase3:
+        enabled: true
+        max_iterations: 6
+      phase4:
+        enabled: false
+  phase1:
+    name: Hydrology Calibration
+    target_state_key: soil_moisture
+    obs_key: null
+    trainable_keys:
+    - hydrosphere.soil_moisture.field_capacity
+    - hydrosphere.soil_moisture.porosity
+    - hydrosphere.soil_moisture.saturated_hydraulic_conductivity
+    - hydrosphere.soil_moisture.drainage_exponent
+    - tutorial.case.state_init.soil_moisture
+    freeze_keys:
+    - hydrosphere.soil_moisture.wilting_point
+    - tutorial.case.forcing.precipitation_scale
+    - biosphere.*
+    detach_state_keys:
+    - net_photosynthesis
+    - isoprene_emission
+    lr: 0.0008
+    epochs: 4
+    window_hours: 24
+    early_stopping:
+      enabled: true
+      mode: min
+      min_delta: 0.002
+      patience: 1
+      warmup_epochs: 1
+      restore_best: true
+  phase2:
+    name: GPP Calibration
+    target_state_key: net_photosynthesis
+    obs_key: net_photosynthesis_obs
+    trainable_keys:
+    - tutorial.case.radiation.par_effective_scale
+    - biosphere.photosynthesis.vcmax25
+    - biosphere.photosynthesis.jmax25
+    - biosphere.photosynthesis.rd25
+    freeze_keys:
+    - hydrosphere.*
+    - biosphere.bvoc.*
+    detach_state_keys:
+    - soil_moisture
+    lr: 0.0015
+    epochs: 8
+    window_hours: 24
+    early_stopping:
+      enabled: true
+      mode: min
+      min_delta: 1.0
+      patience: 4
+      warmup_epochs: 1
+      restore_best: true
+    zero_inflation:
+      enabled: true
+      target_state_keys:
+      - net_photosynthesis
+      threshold: 0.1
+      zero_weight: 0.2
+      positive_weight: 2.5
+      false_positive_weight: 0.5
+      log1p_positive: false
+    correlation_loss:
+      enabled: true
+      target_state_keys:
+      - net_photosynthesis
+      min_count: 6
+      positive_only: true
+      threshold: 0.1
+      weight: 1.5
+      epsilon: 1.0e-8
+  phase3:
+    name: Isoprene Calibration
+    target_state_key: isoprene_emission
+    obs_key: isoprene_emission_obs
+    trainable_keys:
+    - biosphere.bvoc.default.isoprene
+    - biosphere.bvoc.megan.alpha_light
+    - biosphere.bvoc.megan.cl_light
+    - biosphere.bvoc.megan.eopt_isoprene
+    - biosphere.bvoc.megan.topt
+    - biosphere.bvoc.megan.ct1_isoprene
+    - biosphere.bvoc.megan.ct2
+    freeze_keys:
+    - hydrosphere.*
+    detach_state_keys:
+    - soil_moisture
+    - net_photosynthesis
+    lr: 0.00045
+    epochs: 18
+    window_hours: 24
+    early_stopping:
+      enabled: true
+      mode: min
+      min_delta: 0.01
+      patience: 5
+      warmup_epochs: 2
+      restore_best: true
+    zero_inflation:
+      enabled: true
+      target_state_keys:
+      - isoprene_emission
+      threshold: 1.0e-9
+      zero_weight: 1.0
+      positive_weight: 1.2
+      false_positive_weight: 3.0
+      log1p_positive: false
+    correlation_loss:
+      enabled: true
+      target_state_keys:
+      - isoprene_emission
+      min_count: 6
+      positive_only: true
+      threshold: 50.0
+      weight: 1.0
+      epsilon: 1.0e-8
+    bias_penalty:
+      enabled: true
+      target_state_keys:
+      - isoprene_emission
+      positive_only: true
+      threshold: 50.0
+      min_count: 6
+      weight: 1.5
+    daytime_loss:
+      enabled: true
+      par_key: ppfd
+      par_threshold: 10.0
+      target_state_keys:
+      - isoprene_emission
+      positive_weight: 2.0
+      underprediction_penalty_weight: 1.0
+  phase4:
+    name: Joint Multi-Objective Fine-Tune
+    target_state_key: isoprene_emission
+    obs_key: isoprene_emission_obs
+    primary_weight: 1.0
+    auxiliary_targets:
+    - target_state_key: net_photosynthesis
+      obs_key: net_photosynthesis_obs
+      weight: 0.05
+    trainable_keys:
+    - tutorial.case.radiation.par_effective_scale
+    - biosphere.photosynthesis.vcmax25
+    - biosphere.photosynthesis.jmax25
+    - biosphere.photosynthesis.rd25
+    - biosphere.bvoc.default.isoprene
+    - biosphere.bvoc.megan.alpha_light
+    - biosphere.bvoc.megan.cl_light
+    - biosphere.bvoc.megan.eopt_isoprene
+    - biosphere.bvoc.megan.topt
+    - biosphere.bvoc.megan.ct1_isoprene
+    - biosphere.bvoc.megan.ct2
+    freeze_keys:
+    - hydrosphere.*
+    detach_state_keys:
+    - soil_moisture
+    - net_photosynthesis
+    daytime_loss:
+      enabled: true
+      par_key: ppfd
+      par_threshold: 10.0
+      target_state_keys:
+      - isoprene_emission
+      positive_weight: 1.5
+      underprediction_penalty_weight: 0.75
+    lr: 2.5e-05
+    epochs: 6
+    window_hours: 24
+    early_stopping:
+      enabled: true
+      mode: min
+      min_delta: 0.02
+      patience: 3
+      warmup_epochs: 1
+      restore_best: true
+    zero_inflation:
+      enabled: true
+      target_state_keys:
+      - isoprene_emission
+      threshold: 1.0e-9
+      zero_weight: 1.0
+      positive_weight: 1.2
+      false_positive_weight: 2.5
+      log1p_positive: false
+    correlation_loss:
+      enabled: true
+      target_state_keys:
+      - isoprene_emission
+      min_count: 6
+      positive_only: true
+      threshold: 50.0
+      weight: 1.2
+      epsilon: 1.0e-8
+    bias_penalty:
+      enabled: true
+      target_state_keys:
+      - isoprene_emission
+      positive_only: true
+      threshold: 50.0
+      min_count: 6
+      weight: 1.0

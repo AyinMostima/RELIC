@@ -1,0 +1,238 @@
+certificate_version: '1.0'
+process_id: relic.scientific.anthroposphere.management.tillage.TillageManagement
+module_name: TillageManagement
+canonical_role: port
+iphs_level: 2
+iphs_level_evidence:
+  classification: IPHS-wrapped port process certificate
+  compatible_basis: Process declares composition-safe IPHS or DEC structure
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: G_h u_h port route with explicit boundary or external exchange
+  level_2_limit: The canonical runtime wrapper is declared, but no executable typed-cochain or IPHS structural contribution is bound; strict level 4 or 5 evidence is not claimed.
+theory_document: docs\source\theory\anthroposphere_management_tillage.md
+theory_document_status: updated
+legacy_formula: Tillage previously exposed generic decomposition and infiltration modifiers without a consuming owner contract.
+literature_formula: D_tillage = k_disturbance I f_theta; R_inc = clamp(k_residue I (a_theta + f_moisture), 0, 1); F_C = C_soil f_0 f_p I D f_T / S_day in an operation step, 0 otherwise.
+iphs_formula: y_dot = G_h u_h through the declared tillage disturbance, residue, porosity, roughness, and carbon-export ports.
+legacy_expression: Removed generic modifier outputs had no executable downstream composition path.
+iphs_expression: y_dot = G_h u_h with one canonical output per direct tillage contribution and no duplicated process-law output.
+input_variables:
+- soil_moisture
+- soil_temperature
+- soil_organic_carbon
+- day_of_year
+- days_since_tillage
+- residue_cover
+output_variables:
+- porosity_modifier
+- roughness_modifier
+- days_since_tillage
+- tillage_intensity_factor
+- time_decay_factor
+- cumulative_operations
+- soil_disturbance_rate
+- residue_incorporation_rate
+- carbon_loss_rate
+- soil_co2_flux
+- delta_residue_cover
+- diagnostics.tillage_mass_balance_error
+parameter_keys:
+- anthroposphere.management.tillage.disturbance_factor
+- anthroposphere.management.tillage.residue_incorporation_rate
+- anthroposphere.management.tillage.effect_decay_rate
+- anthroposphere.management.tillage.schedule_window_days
+- anthroposphere.management.tillage.minimum_operation_interval_days
+- anthroposphere.management.tillage.default_schedule.*
+- anthroposphere.management.tillage.porosity_change
+- anthroposphere.management.tillage.roughness_intensity_coefficient
+- anthroposphere.management.tillage.co2_pulse_base_fraction
+- anthroposphere.management.tillage.co2_pulse_factor
+- anthroposphere.management.tillage.moisture_optimum
+- anthroposphere.management.tillage.moisture_sigma
+- anthroposphere.management.tillage.moisture_effect_denominator
+- anthroposphere.management.tillage.residue_moisture_offset
+- anthroposphere.management.tillage.*_intensity_factor
+- anthroposphere.management.tillage.*_depth_factor
+- pedosphere.physical.q10_decomposition
+- validation.conservation.conservation_tolerance
+composition_ports:
+- soil_moisture,soil_temperature,soil_organic_carbon,days_since_tillage,residue_cover
+references:
+- Lal (2004) DOI:10.1126/science.1097396
+- Paustian et al. (2000) DOI:10.1023/A:1005554205788
+- Six et al. (2002) DOI:10.1023/A:1016125726789
+- Reicosky (1997) DOI:10.1023/A:1009766510274
+- Davidson and Janssens (2006) DOI:10.1038/nature04514
+baseline_tests:
+- test\anthroposphere\management\test_tillage_l1.py
+- test\audit\land_use_modifier_output_contract.test.py
+- test\audit\phase8_scientific_inventory.test.py
+validation_tests:
+- test\anthroposphere\management\test_tillage_l1.py
+- test\audit\land_use_modifier_output_contract.test.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  soil_moisture: soil_moisture mapped to canonical Phase 8 cochain basis
+  soil_temperature: soil temperature of the tilled layer [K], the Q10 driver of the tillage carbon flush
+  soil_organic_carbon: soil organic carbon stock of the tilled layer [kg C m-2] exposed by the carbon flush (no default)
+  day_of_year: day_of_year mapped to canonical Phase 8 cochain basis
+  days_since_tillage: days_since_tillage mapped to canonical Phase 8 cochain basis
+  residue_cover: residue cover fraction [1], optional, read only when an operation executes (incorporated cover -min(cover, R)); an operation without it raises
+  soil_disturbance_rate: dimensionless direct tillage disturbance contribution
+  residue_incorporation_rate: dimensionless residue-incorporation contribution
+  carbon_loss_rate: operation-step tillage carbon flush F_C = C_soil f_0 f_p I D f_T / S_day [kg C m^-2 s^-1], the one tillage carbon flux, zero outside an operation step; post-tillage enhanced decomposition is not represented
+  soil_co2_flux: tillage CO2 mass flux F_C M_CO2 / M_C [kg CO2 m^-2 s^-1]
+parameter_map:
+  anthroposphere.management.tillage.disturbance_factor: Base soil disturbance scaling for tillage operations [dimensionless]
+  anthroposphere.management.tillage.residue_incorporation_rate: Fraction of surface residue incorporated by tillage [dimensionless]
+  anthroposphere.management.tillage.effect_decay_rate: Tillage effect decay rate [day-1]
+  anthroposphere.management.tillage.schedule_window_days: Half-width of the calendar window around a scheduled operation day [day]
+  anthroposphere.management.tillage.minimum_operation_interval_days: Minimum elapsed time since the last operation before the next one [day]
+  anthroposphere.management.tillage.default_schedule.*: Day of year [day] and soil-moisture upper limit [m3 m-3] of the four default operations [units per key]
+  anthroposphere.management.tillage.porosity_change: Soil porosity change factor [dimensionless]
+  anthroposphere.management.tillage.roughness_intensity_coefficient: Intensity response coefficient for tillage roughness modifier [dimensionless]
+  anthroposphere.management.tillage.co2_pulse_base_fraction: Base fractional scaling for tillage induced CO2 pulse emissions [dimensionless]
+  anthroposphere.management.tillage.co2_pulse_factor: CO2 emission pulse factor [dimensionless]
+  anthroposphere.management.tillage.moisture_optimum: Optimal soil moisture for tillage disturbance response [m3 m-3]
+  anthroposphere.management.tillage.moisture_sigma: Gaussian width for moisture response under tillage [m3 m-3]
+  anthroposphere.management.tillage.moisture_effect_denominator: Soil moisture scaling denominator for tillage moisture effect [m3 m-3]
+  anthroposphere.management.tillage.residue_moisture_offset: Offset term applied to moisture response in tillage residue incorporation [dimensionless]
+  anthroposphere.management.tillage.*_intensity_factor: Intensity multiplier per tillage intensity class (none, low, moderate, high, very high) [dimensionless]
+  anthroposphere.management.tillage.*_depth_factor: Depth multiplier per tillage depth class (shallow, medium, deep, very deep) [dimensionless]
+  pedosphere.physical.q10_decomposition: Q10 of soil organic matter decomposition in the tillage carbon flush [dimensionless]
+  validation.conservation.conservation_tolerance: General relative tolerance of the conservation checks [dimensionless]
+physical_constant_ssot:
+  seconds_per_day: Central time-constants facade backed by the physical constants SSOT
+  standard_temperature: get_physical_constant("standard_temperature")
+operator_map:
+  G_h: declared port map
+  H_h: positive port metric or conversion Hodge map
+unit_map:
+  porosity_modifier: '1'
+  roughness_modifier: '1'
+  days_since_tillage: day
+  tillage_intensity_factor: '1'
+  time_decay_factor: '1'
+  cumulative_operations: '1'
+  soil_disturbance_rate: '1'
+  residue_incorporation_rate: '1'
+  carbon_loss_rate: kg C m-2 s-1
+  soil_co2_flux: kg CO2 m-2 s-1
+  delta_residue_cover: s-1
+  diagnostics.tillage_mass_balance_error: kg C m-2
+input_output_map:
+  direct_disturbance: soil moisture and the intensity of the executing operation map once to soil_disturbance_rate and residue_incorporation_rate; zero without an operation
+  carbon_export: carbon_loss_rate maps once to soil_co2_flux through the declared carbon-to-CO2 mass ratio
+  decaying_structure: days_since_tillage maps to time_decay_factor, porosity_modifier, and roughness_modifier
+  ownership_boundary: decomposition and infiltration process laws are not advanced or emitted by this Functor
+  diagnostics: the mass-balance residual reports removal beyond available soil carbon
+interface_map:
+  forward_signature: forward(self, state, time, dt, calendar_type=None, **kwargs)
+  bridge_class: TransportMechanism
+  abstraction_contract: TransportMechanism
+  state_write_mode: existing RELIC simulator and StateManager update path
+  legacy_inputs:
+  - soil_moisture
+  - soil_temperature
+  - soil_organic_carbon
+  - day_of_year
+  - days_since_tillage
+  - residue_cover
+  iphs_inputs:
+  - soil_moisture
+  - soil_temperature
+  - soil_organic_carbon
+  - day_of_year
+  - days_since_tillage
+  - residue_cover
+  legacy_outputs:
+  - porosity_modifier
+  - roughness_modifier
+  - days_since_tillage
+  - tillage_intensity_factor
+  - time_decay_factor
+  - cumulative_operations
+  - soil_disturbance_rate
+  - residue_incorporation_rate
+  - carbon_loss_rate
+  - soil_co2_flux
+  - delta_residue_cover
+  - diagnostics.tillage_mass_balance_error
+  iphs_outputs:
+  - porosity_modifier
+  - roughness_modifier
+  - days_since_tillage
+  - tillage_intensity_factor
+  - time_decay_factor
+  - cumulative_operations
+  - soil_disturbance_rate
+  - residue_incorporation_rate
+  - carbon_loss_rate
+  - soil_co2_flux
+  - delta_residue_cover
+  - diagnostics.tillage_mass_balance_error
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: Existing ParameterManager-backed calculations define canonical IPHS operator coefficients, rates, ports, or observations.
+  no_legacy_mode: No selectable legacy runtime branch is exposed for Phase 8 completion.
+state_advancement_map:
+  potential_basis: declared RELIC state, port, or observation cochain basis
+  effort_variable: ParameterManager-backed thermodynamic effort, driver, or diagnostic input used by the module
+  state_advancer: y_dot = G_h u_h through the declared matter, energy, or management port map
+  runtime_usage: TillageManagement.forward applies the canonical IPHS port map and routes declared control, forcing, or interface fluxes through the production output path.
+parameter_management_map:
+  anthroposphere.management.tillage.disturbance_factor:
+    source: ParameterManager YAML
+  anthroposphere.management.tillage.residue_incorporation_rate:
+    source: ParameterManager YAML
+  anthroposphere.management.tillage.effect_decay_rate:
+    source: ParameterManager YAML
+  anthroposphere.management.tillage.schedule_window_days:
+    source: ParameterManager YAML
+  anthroposphere.management.tillage.minimum_operation_interval_days:
+    source: ParameterManager YAML
+  anthroposphere.management.tillage.default_schedule.*:
+    source: ParameterManager YAML
+  anthroposphere.management.tillage.porosity_change:
+    source: ParameterManager YAML
+  anthroposphere.management.tillage.roughness_intensity_coefficient:
+    source: ParameterManager YAML
+  anthroposphere.management.tillage.co2_pulse_base_fraction:
+    source: ParameterManager YAML
+  anthroposphere.management.tillage.co2_pulse_factor:
+    source: ParameterManager YAML
+  anthroposphere.management.tillage.moisture_optimum:
+    source: ParameterManager YAML
+  anthroposphere.management.tillage.moisture_sigma:
+    source: ParameterManager YAML
+  anthroposphere.management.tillage.moisture_effect_denominator:
+    source: ParameterManager YAML
+  anthroposphere.management.tillage.residue_moisture_offset:
+    source: ParameterManager YAML
+  anthroposphere.management.tillage.*_intensity_factor:
+    source: ParameterManager YAML
+  anthroposphere.management.tillage.*_depth_factor:
+    source: ParameterManager YAML
+  pedosphere.physical.q10_decomposition:
+    source: ParameterManager YAML
+  validation.conservation.conservation_tolerance:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares interfaces, execution phase, and conservation semantics
+  state_contract: existing simulator state update path is preserved
+  validation_rule: phase8 scientific inventory and equivalence certificate checks
+dependency_interconnection_map:
+  dependencies: soil_moisture,soil_temperature,soil_organic_carbon,days_since_tillage,residue_cover
+  direct_functor_calls: none declared by certificate
+overflow_routing_map:
+  diagnostic_residuals: existing diagnostics and conservation checks route clipping or residual terms
+  discarded_residuals: carbon loss is exported once through carbon_loss_rate (soil_co2_flux is its CO2-mass form); any removal beyond available soil carbon is exported as diagnostics.tillage_mass_balance_error, while the residue-cover update removes only the explicitly incorporated amount
+conservation_map:
+  conserved_quantities: mass
+  balance_expression: existing local balance is represented by the canonical Phase 8 state advancement map
+entropy_audit:
+  operator_sign: rates, mobilities, or diagnostic maps are non-negative or checked by existing validation hooks where physically required
+  sigma_expression: canonical entropy production is non-negative for dissipative subexpressions
+equivalence_type: port_equivalent

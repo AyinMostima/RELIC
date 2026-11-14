@@ -1,0 +1,43 @@
+variable: soil_moisture_profile
+title: "Soil Moisture Profile"
+description: "Volumetric liquid water content per soil layer theta_i in m3 m-3 (layer mean, one value per layer, the layer dimension before the horizontal dimensions). Read by SoilVegetationCoupling (root water uptake with soil_matric_potential and the layer-bottom depths soil_depth_layers) and, optionally, by CapillaryRise (saturation limit). It is not the layer water mass of mass_content_of_water_in_soil_layer (kg m-2, M_i = rho_w theta_i dz_i, C2a external forcing); no conversion between them is declared because RELIC holds layer-bottom depths, not layer thicknesses, as state. No relic Functor writes it. No CF name: CF volume_fraction_of_condensed_water_in_soil includes ice."
+kind: state
+dimension:
+  udunits: "m3 m-3"
+  cf_standard_name: null
+support:
+  spatial_kind: grid_cell
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [soil_layer, cell]
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Hillel, D. (1998). Environmental Soil Physics. Academic Press (volumetric water content)"
+  - "CF Standard Name Table v94: volume_fraction_of_condensed_water_in_soil includes ice; mass_content_of_water_in_soil_layer is a layer mass [kg m-2]"
+numerics:
+  # Volume fraction: 0 <= theta_i <= 1.
+  lower_bound: 0.0
+  upper_bound: 1.0
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies: []
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/coupling/internal/soil_vegetation.py"
+  runtime_role: "soil_layer_volumetric_water_content_state"
+  runtime_writer: null
+  note: "Readers: SoilVegetationCoupling (required, one-dimensional profile of equal length with soil_matric_potential and soil_depth_layers) and CapillaryRise (optional_input_variables; its size must equal the flux profile layer count). HIM category STATE (m3 m-3, no CF name) and the SSOT catalog entry (semantics state, bounds [0, 1]) agree. No relic Functor writes soil_moisture_profile."

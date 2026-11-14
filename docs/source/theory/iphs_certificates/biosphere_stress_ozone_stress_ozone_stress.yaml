@@ -1,0 +1,192 @@
+certificate_version: '1.0'
+process_id: relic.scientific.biosphere.stress.ozone_stress.OzoneStress
+module_name: OzoneStress
+canonical_role: reaction
+iphs_level: 2
+iphs_level_evidence:
+  classification: IPHS-wrapped reaction process certificate
+  compatible_basis: Stomatal ozone uptake, antioxidant detoxification, and damage fluxes are represented on a typed reaction-network output basis.
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: N_h r_h reaction-network state advance through advance_reaction_network.
+  level_2_limit: The canonical runtime wrapper is declared, but no executable typed-cochain or IPHS structural contribution is bound; strict level 4 or 5 evidence is not claimed.
+theory_document: docs\source\theory\stress.md
+theory_document_status: updated
+legacy_formula: F_O3 = (g_s / k_O3) * [O3] * ozone_uptake_rate
+literature_formula: F_O3 = (g_s / k_O3) * [O3] * ozone_uptake_rate, the R_a -> 0 limit of the Sitch et al. (2007) leaf uptake [O3] / (R_a + k_O3 / g_l) with g_s the leaf-level stomatal conductance to water vapour and k_O3 = 1.67; f_O3 = 1 - min(F_O3 / C_detox, r_max)
+iphs_formula: x_dot = N_h r_h with r_h = [F_O3, min(F_O3, C_detox), max(F_O3 - C_detox, 0)] and open port routing.
+legacy_expression: F_O3 = (g_s / k_O3) * [O3] * ozone_uptake_rate
+iphs_expression: x_dot = N_h r_h with explicit stoichiometric_N and rates evaluated by advance_reaction_network.
+input_variables:
+- o3_mixing_ratio
+- stomatal_conductance
+- latitude
+- day_of_year
+output_variables:
+- ozone_stress_factor
+- ozone_uptake
+- antioxidant_depletion
+- diagnostics.ozone_stress.detoxification_flux
+- diagnostics.ozone_stress.excess_ozone_flux
+- diagnostics.ozone_stress.antioxidant_pool_tendency
+- diagnostics.ozone_stress.damage_tendency
+- diagnostics.ozone_stress.port_power
+- diagnostics.ozone_stress.entropy_production
+- ozone_stress_factor_daylight_samples
+parameter_keys:
+- biosphere.stress.ozone.ozone_threshold
+- biosphere.stress.ozone.flux_threshold
+- biosphere.stress.ozone.ozone_uptake_rate
+- relic.physical.constants.conversions.h2o_o3_diffusivity_ratio
+- biosphere.stress.ozone.ozone_detox_capacity
+- biosphere.stress.ozone.antioxidant_capacity
+- biosphere.stress.ozone.max_flux_ratio
+- biosphere.stress.global.factor_min
+- biosphere.stress.global.factor_max
+composition_ports:
+- atmospheric_chemistry
+references:
+- Fuhrer, J. et al. (1997). Environmental Pollution 97, 91-106
+- Mills, G. et al. (2011). Atmospheric Environment 45, 1703-1713
+- Emberson, L.D. et al. (2000). Environmental Pollution 109, 403-413
+- Sitch, S. et al. (2007). Nature 448, 791-794
+- Leung, F. et al. (2020). Geosci. Model Dev. 13, 6201-6213, Eq. (5)
+- Kangasjarvi, J. et al. (2005). Journal of Experimental Botany 56, 195-209
+- Grmela and Ottinger (1997). Physical Review E 56, 6620-6632
+baseline_tests:
+- test\biosphere\stress\test_ozone_stress.py
+- test\audit\phase8_scientific_inventory.test.py
+validation_tests:
+- test\biosphere\stress\test_ozone_stress.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  o3_mixing_ratio: atmospheric ozone mole fraction (CF mole_fraction_of_ozone_in_air, written by atmospheric_chemistry) mapped to the ozone exposure cochain input.
+  stomatal_conductance: leaf-level stomatal conductance to water vapour [mol m-2 s-1], a caller-supplied forcing (no relic Functor writes it; FarquharPhotosynthesis outputs no conductance), converted to the O3 conductance g_s / k_O3 for the stomatal uptake reaction rate.
+  ozone_uptake: first row of N_h r_h.
+  diagnostics.ozone_stress.antioxidant_pool_tendency: antioxidant defense sink row of N_h r_h.
+  diagnostics.ozone_stress.damage_tendency: unquenched ozone damage row of N_h r_h.
+  latitude: latitude of the cell, read only with temporal_support daylight_gauss
+  day_of_year: day of year, read only with temporal_support daylight_gauss
+parameter_map:
+  biosphere.stress.ozone.ozone_threshold: Ozone mixing-ratio threshold of the stress [mol mol-1]
+  biosphere.stress.ozone.flux_threshold: Stomatal ozone flux threshold Y of POD_Y [nmol O3 m-2 s-1]
+  biosphere.stress.ozone.ozone_uptake_rate: Fraction of the ozone flux taken up [dimensionless]
+  relic.physical.constants.conversions.h2o_o3_diffusivity_ratio: Ratio k_O3 of the leaf resistance for O3 to that for water vapour, g_s,O3 = g_s / k_O3 [dimensionless]
+  biosphere.stress.ozone.ozone_detox_capacity: Ozone detoxification capacity [mol O3 m-2 s-1]
+  biosphere.stress.ozone.antioxidant_capacity: Antioxidant capacity against ozone [mol O3 m-2]
+  biosphere.stress.ozone.max_flux_ratio: Upper bound of the uptake to detoxification ratio [dimensionless]
+  biosphere.stress.global.factor_min: Lower bound of the stress factor [dimensionless]
+  biosphere.stress.global.factor_max: Upper bound of the stress factor [dimensionless]
+operator_map:
+  N_h: declared stoichiometric/output incidence matrix in OzoneStress.forward.
+  r_h: ParameterManager-backed reaction-rate vector [F_O3, detoxification_flux, excess_ozone_flux].
+  G_h: open atmospheric ozone uptake port declared through open_system_route='port'.
+  y_h: ozone exposure effort [O3] / [O3]_threshold used for port-power audit.
+unit_map:
+  ozone_stress_factor: dimensionless
+  ozone_uptake: mol O3 m-2 s-1
+  antioxidant_depletion: s-1
+  diagnostics.ozone_stress.detoxification_flux: mol O3 m-2 s-1
+  diagnostics.ozone_stress.excess_ozone_flux: mol O3 m-2 s-1
+  diagnostics.ozone_stress.antioxidant_pool_tendency: mol O3 m-2 s-1
+  diagnostics.ozone_stress.damage_tendency: mol O3 m-2 s-1
+  diagnostics.ozone_stress.port_power: mol O3 m-2 s-1
+  diagnostics.ozone_stress.entropy_production: mol O3 m-2 s-1
+  latitude: degrees_north
+  day_of_year: '1'
+  ozone_stress_factor_daylight_samples: dimensionless
+input_output_map:
+  o3_mixing_ratio: same interface variable preserved between legacy and IPHS runtime contracts.
+  stomatal_conductance: same interface variable preserved between legacy and IPHS runtime contracts.
+  ozone_stress_factor: same public stress multiplier preserved between legacy and IPHS runtime contracts.
+  ozone_uptake: same public uptake flux preserved between legacy and IPHS runtime contracts.
+  antioxidant_depletion: specific antioxidant consumption rate D / C_ax [s-1] of the detoxification reaction row (D = min(F, C_detox)); no dimensionless clamp.
+  ozone_stress_factor_daylight_samples: ozone stress factor at the daylight Gauss samples, written only with temporal_support daylight_gauss
+interface_map:
+  forward_signature: forward(self, state, time, dt)
+  bridge_class: BiologicalProcessFunctor
+  abstraction_contract: BiologicalProcess
+  state_write_mode: existing RELIC simulator and StateManager update path
+  legacy_inputs:
+  - o3_mixing_ratio
+  - stomatal_conductance
+  - latitude
+  - day_of_year
+  iphs_inputs:
+  - o3_mixing_ratio
+  - stomatal_conductance
+  - latitude
+  - day_of_year
+  legacy_outputs:
+  - ozone_stress_factor
+  - ozone_uptake
+  - antioxidant_depletion
+  - diagnostics.ozone_stress.detoxification_flux
+  - diagnostics.ozone_stress.excess_ozone_flux
+  - diagnostics.ozone_stress.antioxidant_pool_tendency
+  - diagnostics.ozone_stress.damage_tendency
+  - diagnostics.ozone_stress.port_power
+  - diagnostics.ozone_stress.entropy_production
+  - ozone_stress_factor_daylight_samples
+  iphs_outputs:
+  - ozone_stress_factor
+  - ozone_uptake
+  - antioxidant_depletion
+  - diagnostics.ozone_stress.detoxification_flux
+  - diagnostics.ozone_stress.excess_ozone_flux
+  - diagnostics.ozone_stress.antioxidant_pool_tendency
+  - diagnostics.ozone_stress.damage_tendency
+  - diagnostics.ozone_stress.port_power
+  - diagnostics.ozone_stress.entropy_production
+  - ozone_stress_factor_daylight_samples
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: Existing stomatal-flux response is retained only as ParameterManager-backed r_h coefficients inside the canonical reaction-network runtime.
+  no_legacy_mode: No selectable legacy runtime branch is exposed.
+state_advancement_map:
+  potential_basis: ozone uptake, detoxification, excess flux, antioxidant-pool tendency, and damage tendency cochain rows.
+  effort_variable: ozone exposure effort [O3] / [O3]_threshold.
+  state_advancer: x_dot = N_h r_h with r_h = [F_O3, detoxification_flux, excess_ozone_flux].
+  explicit_stoichiometric_usage: OzoneStress.forward declares stoichiometric_N=... and rates=... in advance_reaction_network.
+  runtime_usage: OzoneStress.forward calls advance_reaction_network and maps species_rate rows to public outputs and diagnostics.
+parameter_management_map:
+  biosphere.stress.ozone.ozone_threshold:
+    source: ParameterManager YAML
+  biosphere.stress.ozone.flux_threshold:
+    source: ParameterManager YAML
+  biosphere.stress.ozone.ozone_uptake_rate:
+    source: ParameterManager YAML
+  relic.physical.constants.conversions.h2o_o3_diffusivity_ratio:
+    source: ParameterManager physical constants SSOT via get_physical_constant
+  biosphere.stress.ozone.ozone_detox_capacity:
+    source: ParameterManager YAML
+  biosphere.stress.ozone.antioxidant_capacity:
+    source: ParameterManager YAML
+  biosphere.stress.ozone.max_flux_ratio:
+    source: ParameterManager YAML
+  biosphere.stress.global.factor_min:
+    source: ParameterManager YAML
+  biosphere.stress.global.factor_max:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: FunctorMetadata declares input/output variables, execution phase, dependencies, and references.
+  state_contract: Existing simulator state update path is preserved.
+  validation_rule: Phase 8 scientific inventory and equivalence certificate checks validate the reaction-network certificate.
+dependency_interconnection_map:
+  dependencies:
+  - atmospheric_chemistry
+  direct_functor_calls: none_no_direct_functor_calls
+overflow_routing_map:
+  clipping_residuals: stress-factor saturation remains visible through diagnostics.ozone_stress.excess_ozone_flux and damage_tendency.
+  open_system_route: port
+  discarded_residuals: none_no_flux_residual_is_discarded_because_uptake_is_partitioned_exactly_into_detoxification_and_excess_rows
+conservation_map:
+  conserved_quantities: none; the atmospheric O3 mole fraction is forcing and no leaf ozone stock is advanced, so no closed ozone ledger exists; the network partitions the uptake rate F = D + X into REPLACE rate outputs
+  open_system_route: port
+  balance_expression: 'Rate partition only: F = D + X row-wise (D = min(F, C_detox), X = max(F - D, 0)); atmospheric ozone uptake is an open port input and no stock budget is claimed.'
+entropy_audit:
+  sigma_expression: sigma_O3 = detoxification_flux * max(F_O3 / C_detox, 0) >= 0.
+  runtime_output: diagnostics.ozone_stress.entropy_production
+  generic_degeneracy_status: not_claimed_for_level5
+equivalence_type: reaction_network

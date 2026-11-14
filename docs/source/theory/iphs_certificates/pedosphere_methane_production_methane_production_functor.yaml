@@ -1,0 +1,212 @@
+certificate_version: '1.0'
+process_id: relic.scientific.pedosphere.methane.production.MethaneProductionFunctor
+module_name: MethaneProductionFunctor
+canonical_role: reaction
+iphs_level: 2
+iphs_level_evidence:
+  classification: IPHS-wrapped reaction process certificate
+  compatible_basis: Reaction process is expressed through conserved or open stoichiometric ledgers
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: N_h r_h reaction-network state advance
+  level_2_limit: The canonical runtime wrapper is declared, but no executable typed-cochain or IPHS structural contribution is bound; strict level 4 or 5 evidence is not claimed.
+theory_document: docs\source\theory\wetland_methane.md
+theory_document_status: updated
+legacy_formula: Prior RELIC production used a Gaussian pH response, a non-iMAPLE temperature shape, public branch-rate aliases, and input defaults.
+literature_formula: P_iMAPLE = Rh r f_ST f_pH f_wet (Yue et al. (2024) Eq. 34) with f_ST from Yue et al. (2024) Eqs. 35-38 (Zhu et al. (2014) Eqs. 3-5 with the temperature-dependent Q10 of Yue et al. (2024) Eq. 39, Q10 = clip(r_b Q_b^((Ts - T_base)/10), 1.7, 16), r_b = 3.0, Q_b = 1.33, T_base = 25 C; the clip is the observed range of Zhu et al. (2014) applied in the released iMAPLE code), f_pH from Zhu et al. (2014) Eq. 6, and f_wet the continuous inundation fraction; no closure factor multiplies Eq. 34. The calibrated branch Rh r f_T f_Eh A (the same Zhu et al. (2014) peak f_T, and the DNDC95 microbial activity index A in [0, 1]) and the blend weight are RELIC conventions with DNDC-type temperature and redox controls, not the DNDC substrate-kinetic model (Fumoto et al. 2008; van Bodegom and Scholten 2001), which is not implemented; its redox factor f_Eh is the piecewise-linear form of Zhu et al. (2014) Sect. 2.2.1 after Zhang et al. (2002).
+iphs_formula: x_dot = N_h r_h with ParameterManager-backed process rates r_h and declared stoichiometric/output map N_h
+legacy_expression: P = (1 - w) * Rh * r * f_T(Ts) * f_pH(pH) * f_wet + w * Rh * r * f_T(Ts) * f_Eh(Eh) * A
+iphs_expression: x_dot = N_h r_h with ParameterManager-backed process rates r_h and declared stoichiometric/output map N_h
+input_variables:
+- soil_temperature
+- soil_ph
+- heterotrophic_respiration
+- redox_potential
+- land_surface.wetland_fraction
+- microbial_activity_index
+- methane_gating_weight
+output_variables:
+- ch4_production_rate
+- ch4_storage_tendency_prod
+- diagnostics.methane_production.imaple_rate
+- diagnostics.methane_production.calibrated_rate
+parameter_keys:
+- pedosphere.methane.production.release_ratio
+- pedosphere.methane.production.q10
+- pedosphere.methane.production.q10_temperature_sensitivity
+- pedosphere.methane.production.q10_base_temperature
+- pedosphere.methane.production.q10_min
+- pedosphere.methane.production.q10_max
+- pedosphere.methane.production.temperature_min
+- pedosphere.methane.production.temperature_optimum
+- pedosphere.methane.production.temperature_max
+- pedosphere.methane.production.ph_optimum
+- pedosphere.methane.production.ph_lower_limit
+- pedosphere.methane.production.ph_upper_limit
+- pedosphere.methane.production.calibrated.eh_full_activity
+- pedosphere.methane.production.calibrated.eh_zero_activity
+- pedosphere.numerical.minimum_temperature_span
+- pedosphere.numerical.minimum_dimensionless
+composition_ports:
+- phase8_runtime_port
+references:
+- Yue et al. (2024) doi:10.5194/gmd-17-4621-2024
+- Zhu et al. (2014) doi:10.5194/gmd-7-981-2014
+- Wania et al. (2010) doi:10.5194/gmd-3-565-2010
+- Zhang et al. (2002) doi:10.1029/2001GB001838
+baseline_tests:
+- test\unit\pedosphere\methane\test_production_mode_switch.py
+- test\scientific\methane_physical_consistency\test_methane_physical_consistency.py
+- test\unit\pedosphere\methane\test_units_conservation.py
+- test\pedosphere\methane\strict_overlap_registration.test.py
+- test\audit\phase8_scientific_inventory.test.py
+validation_tests:
+- test\unit\pedosphere\methane\test_production_mode_switch.py
+- test\scientific\methane_physical_consistency\test_methane_physical_consistency.py
+- test\unit\pedosphere\methane\test_units_conservation.py
+- test\pedosphere\methane\strict_overlap_registration.test.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  soil_temperature: soil_temperature mapped to canonical Phase 8 cochain basis
+  soil_ph: soil_ph mapped to canonical Phase 8 cochain basis
+  heterotrophic_respiration: heterotrophic_respiration mapped to canonical Phase 8 cochain basis
+  redox_potential: redox_potential mapped to canonical Phase 8 cochain basis
+  land_surface.wetland_fraction: land_surface.wetland_fraction mapped to canonical Phase 8 cochain basis
+  microbial_activity_index: microbial_activity_index in [0, 1] mapped to the calibrated branch activity factor
+  methane_gating_weight: methane_gating_weight mapped to the required scale-coupling control port
+parameter_map:
+  pedosphere.methane.production.release_ratio: pedosphere.methane.production.release_ratio from ParameterManager
+  pedosphere.methane.production.q10: pedosphere.methane.production.q10 from ParameterManager
+  pedosphere.methane.production.q10_temperature_sensitivity: pedosphere.methane.production.q10_temperature_sensitivity from ParameterManager
+  pedosphere.methane.production.q10_base_temperature: pedosphere.methane.production.q10_base_temperature from ParameterManager
+  pedosphere.methane.production.q10_min: pedosphere.methane.production.q10_min from ParameterManager
+  pedosphere.methane.production.q10_max: pedosphere.methane.production.q10_max from ParameterManager
+  pedosphere.methane.production.temperature_min: pedosphere.methane.production.temperature_min from ParameterManager
+  pedosphere.methane.production.temperature_optimum: pedosphere.methane.production.temperature_optimum from ParameterManager
+  pedosphere.methane.production.temperature_max: pedosphere.methane.production.temperature_max from ParameterManager
+  pedosphere.methane.production.ph_optimum: pedosphere.methane.production.ph_optimum from ParameterManager
+  pedosphere.methane.production.ph_lower_limit: pedosphere.methane.production.ph_lower_limit from ParameterManager
+  pedosphere.methane.production.ph_upper_limit: pedosphere.methane.production.ph_upper_limit from ParameterManager
+  pedosphere.methane.production.calibrated.eh_full_activity: pedosphere.methane.production.calibrated.eh_full_activity from ParameterManager
+  pedosphere.methane.production.calibrated.eh_zero_activity: pedosphere.methane.production.calibrated.eh_zero_activity from ParameterManager
+  pedosphere.numerical.minimum_temperature_span: pedosphere.numerical.minimum_temperature_span from ParameterManager
+  pedosphere.numerical.minimum_dimensionless: pedosphere.numerical.minimum_dimensionless from ParameterManager
+physical_constant_ssot:
+  q10_interval:
+    key: relic.physical.constants.temperature.q10_interval
+    access: get_physical_constant
+    role: The 10 K Q10 interval; Yue equation coefficients are derived as 4*dT10 and (2*dT10)^2.
+operator_map:
+  N_h: declared stoichiometric or output incidence map for this reaction process
+  r_h: ParameterManager-backed process-rate vector evaluated by the production forward path
+unit_map:
+  ch4_production_rate: g C m-2 s-1
+  ch4_storage_tendency_prod: g C m-2 s-1
+  diagnostics.methane_production.imaple_rate: g C m-2 s-1
+  diagnostics.methane_production.calibrated_rate: g C m-2 s-1
+input_output_map:
+  ch4_production_dndc_rate: migrated to diagnostics.methane_production.calibrated_rate
+  ch4_production_imaple_rate: migrated to diagnostics.methane_production.imaple_rate
+  diagnostics.methane_production.calibrated_rate: canonical namespaced diagnostic for the calibrated Rh-based branch rate
+  diagnostics.methane_production.imaple_rate: canonical namespaced diagnostic for the iMAPLE branch rate
+  ch4_production_rate: same interface variable preserved between legacy and IPHS runtime contracts
+  ch4_storage_tendency_prod: same interface variable preserved between legacy and IPHS runtime contracts
+  heterotrophic_respiration: same interface variable preserved between legacy and IPHS runtime contracts
+  land_surface.wetland_fraction: same interface variable preserved between legacy and IPHS runtime contracts
+  methane_gating_weight: same interface variable preserved between legacy and IPHS runtime contracts
+  microbial_activity_index: same interface variable preserved between legacy and IPHS runtime contracts
+  redox_potential: same interface variable preserved between legacy and IPHS runtime contracts
+interface_map:
+  forward_signature: forward(self, state, time, dt)
+  bridge_class: BiologicalProcessFunctor
+  abstraction_contract: BiologicalProcess
+  state_write_mode: explicit UpdateItem REPLACE rate ports with per_timestep false, canonical units, and source_functor provenance
+  legacy_inputs:
+  - soil_temperature
+  - soil_ph
+  - heterotrophic_respiration
+  - redox_potential
+  - land_surface.wetland_fraction
+  - microbial_activity_index
+  - methane_gating_weight
+  iphs_inputs:
+  - soil_temperature
+  - soil_ph
+  - heterotrophic_respiration
+  - redox_potential
+  - land_surface.wetland_fraction
+  - microbial_activity_index
+  - methane_gating_weight
+  legacy_outputs:
+  - ch4_production_rate
+  - ch4_storage_tendency_prod
+  - diagnostics.methane_production.imaple_rate
+  - diagnostics.methane_production.calibrated_rate
+  iphs_outputs:
+  - ch4_production_rate
+  - ch4_storage_tendency_prod
+  - diagnostics.methane_production.imaple_rate
+  - diagnostics.methane_production.calibrated_rate
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: Existing ParameterManager-backed calculations define canonical IPHS operator coefficients, rates, ports, or observations.
+  no_legacy_mode: No selectable legacy runtime branch is exposed for Phase 8 completion.
+state_advancement_map:
+  potential_basis: declared RELIC state, port, or observation cochain basis
+  effort_variable: ParameterManager-backed thermodynamic effort, driver, or diagnostic input used by the module
+  state_advancer: x_dot = N_h r_h with explicit stoichiometric_N and rates evaluated by advance_reaction_network
+  runtime_usage: MethaneProductionFunctor.forward calls advance_reaction_network with declared stoichiometric_N and rates before emitting canonical outputs.
+  explicit_stoichiometric_usage: MethaneProductionFunctor.forward materializes stoichiometric_N and rates, then lowers x_dot=N_h r_h through advance_reaction_network.
+parameter_management_map:
+  pedosphere.methane.production.release_ratio:
+    source: ParameterManager YAML
+  pedosphere.methane.production.q10:
+    source: ParameterManager YAML
+  pedosphere.methane.production.q10_temperature_sensitivity:
+    source: ParameterManager YAML
+  pedosphere.methane.production.q10_base_temperature:
+    source: ParameterManager YAML
+  pedosphere.methane.production.q10_min:
+    source: ParameterManager YAML
+  pedosphere.methane.production.q10_max:
+    source: ParameterManager YAML
+  pedosphere.methane.production.temperature_min:
+    source: ParameterManager YAML
+  pedosphere.methane.production.temperature_optimum:
+    source: ParameterManager YAML
+  pedosphere.methane.production.temperature_max:
+    source: ParameterManager YAML
+  pedosphere.methane.production.ph_optimum:
+    source: ParameterManager YAML
+  pedosphere.methane.production.ph_lower_limit:
+    source: ParameterManager YAML
+  pedosphere.methane.production.ph_upper_limit:
+    source: ParameterManager YAML
+  pedosphere.methane.production.calibrated.eh_full_activity:
+    source: ParameterManager YAML
+  pedosphere.methane.production.calibrated.eh_zero_activity:
+    source: ParameterManager YAML
+  pedosphere.numerical.minimum_temperature_span:
+    source: ParameterManager YAML
+  pedosphere.numerical.minimum_dimensionless:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares interfaces, execution phase, and conservation semantics
+  state_contract: existing simulator state update path is preserved
+  validation_rule: phase8 scientific inventory and equivalence certificate checks
+dependency_interconnection_map:
+  dependencies: pedosphere_methane_scale is a required scheduler dependency that supplies methane_gating_weight
+  direct_functor_calls: none declared by certificate
+overflow_routing_map:
+  diagnostic_residuals: no substrate, input, or branch-rate clipping remains in the production runtime
+  discarded_residuals: constitutive lower bounds define non-negative source rates rather than removing an existing pool; both branch rates are diagnostics and their blend is exported identically as ch4_production_rate and ch4_storage_tendency_prod
+conservation_map:
+  conserved_quantities: mass
+  balance_expression: ch4_storage_tendency_prod - ch4_production_rate = 0 on the CH4-C basis; only ch4_production_rate is a carbon.total boundary input
+  internal_interconnection: ch4_storage_tendency_prod has no element tag or accumulation domain and is realized only by pedosphere_methane_budget
+  open_system_route: ch4_production_rate is the single positive methane-carbon production boundary port; an explicit upstream donor-carbon withdrawal is outside this process certificate
+entropy_audit:
+  operator_sign: rates, mobilities, or diagnostic maps are non-negative or checked by existing validation hooks where physically required
+  sigma_expression: canonical entropy production is non-negative for dissipative subexpressions
+equivalence_type: thermodynamic_embedding

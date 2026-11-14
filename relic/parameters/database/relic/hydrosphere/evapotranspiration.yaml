@@ -1,0 +1,448 @@
+schema_version: 2.0.0
+tier: relic
+namespace: hydrosphere.evapotranspiration
+description: Evapotranspiration model parameters for Penman-Monteith and Priestley-Taylor methods
+metadata:
+  created_by: RELIC Parameter System
+  last_modified: '2026-01-07T14:20:26Z'
+  schema_url: https://github.com/relic/parameter-schema/v2.0.0
+  version: 1.0.0
+parameters:
+  hydrosphere.evapotranspiration.roughness_length:
+    value: 2.0
+    default: 2.0
+    units: m
+    dtype: float32
+    bounds:
+    - 0.001
+    - 10.0
+    category: model_parameter
+    description: Momentum roughness length for forest canopy aerodynamics
+    references:
+    - FAO-56 Irrigation and Drainage Paper
+    - Brutsaert (1982) Evaporation into the Atmosphere
+    tags:
+    - aerodynamic
+    - surface_property
+    - calibratable
+    dimension: length
+    requires_grad: true
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-08-25T00:00:00Z'
+  hydrosphere.evapotranspiration.displacement_height:
+    value: 13.4
+    default: 13.4
+    units: m
+    dtype: float32
+    bounds:
+    - 0.0
+    - 50.0
+    category: model_parameter
+    description: Zero plane displacement height d of the FAO-56 logarithmic wind profile (FAO-56 relates d = 2/3 h for a canopy of height h; RELIC reads d directly)
+    references:
+    - FAO-56 Irrigation and Drainage Paper
+    - Thom (1975) Boundary Layer Meteorology 9:319-343
+    tags:
+    - aerodynamic
+    - canopy_structure
+    - derived_parameter
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: empirical_relationship
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-08-25T00:00:00Z'
+  hydrosphere.evapotranspiration.minimum_conductance:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: m s-1
+    dtype: float32
+    bounds:
+    - 1.0e-09
+    - 0.001
+    category: model_parameter
+    description: Minimum canopy conductance to prevent division by zero in calculations
+    references:
+    - Technical parameter from model implementation
+    tags:
+    - numerical_stability
+    - technical_parameter
+    dimension: velocity
+    requires_grad: false
+    provenance:
+      source: numerical_implementation
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-08-25T00:00:00Z'
+  hydrosphere.evapotranspiration.reference_height:
+    value: 30.0
+    default: 30.0
+    units: m
+    dtype: float32
+    bounds:
+    - 2.0
+    - 200.0
+    category: model_parameter
+    description: Reference height for wind speed measurements
+    references:
+    - FAO-56 Irrigation and Drainage Paper
+    - WMO Guide to Meteorological Instruments
+    tags:
+    - measurement_height
+    - meteorological
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: measurement_standard
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-08-25T00:00:00Z'
+  hydrosphere.evapotranspiration.enable_canopy_interception:
+    value: false
+    default: false
+    units: dimensionless
+    dtype: bool
+    bounds:
+    - false
+    - true
+    category: model_option
+    description: Enable canopy interception modeling (Rutter/Gash-style interception)
+    references:
+    - Rutter et al. (1971) J. Appl. Ecol. 8:667-689
+    - Gash (1979) Q. J. R. Meteorol. Soc. 105:43-55
+    - doi:10.2307/2401758
+    tags:
+    - canopy_interception
+    - model_option
+    - hydrological_process
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: interception_modeling_literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-09T00:00:00Z'
+  hydrosphere.evapotranspiration.interception_capacity_per_LAI:
+    value: 0.2
+    default: 0.2
+    units: mm
+    dtype: float32
+    bounds:
+    - 0.05
+    - 2.0
+    category: model_parameter
+    description: Canopy water storage capacity per unit Leaf Area Index
+    references:
+    - Rutter et al. (1971) J. Appl. Ecol. 8:667-689
+    - Herwitz (1985) Water Resour. Res. 21:1465-1472
+    - doi:10.1029/WR021i010p01465
+    tags:
+    - canopy_interception
+    - storage_capacity
+    - calibratable
+    dimension: length
+    requires_grad: true
+    provenance:
+      source: interception_modeling_literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-09T00:00:00Z'
+  hydrosphere.evapotranspiration.canopy_evaporation_efficiency:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 1.5
+    category: model_parameter
+    description: Enhanced evaporation efficiency factor for wet canopy surfaces
+    references:
+    - Shuttleworth & Calder (1979) J. Hydrol. 41:163-178
+    - Stewart (1977) Water Resour. Res. 13:915-921
+    - doi:10.1029/WR013i006p00915
+    tags:
+    - canopy_interception
+    - evaporation_enhancement
+    - calibratable
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: canopy_evaporation_theory
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-09T00:00:00Z'
+  hydrosphere.evapotranspiration.alpha_pt:
+    value: 1.26
+    default: 1.26
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.6
+    - 1.6
+    category: model_parameter
+    description: Priestley-Taylor equilibrium evapotranspiration coefficient under well-watered conditions
+    references:
+    - Priestley & Taylor (1972) Mon. Weather Rev. 100:81-92
+    - De Bruin (1983) J. Climate Appl. Meteor. 22:572-578
+    tags:
+    - equilibrium_evapotranspiration
+    - energy_balance
+    - calibratable
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: hydrometeorological_literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-09T00:00:00Z'
+  hydrosphere.evapotranspiration.soil_heat_flux_source:
+    value: fraction
+    default: fraction
+    units: dimensionless
+    dimension: dimensionless
+    dtype: str
+    bounds: null
+    allowed_values: [fraction, state]
+    category: model_option
+    description: Explicit ground-heat source for Priestley-Taylor and Penman-Monteith; fraction uses the process-specific documented radiation fraction, state requires signed surface soil_heat_flux without fallback
+    references:
+    - Priestley and Taylor (1972) Monthly Weather Review 100:81-92
+    - Allen et al. (1998) FAO Irrigation and Drainage Paper 56, soil heat flux
+    tags: [energy_partition, observed_forcing, surface_flux]
+    requires_grad: false
+    provenance:
+      source: explicit_surface_energy_input_contract
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-10-02T00:00:00Z'
+  hydrosphere.evapotranspiration.sub_freezing_phase:
+    value: liquid
+    default: liquid
+    units: dimensionless
+    dimension: dimensionless
+    dtype: str
+    bounds: null
+    allowed_values: [liquid, ice]
+    category: model_option
+    description: Phase of the saturation vapor pressure and latent heat that Priestley-Taylor uses below 273.15 K when the configured temperature bounds admit such temperatures; liquid keeps the single Tetens form, ice uses the Murray (1967) ice coefficients and the latent heat of sublimation cell by cell
+    references:
+    - Murray (1967) Journal of Applied Meteorology 6:203-204, doi:10.1175/1520-0450(1967)006<0203:OTCOSV>2.0.CO;2
+    - Priestley and Taylor (1972) Monthly Weather Review 100:81-92
+    tags: [energy_partition, phase_change, surface_flux]
+    requires_grad: false
+    provenance:
+      source: sub_freezing_psychrometric_option
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-10-10T00:00:00Z'
+  hydrosphere.evapotranspiration.soil_heat_fraction:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.3
+    category: model_parameter
+    description: Fraction of net radiation allocated to soil heat flux for daily Priestley-Taylor estimates
+    references:
+    - Allen et al. (1998) FAO Irrigation Paper 56
+    - Brutsaert (1982) Evaporation into the Atmosphere
+    tags:
+    - energy_partition
+    - surface_flux
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: evapotranspiration_guidelines
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-09T00:00:00Z'
+  hydrosphere.evapotranspiration.enable_dynamic_alpha:
+    value: false
+    default: false
+    units: dimensionless
+    dtype: bool
+    bounds:
+    - false
+    - true
+    category: model_option
+    description: Enable soil-moisture and VPD-dependent adjustments to the Priestley-Taylor alpha coefficient
+    references:
+    - Katerji & Rana (2011) Agric. For. Meteorol. 151:428-440
+    tags:
+    - model_option
+    - stress_response
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: evapotranspiration_stress_response
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-09T00:00:00Z'
+  hydrosphere.evapotranspiration.alpha_min:
+    value: 0.6
+    default: 0.6
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.4
+    - 1.0
+    category: model_parameter
+    description: Lower bound for Priestley-Taylor alpha under strong atmospheric or soil moisture stress
+    references:
+    - McNaughton & Jarvis (1983) Adv. Ecol. Res. 13:1-67
+    tags:
+    - stress_response
+    - energy_balance
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: evapotranspiration_stress_response
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-09T00:00:00Z'
+  hydrosphere.evapotranspiration.alpha_max:
+    value: 1.5
+    default: 1.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.1
+    - 1.8
+    category: model_parameter
+    description: Upper bound for Priestley-Taylor alpha reflecting advective enhancement of evaporation
+    references:
+    - Priestley & Taylor (1972) Mon. Weather Rev. 100:81-92
+    - Brutsaert (1982) Evaporation into the Atmosphere
+    tags:
+    - advective_enhancement
+    - stress_response
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: hydrometeorological_literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-09T00:00:00Z'
+  hydrosphere.evapotranspiration.stress_threshold:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 0.9
+    category: model_parameter
+    description: Relative soil moisture threshold at which Priestley-Taylor alpha begins to decline
+    references:
+    - Katerji & Rana (2011) Agric. For. Meteorol. 151:428-440
+    tags:
+    - soil_moisture_stress
+    - calibratable
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: soil_moisture_response_analysis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-09T00:00:00Z'
+  hydrosphere.evapotranspiration.hodge_reference_atmospheric_pressure:
+    value: 101325.0
+    default: 101325.0
+    units: Pa
+    dtype: float32
+    bounds:
+    - 80000.0
+    - 110000.0
+    category: reference_constant
+    description: Reference atmospheric pressure p_ref (sea-level standard) at which Priestley-Taylor assembles its static Hodge contract (psychrometric constant gamma(p_ref)); a structural reference state, never a forward input and never substituted for atmospheric_pressure
+    references:
+    - International Standard Atmosphere (ISO 2533)
+    - Allen, R.G. et al. (1998). FAO Irrigation and Drainage Paper 56, Eq. 8
+    tags:
+    - hodge_reference
+    - structural_reference
+    - standard_condition
+    dimension: pressure
+    requires_grad: false
+    provenance:
+      source: international_standard
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+      notes: Renamed from hydrosphere.evapotranspiration.atmospheric_pressure_diagnostic_default on 2026-09-26; its only reader is PriestleyTaylorET.build_hodge_contract.
+  hydrosphere.evapotranspiration.hodge_reference_air_temperature:
+    value: 293.15
+    default: 293.15
+    units: K
+    dtype: float32
+    bounds:
+    - 233.15
+    - 323.15
+    category: reference_constant
+    description: Reference air temperature T_ref (20 degC) at which Priestley-Taylor assembles its static Hodge contract (slope Delta(T_ref) of the saturation vapour pressure curve); a structural reference state, never a forward input and never substituted for air_temperature
+    references:
+    - Standard meteorological reference temperature
+    - Allen, R.G. et al. (1998). FAO Irrigation and Drainage Paper 56, Eq. 13
+    tags:
+    - temperature
+    - hodge_reference
+    - structural_reference
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: standard_conditions
+      schema_version: 2.0.0
+      created_by: hydrosphere_parameter_refactoring
+      last_modified: '2026-09-26T00:00:00Z'
+      notes: Moved from hydrosphere.state_defaults.air_temperature on 2026-09-26; its only reader is PriestleyTaylorET.build_hodge_contract, and hydrosphere/state_defaults.yaml was deleted with its last entry.
+  hydrosphere.evapotranspiration.hodge_reference_aerodynamic_conductance:
+    value: 0.01
+    default: 0.01
+    units: m s-1
+    dtype: float32
+    bounds:
+    - 0.001
+    - 0.1
+    category: reference_constant
+    description: Reference aerodynamic conductance g_a of the static Penman-Monteith vapor
+      Hodge contract (PenmanMonteithET.build_hodge_contract, star_ET = diag(g_eff / lambda)
+      with g_eff = g_a g_c / (g_a + g_c)); never substituted for the runtime g_a, which is
+      the aerodynamic_resistance state or the FAO-56 log wind profile
+    references:
+    - Typical low-wind conductance values from boundary layer meteorology
+    - Allen, R.G. et al. (1998). Crop evapotranspiration. FAO Irrigation and Drainage Paper 56
+    tags:
+    - structural_reference
+    - hodge_reference
+    - hodge_contract
+    dimension: velocity
+    requires_grad: false
+    provenance:
+      source: numerical_implementation
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+      notes: Renamed from hydrosphere.evapotranspiration.aerodynamic_conductance_default on 2026-09-26; its only reader is PenmanMonteithET.build_hodge_contract.
+creation_info:
+  created_by: Yuchong Long
+  created_at: '2024-08-25T00:00:00Z'
+  schema_version: 1.0.0
+  tier: relic
+quality_control:
+  validated_by: Hydrosphere Scientific Review Panel
+  validation_date: '2024-08-25T00:00:00Z'
+  validation_criteria:
+  - FAO-56 standard compliance
+  - Literature consistency check
+  - Physical bounds verification
+  - Unit dimensional analysis
+  - Tetens formula coefficient validation
+  - Cross-parameter relationship validation
+  - CF-1.8 convention adherence

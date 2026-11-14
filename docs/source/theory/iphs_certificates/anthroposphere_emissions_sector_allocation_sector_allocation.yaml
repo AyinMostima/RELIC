@@ -1,0 +1,246 @@
+certificate_version: '1.0'
+process_id: relic.scientific.anthroposphere.emissions.sector_allocation.SectorAllocation
+module_name: sector_allocation
+canonical_role: scale_coupling
+iphs_level: 1
+iphs_level_evidence:
+  classification: IPHS-compatible descriptive algebraic scale-coupling certificate
+  compatible_basis: Runtime exposes unit-bound flux inputs, one governed output, and executable pointwise species-mass conservation without claiming DEC or IPHS operators.
+  level_2_limit: Runtime is an algebraic allocation with a mass audit, not a canonical IPHS wrapper, typed DEC chain map, or IPHS state-advance operator.
+theory_document: docs\source\theory\anthroposphere_sector_allocation.md
+theory_document_status: updated
+legacy_formula: Historical runtime applied multiple dynamic sector, temporal, policy, temperature, and spatial formulas.
+literature_formula: Emissions preprocessing splits already computed inventory mass fluxes using declared sector priors and spatial surrogates while preserving species totals.
+iphs_formula: Level 1 compatibility records the executed allocation E_s,k,x = W_s,k,x E_k,x with W_s,k,x >= 0 and sum_s W_s,k,x = 1; no IPHS operator is claimed.
+legacy_expression: Historical dynamic outputs and secondary process-law scaling are retained only as migration evidence, not executable runtime.
+iphs_expression: The single runtime allocation satisfies sum_s E_s,k,x = E_k,x pointwise for each species and cell; no DEC morphism is asserted.
+input_variables:
+- anthropogenic_nox_flux
+- anthropogenic_co_flux
+- anthropogenic_so2_flux
+- anthropogenic_voc_flux
+- anthropogenic_nh3_flux
+- anthropogenic_pm25_flux
+- population_density
+- gdp_density
+- road_density
+- land_use_fractions
+output_variables:
+- sector_emission_flux
+- diagnostics.sector_allocation.allocation_weights
+- diagnostics.sector_allocation.spatial_distribution
+- diagnostics.sector_allocation.temporal_factors
+- diagnostics.sector_allocation.mass_residual
+parameter_keys:
+- anthroposphere.emissions.sector_fractions.power
+- anthroposphere.emissions.sector_fractions.transport
+- anthroposphere.emissions.sector_fractions.industry
+- anthroposphere.emissions.sector_fractions.buildings
+- anthroposphere.emissions.sector_fractions.agriculture
+- anthroposphere.emissions.power_sector.species_fractions.nox
+- anthroposphere.emissions.power_sector.species_fractions.so2
+- anthroposphere.emissions.power_sector.species_fractions.pm25
+- anthroposphere.emissions.transport_sector.species_fractions.nox
+- anthroposphere.emissions.transport_sector.species_fractions.co
+- anthroposphere.emissions.transport_sector.species_fractions.pm25
+- anthroposphere.emissions.industry_sector.species_fractions.nox
+- anthroposphere.emissions.industry_sector.species_fractions.so2
+- anthroposphere.emissions.industry_sector.species_fractions.nmvoc
+- anthroposphere.emissions.buildings_sector.species_fractions.nox
+- anthroposphere.emissions.buildings_sector.species_fractions.pm25
+- anthroposphere.emissions.agriculture_sector.species_fractions.nh3
+- anthroposphere.emissions.sector_allocation.proxy_floor
+- anthroposphere.emissions.sector_allocation.cropland_class_index
+- anthroposphere.emissions.conservation_tolerance
+composition_ports: []
+references:
+- CMAQ User Guide v5.3 (EPA, 2019).
+- SMOKE Emissions Modeling System documentation.
+- Crippa, M. et al. (2020). High resolution temporal profiles in EDGAR.
+- McDuffie, E.E. et al. (2020). Global anthropogenic emission inventory.
+baseline_tests:
+- test\anthroposphere\emissions\test_sector_allocation_l1.py
+- test\scientific\anthroposphere\emissions\sector_allocation_no_inplace_mutation.test.py
+- test\anthroposphere\emissions\sector_allocation_phase8.test.py
+validation_tests:
+- test\anthroposphere\emissions\test_sector_allocation_l1_improved.py
+- test\scientific\anthroposphere\emissions\sector_allocation_no_inplace_mutation.test.py
+- test\anthroposphere\emissions\sector_allocation_phase8.test.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  anthropogenic_nox_flux: NOx inventory mass flux [kg m-2 s-1]
+  anthropogenic_co_flux: CO inventory mass flux [kg m-2 s-1]
+  anthropogenic_so2_flux: SO2 inventory mass flux [kg m-2 s-1]
+  anthropogenic_voc_flux: VOC inventory mass flux [kg m-2 s-1]
+  anthropogenic_nh3_flux: NH3 inventory mass flux [kg m-2 s-1]
+  anthropogenic_pm25_flux: PM25 inventory mass flux [kg m-2 s-1]
+  population_density: population proxy field
+  gdp_density: GDP proxy field
+  road_density: road proxy field
+  land_use_fractions: land-use class fraction field
+  sector_emission_flux: fixed [sector, species, source_shape] mass-flux tensor [kg m-2 s-1]
+  diagnostics.sector_allocation.allocation_weights: pointwise sector weights [1]
+  diagnostics.sector_allocation.spatial_distribution: spatial-mean-normalized sector proxies [1]
+  diagnostics.sector_allocation.temporal_factors: unity factors confirming upstream temporal ownership [1]
+  diagnostics.sector_allocation.mass_residual: input minus sector-summed output by species and cell [kg m-2 s-1]
+parameter_map:
+  anthroposphere.emissions.sector_fractions.power: Power-sector fraction of total anthropogenic emissions [dimensionless]
+  anthroposphere.emissions.sector_fractions.transport: Transport-sector fraction of total anthropogenic emissions [dimensionless]
+  anthroposphere.emissions.sector_fractions.industry: Industry-sector fraction of total anthropogenic emissions [dimensionless]
+  anthroposphere.emissions.sector_fractions.buildings: Buildings-sector fraction of total anthropogenic emissions [dimensionless]
+  anthroposphere.emissions.sector_fractions.agriculture: Agriculture-sector fraction of total anthropogenic emissions [dimensionless]
+  anthroposphere.emissions.power_sector.species_fractions.nox: Fraction of NOx mass within power-sector emissions [dimensionless]
+  anthroposphere.emissions.power_sector.species_fractions.so2: Fraction of SO2 mass within power-sector emissions [dimensionless]
+  anthroposphere.emissions.power_sector.species_fractions.pm25: Fraction of PM2.5 mass within power-sector emissions [dimensionless]
+  anthroposphere.emissions.transport_sector.species_fractions.nox: Fraction of NOx mass for transport-sector emissions [dimensionless]
+  anthroposphere.emissions.transport_sector.species_fractions.co: Fraction of CO mass for transport-sector emissions [dimensionless]
+  anthroposphere.emissions.transport_sector.species_fractions.pm25: Fraction of PM2.5 mass for transport-sector emissions [dimensionless]
+  anthroposphere.emissions.industry_sector.species_fractions.nox: Fraction of NOx mass for industry-sector emissions [dimensionless]
+  anthroposphere.emissions.industry_sector.species_fractions.so2: Fraction of SO2 mass for industry-sector emissions [dimensionless]
+  anthroposphere.emissions.industry_sector.species_fractions.nmvoc: Fraction of NMVOC mass for industry-sector emissions [dimensionless]
+  anthroposphere.emissions.buildings_sector.species_fractions.nox: Fraction of NOx mass for buildings-sector emissions [dimensionless]
+  anthroposphere.emissions.buildings_sector.species_fractions.pm25: Fraction of PM2.5 mass for buildings-sector emissions [dimensionless]
+  anthroposphere.emissions.agriculture_sector.species_fractions.nh3: Fraction of NH3 mass for agriculture-sector emissions [dimensionless]
+  anthroposphere.emissions.sector_allocation.proxy_floor: Positive floor of the spatial allocation proxy [dimensionless]
+  anthroposphere.emissions.sector_allocation.cropland_class_index: Index of the cropland class on the land-use axis [dimensionless]
+  anthroposphere.emissions.conservation_tolerance: Maximum relative residual of the allocated emission mass [dimensionless]
+operator_map:
+  allocation_rule: forward evaluates the pointwise non-negative W_sector_species_proxy and normalizes it only along the sector axis
+  sector_aggregation: upscale sums the governed sector axis without constructing a second allocation operator
+unit_map:
+  anthropogenic_nox_flux: kg m-2 s-1
+  anthropogenic_co_flux: kg m-2 s-1
+  anthropogenic_so2_flux: kg m-2 s-1
+  anthropogenic_voc_flux: kg m-2 s-1
+  anthropogenic_nh3_flux: kg m-2 s-1
+  anthropogenic_pm25_flux: kg m-2 s-1
+  population_density: '1'
+  gdp_density: '1'
+  road_density: '1'
+  land_use_fractions: '1'
+  sector_emission_flux: kg m-2 s-1
+  diagnostics.sector_allocation.allocation_weights: '1'
+  diagnostics.sector_allocation.spatial_distribution: '1'
+  diagnostics.sector_allocation.temporal_factors: '1'
+  diagnostics.sector_allocation.mass_residual: kg m-2 s-1
+input_output_map:
+  inventory_to_sector: six canonical species fluxes are split pointwise over the fixed sector axis
+  mass_closure: summing sector_emission_flux over sector exactly reconstructs each input species field
+  proxy_role: proxies alter only sector shares and cannot alter total input mass
+  temporal_ownership: SectorAllocation applies no Q10, policy, emission factor, or dt scaling
+interface_map:
+  forward_signature: forward(self, state, time, dt)
+  bridge_class: ScaleCouplingFunctor
+  abstraction_contract: ScaleCoupling
+  state_write_mode: sector_emission_flux uses UpdateItem(REPLACE, DERIVED, per_second, per_timestep=False); diagnostics are observation payloads
+  legacy_inputs:
+  - anthropogenic_nox_flux
+  - anthropogenic_co_flux
+  - anthropogenic_so2_flux
+  - anthropogenic_voc_flux
+  - anthropogenic_nh3_flux
+  - anthropogenic_pm25_flux
+  - population_density
+  - gdp_density
+  - road_density
+  - land_use_fractions
+  iphs_inputs:
+  - anthropogenic_nox_flux
+  - anthropogenic_co_flux
+  - anthropogenic_so2_flux
+  - anthropogenic_voc_flux
+  - anthropogenic_nh3_flux
+  - anthropogenic_pm25_flux
+  - population_density
+  - gdp_density
+  - road_density
+  - land_use_fractions
+  legacy_outputs:
+  - sector_emission_flux
+  - diagnostics.sector_allocation.allocation_weights
+  - diagnostics.sector_allocation.spatial_distribution
+  - diagnostics.sector_allocation.temporal_factors
+  - diagnostics.sector_allocation.mass_residual
+  iphs_outputs:
+  - sector_emission_flux
+  - diagnostics.sector_allocation.allocation_weights
+  - diagnostics.sector_allocation.spatial_distribution
+  - diagnostics.sector_allocation.temporal_factors
+  - diagnostics.sector_allocation.mass_residual
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: Declared sector and species priors are retained in one pointwise normalized allocation rule; historical Q10, policy, dt, default-source, shape-expansion, and dynamic-output paths are removed.
+  no_legacy_mode: No alternate runtime mode, default emission source, dynamic output formula, or duplicate allocation path is exposed.
+state_advancement_map:
+  potential_basis: not_applicable_algebraic_flux_partition_without_hamiltonian_potential
+  effort_variable: not_applicable_no_energy_or_entropy_effort
+  state_advancer: E_sector = W_sector_species_proxy E_input
+  runtime_usage: forward replaces the current sector-resolved rate map and emits the exact pointwise residual.
+parameter_management_map:
+  anthroposphere.emissions.sector_fractions.power:
+    source: ParameterManager YAML
+  anthroposphere.emissions.sector_fractions.transport:
+    source: ParameterManager YAML
+  anthroposphere.emissions.sector_fractions.industry:
+    source: ParameterManager YAML
+  anthroposphere.emissions.sector_fractions.buildings:
+    source: ParameterManager YAML
+  anthroposphere.emissions.sector_fractions.agriculture:
+    source: ParameterManager YAML
+  anthroposphere.emissions.power_sector.species_fractions.nox:
+    source: ParameterManager YAML
+  anthroposphere.emissions.power_sector.species_fractions.so2:
+    source: ParameterManager YAML
+  anthroposphere.emissions.power_sector.species_fractions.pm25:
+    source: ParameterManager YAML
+  anthroposphere.emissions.transport_sector.species_fractions.nox:
+    source: ParameterManager YAML
+  anthroposphere.emissions.transport_sector.species_fractions.co:
+    source: ParameterManager YAML
+  anthroposphere.emissions.transport_sector.species_fractions.pm25:
+    source: ParameterManager YAML
+  anthroposphere.emissions.industry_sector.species_fractions.nox:
+    source: ParameterManager YAML
+  anthroposphere.emissions.industry_sector.species_fractions.so2:
+    source: ParameterManager YAML
+  anthroposphere.emissions.industry_sector.species_fractions.nmvoc:
+    source: ParameterManager YAML
+  anthroposphere.emissions.buildings_sector.species_fractions.nox:
+    source: ParameterManager YAML
+  anthroposphere.emissions.buildings_sector.species_fractions.pm25:
+    source: ParameterManager YAML
+  anthroposphere.emissions.agriculture_sector.species_fractions.nh3:
+    source: ParameterManager YAML
+  anthroposphere.emissions.sector_allocation.proxy_floor:
+    source: ParameterManager YAML
+  anthroposphere.emissions.sector_allocation.cropland_class_index:
+    source: ParameterManager YAML
+  anthroposphere.emissions.conservation_tolerance:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: FunctorMetadata declares the exact canonical inventory, proxy, output, and diagnostic variables
+  lifecycle: ScaleCouplingFunctor forward emits sector_emission_flux as a DERIVED UpdateItem, a derived quantity of the step that partition_outputs routes out of the commit; StateManager records it as a state diagnostic and never stores it as state, and it stays visible to later Functors of the same group call (SpeciesMapper); its SCM contract kind is diagnostic with no committed writer
+  state_contract: sector_emission_flux uses REPLACE, DERIVED, per_second, per_timestep false, explicit units, and source_functor
+dependency_interconnection_map:
+  dependencies: get_dependencies returns an empty list because inputs arrive through governed state variables
+  direct_functor_calls: not_applicable_no_direct_functor_calls
+  state_flow: canonical inventory and proxy variables enter forward and sector_emission_flux leaves through its sole UpdateItem owner as a derived same-step quantity, not committed state
+overflow_routing_map:
+  missing_emissions: missing canonical species inputs raise KeyError
+  missing_proxies: missing or shape-incompatible proxies raise an error
+  negative_emissions: negative emission inputs raise ValueError
+  nonfinite_emissions: NaN or infinite inputs raise ValueError
+  invalid_proxy_support: a species-cell denominator with no sector support raises ValueError before any UpdateItem is created
+  mass_closure_residual: the complete pointwise residual is emitted as diagnostics.sector_allocation.mass_residual
+  discarded_residuals: the pointwise mass residual is emitted in full and is not discarded
+conservation_map:
+  conserved_quantity: emission mass by species and grid cell
+  balance_expression: sum_s E_sector(s,k,x) = E_input(k,x)
+  local_check: forward and check_conservation_laws compute current-payload residuals without cached ledgers
+  output_balance: sector_emission_flux carries the complete non-negative sector/species mass flux
+entropy_audit:
+  status: descriptive_level_1_without_entropy_formulation
+  reason: forward performs an algebraic allocation and evaluates no energy functional, entropy effort, mobility, or entropy production
+equivalence_type: exact

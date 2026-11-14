@@ -1,0 +1,46 @@
+variable: irrigation_remaining_quota
+title: "Irrigation Remaining Source-Water Quota"
+description: "Remaining source-water allocation Q of the irrigated domain, a water depth summed over the irrigated cells in mm. IrrigationManagement reads it as a declared input and returns Q' = Q - A_used (A_used the abstracted depth of the step) as a REPLACE update; a domain demand above Q is met at the same percentage in every cell (WEAP21 equity rule). The initial quota is part of the scenario initial state; a quota reset is a state assignment."
+kind: state
+dimension:
+  udunits: "mm"
+  cf_standard_name: null
+support:
+  spatial_kind: null
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: []
+owner: "irrigation_management"
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Yates, D., Sieber, J., Purkey, D. and Huber-Lee, A. (2005). WEAP21 - A demand-, priority-, and preference-driven water planning model, Part 1: Model characteristics. Water International 30(4). doi:10.1080/02508060508691893"
+  - "Allen, R.G., Pereira, L.S., Raes, D. and Smith, M. (1998). Crop evapotranspiration, FAO Irrigation and Drainage Paper 56"
+numerics:
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-9
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "irrigation_management"
+      module: "relic.scientific.anthroposphere.management.irrigation"
+      provides: ["irrigation_remaining_quota"]
+      unit: "mm"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-9
+      rtol: 1.0e-9
+provenance:
+  source_file: "relic/scientific/anthroposphere/management/irrigation.py"
+  runtime_role: "accepted_step_irrigation_quota_state"
+  runtime_writer: "irrigation_management"
+  note: "Replaces the former module buffer remaining_quota_mm (item 119); the Functor holds no copy of the quota."

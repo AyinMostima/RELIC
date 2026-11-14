@@ -1,0 +1,36 @@
+variable: ch4_storage_tendency_oxid
+title: "Methane Storage Oxidation Tendency"
+kind: flux
+dimension:
+  udunits: "g C m-2 s-1"
+  cf_standard_name: null
+owner: "pedosphere_methane_oxidation"
+aliases: []
+incrementable: false
+accumulates: carbon.total
+numerics:
+  lower_bound: null
+  upper_bound: 0.0
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "pedosphere_methane_oxidation"
+      module: "relic.scientific.pedosphere.methane.oxidation"
+      provides:
+        - "ch4_storage_tendency_oxid"
+      unit: "g C m-2 s-1"
+flux_contract:
+  allowed_in: []
+  allowed_out:
+    - "pedosphere_methane_oxidation"
+  budget_check:
+    guardian: "pedosphere_methane_budget"
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/pedosphere/methane/oxidation.py"
+  runtime_role: "methane_storage_oxidation_tendency"
+  runtime_writer: "pedosphere_methane_oxidation"

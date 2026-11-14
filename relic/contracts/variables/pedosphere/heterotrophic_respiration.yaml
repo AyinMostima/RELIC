@@ -1,0 +1,52 @@
+variable: heterotrophic_respiration
+title: "Heterotrophic Respiration"
+description: "Heterotrophic (decomposer) respiration R_h [g C m-2 s-1]: the CO2-C released from litter and soil organic matter to the atmosphere. A non-negative release magnitude, positive out of the soil carbon pools into the atmosphere (upward), as CF surface_upward_mass_flux_of_carbon_dioxide_expressed_as_carbon_due_to_heterotrophic_respiration (the former heterotrophic_respiration_carbon_flux); no CF name is declared because the unit is grams of carbon. Every writer produces it non-negative (first_order_decomposition and pools_matrix raise on a negative rate, microbial_enzyme_decomposition forms it as (1 - CUE) times the non-negative substrate consumption rates plus the microbial turnover rate), it accumulates into the carbon.total boundary ledger, which takes non-negative magnitudes, and its readers (methane production, the NEE = Ra + Rh - GPP carbon rule) read it as a release."
+kind: flux
+dimension:
+  udunits: "g C m-2 s-1"
+  cf_standard_name: null
+owner: null
+aliases: []
+incrementable: false
+accumulates: carbon.total
+numerics:
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "first_order_decomposition"
+      module: "relic.scientific.pedosphere.decomposition.first_order"
+      provides: ["heterotrophic_respiration"]
+      unit: "g C m-2 s-1"
+    - name: "pools_matrix"
+      module: "relic.scientific.pedosphere.carbon_pools.pools_matrix"
+      provides: ["heterotrophic_respiration"]
+      unit: "g C m-2 s-1"
+    - name: "microbial_enzyme_decomposition"
+      module: "relic.scientific.pedosphere.decomposition.microbial_enzyme"
+      provides: ["heterotrophic_respiration"]
+      unit: "g C m-2 s-1"
+flux_contract:
+  allowed_in: []
+  allowed_out:
+    - "first_order_decomposition"
+    - "pools_matrix"
+    - "microbial_enzyme_decomposition"
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+references:
+  - "CF standard name table: surface_upward_mass_flux_of_carbon_dioxide_expressed_as_carbon_due_to_heterotrophic_respiration (upward positive; alias heterotrophic_respiration_carbon_flux)"
+provenance:
+  source_file: "relic/scientific/pedosphere/decomposition/first_order.py"
+  runtime_role: "mutually_exclusive_decomposition_respiration_flux"
+  sign_convention: "non_negative_release_to_atmosphere"
+  runtime_writers:
+    - "first_order_decomposition"
+    - "pools_matrix"
+    - "microbial_enzyme_decomposition"

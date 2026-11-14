@@ -1,0 +1,262 @@
+schema_version: 2.0.0
+tier: relic
+namespace: coupling.external.validation
+description: Thresholds of the external data validator (relic/coupling/external/common/validators.py). Its missing-data thresholds are coupling.external.io.missing_data_warning_threshold (warning) and coupling.external.regrid.missing_threshold (error).
+metadata:
+  version: 1.0.0
+parameters:
+  coupling.external.validation.outlier_zscore_threshold:
+    value: 4.0
+    default: 4.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 10.0
+    category: quality_control
+    description: Absolute z-score |x - mean| / std (population standard deviation of the finite values of one field) above which the external data validator counts a value as a statistical outlier. A RELIC convention; the z-score rule is that of Iglewicz and Hoaglin (1993). With n finite values the largest attainable score is sqrt(n - 1) (Shiffler 1988), so fewer than 1 + threshold^2 values cannot contain an outlier and no minimum sample size is declared.
+    references:
+    - Iglewicz, B. and Hoaglin, D. C. (1993). How to Detect and Handle Outliers. ASQC Quality Press.
+    - Shiffler, R. E. (1988). Maximum Z scores and outliers. The American Statistician, 42(1), 79-80.
+    - RELIC convention (value); former ValidationConfig.outlier_threshold default
+    tags:
+    - external
+    - validation
+    - outlier
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC convention; former Python default ValidationConfig.outlier_threshold (4.0)
+      schema_version: 2.0.0
+      created_by: MA-21 external coupling repair
+      last_modified: '2026-09-26T00:00:00Z'
+  coupling.external.validation.outlier_fraction_warning:
+    value: 0.05
+    default: 0.05
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: quality_control
+    description: Fraction of the finite values of one field flagged as outliers above which the external data validator reports a WARNING. A RELIC convention without a primary source; for Gaussian data the expected fraction beyond |z| = 4 is 6.3e-5.
+    references:
+    - RELIC convention (no primary source); former literal 0.05 in Validator._validate_statistical_outliers
+    tags:
+    - external
+    - validation
+    - outlier
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC convention; former Python literal 0.05 in Validator._validate_statistical_outliers
+      schema_version: 2.0.0
+      created_by: MA-21 external coupling repair
+      last_modified: '2026-09-26T00:00:00Z'
+  coupling.external.validation.outlier_fraction_error:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: quality_control
+    description: Outlier fraction of one field at or above which the external data validator reports an ERROR instead of a WARNING. A RELIC convention without a primary source.
+    references:
+    - RELIC convention (no primary source); former literal 0.1 in Validator._validate_statistical_outliers
+    tags:
+    - external
+    - validation
+    - outlier
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC convention; former Python literal 0.1 in Validator._validate_statistical_outliers
+      schema_version: 2.0.0
+      created_by: MA-21 external coupling repair
+      last_modified: '2026-09-26T00:00:00Z'
+  coupling.external.validation.require_monotonic_time:
+    value: true
+    default: true
+    units: dimensionless
+    dtype: bool
+    bounds:
+    - false
+    - true
+    category: quality_control
+    description: Whether the external data validator reports non-increasing time coordinates. A RELIC convention.
+    references:
+    - RELIC convention; former ValidationConfig.require_monotonic_time default
+    tags:
+    - external
+    - validation
+    - time
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC convention; former Python default ValidationConfig.require_monotonic_time (true)
+      schema_version: 2.0.0
+      created_by: MA-21 external coupling repair
+      last_modified: '2026-09-26T00:00:00Z'
+  coupling.external.validation.max_time_gap_hours:
+    value: 48.0
+    default: 48.0
+    units: h
+    dtype: float32
+    bounds:
+    - 0.0
+    - 8784.0
+    category: quality_control
+    description: Largest spacing of consecutive time records, in hours, that the external data validator accepts without a temporal-gap issue. A RELIC convention without a primary source.
+    references:
+    - RELIC convention (no primary source); former ValidationConfig.max_time_gap_hours default
+    tags:
+    - external
+    - validation
+    - time
+    dimension: time
+    requires_grad: false
+    provenance:
+      source: RELIC convention; former Python default ValidationConfig.max_time_gap_hours (48.0)
+      schema_version: 2.0.0
+      created_by: MA-21 external coupling repair
+      last_modified: '2026-09-26T00:00:00Z'
+  coupling.external.validation.require_global_coverage:
+    value: false
+    default: false
+    units: dimensionless
+    dtype: bool
+    bounds:
+    - false
+    - true
+    category: quality_control
+    description: Whether the external data validator reports longitude or latitude spans below the global-coverage spans. A RELIC convention.
+    references:
+    - RELIC convention; former ValidationConfig.require_global_coverage default
+    tags:
+    - external
+    - validation
+    - spatial
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC convention; former Python default ValidationConfig.require_global_coverage (false)
+      schema_version: 2.0.0
+      created_by: MA-21 external coupling repair
+      last_modified: '2026-09-26T00:00:00Z'
+  coupling.external.validation.global_longitude_span_min:
+    value: 350.0
+    default: 350.0
+    units: deg
+    dtype: float32
+    bounds:
+    - 0.0
+    - 360.0
+    category: quality_control
+    description: Smallest longitude span (max - min of the cell centres) the validator treats as global when global coverage is required; below 360 deg because a global grid of centres spans 360 deg minus one cell width. A RELIC convention (admits cells up to 10 deg).
+    references:
+    - RELIC convention (no primary source); former literal 350 in Validator._validate_spatial_quality
+    tags:
+    - external
+    - validation
+    - spatial
+    dimension: angular
+    requires_grad: false
+    provenance:
+      source: RELIC convention; former Python literal 350 in Validator._validate_spatial_quality
+      schema_version: 2.0.0
+      created_by: MA-21 external coupling repair
+      last_modified: '2026-09-26T00:00:00Z'
+  coupling.external.validation.global_latitude_span_min:
+    value: 170.0
+    default: 170.0
+    units: deg
+    dtype: float32
+    bounds:
+    - 0.0
+    - 180.0
+    category: quality_control
+    description: Smallest latitude span (max - min of the cell centres) the validator treats as global when global coverage is required; below 180 deg because a global grid of centres spans 180 deg minus one cell height. A RELIC convention (admits cells up to 10 deg).
+    references:
+    - RELIC convention (no primary source); former literal 170 in Validator._validate_spatial_quality
+    tags:
+    - external
+    - validation
+    - spatial
+    dimension: angular
+    requires_grad: false
+    provenance:
+      source: RELIC convention; former Python literal 170 in Validator._validate_spatial_quality
+      schema_version: 2.0.0
+      created_by: MA-21 external coupling repair
+      last_modified: '2026-09-26T00:00:00Z'
+  coupling.external.validation.require_cf_conventions:
+    value: true
+    default: true
+    units: dimensionless
+    dtype: bool
+    bounds:
+    - false
+    - true
+    category: quality_control
+    description: Whether the external data validator reports a dataset without a CF Conventions attribute (a declaration check only, not a CF conformance check). A RELIC convention.
+    references:
+    - Eaton, B. et al. NetCDF Climate and Forecast (CF) Metadata Conventions, section 2.6.1 (Conventions attribute)
+    - RELIC convention; former ValidationConfig.require_cf_conventions default
+    tags:
+    - external
+    - validation
+    - cf
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC convention; former Python default ValidationConfig.require_cf_conventions (true)
+      schema_version: 2.0.0
+      created_by: MA-21 external coupling repair
+      last_modified: '2026-09-26T00:00:00Z'
+  coupling.external.validation.cf_version_min:
+    value: '1.6'
+    default: '1.6'
+    units: dimensionless
+    dtype: string
+    bounds: null
+    category: quality_control
+    description: Oldest CF Conventions version the external data validator accepts in the Conventions attribute without a warning. A RELIC convention.
+    references:
+    - Eaton, B. et al. NetCDF Climate and Forecast (CF) Metadata Conventions, version 1.6 (2011)
+    - RELIC convention; former ValidationConfig.cf_version_min default
+    tags:
+    - external
+    - validation
+    - cf
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC convention; former Python default ValidationConfig.cf_version_min ('1.6')
+      schema_version: 2.0.0
+      created_by: MA-21 external coupling repair
+      last_modified: '2026-09-26T00:00:00Z'
+  coupling.external.validation.require_standard_names:
+    value: false
+    default: false
+    units: dimensionless
+    dtype: bool
+    bounds:
+    - false
+    - true
+    category: quality_control
+    description: Whether the external data validator reports data variables without a standard_name attribute. A RELIC convention.
+    references:
+    - RELIC convention; former ValidationConfig.require_standard_names default
+    tags:
+    - external
+    - validation
+    - cf
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC convention; former Python default ValidationConfig.require_standard_names (false)
+      schema_version: 2.0.0
+      created_by: MA-21 external coupling repair
+      last_modified: '2026-09-26T00:00:00Z'

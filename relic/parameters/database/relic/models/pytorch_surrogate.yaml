@@ -1,0 +1,842 @@
+schema_version: 2.0.0
+tier: relic
+namespace: models.surrogate.pytorch
+description: Architecture and training hyperparameters of relic.models.pytorch_surrogate.PyTorchSurrogate,
+  used when the surrogate configuration does not declare them.
+metadata:
+  version: 1.0.0
+  created_by: relic
+  last_modified: '2026-09-26T00:00:00Z'
+parameters:
+  models.surrogate.pytorch.architecture.type:
+    value: mlp
+    default: mlp
+    units: dimensionless
+    dtype: string
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+    category: model_parameter
+    description: Network family built by relic.models.pytorch_surrogate.architecture_factory when the
+      configuration names none.
+    references:
+    - Goodfellow, I., Bengio, Y. & Courville, A. (2016). Deep Learning. MIT Press.
+    tags:
+    - ml_surrogate
+    - pytorch_surrogate
+    - architecture
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic.models.pytorch_surrogate
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-26T00:00:00Z'
+    allowed_values:
+    - mlp
+    - resnet
+    - transformer
+  models.surrogate.pytorch.architecture.mlp.hidden_dims:
+    value: &id001
+    - 64
+    - 32
+    default: *id001
+    units: dimensionless
+    dtype: list
+    bounds:
+    - 1
+    - 65536
+    category: model_parameter
+    description: Widths of the hidden layers of the multi-layer perceptron surrogate.
+    references:
+    - Goodfellow, I., Bengio, Y. & Courville, A. (2016). Deep Learning. MIT Press.
+    tags:
+    - ml_surrogate
+    - pytorch_surrogate
+    - architecture
+    - mlp
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic.models.pytorch_surrogate
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-26T00:00:00Z'
+  models.surrogate.pytorch.architecture.mlp.activation:
+    value: relu
+    default: relu
+    units: dimensionless
+    dtype: string
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+    category: model_parameter
+    description: Hidden-layer activation of the multi-layer perceptron surrogate.
+    references:
+    - Goodfellow, I., Bengio, Y. & Courville, A. (2016). Deep Learning. MIT Press.
+    tags:
+    - ml_surrogate
+    - pytorch_surrogate
+    - architecture
+    - mlp
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic.models.pytorch_surrogate
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-26T00:00:00Z'
+    allowed_values:
+    - relu
+    - tanh
+    - elu
+    - silu
+  models.surrogate.pytorch.architecture.mlp.dropout_rate:
+    value: 0.0
+    default: 0.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.95
+    category: model_parameter
+    description: Dropout probability after each hidden layer of the MLP (0 = no dropout layer; dropout-based
+      uncertainty needs a positive value).
+    references:
+    - 'Srivastava, N. et al. (2014). Dropout: a simple way to prevent neural networks from overfitting.
+      JMLR 15, 1929-1958.'
+    tags:
+    - ml_surrogate
+    - pytorch_surrogate
+    - architecture
+    - mlp
+    - dropout
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic.models.pytorch_surrogate
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-26T00:00:00Z'
+  models.surrogate.pytorch.architecture.mlp.batch_norm:
+    value: false
+    default: false
+    units: dimensionless
+    dtype: bool
+    bounds:
+    - 0
+    - 1
+    category: model_parameter
+    description: Insert batch normalization after each hidden linear layer of the MLP.
+    references:
+    - Ioffe, S. & Szegedy, C. (2015). Batch normalization. ICML, 448-456.
+    tags:
+    - ml_surrogate
+    - pytorch_surrogate
+    - architecture
+    - mlp
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic.models.pytorch_surrogate
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-26T00:00:00Z'
+  models.surrogate.pytorch.architecture.resnet.n_blocks:
+    value: 4
+    default: 4
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 64
+    category: model_parameter
+    description: Number of residual blocks of the ResNet surrogate.
+    references:
+    - He, K., Zhang, X., Ren, S. & Sun, J. (2016). Deep residual learning for image recognition. CVPR,
+      770-778.
+    tags:
+    - ml_surrogate
+    - pytorch_surrogate
+    - architecture
+    - resnet
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic.models.pytorch_surrogate
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-26T00:00:00Z'
+  models.surrogate.pytorch.architecture.resnet.hidden_dim:
+    value: 128
+    default: 128
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 65536
+    category: model_parameter
+    description: Width of the residual blocks of the ResNet surrogate.
+    references:
+    - He, K., Zhang, X., Ren, S. & Sun, J. (2016). Deep residual learning for image recognition. CVPR,
+      770-778.
+    tags:
+    - ml_surrogate
+    - pytorch_surrogate
+    - architecture
+    - resnet
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic.models.pytorch_surrogate
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-26T00:00:00Z'
+  models.surrogate.pytorch.architecture.resnet.activation:
+    value: relu
+    default: relu
+    units: dimensionless
+    dtype: string
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+    category: model_parameter
+    description: Activation inside the residual blocks of the ResNet surrogate.
+    references:
+    - He, K., Zhang, X., Ren, S. & Sun, J. (2016). Deep residual learning for image recognition. CVPR,
+      770-778.
+    tags:
+    - ml_surrogate
+    - pytorch_surrogate
+    - architecture
+    - resnet
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic.models.pytorch_surrogate
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-26T00:00:00Z'
+    allowed_values:
+    - relu
+    - tanh
+    - elu
+    - silu
+  models.surrogate.pytorch.architecture.resnet.dropout_rate:
+    value: 0.0
+    default: 0.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.95
+    category: model_parameter
+    description: Dropout probability inside each residual block (0 = no dropout layer).
+    references:
+    - 'Srivastava, N. et al. (2014). Dropout: a simple way to prevent neural networks from overfitting.
+      JMLR 15, 1929-1958.'
+    tags:
+    - ml_surrogate
+    - pytorch_surrogate
+    - architecture
+    - resnet
+    - dropout
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic.models.pytorch_surrogate
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-26T00:00:00Z'
+  models.surrogate.pytorch.architecture.transformer.d_model:
+    value: 128
+    default: 128
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 65536
+    category: model_parameter
+    description: Embedding width of the transformer surrogate; divisible by n_heads.
+    references:
+    - Vaswani, A. et al. (2017). Attention is all you need. NeurIPS 30, 5998-6008.
+    tags:
+    - ml_surrogate
+    - pytorch_surrogate
+    - architecture
+    - transformer
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic.models.pytorch_surrogate
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-26T00:00:00Z'
+  models.surrogate.pytorch.architecture.transformer.n_heads:
+    value: 4
+    default: 4
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 256
+    category: model_parameter
+    description: Number of attention heads of the transformer surrogate.
+    references:
+    - Vaswani, A. et al. (2017). Attention is all you need. NeurIPS 30, 5998-6008.
+    tags:
+    - ml_surrogate
+    - pytorch_surrogate
+    - architecture
+    - transformer
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic.models.pytorch_surrogate
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-26T00:00:00Z'
+  models.surrogate.pytorch.architecture.transformer.n_layers:
+    value: 2
+    default: 2
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 64
+    category: model_parameter
+    description: Number of transformer blocks of the transformer surrogate.
+    references:
+    - Vaswani, A. et al. (2017). Attention is all you need. NeurIPS 30, 5998-6008.
+    tags:
+    - ml_surrogate
+    - pytorch_surrogate
+    - architecture
+    - transformer
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic.models.pytorch_surrogate
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-26T00:00:00Z'
+  models.surrogate.pytorch.architecture.transformer.ffn_ratio:
+    value: 4.0
+    default: 4.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.25
+    - 64.0
+    category: model_parameter
+    description: Ratio of the feed-forward width to d_model in each transformer block (4 in Vaswani et
+      al. 2017).
+    references:
+    - Vaswani, A. et al. (2017). Attention is all you need. NeurIPS 30, 5998-6008.
+    tags:
+    - ml_surrogate
+    - pytorch_surrogate
+    - architecture
+    - transformer
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic.models.pytorch_surrogate
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-26T00:00:00Z'
+  models.surrogate.pytorch.architecture.transformer.dropout_rate:
+    value: 0.0
+    default: 0.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.95
+    category: model_parameter
+    description: Dropout probability inside each transformer block (0 = no dropout).
+    references:
+    - 'Srivastava, N. et al. (2014). Dropout: a simple way to prevent neural networks from overfitting.
+      JMLR 15, 1929-1958.'
+    tags:
+    - ml_surrogate
+    - pytorch_surrogate
+    - architecture
+    - transformer
+    - dropout
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic.models.pytorch_surrogate
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-26T00:00:00Z'
+  models.surrogate.pytorch.training.optimizer:
+    value: adam
+    default: adam
+    units: dimensionless
+    dtype: string
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+    category: numerical_parameter
+    description: Optimizer of PyTorchSurrogate training.
+    references:
+    - 'Kingma, D.P. & Ba, J. (2015). Adam: a method for stochastic optimization. ICLR.'
+    - Goodfellow, I., Bengio, Y. & Courville, A. (2016). Deep Learning. MIT Press.
+    tags:
+    - ml_surrogate
+    - pytorch_surrogate
+    - training
+    - optimizer
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic.models.pytorch_surrogate
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-26T00:00:00Z'
+    allowed_values:
+    - adam
+    - sgd
+    - rmsprop
+  models.surrogate.pytorch.training.learning_rate:
+    value: 0.001
+    default: 0.001
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-08
+    - 1.0
+    category: numerical_parameter
+    description: Initial learning rate of the optimizer (1e-3 is the Adam default of Kingma and Ba 2015).
+    references:
+    - 'Kingma, D.P. & Ba, J. (2015). Adam: a method for stochastic optimization. ICLR.'
+    tags:
+    - ml_surrogate
+    - pytorch_surrogate
+    - training
+    - optimizer
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic.models.pytorch_surrogate
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-26T00:00:00Z'
+  models.surrogate.pytorch.training.weight_decay:
+    value: 0.0
+    default: 0.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: numerical_parameter
+    description: L2 weight decay coefficient of the optimizer (0 = none).
+    references:
+    - Goodfellow, I., Bengio, Y. & Courville, A. (2016). Deep Learning. MIT Press.
+    tags:
+    - ml_surrogate
+    - pytorch_surrogate
+    - training
+    - optimizer
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic.models.pytorch_surrogate
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-26T00:00:00Z'
+  models.surrogate.pytorch.training.momentum:
+    value: 0.9
+    default: 0.9
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.999
+    category: numerical_parameter
+    description: Momentum of the SGD optimizer.
+    references:
+    - Sutskever, I., Martens, J., Dahl, G. & Hinton, G. (2013). On the importance of initialization and
+      momentum in deep learning. ICML, 1139-1147.
+    tags:
+    - ml_surrogate
+    - pytorch_surrogate
+    - training
+    - optimizer
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic.models.pytorch_surrogate
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-26T00:00:00Z'
+  models.surrogate.pytorch.training.batch_size:
+    value: 32
+    default: 32
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 1048576
+    category: numerical_parameter
+    description: Mini-batch size of surrogate training.
+    references:
+    - Goodfellow, I., Bengio, Y. & Courville, A. (2016). Deep Learning. MIT Press.
+    tags:
+    - ml_surrogate
+    - pytorch_surrogate
+    - training
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic.models.pytorch_surrogate
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-26T00:00:00Z'
+  models.surrogate.pytorch.training.epochs:
+    value: 100
+    default: 100
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 1000000
+    category: numerical_parameter
+    description: Number of training epochs when train() receives no epochs argument.
+    references:
+    - Goodfellow, I., Bengio, Y. & Courville, A. (2016). Deep Learning. MIT Press.
+    tags:
+    - ml_surrogate
+    - pytorch_surrogate
+    - training
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic.models.pytorch_surrogate
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-26T00:00:00Z'
+  models.surrogate.pytorch.training.loss_function:
+    value: mse
+    default: mse
+    units: dimensionless
+    dtype: string
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+    category: numerical_parameter
+    description: Training loss of the surrogate.
+    references:
+    - Goodfellow, I., Bengio, Y. & Courville, A. (2016). Deep Learning. MIT Press.
+    - Huber, P.J. (1964). Robust estimation of a location parameter. Ann. Math. Statist. 35, 73-101.
+    tags:
+    - ml_surrogate
+    - pytorch_surrogate
+    - training
+    - loss
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic.models.pytorch_surrogate
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-26T00:00:00Z'
+    allowed_values:
+    - mse
+    - mae
+    - huber
+  models.surrogate.pytorch.training.huber_delta:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-06
+    - 1000000.0
+    category: numerical_parameter
+    description: Transition point between the quadratic and linear parts of the Huber loss (in the normalized
+      output units of the training targets).
+    references:
+    - Huber, P.J. (1964). Robust estimation of a location parameter. Ann. Math. Statist. 35, 73-101.
+    tags:
+    - ml_surrogate
+    - pytorch_surrogate
+    - training
+    - loss
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic.models.pytorch_surrogate
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-26T00:00:00Z'
+  models.surrogate.pytorch.training.early_stopping_patience:
+    value: 10
+    default: 10
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 100000
+    category: numerical_parameter
+    description: Number of epochs without validation-loss improvement before training stops.
+    references:
+    - 'Prechelt, L. (1998). Early stopping - but when? In: Neural Networks: Tricks of the Trade, Springer,
+      55-69.'
+    tags:
+    - ml_surrogate
+    - pytorch_surrogate
+    - training
+    - early_stopping
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic.models.pytorch_surrogate
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-26T00:00:00Z'
+  models.surrogate.pytorch.training.shuffle_training:
+    value: true
+    default: true
+    units: dimensionless
+    dtype: bool
+    bounds:
+    - 0
+    - 1
+    category: numerical_parameter
+    description: Reshuffle the training samples every epoch.
+    references:
+    - Goodfellow, I., Bengio, Y. & Courville, A. (2016). Deep Learning. MIT Press.
+    - PyTorch documentation (torch.optim.lr_scheduler, torch.utils.data.DataLoader), v2.x.
+    tags:
+    - ml_surrogate
+    - pytorch_surrogate
+    - training
+    - data_loader
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic.models.pytorch_surrogate
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-26T00:00:00Z'
+  models.surrogate.pytorch.training.num_workers:
+    value: 0
+    default: 0
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 0
+    - 256
+    category: numerical_parameter
+    description: DataLoader worker processes (0 = load in the training process).
+    references:
+    - PyTorch documentation (torch.optim.lr_scheduler, torch.utils.data.DataLoader), v2.x.
+    tags:
+    - ml_surrogate
+    - pytorch_surrogate
+    - training
+    - data_loader
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic.models.pytorch_surrogate
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-26T00:00:00Z'
+  models.surrogate.pytorch.training.prefetch_factor:
+    value: 2
+    default: 2
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 1024
+    category: numerical_parameter
+    description: Batches loaded in advance by each DataLoader worker (used only with num_workers > 0).
+    references:
+    - PyTorch documentation (torch.optim.lr_scheduler, torch.utils.data.DataLoader), v2.x.
+    tags:
+    - ml_surrogate
+    - pytorch_surrogate
+    - training
+    - data_loader
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic.models.pytorch_surrogate
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-26T00:00:00Z'
+  models.surrogate.pytorch.training.pin_memory:
+    value: false
+    default: false
+    units: dimensionless
+    dtype: bool
+    bounds:
+    - 0
+    - 1
+    category: numerical_parameter
+    description: Place loaded batches in page-locked memory.
+    references:
+    - PyTorch documentation (torch.optim.lr_scheduler, torch.utils.data.DataLoader), v2.x.
+    tags:
+    - ml_surrogate
+    - pytorch_surrogate
+    - training
+    - data_loader
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic.models.pytorch_surrogate
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-26T00:00:00Z'
+  models.surrogate.pytorch.training.persistent_workers:
+    value: false
+    default: false
+    units: dimensionless
+    dtype: bool
+    bounds:
+    - 0
+    - 1
+    category: numerical_parameter
+    description: Keep DataLoader workers alive between epochs (used only with num_workers > 0).
+    references:
+    - PyTorch documentation (torch.optim.lr_scheduler, torch.utils.data.DataLoader), v2.x.
+    tags:
+    - ml_surrogate
+    - pytorch_surrogate
+    - training
+    - data_loader
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic.models.pytorch_surrogate
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-26T00:00:00Z'
+  models.surrogate.pytorch.training.seed:
+    value: 0
+    default: 0
+    units: dimensionless
+    dtype: int64
+    bounds:
+    - 0
+    - 9223372036854775807
+    category: numerical_parameter
+    description: Seed of the DataLoader shuffling generators and of the validation_split draw.
+    references:
+    - PyTorch documentation (torch.optim.lr_scheduler, torch.utils.data.DataLoader), v2.x.
+    tags:
+    - ml_surrogate
+    - pytorch_surrogate
+    - training
+    - reproducibility
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic.models.pytorch_surrogate
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-26T00:00:00Z'
+  models.surrogate.pytorch.scheduler.step.step_size:
+    value: 50
+    default: 50
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 1000000
+    category: numerical_parameter
+    description: Epochs between learning-rate decays of the step scheduler.
+    references:
+    - PyTorch documentation (torch.optim.lr_scheduler, torch.utils.data.DataLoader), v2.x.
+    tags:
+    - ml_surrogate
+    - pytorch_surrogate
+    - training
+    - scheduler
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic.models.pytorch_surrogate
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-26T00:00:00Z'
+  models.surrogate.pytorch.scheduler.step.gamma:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-06
+    - 1.0
+    category: numerical_parameter
+    description: Multiplicative learning-rate decay of the step scheduler.
+    references:
+    - PyTorch documentation (torch.optim.lr_scheduler, torch.utils.data.DataLoader), v2.x.
+    tags:
+    - ml_surrogate
+    - pytorch_surrogate
+    - training
+    - scheduler
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic.models.pytorch_surrogate
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-26T00:00:00Z'
+  models.surrogate.pytorch.scheduler.exponential.gamma:
+    value: 0.95
+    default: 0.95
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-06
+    - 1.0
+    category: numerical_parameter
+    description: Per-epoch multiplicative learning-rate decay of the exponential scheduler.
+    references:
+    - PyTorch documentation (torch.optim.lr_scheduler, torch.utils.data.DataLoader), v2.x.
+    tags:
+    - ml_surrogate
+    - pytorch_surrogate
+    - training
+    - scheduler
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic.models.pytorch_surrogate
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-26T00:00:00Z'
+  models.surrogate.pytorch.scheduler.cosine.T_max:
+    value: 100
+    default: 100
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 1000000
+    category: numerical_parameter
+    description: Half period in epochs of the cosine-annealing scheduler.
+    references:
+    - 'Loshchilov, I. & Hutter, F. (2017). SGDR: stochastic gradient descent with warm restarts. ICLR.'
+    - PyTorch documentation (torch.optim.lr_scheduler, torch.utils.data.DataLoader), v2.x.
+    tags:
+    - ml_surrogate
+    - pytorch_surrogate
+    - training
+    - scheduler
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic.models.pytorch_surrogate
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-26T00:00:00Z'

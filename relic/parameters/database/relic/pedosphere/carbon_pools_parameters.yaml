@@ -1,0 +1,512 @@
+schema_version: 2.0.0
+tier: relic
+namespace: pedosphere.carbon_pools
+description: Default carbon pool sizes and turnover rates for soil organic matter compartments based on CENTURY model structure
+metadata:
+  created_by: RELIC Refactoring Phase 2
+  last_modified: '2025-10-06T00:00:00Z'
+  references:
+  - DOI:10.2136/sssaj1987.03615995005100050015x (Parton et al. 1987 CENTURY)
+  - DOI:10.1029/94GB00993 (Schimel et al. 1994)
+  - DOI:10.1029/1999GB001232 (Trumbore 2000 radiocarbon)
+  version: 1.0.0
+parameters:
+  pedosphere.carbon_pools.metabolic_litter_c:
+    value: 100.0
+    default: 100.0
+    units: g C m-2
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1000.0
+    category: pool_size
+    description: Metabolic litter carbon pool (low lignin, easily decomposable plant material)
+    references:
+    - DOI:10.2136/sssaj1987.03615995005100050015x
+    tags:
+    - litter
+    - metabolic
+    - initial_condition
+    dimension: mass_per_area
+    requires_grad: false
+    provenance:
+      source: CENTURY model default for temperate grassland
+      schema_version: 2.0.0
+      created_by: literature_derived
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.carbon_pools.structural_litter_c:
+    value: 500.0
+    default: 500.0
+    units: g C m-2
+    dtype: float32
+    bounds:
+    - 0.0
+    - 5000.0
+    category: pool_size
+    description: Structural litter carbon pool (high lignin, woody material with slow decomposition)
+    references:
+    - DOI:10.2136/sssaj1987.03615995005100050015x
+    tags:
+    - litter
+    - structural
+    - initial_condition
+    dimension: mass_per_area
+    requires_grad: false
+    provenance:
+      source: CENTURY model default for temperate forest
+      schema_version: 2.0.0
+      created_by: literature_derived
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.carbon_pools.fast_som_c:
+    value: 100.0
+    default: 100.0
+    units: g C m-2
+    dtype: float32
+    bounds:
+    - 0.0
+    - 2000.0
+    category: pool_size
+    description: Fast (active) soil organic carbon pool with rapid turnover (1-5 years)
+    references:
+    - DOI:10.2136/sssaj1987.03615995005100050015x
+    tags:
+    - som
+    - fast
+    - active
+    - initial_condition
+    dimension: mass_per_area
+    requires_grad: false
+    provenance:
+      source: CENTURY model active pool
+      schema_version: 2.0.0
+      created_by: literature_derived
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.carbon_pools.slow_som_c:
+    value: 1000.0
+    default: 1000.0
+    units: g C m-2
+    dtype: float32
+    bounds:
+    - 0.0
+    - 10000.0
+    category: pool_size
+    description: Slow (protected) soil organic carbon pool with intermediate turnover (20-50 years)
+    references:
+    - DOI:10.2136/sssaj1987.03615995005100050015x
+    tags:
+    - som
+    - slow
+    - protected
+    - initial_condition
+    dimension: mass_per_area
+    requires_grad: false
+    provenance:
+      source: CENTURY model slow pool
+      schema_version: 2.0.0
+      created_by: literature_derived
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.carbon_pools.passive_som_c:
+    value: 2000.0
+    default: 2000.0
+    units: g C m-2
+    dtype: float32
+    bounds:
+    - 0.0
+    - 20000.0
+    category: pool_size
+    description: Passive (recalcitrant) soil organic carbon pool with very slow turnover (200-1500 years)
+    references:
+    - DOI:10.1029/1999GB001232
+    tags:
+    - som
+    - passive
+    - recalcitrant
+    - initial_condition
+    dimension: mass_per_area
+    requires_grad: false
+    provenance:
+      source: CENTURY model passive pool, validated with radiocarbon
+      schema_version: 2.0.0
+      created_by: literature_derived
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.carbon_pools.initial_metabolic_litter:
+    value: 100.0
+    default: 100.0
+    units: g C m-2
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1000.0
+    category: initial_condition
+    description: Initial metabolic litter carbon pool size for model spin-up and initialization
+    references:
+    - DOI:10.2136/sssaj1987.03615995005100050015x
+    tags:
+    - litter
+    - metabolic
+    - initial_condition
+    - state_variable
+    dimension: mass_per_area
+    requires_grad: false
+    provenance:
+      source: CENTURY model default for temperate grassland
+      schema_version: 2.0.0
+      created_by: parameter_audit_2025
+      last_modified: '2025-10-07T00:00:00Z'
+  pedosphere.carbon_pools.initial_structural_litter:
+    value: 500.0
+    default: 500.0
+    units: g C m-2
+    dtype: float32
+    bounds:
+    - 0.0
+    - 5000.0
+    category: initial_condition
+    description: Initial structural litter carbon pool size for model spin-up and initialization
+    references:
+    - DOI:10.2136/sssaj1987.03615995005100050015x
+    tags:
+    - litter
+    - structural
+    - initial_condition
+    - state_variable
+    dimension: mass_per_area
+    requires_grad: false
+    provenance:
+      source: CENTURY model default for temperate forest
+      schema_version: 2.0.0
+      created_by: parameter_audit_2025
+      last_modified: '2025-10-07T00:00:00Z'
+  pedosphere.carbon_pools.initial_fast_som:
+    value: 100.0
+    default: 100.0
+    units: g C m-2
+    dtype: float32
+    bounds:
+    - 0.0
+    - 2000.0
+    category: initial_condition
+    description: Initial fast SOM carbon pool size for model spin-up and initialization
+    references:
+    - DOI:10.2136/sssaj1987.03615995005100050015x
+    tags:
+    - som
+    - fast
+    - active
+    - initial_condition
+    - state_variable
+    dimension: mass_per_area
+    requires_grad: false
+    provenance:
+      source: CENTURY model active pool
+      schema_version: 2.0.0
+      created_by: parameter_audit_2025
+      last_modified: '2025-10-07T00:00:00Z'
+  pedosphere.carbon_pools.initial_slow_som:
+    value: 1000.0
+    default: 1000.0
+    units: g C m-2
+    dtype: float32
+    bounds:
+    - 0.0
+    - 10000.0
+    category: initial_condition
+    description: Initial slow SOM carbon pool size for model spin-up and initialization
+    references:
+    - DOI:10.2136/sssaj1987.03615995005100050015x
+    tags:
+    - som
+    - slow
+    - protected
+    - initial_condition
+    - state_variable
+    dimension: mass_per_area
+    requires_grad: false
+    provenance:
+      source: CENTURY model slow pool
+      schema_version: 2.0.0
+      created_by: parameter_audit_2025
+      last_modified: '2025-10-07T00:00:00Z'
+  pedosphere.carbon_pools.initial_passive_som:
+    value: 2000.0
+    default: 2000.0
+    units: g C m-2
+    dtype: float32
+    bounds:
+    - 0.0
+    - 20000.0
+    category: initial_condition
+    description: Initial passive SOM carbon pool size for model spin-up and initialization
+    references:
+    - DOI:10.1029/1999GB001232
+    tags:
+    - som
+    - passive
+    - recalcitrant
+    - initial_condition
+    - state_variable
+    dimension: mass_per_area
+    requires_grad: false
+    provenance:
+      source: CENTURY model passive pool, validated with radiocarbon
+      schema_version: 2.0.0
+      created_by: parameter_audit_2025
+      last_modified: '2025-10-07T00:00:00Z'
+  pedosphere.carbon_pools.turnover_rate_metabolic:
+    value: 3.17e-07
+    default: 3.17e-07
+    units: s-1
+    dtype: float32
+    bounds:
+    - 1.0e-08
+    - 1.0e-05
+    category: turnover_rate
+    description: Base turnover rate for metabolic litter (corresponds to ~10 year^-1 or 36.5 day turnover time)
+    references:
+    - DOI:10.2136/sssaj1987.03615995005100050015x
+    tags:
+    - turnover
+    - metabolic
+    - decomposition_rate
+    dimension: frequency
+    requires_grad: true
+    provenance:
+      source: Converted from CENTURY yearly rate to per-second
+      schema_version: 2.0.0
+      created_by: literature_derived
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.carbon_pools.turnover_rate_structural:
+    value: 1.55e-07
+    default: 1.55e-07
+    units: s-1
+    dtype: float32
+    bounds:
+    - 1.0e-08
+    - 1.0e-06
+    category: turnover_rate
+    description: Base turnover rate for structural litter (corresponds to ~4.9 year^-1 or 74.5 day turnover time)
+    references:
+    - DOI:10.2136/sssaj1987.03615995005100050015x
+    tags:
+    - turnover
+    - structural
+    - decomposition_rate
+    dimension: frequency
+    requires_grad: true
+    provenance:
+      source: Converted from CENTURY yearly rate to per-second
+      schema_version: 2.0.0
+      created_by: literature_derived
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.carbon_pools.turnover_rate_fast_som:
+    value: 1.9e-07
+    default: 1.9e-07
+    units: s-1
+    dtype: float32
+    bounds:
+    - 1.0e-08
+    - 1.0e-06
+    category: turnover_rate
+    description: Base turnover rate for fast SOM (corresponds to ~6 year^-1 or 2 month turnover time)
+    references:
+    - DOI:10.2136/sssaj1987.03615995005100050015x
+    tags:
+    - turnover
+    - fast_som
+    - decomposition_rate
+    dimension: frequency
+    requires_grad: true
+    provenance:
+      source: Converted from CENTURY yearly rate to per-second
+      schema_version: 2.0.0
+      created_by: literature_derived
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.carbon_pools.turnover_rate_slow_som:
+    value: 6.34e-09
+    default: 6.34e-09
+    units: s-1
+    dtype: float32
+    bounds:
+    - 1.0e-10
+    - 1.0e-07
+    category: turnover_rate
+    description: Base turnover rate for slow SOM (corresponds to ~0.2 year^-1 or 5 year turnover time)
+    references:
+    - DOI:10.2136/sssaj1987.03615995005100050015x
+    tags:
+    - turnover
+    - slow_som
+    - decomposition_rate
+    dimension: frequency
+    requires_grad: true
+    provenance:
+      source: Converted from CENTURY yearly rate to per-second
+      schema_version: 2.0.0
+      created_by: literature_derived
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.carbon_pools.turnover_rate_passive_som:
+    value: 1.43e-10
+    default: 1.43e-10
+    units: s-1
+    dtype: float32
+    bounds:
+    - 1.0e-12
+    - 1.0e-08
+    category: turnover_rate
+    description: Base turnover rate for passive SOM (corresponds to ~0.0045 year^-1 or 222 year turnover time)
+    references:
+    - DOI:10.1029/1999GB001232
+    tags:
+    - turnover
+    - passive_som
+    - decomposition_rate
+    dimension: frequency
+    requires_grad: true
+    provenance:
+      source: Converted from CENTURY yearly rate, consistent with radiocarbon measurements
+      schema_version: 2.0.0
+      created_by: literature_derived
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.carbon_pools.leaf_biomass_c:
+    value: 0.2
+    default: 0.2
+    units: kg C m-2
+    dtype: float32
+    bounds:
+    - 0.0
+    - 5.0
+    category: biomass
+    description: Leaf biomass carbon reference stock managed by the biosphere carbon ledger
+    references:
+    - Ecosystem-specific measurements
+    tags:
+    - biomass
+    - leaf
+    - reference
+    dimension: mass_per_area
+    requires_grad: false
+    provenance:
+      source: Typical temperate forest value converted from 200 g C m-2
+      schema_version: 2.0.0
+      created_by: ecosystem_typical
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.carbon_pools.root_biomass_c:
+    value: 0.15
+    default: 0.15
+    units: kg C m-2
+    dtype: float32
+    bounds:
+    - 0.0
+    - 5.0
+    category: biomass
+    description: Root biomass carbon reference stock managed by the biosphere carbon ledger
+    references:
+    - Root biomass measurements
+    tags:
+    - biomass
+    - root
+    - reference
+    dimension: mass_per_area
+    requires_grad: false
+    provenance:
+      source: Typical temperate ecosystem value converted from 150 g C m-2
+      schema_version: 2.0.0
+      created_by: ecosystem_typical
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.carbon_pools.wood_biomass_c:
+    value: 0.5
+    default: 0.5
+    units: kg C m-2
+    dtype: float32
+    bounds:
+    - 0.0
+    - 50.0
+    category: biomass
+    description: Woody biomass carbon reference stock managed by the biosphere carbon ledger
+    references:
+    - Forest biomass allometry
+    tags:
+    - biomass
+    - wood
+    - reference
+    dimension: mass_per_area
+    requires_grad: false
+    provenance:
+      source: Typical young temperate forest value converted from 500 g C m-2
+      schema_version: 2.0.0
+      created_by: ecosystem_typical
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.carbon_pools.env_modifier_default:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 2.0
+    category: environmental_modifier
+    description: Default environmental modifier when not provided by atmospheric/hydrological drivers (neutral conditions)
+    references:
+    - Model coupling protocol for missing driver data
+    tags:
+    - carbon
+    - environment
+    - modifier
+    - default
+    - coupling
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Model coupling defaults - neutral environmental effect
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Audit 2025-10-05
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.carbon_pools.total_external_default:
+    value: 0.0
+    default: 0.0
+    units: g C m-2 s-1
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.001
+    category: boundary_condition
+    description: Default total external carbon input when not specified by litter fall drivers
+    references:
+    - Model initialization and boundary condition protocol
+    tags:
+    - carbon
+    - external
+    - input
+    - default
+    - boundary
+    dimension: mass_flux
+    requires_grad: false
+    provenance:
+      source: Model initialization defaults
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Audit 2025-10-05
+      last_modified: '2025-10-06T00:00:00Z'
+  pedosphere.carbon_pools.input_value_default:
+    value: 0.0
+    default: 0.0
+    units: g C m-2 s-1
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.001
+    category: boundary_condition
+    description: Default pool-specific input value when individual litter input not provided
+    references:
+    - Model initialization and boundary condition protocol
+    tags:
+    - carbon
+    - input
+    - default
+    - default
+    dimension: mass_flux
+    requires_grad: false
+    provenance:
+      source: Model initialization defaults
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Audit 2025-10-05
+      last_modified: '2025-10-06T00:00:00Z'

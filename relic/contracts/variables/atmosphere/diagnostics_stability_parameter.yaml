@@ -1,0 +1,48 @@
+variable: diagnostics.stability_parameter
+title: "Atmospheric Transport Stability Parameter"
+description: "Stability parameter that drives the atmospheric K-theory tracer closure: zeta = z / L with z = boundary_layer_height / 2 and L the Obukhov length for stability_scheme monin-obukhov (Monin and Obukhov 1954), the bulk Richardson number for richardson (Stull 1988), and 0 for constant; clamped to +/- atmosphere.turbulence.transport_stability_limit. Dimensionless and signed: negative is unstable, positive is stable. For monin-obukhov an upward sensible heat flux (H > 0) gives zeta < 0 and a downward flux zeta > 0; a heat flux with |H| below atmosphere.most.h_min_safeguard, including H = 0, is replaced by +h_min_safeguard, so H = 0 is reported as unstable (zeta < 0), and the Obukhov-length clamp atmosphere.most.monin_obukhov_length_clamp_min/max (+/- 1000 m) keeps |zeta| >= z / 1000 m (0.5 at the default z = 500 m), so the scheme never returns 0. For richardson the sign follows only the prescribed atmosphere.stability.potential_temperature_gradient (positive gradient: stable). Only the constant scheme returns 0. Distinct from diagnostics.turbulence.stability_parameter of atmospheric_turbulence. Written only by atmospheric_advection_diffusion as a read-only step diagnostic."
+kind: diagnostic
+dimension:
+  udunits: "1"
+  cf_standard_name: null
+support:
+  spatial_kind: null
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: height_level
+owner: "atmospheric_advection_diffusion"
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Monin, A.S. & Obukhov, A.M. (1954). Tr. Akad. Nauk SSSR Geofiz. Inst. 24(151), 163-187"
+  - "Businger, J.A. et al. (1971). J. Atmos. Sci. 28, 181-189"
+  - "Stull, R.B. (1988). An Introduction to Boundary Layer Meteorology, Kluwer"
+numerics:
+  # Signed quantity: no bound on either side. The clamp is the
+  # ParameterManager value transport_stability_limit, not a declared bound.
+  lower_bound: null
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "atmospheric_advection_diffusion"
+      module: "relic.scientific.atmosphere.transport.AtmosphericAdvectionDiffusionFunctor"
+      provides: ["diagnostics.stability_parameter"]
+      unit: "1"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/atmosphere/transport/AtmosphericAdvectionDiffusionFunctor.py"
+  runtime_role: "atmospheric_transport_stability_parameter_observation"
+  runtime_writer: "atmospheric_advection_diffusion"
+  sign_convention: "negative_unstable_positive_stable"
+  note: "Written at AtmosphericAdvectionDiffusionFunctor.py:802,975 from _compute_atmospheric_stability (AtmosphericAdvectionDiffusionFunctor.py:997-1130). Shape is scheme dependent (scalar for constant, the temperature/sensible_heat_flux/atmospheric_pressure/relative_humidity broadcast for monin-obukhov, the tracer grid for richardson), so no tensor shape is declared. Heat-flux safeguard and length clamp: relic/scientific/atmosphere/most/stability_parameters.py:296-306. Runtime probe (default parameters, z = 500 m, supplied T = 298.15 K, p = 101325 Pa, RH = 0.5): monin-obukhov H = 0 gives zeta = -0.5, H = +50 W m-2 gives -10 and H = -50 W m-2 gives +10 (the transport_stability_limit clamp); richardson gives +10 for any H; constant gives 0."

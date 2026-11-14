@@ -1,0 +1,67 @@
+variable: tracer_concentration
+title: "Tracer Concentration"
+kind: state
+dimension:
+  udunits: "kg m-3"
+  cf_standard_name: null
+support:
+  spatial_kind: vertical_column
+  area_basis: grid_area
+  temporal_basis: instantaneous
+  vertical_basis: height_level
+  shape:
+    dimensions:
+      - cell
+      - layer
+owner: null
+aliases: []
+incrementable: true
+accumulates: null
+numerics:
+  lower_bound: null
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments:
+    - name: "linear_advection"
+      module: "relic.scientific.transport.advection"
+      provides: ["tracer_concentration"]
+      unit: "kg m-3"
+    - name: "fickian_diffusion"
+      module: "relic.scientific.transport.diffusion"
+      provides: ["tracer_concentration"]
+      unit: "kg m-3"
+    - name: "advection_diffusion"
+      module: "relic.scientific.transport.advection_diffusion"
+      provides: ["tracer_concentration"]
+      unit: "kg m-3"
+    - name: "atmospheric_advection_diffusion"
+      module: "relic.scientific.atmosphere.transport.AtmosphericAdvectionDiffusionFunctor"
+      provides: ["tracer_concentration"]
+      unit: "kg m-3"
+  tendencies: []
+flux_contract:
+  allowed_in:
+    - "linear_advection"
+    - "fickian_diffusion"
+    - "advection_diffusion"
+    - "atmospheric_advection_diffusion"
+  allowed_out:
+    - "linear_advection"
+    - "fickian_diffusion"
+    - "advection_diffusion"
+    - "atmospheric_advection_diffusion"
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/transport/advection_diffusion.py"
+  runtime_role: "mutually_exclusive_tracer_transport_state"
+  runtime_writers:
+    - "linear_advection"
+    - "fickian_diffusion"
+    - "advection_diffusion"
+    - "atmospheric_advection_diffusion"

@@ -1,0 +1,16 @@
+from pathlib import Path
+
+import torch
+
+from relic.extensions.loader import load_single_extension
+
+
+def {{TEST_NAME}}():
+    extension_root = Path(__file__).resolve().parent
+    loaded = load_single_extension(extension_root, validate=False, strict=False)
+    assert loaded
+
+    functor = next(iter(loaded.values()))
+    outputs = functor.forward({"driver_field": torch.tensor(3.0)}, time=0.0, dt=1.0)
+    assert "{{OUTPUT_VARIABLE}}" in outputs
+

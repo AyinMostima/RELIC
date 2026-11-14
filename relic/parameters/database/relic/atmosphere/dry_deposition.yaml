@@ -1,0 +1,192 @@
+schema_version: 2.0.0
+tier: relic
+namespace: atmosphere.dry_deposition
+description: Dry deposition configuration and species properties for Wesely/Zhang parameterizations
+metadata:
+  created_by: RELIC Parameter System
+  last_modified: '2026-01-07T14:20:26Z'
+  schema_url: https://github.com/relic/parameter-schema/v2.0.0
+  version: 1.0.0
+parameters:
+  atmosphere.dry_deposition.enabled:
+    value: true
+    default: true
+    units: dimensionless
+    dtype: bool
+    category: configuration_flag
+    description: Enable dry deposition aggregator
+    references:
+    - Wesely (1989)
+    tags:
+    - dry_deposition
+    - switch
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-11-27T00:00:00Z'
+    bounds:
+    - 0.0
+    - 100
+  atmosphere.dry_deposition.reference_height:
+    value: 10.0
+    default: 10.0
+    units: m
+    dtype: float32
+    bounds:
+    - 1.0
+    - 100.0
+    category: operational_parameter
+    description: Reference height for deposition velocity normalization
+    references:
+    - Wesely (1989)
+    tags:
+    - dry_deposition
+    - reference_height
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-11-27T00:00:00Z'
+  atmosphere.dry_deposition.structural_reference_deposition_velocity:
+    value: 0.01
+    default: 0.01
+    units: m s-1
+    dtype: float32
+    bounds:
+    - 1.0e-6
+    - 1.0
+    category: structural_parameter
+    description: Positive reference velocity used only by the non-strict Phase 8 Hodge declaration; runtime velocity is state-dependent.
+    references:
+    - Wesely (1989)
+    - Zhang et al. (2003)
+    tags:
+    - dry_deposition
+    - phase8_structure
+    dimension: velocity
+    requires_grad: false
+    provenance:
+      source: literature_structural_reference
+      schema_version: 2.0.0
+      created_by: atmosphere_audit_v5
+      last_modified: '2026-07-13T00:00:00Z'
+  atmosphere.dry_deposition.species_list:
+    value:
+    - 'no'
+    - no2
+    - o3
+    - so2
+    default: null
+    units: dimensionless
+    dtype: list
+    category: configuration_flag
+    description: Ordered inorganic species handled by the canonical resistance closure
+    references:
+    - Wesely (1989)
+    - Zhang et al. (2003)
+    tags:
+    - species
+    - dry_deposition
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: configuration
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-07-13T00:00:00Z'
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+  atmosphere.dry_deposition.species.no.effective_non_aerodynamic_resistance:
+    value: 500.0
+    default: 500.0
+    units: s m-1
+    dtype: float32
+    category: species_property
+    description: Effective NO resistance r_b plus r_c for the canonical series-resistance closure
+    references:
+    - Wesely (1989)
+    tags:
+    - 'no'
+    - r_eff
+    dimension: resistance
+    requires_grad: false
+    provenance:
+      source: literature_parameterization
+      schema_version: 2.0.0
+      created_by: relic_iphs_dry_deposition_closure
+      last_modified: '2026-07-13T00:00:00Z'
+    bounds:
+    - 1.0e-6
+    - 50000.0
+  atmosphere.dry_deposition.species.no2.effective_non_aerodynamic_resistance:
+    value: 200.0
+    default: 200.0
+    units: s m-1
+    dtype: float32
+    category: species_property
+    description: Effective NO2 resistance r_b plus r_c for the canonical series-resistance closure
+    references:
+    - Wesely (1989)
+    tags:
+    - no2
+    - r_eff
+    dimension: resistance
+    requires_grad: false
+    provenance:
+      source: literature_parameterization
+      schema_version: 2.0.0
+      created_by: relic_iphs_dry_deposition_closure
+      last_modified: '2026-07-13T00:00:00Z'
+    bounds:
+    - 1.0e-6
+    - 20000.0
+  atmosphere.dry_deposition.species.o3.effective_non_aerodynamic_resistance:
+    value: 150.0
+    default: 150.0
+    units: s m-1
+    dtype: float32
+    category: species_property
+    description: Effective O3 resistance r_b plus r_c for the canonical series-resistance closure
+    references:
+    - Wesely (1989)
+    tags:
+    - o3
+    - r_eff
+    dimension: resistance
+    requires_grad: false
+    provenance:
+      source: literature_parameterization
+      schema_version: 2.0.0
+      created_by: relic_iphs_dry_deposition_closure
+      last_modified: '2026-07-13T00:00:00Z'
+    bounds:
+    - 1.0e-6
+    - 15000.0
+  atmosphere.dry_deposition.species.so2.effective_non_aerodynamic_resistance:
+    value: 100.0
+    default: 100.0
+    units: s m-1
+    dtype: float32
+    category: species_property
+    description: Effective SO2 resistance r_b plus r_c for the canonical series-resistance closure
+    references:
+    - Wesely (1989)
+    tags:
+    - so2
+    - r_eff
+    dimension: resistance
+    requires_grad: false
+    provenance:
+      source: literature_parameterization
+      schema_version: 2.0.0
+      created_by: relic_iphs_dry_deposition_closure
+      last_modified: '2026-07-13T00:00:00Z'
+    bounds:
+    - 1.0e-6
+    - 10000.0

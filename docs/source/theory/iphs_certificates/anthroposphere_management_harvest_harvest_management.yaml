@@ -1,0 +1,225 @@
+certificate_version: '1.0'
+process_id: relic.scientific.anthroposphere.management.harvest.HarvestManagement
+module_name: harvest_management
+canonical_role: port
+iphs_level: 3
+iphs_level_evidence:
+  classification: IPHS-structured port process certificate
+  compatible_basis: Process declares composition-safe IPHS or DEC structure
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: G_h u_h port route with explicit boundary or external exchange
+  structural_contribution: Port flow, orientation, and managed boundary route are declared
+  assembly_participation: Certificate participates in Phase 8 inventory and GraphIR structural audit
+  level_3_limit: Typed form, Hodge, port, or related structure is declared, but no runtime-linked IPHSStructureSpec contribution and executable level 4 or 5 certificate binding is present.
+theory_document: docs\source\theory\anthroposphere_management_harvest.md
+theory_document_status: updated
+legacy_formula: Harvest biomass removal, residue return, and root turnover were previously computed as independent harvest-index and residue-retention formulas.
+literature_formula: Harvested biomass follows harvest-index partitioning, while crop residues and root turnover return carbon and nitrogen to managed soil pools.
+iphs_formula: The current Level 3 implementation is a typed open-port partition map. The quadratic quantity Q_h=0.5*x_h.T*H_h*x_h is diagnostic only; no dissipative pH or GENERIC state equation is claimed.
+legacy_expression: H_biomass = B_total * HI * efficiency; R_C = (B_total - H_biomass) * C_fraction * R_return.
+iphs_expression: Harvest-index, residue-retention, and root-turnover closures are control coefficients inside the single IPHS harvest biomass-residue port state advancer.
+input_variables:
+- aboveground_biomass
+- belowground_biomass
+- residue_cover
+- day_of_year
+output_variables:
+- harvest_flux
+- harvest_biomass_carbon_input
+- harvest_carbon_export_flux
+- residue_c_flux
+- harvest_biomass_nitrogen_input
+- harvest_nitrogen_export_flux
+- residue_n_flux
+- delta_residue_cover
+- diagnostics.harvest.events_today
+- diagnostics.harvest.biomass_partition_residual
+- diagnostics.harvest.carbon_ledger_residual
+- diagnostics.harvest.nitrogen_ledger_residual
+- diagnostics.harvest_management.free_energy
+- diagnostics.harvest_management.chemical_potential_norm
+- diagnostics.harvest_management.canonical_iphs_runtime
+parameter_keys:
+- anthroposphere.management.harvest.harvest_efficiency
+- anthroposphere.management.harvest.default_harvest_index
+- anthroposphere.management.harvest.schedule_window_days
+- anthroposphere.management.harvest.minimum_event_interval_days
+- anthroposphere.management.harvest.default_schedule.*
+- anthroposphere.management.harvest.residue_retention
+- anthroposphere.management.harvest.residue_removal_rate
+- anthroposphere.management.harvest.root_mortality_rate
+- anthroposphere.management.harvest.*_c_content
+- anthroposphere.management.harvest.*_cn_ratio
+- validation.conservation.conservation_tolerance
+composition_ports:
+- harvest_biomass_residue_port
+references:
+- 'Prince, S.D. et al. (2001). Global primary production: A remote sensing approach.'
+- Johnson, J.M.F. et al. (2006). Agricultural opportunities to mitigate greenhouse gas emissions.
+- Lal, R. (2005). World crop residues production and implications of its use as a biofuel.
+- Blanco-Canqui, H. and Lal, R. (2009). Crop residue removal impacts on soil productivity and environmental quality.
+- Grmela, M. and Ottinger, H.C. (1997). Dynamics and thermodynamics of complex fluids.
+- van der Schaft, A. and Maschke, B. (1995). Port-Hamiltonian systems.
+baseline_tests:
+- test\anthroposphere\management\test_harvest_l1.py
+- test\anthroposphere\management\harvest_phase8.test.py
+validation_tests:
+- test\anthroposphere\management\test_harvest_l1.py
+- test\anthroposphere\management\harvest_phase8.test.py
+- test\audit\dependency_contract_management_functors.test.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  harvest_biomass_pool: aboveground and belowground biomass cochains [kg DM m^-2]
+  harvest_residue_flux: grain export, residue return, root turnover, and residue cover response [kg m^-2 s^-1]
+  harvest_management_port: dimensionless harvest control effort
+  diagnostics.harvest_management.free_energy: G_h(x) potential audit
+  diagnostics.harvest_management.chemical_potential_norm: norm of mu_h effort
+  diagnostics.harvest_management.canonical_iphs_runtime: canonical IPHS runtime flag [1]
+parameter_map:
+  anthroposphere.management.harvest.harvest_efficiency: Mechanical harvest efficiency [dimensionless]
+  anthroposphere.management.harvest.default_harvest_index: Harvest index weight of the harvest partition Hodge contract [dimensionless]
+  anthroposphere.management.harvest.schedule_window_days: Half-width of the calendar window around a scheduled harvest day [day]
+  anthroposphere.management.harvest.minimum_event_interval_days: Minimum elapsed time after an accepted harvest before the next one [day]
+  anthroposphere.management.harvest.default_schedule.*: Date [day], harvest index [dimensionless] and residue retention [dimensionless] of the default cereal harvest and forage cuts [units per key]
+  anthroposphere.management.harvest.residue_retention: Fraction of residue left on field [dimensionless]
+  anthroposphere.management.harvest.residue_removal_rate: Fraction of residue removed during harvest operations [dimensionless]
+  anthroposphere.management.harvest.root_mortality_rate: Root mortality fraction triggered by harvest disturbance [dimensionless]
+  anthroposphere.management.harvest.*_c_content: Carbon content of the harvested dry matter per crop type [kg C kg-1 DM]
+  anthroposphere.management.harvest.*_cn_ratio: C:N ratio of the harvested material per crop type [kg C kg-1 N]
+  validation.conservation.conservation_tolerance: General relative tolerance of the conservation checks [dimensionless]
+operator_map:
+  H_harvest: positive semidefinite diagnostic metric assembled by build_hodge_contract; it is not a GENERIC mobility or a dissipative pH resistance operator
+  M_h: empirical non-negative partition weights M_h(u_h,theta); the symbol does not denote the GENERIC entropy-production operator
+  G_h: open harvest_biomass_residue_port control and export map
+  O_h: quadratic-potential, effort-norm, ledger-residual, and runtime diagnostics
+state_advancement_map:
+  potential_basis: Q_h(x_h)=0.5*x_h.T*H_harvest*x_h is a diagnostic quadratic quantity, not a Hamiltonian or thermodynamic potential claim
+  effort_variable: q_h=dQ_h/dx_h=H_harvest*x_h is a diagnostic gradient, not a dPH or GENERIC conjugate effort claim
+  state_advancer: the Level 3 typed open-port map partitions biomass into managed export and residue-return outputs; it is not asserted to equal (J-R)e_H or J e_E+M e_S
+  runtime_usage: forward evaluates _canonical_iphs_harvest_partition for each scheduled event and _storage_potential for the potential audit; Level 4 or Level 5 thermodynamic closure is not claimed.
+unit_map:
+  harvest_flux: kg DM m-2 s-1
+  harvest_biomass_carbon_input: kg C m-2 s-1
+  harvest_carbon_export_flux: kg C m-2 s-1
+  residue_c_flux: kg C m-2 s-1
+  harvest_biomass_nitrogen_input: kg N m-2 s-1
+  harvest_nitrogen_export_flux: kg N m-2 s-1
+  residue_n_flux: kg N m-2 s-1
+  delta_residue_cover: s-1
+  diagnostics.harvest.events_today: '1'
+  diagnostics.harvest.biomass_partition_residual: kg DM m-2
+  diagnostics.harvest.carbon_ledger_residual: kg C m-2 s-1
+  diagnostics.harvest.nitrogen_ledger_residual: kg N m-2 s-1
+  diagnostics.harvest_management.free_energy: kg2 m-4
+  diagnostics.harvest_management.chemical_potential_norm: kg m-2
+  diagnostics.harvest_management.canonical_iphs_runtime: '1'
+input_output_map:
+  biomass_to_potential: aboveground and belowground biomass form x_h and mu_h
+  control_to_mobility: the scheduled event harvest index, quality factor and residue retention, the harvest efficiency and the root mortality fraction define M_h(u_h,theta); no event-less partition is evaluated
+  state_advancer_to_outputs: state_advancer components map to grain_yield_rate, residue_generation_rate, biomass_removal_rate, root_mortality_flux, and residue diagnostics
+  diagnostics: free-energy, chemical-potential, mass-balance, and runtime diagnostics return through existing Functor output path
+interface_map:
+  forward_signature: forward(self, state, time, dt, **kwargs)
+  bridge_class: BiologicalProcessFunctor
+  abstraction_contract: BiologicalProcess
+  state_write_mode: outputs are returned through existing FunctorBase/StateManager path
+  legacy_inputs:
+  - aboveground_biomass
+  - belowground_biomass
+  - residue_cover
+  - day_of_year
+  iphs_inputs:
+  - aboveground_biomass
+  - belowground_biomass
+  - residue_cover
+  - day_of_year
+  legacy_outputs:
+  - harvest_flux
+  - harvest_biomass_carbon_input
+  - harvest_carbon_export_flux
+  - residue_c_flux
+  - harvest_biomass_nitrogen_input
+  - harvest_nitrogen_export_flux
+  - residue_n_flux
+  - delta_residue_cover
+  - diagnostics.harvest.events_today
+  - diagnostics.harvest.biomass_partition_residual
+  - diagnostics.harvest.carbon_ledger_residual
+  - diagnostics.harvest.nitrogen_ledger_residual
+  - diagnostics.harvest_management.free_energy
+  - diagnostics.harvest_management.chemical_potential_norm
+  - diagnostics.harvest_management.canonical_iphs_runtime
+  iphs_outputs:
+  - harvest_flux
+  - harvest_biomass_carbon_input
+  - harvest_carbon_export_flux
+  - residue_c_flux
+  - harvest_biomass_nitrogen_input
+  - harvest_nitrogen_export_flux
+  - residue_n_flux
+  - delta_residue_cover
+  - diagnostics.harvest.events_today
+  - diagnostics.harvest.biomass_partition_residual
+  - diagnostics.harvest.carbon_ledger_residual
+  - diagnostics.harvest.nitrogen_ledger_residual
+  - diagnostics.harvest_management.free_energy
+  - diagnostics.harvest_management.chemical_potential_norm
+  - diagnostics.harvest_management.canonical_iphs_runtime
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: Harvest-index and residue-retention closures are control coefficients inside _canonical_iphs_harvest_partition.
+  no_legacy_mode: No selectable legacy branch, alternate harvest law, or independent compute-rate law remains callable.
+parameter_management_map:
+  anthroposphere.management.harvest.harvest_efficiency:
+    source: ParameterManager YAML
+  anthroposphere.management.harvest.default_harvest_index:
+    source: ParameterManager YAML
+  anthroposphere.management.harvest.schedule_window_days:
+    source: ParameterManager YAML
+  anthroposphere.management.harvest.minimum_event_interval_days:
+    source: ParameterManager YAML
+  anthroposphere.management.harvest.default_schedule.*:
+    source: ParameterManager YAML
+  anthroposphere.management.harvest.residue_retention:
+    source: ParameterManager YAML
+  anthroposphere.management.harvest.residue_removal_rate:
+    source: ParameterManager YAML
+  anthroposphere.management.harvest.root_mortality_rate:
+    source: ParameterManager YAML
+  anthroposphere.management.harvest.*_c_content:
+    source: ParameterManager YAML
+  anthroposphere.management.harvest.*_cn_ratio:
+    source: ParameterManager YAML
+  validation.conservation.conservation_tolerance:
+    source: ParameterManager YAML
+  relic.physical.constants.time.seconds_per_day:
+    source: physical constants SSOT via get_physical_constant
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares biological process category and biosphere/pedosphere coupling
+  structural_protocol: declared_forms, build_hodge_contract, build_hodge_terms, energy_terms, reversible_structure, dissipative_structure, ports
+  ports:
+  - harvest_biomass_residue_port
+dependency_interconnection_map:
+  dependencies: required and optional Functor dependency lists are empty; biomass, crop stage, grain moisture, residue cover, harvest schedule, and event controls are StateManager or external ports rather than scheduling edges
+  direct_functor_calls: none; biomass, crop stage, moisture, residue, and schedule are state or boundary inputs and forward calls only local harvest helpers
+  chain_maps:
+  - aboveground biomass enters x_h and mu_h
+  - harvest controls enter M_h(u_h,theta)
+  - residue and root outputs leave through declared matter fluxes
+overflow_routing_map:
+  biomass_limit: control vector is clipped to [0,1] and biomass partition residual is reported by diagnostics.harvest.biomass_partition_residual
+  event_overflow: scheduled events route export through harvest_biomass_residue_port
+  conservation_residual: carbon and nitrogen open-ledger residuals are reported separately by diagnostics.harvest.carbon_ledger_residual and diagnostics.harvest.nitrogen_ledger_residual
+  discarded_residuals: bounded controls feed the one canonical partition, material leaves through export, residue, and root ports, and biomass_partition_residual, carbon_ledger_residual, and nitrogen_ledger_residual are explicit outputs
+conservation_map:
+  conserved_quantity: managed dry matter with explicit carbon and nitrogen input/export/return ledgers
+  balance_expression: B_above = B_removed + B_remaining + residual; C_input = C_export + C_residue + residual_C; N_input = N_export + N_residue + residual_N
+  local_check: _check_conservation evaluates the biomass partition; carbon_ledger_residual and nitrogen_ledger_residual evaluate the two open matter ledgers
+  port_balance: harvest_biomass_residue_port declares open managed export and residue return; no closed-system C*N=0 proof is claimed
+entropy_audit:
+  diagnostic_metric: H_harvest is diagonal positive semidefinite for non-negative ParameterManager weights
+  strict_entropy_claim: none at Level 3; Q_h and q_h are diagnostic and do not prove dH/dt<=0 or dS/dt>=0
+  validation_hook: build_hodge_contract(strict=True) validates only the typed metric contract
+equivalence_type: port_equivalent

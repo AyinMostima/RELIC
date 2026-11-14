@@ -1,0 +1,44 @@
+variable: snow_surface_temperature
+title: "Snow Surface Temperature"
+description: "Snow skin (surface) temperature in K. In BATS it is the ground temperature T_g of the surface energy balance, a prognostic state advanced each step by the linearized energy-balance increment (Noah-MP technical description Eq. 4-16 to 4-21); it drives the BATS grain-growth and aging factor of snow_albedo (bats scheme) and is required by SnowAlbedo for both schemes. No relic Functor prognoses it: the state holds the value supplied by the caller. Absolute temperature, non-negative; the bats scheme clamps it to its parameter range before use. No CF name: CF v94 temperature_in_surface_snow is the bulk snow temperature and explicitly not the skin temperature."
+kind: state
+dimension:
+  udunits: "K"
+  cf_standard_name: null
+support:
+  spatial_kind: grid_cell
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Dickinson, R.E. et al. (1993). Biosphere-Atmosphere Transfer Scheme (BATS) Version 1e. NCAR Technical Note NCAR/TN-387+STR"
+  - "Yang, Z.-L. et al. (2011). The Community Noah Land Surface Model with Multi-Parameterization Options (Noah-MP): Technical Description. University of Texas at Austin, Section 3.2 (snow age) and Eq. 4-16 to 4-21 (ground temperature update)"
+  - "CF Standard Name Table v94: temperature_in_surface_snow is the bulk, not the skin, snow temperature"
+numerics:
+  # Absolute temperature >= 0 K; the bats aging factor clamps it to hydrosphere.snow temperature bounds.
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies: []
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/hydrosphere/snow/albedo.py"
+  runtime_role: "snow_skin_temperature_state"
+  runtime_writer: null
+  note: "Reader: SnowAlbedo (metadata input_variables; forward raises ValueError naming missing inputs, no state default; used by the bats aging factor, clamped to the hydrosphere.snow temperature bounds [K]). No RELIC Functor writes snow_surface_temperature; it is a state variable without a RELIC prognostic writer."

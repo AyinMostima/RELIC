@@ -1,0 +1,327 @@
+schema_version: 2.0.0
+tier: relic
+namespace: stochastic.weather
+description: Stochastic weather generation parameters for temperature and precipitation processes
+metadata:
+  created_by: RELIC Parameter System
+  last_modified: '2026-01-07T14:20:26Z'
+  schema_url: https://github.com/relic/parameter-schema/v2.0.0
+  version: 1.0.0
+parameters:
+  stochastic.weather.temperature.mean_temp:
+    value: 288.15
+    default: 288.15
+    units: K
+    dtype: float32
+    bounds:
+    - 250.0
+    - 320.0
+    category: meteorological_parameter
+    description: Long-term mean temperature for OU process (15degC)
+    references:
+    - Regional climate data standards
+    tags:
+    - weather
+    - temperature
+    - ou_process
+    dimension: temperature
+    requires_grad: true
+    provenance:
+      source: climate_data
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-16T00:00:00Z'
+  stochastic.weather.temperature.reversion_rate:
+    value: 0.1
+    default: 0.1
+    units: day-1
+    dtype: float32
+    bounds:
+    - 0.01
+    - 1.0
+    category: process_parameter
+    description: Mean reversion rate alpha for OU temperature process
+    references:
+    - Hasselmann (1976). Tellus, 28, 473-485.
+    tags:
+    - weather
+    - temperature
+    - stochastic
+    dimension: frequency
+    requires_grad: true
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-16T00:00:00Z'
+  stochastic.weather.temperature.volatility:
+    value: 2.0
+    default: 2.0
+    units: K day-0.5
+    dtype: float32
+    bounds:
+    - 0.1
+    - 10.0
+    category: volatility_parameter
+    description: Volatility sigma for OU temperature process
+    references:
+    - Hasselmann (1976). Tellus, 28, 473-485.
+    tags:
+    - weather
+    - temperature
+    - stochastic
+    dimension: temperature_volatility
+    requires_grad: true
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-16T00:00:00Z'
+  stochastic.weather.precipitation.p_wet_wet:
+    value: 0.7
+    default: 0.7
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: probability_parameter
+    description: Markov transition probability P(wet|wet)
+    references:
+    - Wilks (2006). Statistical Methods in Atmospheric Sciences.
+    tags:
+    - weather
+    - precipitation
+    - markov
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-16T00:00:00Z'
+  stochastic.weather.precipitation.p_wet_dry:
+    value: 0.2
+    default: 0.2
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: probability_parameter
+    description: Markov transition probability P(wet|dry)
+    references:
+    - Wilks (2006). Statistical Methods in Atmospheric Sciences.
+    tags:
+    - weather
+    - precipitation
+    - markov
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-16T00:00:00Z'
+  stochastic.weather.precipitation.gamma_shape:
+    value: 2.0
+    default: 2.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 10.0
+    category: distribution_parameter
+    description: Gamma distribution shape parameter k for precipitation intensity
+    references:
+    - Katz (1996). Clim. Change, 32, 237-255.
+    tags:
+    - weather
+    - precipitation
+    - gamma
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-16T00:00:00Z'
+  stochastic.weather.precipitation.gamma_scale:
+    value: 5.0
+    default: 5.0
+    units: mm day-1
+    dtype: float32
+    bounds:
+    - 0.1
+    - 50.0
+    category: distribution_parameter
+    description: Gamma distribution scale parameter theta for precipitation intensity
+    references:
+    - Katz (1996). Clim. Change, 32, 237-255.
+    tags:
+    - weather
+    - precipitation
+    - gamma
+    dimension: velocity
+    requires_grad: true
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-10-16T00:00:00Z'
+  stochastic.weather.rainfall.event_rate:
+    value: 0.3
+    default: 0.3
+    units: day-1
+    dtype: float64
+    bounds:
+    - 0.01
+    - 5.0
+    category: process_parameter
+    description: Poisson arrival rate lambda of rainfall events for the marked-Poisson rainfall process
+    references:
+    - Rodriguez-Iturbe, I., Porporato, A., Ridolfi, L., Isham, V. & Cox, D.R. (1999). Proc. R. Soc. A, 455, 3789-3805.
+    - Laio, F., Porporato, A., Ridolfi, L. & Rodriguez-Iturbe, I. (2001). Adv. Water Resour., 24, 707-723.
+    tags:
+    - weather
+    - rainfall
+    - stochastic
+    - marked_jump
+    dimension: frequency
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-13T00:00:00Z'
+  stochastic.weather.rainfall.mean_depth:
+    value: 15.0
+    default: 15.0
+    units: mm
+    dtype: float64
+    bounds:
+    - 0.1
+    - 200.0
+    category: distribution_parameter
+    description: Mean alpha of the exponential rainfall depth mark per event for the marked-Poisson rainfall process
+    references:
+    - Rodriguez-Iturbe, I., Porporato, A., Ridolfi, L., Isham, V. & Cox, D.R. (1999). Proc. R. Soc. A, 455, 3789-3805.
+    - Laio, F., Porporato, A., Ridolfi, L. & Rodriguez-Iturbe, I. (2001). Adv. Water Resour., 24, 707-723.
+    tags:
+    - weather
+    - rainfall
+    - stochastic
+    - marked_jump
+    dimension: length
+    requires_grad: true
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-13T00:00:00Z'
+  stochastic.weather.temperature.dt:
+    value: 1.0
+    default: 1.0
+    units: day
+    dtype: float32
+    bounds:
+    - 0.001
+    - 1.0
+    category: numerical_parameter
+    description: Time step of the Ornstein-Uhlenbeck temperature recursion of relic.stochastic.weather_generator
+      (exact discretization). The coupled WeatherGenerator advances temperature and the daily Markov-Gamma
+      precipitation chain on the same step index and therefore requires one day.
+    references:
+    - Gardiner, C. (2009). Stochastic Methods, 4th ed., Springer (exact Ornstein-Uhlenbeck transition).
+    - Richardson, C.W. (1981). Stochastic simulation of daily precipitation, temperature, and solar radiation.
+      Water Resour. Res., 17, 182-190 (daily generation step).
+    tags:
+    - weather
+    - temperature
+    - ou_process
+    dimension: time
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-26T00:00:00Z'
+  stochastic.weather.temperature.wet_day_temperature_offset:
+    value: 0.0
+    default: 0.0
+    units: K
+    dtype: float32
+    bounds:
+    - -15.0
+    - 15.0
+    category: meteorological_parameter
+    description: Additive temperature offset on wet days of the coupled WeatherGenerator, T = T_OU + offset * S
+      with S the wet/dry state; mean_temp is then the dry-day mean. Conditioning the daily temperature on the
+      precipitation state follows WGEN (Richardson 1981), which uses separate wet-day and dry-day means. The
+      value 0 declares no conditioning (the site-specific wet-dry difference must be calibrated).
+    references:
+    - Richardson, C.W. (1981). Stochastic simulation of daily precipitation, temperature, and solar radiation.
+      Water Resour. Res., 17, 182-190.
+    - Richardson, C.W. & Wright, D.A. (1984). WGEN: A model for generating daily weather variables. USDA ARS-8.
+    tags:
+    - weather
+    - temperature
+    - precipitation_conditioning
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-26T00:00:00Z'
+  stochastic.weather.precipitation.initial_state:
+    value: false
+    default: false
+    units: dimensionless
+    dtype: bool
+    bounds:
+    - 0
+    - 1
+    category: model_parameter
+    description: Wet/dry state of the Markov-Gamma precipitation chain before the first generated day (false =
+      dry, true = wet).
+    references:
+    - Wilks, D.S. (2011). Statistical Methods in the Atmospheric Sciences, 3rd ed., Sect. 9.2.
+    tags:
+    - weather
+    - precipitation
+    - markov
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-26T00:00:00Z'
+  stochastic.weather.precipitation.wet_day_threshold:
+    value: 1.0e-08
+    default: 1.0e-08
+    units: kg m-2 s-1
+    dtype: float64
+    bounds:
+    - 0.0
+    - 0.0001
+    category: numerical_parameter
+    description: Precipitation flux above which an observation counts as a wet day in the Markov-Gamma
+      log-probability (about 0.00086 mm day-1). It separates the generator's exact dry-day zeros from Gamma
+      amounts; it is a numerical trace threshold, not a climatological wet-day definition (WGEN uses
+      0.25 mm day-1 for station records), which must be set for observed series.
+    references:
+    - Richardson, C.W. & Wright, D.A. (1984). WGEN: A model for generating daily weather variables. USDA ARS-8.
+    - Wilks, D.S. (2011). Statistical Methods in the Atmospheric Sciences, 3rd ed., Sect. 9.2.
+    tags:
+    - weather
+    - precipitation
+    - threshold
+    dimension: mass_flux
+    requires_grad: false
+    provenance:
+      source: relic_numerical_choice
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2026-09-26T00:00:00Z'

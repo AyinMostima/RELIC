@@ -1,0 +1,781 @@
+schema_version: 2.0.0
+tier: relic
+namespace: hydrosphere.runoff
+description: Surface and subsurface runoff model parameters for hydrological processes
+metadata:
+  created_by: RELIC Parameter System
+  last_modified: '2026-01-07T14:20:26Z'
+  schema_url: https://github.com/relic/parameter-schema/v2.0.0
+  version: 1.0.0
+parameters:
+  hydrosphere.runoff.curve_number:
+    value: 70.0
+    default: 70.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 30.0
+    - 100.0
+    category: model_parameter
+    description: SCS Curve Number for runoff generation (forest land use, moderate infiltration)
+    references:
+    - SCS (1972) National Engineering Handbook Section 4
+    - Mockus (1972) SCS Technical Release 55
+    tags:
+    - scs_method
+    - land_use_dependent
+    - calibratable
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: scs_tables
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-08-25T00:00:00Z'
+  hydrosphere.runoff.initial_abstraction_ratio:
+    value: 0.2
+    default: 0.2
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.05
+    - 0.3
+    category: model_parameter
+    description: Initial abstraction ratio (Ia/S) in SCS method
+    references:
+    - SCS (1972) National Engineering Handbook Section 4
+    - Hawkins et al. (2009) J. Hydrol. Eng. 14:226-235
+    tags:
+    - scs_method
+    - initial_losses
+    - calibratable
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: scs_standard
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-08-25T00:00:00Z'
+  hydrosphere.runoff.scs_storage_minimum:
+    value: 0.1
+    default: 0.1
+    units: mm
+    dtype: float32
+    bounds:
+    - 0.0
+    - 10.0
+    category: numerical_parameter
+    description: Minimum SCS storage parameter S to avoid division issues
+    references:
+    - SCS (1972) National Engineering Handbook Section 4
+    tags:
+    - scs_method
+    - numerical_stability
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: numerical_implementation
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-27T00:00:00Z'
+  hydrosphere.runoff.moisture_adjustment_factor:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: model_parameter
+    description: Moisture adjustment coefficient for SCS retention scaling
+    references:
+    - SCS (1972) National Engineering Handbook Section 4
+    tags:
+    - scs_method
+    - soil_moisture
+    - adjustment_factor
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: hydrological_modeling
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-27T00:00:00Z'
+  hydrosphere.runoff.infiltration_moisture_reduction_factor:
+    value: 0.7
+    default: 0.7
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: model_parameter
+    description: Soil moisture reduction coefficient for infiltration capacity
+    references:
+    - Horton (1933) infiltration excess runoff
+    tags:
+    - horton_method
+    - soil_moisture
+    - adjustment_factor
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: hydrological_modeling
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-27T00:00:00Z'
+  hydrosphere.runoff.transmissivity:
+    value: 0.1
+    default: 0.1
+    units: m2 s-1
+    dtype: float32
+    bounds:
+    - 0.001
+    - 10.0
+    category: model_parameter
+    description: Soil transmissivity for lateral subsurface flow
+    references:
+    - Beven & Kirkby (1979) Hydrol. Sci. Bull. 24:43-69
+    - O'Loughlin (1986) Water Resour. Res. 22:794-804
+    tags:
+    - topmodel
+    - subsurface_flow
+    - calibratable
+    dimension: diffusivity
+    requires_grad: true
+    provenance:
+      source: calibration_studies
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-08-25T00:00:00Z'
+  hydrosphere.runoff.baseflow_recession_constant:
+    value: 0.01
+    default: 0.01
+    units: s-1
+    dtype: float32
+    bounds:
+    - 0.001
+    - 0.1
+    category: model_parameter
+    description: Baseflow recession constant for groundwater discharge
+    references:
+    - Brutsaert & Nieber (1977) Water Resour. Res. 13:637-644
+    - Tallaksen (1995) J. Hydrol. 165:349-370
+    tags:
+    - baseflow
+    - recession_analysis
+    - calibratable
+    dimension: frequency
+    requires_grad: true
+    provenance:
+      source: hydrograph_analysis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-08-25T00:00:00Z'
+  hydrosphere.runoff.topographic_index_mean:
+    value: 8.0
+    default: 8.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 2.0
+    - 20.0
+    category: environmental_variable
+    description: Mean topographic index ln(a/tan(beta)) for the watershed, with the upslope contributing area per unit contour length a in metres, so exp(-lambda) carries m-1 and T0*exp(-lambda) is the TOPMODEL baseflow scale Q0 [m s-1]
+    references:
+    - Beven & Kirkby (1979) Hydrol. Sci. Bull. 24:43-69
+    - Quinn et al. (1991) Hydrol. Process. 5:3-19
+    tags:
+    - topmodel
+    - topographic_index
+    - watershed_property
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: dem_analysis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-08-25T00:00:00Z'
+  hydrosphere.runoff.topmodel_max_deficit:
+    value: 200.0
+    default: 200.0
+    units: mm
+    dtype: float32
+    bounds:
+    - 10.0
+    - 1000.0
+    category: model_parameter
+    description: Maximum storage deficit used in simplified TOPMODEL baseflow
+    references:
+    - Beven & Kirkby (1979) Hydrol. Sci. Bull. 24:43-69
+    - Sivapalan et al. (1987) Water Resour. Res. 23:1061-1077
+    tags:
+    - topmodel
+    - storage_deficit
+    - calibratable
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: topmodel_parameterization
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-21T00:00:00Z'
+  hydrosphere.runoff.topmodel_m_scaling_factor:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.01
+    - 1.0
+    category: model_parameter
+    description: Scaling factor mapping max storage deficit to TOPMODEL m parameter
+    references:
+    - Beven & Kirkby (1979) Hydrol. Sci. Bull. 24:43-69
+    - Sivapalan et al. (1987) Water Resour. Res. 23:1061-1077
+    tags:
+    - topmodel
+    - transmissivity_decay
+    - calibratable
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: topmodel_parameterization
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-21T00:00:00Z'
+  hydrosphere.runoff.topmodel_moisture_reference:
+    value: 0.4
+    default: 0.4
+    units: m3 m-3
+    dtype: float32
+    bounds:
+    - 0.05
+    - 1.0
+    category: model_parameter
+    description: Reference soil moisture for TOPMODEL moisture scaling
+    references:
+    - Beven & Kirkby (1979) Hydrol. Sci. Bull. 24:43-69
+    tags:
+    - topmodel
+    - soil_moisture
+    - scaling_reference
+    dimension: volume_fraction
+    requires_grad: false
+    provenance:
+      source: hydrological_parameterization
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-27T00:00:00Z'
+  hydrosphere.runoff.topmodel_moisture_factor_min:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: numerical_parameter
+    description: Minimum moisture scaling factor for TOPMODEL baseflow
+    references:
+    - Numerical stability constraint for TOPMODEL moisture scaling
+    tags:
+    - topmodel
+    - numerical_stability
+    - scaling_factor
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_implementation
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-27T00:00:00Z'
+  hydrosphere.runoff.topmodel_moisture_factor_max:
+    value: 2.0
+    default: 2.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 5.0
+    category: numerical_parameter
+    description: Maximum moisture scaling factor for TOPMODEL baseflow
+    references:
+    - Numerical stability constraint for TOPMODEL moisture scaling
+    tags:
+    - topmodel
+    - numerical_stability
+    - scaling_factor
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_implementation
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-27T00:00:00Z'
+  hydrosphere.runoff.water_table_depth_scale:
+    value: 2.0
+    default: 2.0
+    units: m
+    dtype: float32
+    bounds:
+    - 0.5
+    - 10.0
+    category: model_parameter
+    description: Diagnostic scaling factor for groundwater table depth estimation
+    references:
+    - Simplified diagnostic scaling for groundwater depth
+    tags:
+    - groundwater
+    - diagnostic
+    - scaling_factor
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: diagnostic_approximation
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-27T00:00:00Z'
+  hydrosphere.runoff.water_table_depth_max:
+    value: 5.0
+    default: 5.0
+    units: m
+    dtype: float32
+    bounds:
+    - 1.0
+    - 20.0
+    category: model_parameter
+    description: Maximum diagnostic groundwater table depth
+    references:
+    - Simplified diagnostic scaling for groundwater depth
+    tags:
+    - groundwater
+    - diagnostic
+    - upper_bound
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: diagnostic_approximation
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-27T00:00:00Z'
+  hydrosphere.runoff.return_flow_fraction:
+    value: 0.3
+    default: 0.3
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: model_parameter
+    description: Fraction of subsurface flow that returns as baseflow
+    references:
+    - Nathan & McMahon (1990) Water Resour. Res. 26:2783-2797
+    - Eckhardt (2005) J. Hydrol. 313:123-134
+    tags:
+    - baseflow_separation
+    - return_flow
+    - calibratable
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: baseflow_separation
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-08-25T00:00:00Z'
+  hydrosphere.runoff.threshold_moisture:
+    value: 0.3
+    default: 0.3
+    units: m3 m-3
+    dtype: float32
+    bounds:
+    - 0.1
+    - 0.8
+    category: model_parameter
+    description: Threshold soil moisture for interflow generation (field capacity)
+    references:
+    - Clapp & Hornberger (1978) Water Resour. Res. 14:601-604
+    - Rawls et al. (1982) Trans. ASAE 25:1316-1320
+    tags:
+    - interflow
+    - soil_moisture_threshold
+    - calibratable
+    dimension: volume_fraction
+    requires_grad: true
+    provenance:
+      source: soil_hydraulic_properties
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-09T00:00:00Z'
+  hydrosphere.runoff.storage_capacity:
+    value: 100.0
+    default: 100.0
+    units: mm
+    dtype: float32
+    bounds:
+    - 10.0
+    - 1000.0
+    category: model_parameter
+    description: Maximum groundwater storage capacity for subsurface runoff model
+    references:
+    - Beven & Kirkby (1979) Hydrol. Sci. Bull. 24:43-69
+    - Sivapalan et al. (1987) Water Resour. Res. 23:1061-1077
+    tags:
+    - groundwater_storage
+    - storage_capacity
+    - calibratable
+    dimension: length
+    requires_grad: true
+    provenance:
+      source: watershed_analysis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-09T00:00:00Z'
+  hydrosphere.runoff.interflow_scaling_factor:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.01
+    - 1.0
+    category: model_parameter
+    description: Scaling factor converting return flow fraction to daily interflow coefficient
+    references:
+    - Beven & Kirkby (1979) Hydrol. Sci. Bull. 24:43-69
+    - Moore & Clarke (1981) Hydrol. Sci. Bull. 26:373-390
+    tags:
+    - interflow
+    - scaling_factor
+    - calibratable
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: hydrological_literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-03-06T00:00:00Z'
+  hydrosphere.runoff.interflow_exponent:
+    value: 2.0
+    default: 2.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 3.0
+    category: model_parameter
+    description: Exponent controlling interflow sensitivity to excess soil moisture
+    references:
+    - Beven & Kirkby (1979) Hydrol. Sci. Bull. 24:43-69
+    - Moore & Clarke (1981) Hydrol. Sci. Bull. 26:373-390
+    tags:
+    - interflow
+    - exponent
+    - calibratable
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: hydrological_literature
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-12-21T00:00:00Z'
+  hydrosphere.runoff.interflow_rate_scaling_factor:
+    value: 100.0
+    default: 100.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 1000.0
+    category: numerical_parameter
+    description: Dimensionless multiplier of the moisture-gated interflow recession coefficient k_i*c_i*max(0,theta-theta_t)^n applied to the groundwater store
+    references:
+    - RELIC threshold-interflow closure, docs/source/theory/hydrosphere_subsurface_runoff.md
+    tags:
+    - interflow
+    - scaling_factor
+    - numerical_stability
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_implementation
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-12-21T00:00:00Z'
+  hydrosphere.runoff.baseflow_method:
+    value: exponential
+    default: exponential
+    units: dimensionless
+    dtype: string
+    bounds:
+    category: model_configuration
+    description: Baseflow calculation method (exponential, topmodel, or linear_reservoir)
+    references:
+    - Brutsaert & Nieber (1977) Water Resour. Res. 13:637-644
+    - Beven & Kirkby (1979) Hydrol. Sci. Bull. 24:43-69
+    tags:
+    - baseflow
+    - model_structure
+    - configuration
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_configuration
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-09T00:00:00Z'
+  hydrosphere.runoff.infiltration_capacity:
+    value: 10.0
+    default: 10.0
+    units: mm h-1
+    dtype: float32
+    bounds:
+    - 1.0
+    - 100.0
+    category: model_parameter
+    description: Maximum infiltration capacity for Hortonian runoff generation
+    references:
+    - Horton (1933) Eos Trans. AGU 14:446-460
+    - Green & Ampt (1911) J. Agric. Sci. 4:1-24
+    tags:
+    - horton_model
+    - infiltration_capacity
+    - calibratable
+    dimension: velocity
+    requires_grad: true
+    provenance:
+      source: infiltration_experiments
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-09T00:00:00Z'
+  hydrosphere.runoff.saturated_area_threshold:
+    value: 0.9
+    default: 0.9
+    units: m3 m-3
+    dtype: float32
+    bounds:
+    - 0.5
+    - 1.0
+    category: model_parameter
+    description: Soil moisture threshold for saturation excess runoff generation
+    references:
+    - Dunne & Black (1970) Water Resour. Res. 6:1296-1311
+    - Hewlett & Hibbert (1967) Forest Hydrology, 275-290
+    tags:
+    - saturation_excess
+    - runoff_threshold
+    - calibratable
+    dimension: volume_fraction
+    requires_grad: true
+    provenance:
+      source: field_saturation_studies
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-09T00:00:00Z'
+  hydrosphere.runoff.runoff_method:
+    value: combined
+    default: combined
+    units: dimensionless
+    dtype: string
+    bounds:
+    category: model_configuration
+    description: Runoff generation method (scs, horton, saturation, or combined)
+    references:
+    - SCS (1972) National Engineering Handbook Section 4
+    - Horton (1933) Eos Trans. AGU 14:446-460
+    - Dunne & Black (1970) Water Resour. Res. 6:1296-1311
+    tags:
+    - model_structure
+    - runoff_mechanism
+    - configuration
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_configuration
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-09T00:00:00Z'
+  hydrosphere.runoff.runoff_combination_method:
+    value: max
+    default: max
+    units: dimensionless
+    dtype: string
+    allowed_values:
+    - max
+    - sum
+    bounds:
+    category: model_configuration
+    description: Combination rule for multi-mechanism runoff when runoff_method is combined (max selects dominant mechanism; sum accumulates mechanisms before clamping to precipitation)
+    references:
+    - Dunne & Black (1970) Water Resour. Res. 6:1296-1311
+    - Horton (1933) Eos Trans. AGU 14:446-460
+    - SCS (1972) National Engineering Handbook Section 4
+    tags:
+    - combined_runoff
+    - model_structure
+    - configuration
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_configuration
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-19T00:00:00Z'
+  hydrosphere.runoff.surface_water_input_source:
+    value: precipitation_flux
+    default: precipitation_flux
+    units: dimensionless
+    dtype: string
+    allowed_values:
+    - precipitation_flux
+    - rain_flux_plus_snow_melt_flux
+    bounds:
+    category: model_configuration
+    description: Declared surface water input of SurfaceRunoff. precipitation_flux reads the total precipitation (no snowpack Functor); rain_flux_plus_snow_melt_flux reads the rain reaching the ground plus the snowmelt of the snowpack partition and declares the snowpack Functor (SCM owner of both fluxes) as a required dependency. Exactly one representation is read; an instance config key of the same name overrides this value.
+    references:
+    - E3SM ELM SnowHydrologyMod, column without snow layers (qflx_top_soil = qflx_rain_grnd + qflx_snomelt)
+    - Oleson et al. (2013) Technical Description of version 4.5 of the Community Land Model (CLM), NCAR Technical Note NCAR/TN-503+STR
+    - Neitsch et al. (2011) Soil and Water Assessment Tool Theoretical Documentation Version 2009, Texas Water Resources Institute Technical Report No. 406
+    - Anderson (1976) NOAA Technical Report NWS 19
+    tags:
+    - model_structure
+    - configuration
+    - snowpack_coupling
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_configuration
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-24T00:00:00Z'
+  hydrosphere.runoff.antecedent_moisture_factor:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 2.0
+    category: model_parameter
+    description: 'Antecedent moisture condition factor for SCS method (AMC I: 0.5-0.8, AMC II: 1.0, AMC III: 1.2-2.0)'
+    references:
+    - SCS (1972) National Engineering Handbook Section 4
+    - Hjelmfelt (1991) J. Irrig. Drain. Eng. 117:202-219
+    tags:
+    - scs_method
+    - antecedent_moisture
+    - calibratable
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: scs_amc_tables
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-09T00:00:00Z'
+  hydrosphere.runoff.ponding_infiltration_capacity:
+    value: 10.0
+    default: 10.0
+    units: mm h-1
+    dtype: float32
+    bounds:
+    - 1.0
+    - 200.0
+    category: model_parameter
+    description: Steady infiltration capacity of the surface; rainfall depth arriving faster than this rate becomes Hortonian excess (loam order of magnitude)
+    references:
+    - Horton, R.E. (1933). Trans. Am. Geophys. Union 14, 446-460
+    - Rawls, W.J., Brakensiek, D.L. and Saxton, K.E. (1982). Trans. ASAE 25, 1316-1320
+    tags:
+    - hortonian_ponding
+    - topology_transition
+    - calibratable
+    dimension: velocity
+    requires_grad: true
+    provenance:
+      source: literature_typical_values
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-14T00:00:00Z'
+  hydrosphere.runoff.ponding_onset_depth:
+    value: 2.0
+    default: 2.0
+    units: mm
+    dtype: float32
+    bounds:
+    - 0.1
+    - 50.0
+    category: model_parameter
+    description: Depression-storage threshold; infiltration excess in one step at or above this depth connects the surface ponding store to the graph
+    references:
+    - Beven, K.J. (2012). Rainfall-Runoff Modelling, The Primer, 2nd ed., Wiley, ch. 6
+    - Goebel, R., Sanfelice, R.G. and Teel, A.R. (2012). Hybrid Dynamical Systems, Princeton
+    tags:
+    - hortonian_ponding
+    - topology_transition
+    - calibratable
+    dimension: length
+    requires_grad: true
+    provenance:
+      source: literature_typical_values
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-14T00:00:00Z'
+  hydrosphere.runoff.ponding_cessation_depth:
+    value: 0.1
+    default: 0.1
+    units: mm
+    dtype: float32
+    bounds:
+    - 0.001
+    - 10.0
+    category: model_parameter
+    description: Ponded depth at or below which, with no new excess, the surface ponding store is retired and its residual infiltrates
+    references:
+    - Beven, K.J. (2012). Rainfall-Runoff Modelling, The Primer, 2nd ed., Wiley, ch. 6
+    tags:
+    - hortonian_ponding
+    - topology_transition
+    - calibratable
+    dimension: length
+    requires_grad: true
+    provenance:
+      source: literature_typical_values
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-14T00:00:00Z'
+  hydrosphere.runoff.ponding_drainage_time:
+    value: 1800.0
+    default: 1800.0
+    units: s
+    dtype: float32
+    bounds:
+    - 60.0
+    - 86400.0
+    category: model_parameter
+    description: Linear-reservoir residence time of ponded water draining as overland flow (exact exponential recession)
+    references:
+    - Dooge, J.C.I. (1973). Linear Theory of Hydrologic Systems, USDA Tech. Bull. 1468
+    - Beven, K.J. (2012). Rainfall-Runoff Modelling, The Primer, 2nd ed., Wiley
+    tags:
+    - hortonian_ponding
+    - topology_transition
+    - calibratable
+    dimension: time
+    requires_grad: true
+    provenance:
+      source: literature_typical_values
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-14T00:00:00Z'
+quality_control:
+  hydrosphere.runoff.validated_by: Hydrology Scientific Review Panel
+  hydrosphere.runoff.validation_date: '2024-08-25T00:00:00Z'
+  hydrosphere.runoff.validation_criteria:
+  - SCS Curve Number method validation
+  - Manning roughness coefficient ranges
+  - TOPMODEL parameter relationships
+  - Physical bounds verification
+  - Unit dimensional analysis
+  - Cross-parameter consistency checks
+  - Hydrograph recession analysis validation
+  - Channel routing parameter verification

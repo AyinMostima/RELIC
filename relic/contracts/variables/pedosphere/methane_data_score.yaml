@@ -1,0 +1,42 @@
+variable: methane_data_score
+title: "Methane Data Availability Score"
+description: "Dimensionless data-availability score in [0, 1] steering the gating weight between the process-based and data-constrained methane estimates of methane_scale_coupling. Required; no relic Functor writes it (supplied as forcing)."
+kind: forcing
+dimension:
+  udunits: "1"
+  cf_standard_name: null
+support:
+  spatial_kind: grid_cell
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Yue et al. (2024). Geosci. Model Dev. 17, 4621, doi:10.5194/gmd-17-4621-2024"
+numerics:
+  # Score in [0, 1]; the reader rejects values outside it.
+  lower_bound: 0.0
+  upper_bound: 1.0
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies: []
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/pedosphere/methane/scales.py"
+  runtime_role: "methane_data_score_forcing"
+  runtime_writer: null
+  note: "Reader: MethaneScaleCouplingFunctor (metadata input_variables; a missing value raises; finite and within [0, 1]). No RELIC Functor writes methane_data_score."

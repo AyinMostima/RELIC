@@ -1,0 +1,54 @@
+schema_version: 2.0.0
+tier: relic
+namespace: optimization.gradient_fusion
+description: Parameter configuration for dual-track gradient fusion
+metadata:
+  version: 1.0.0
+  created_by: relic
+parameters:
+  optimization.gradient_fusion.physics_weight_mode:
+    value: inverse_variance
+    default: inverse_variance
+    units: dimensionless
+    dtype: string
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+    category: configuration
+    description: Weighting strategy for physical and statistical gradient fusion
+    references:
+    - Bocquet et al. (2020). Nonlin. Processes Geophys.
+    tags:
+    - optimization
+    - assimilation
+    - gradient_fusion
+    dimension: dimensionless
+    requires_grad: false
+    allowed_values:
+    - inverse_variance
+    - fixed
+    - adaptive
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+  optimization.gradient_fusion.fixed_physics_weight:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: numerical_parameter
+    description: Fixed physics-track weight when physics_weight_mode is fixed
+    references:
+    - Bocquet et al. (2020). Nonlin. Processes Geophys.
+    tags:
+    - optimization
+    - assimilation
+    - gradient_fusion
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: design
+      schema_version: 2.0.0

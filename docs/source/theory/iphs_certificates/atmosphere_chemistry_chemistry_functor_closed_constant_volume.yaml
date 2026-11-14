@@ -1,0 +1,295 @@
+certificate_version: '1.0'
+process_id: relic.scientific.atmosphere.chemistry.ChemistryFunctor
+constructor_selection:
+  physical_boundary: closed_constant_volume
+module_name: ChemistryFunctor
+canonical_role: field
+formulation: generic
+iphs_level: 5
+iphs_level_evidence:
+  classification: Strict GENERIC closed constant-volume reaction box certificate bound to the physical_boundary=closed_constant_volume constructor selection
+  compatible_basis: State x = (n_NO, n_NO2, n_O3, n_O2, U) in mol and J with a fixed volume V in m3; E = U and S = sum_i n_i (s_i(T) - R ln(p_i / p0)) are built from the same-step state through the existing NASA7, mixture, and temperature-inversion primitives
+  runtime_replacement: forward evaluates IPHSStructureSpec.canonical_drift with poisson_operator=zero_field and reaction_representation=absorbed, L_h = 0 and M_h = (r T / A) nu nu^T, commits Delta x = dt x_dot exactly once, and runs IPHSStructureSpec.validate(required_level=5) on the same bound potentials every emitted step
+  canonical_operator: x_dot = L_h e_E + M_h e_S = nu r with nu = (-1, +1, -1, +1, 0), M_h e_E = 0, sigma = e_S^T M_h e_S = A r / T >= 0
+  structural_contribution: Closed-box forms, energy and entropy terms, and the state-dependent dissipative structure are declared through the existing PhysicalField hooks for this selection
+  assembly_participation: The selection is registered through NodeRegistry.register_functor_instance with an explicit node_type_id and config_contract; GraphIR compile_graph(strict=True) and GraphExecutor execute it
+  storage_functional:
+    runtime_owner: relic.scientific.atmosphere.chemistry.ChemistryFunctor._evaluate_closed_constant_volume_box
+    value_key: energy
+    state_keys:
+    - box_no_amount
+    - box_no2_amount
+    - box_o3_amount
+    - box_o2_amount
+    - box_internal_energy
+    units: J
+    theory_anchor: chemistry:closed_constant_volume_box
+    validation_test: test\unit\test_chemistry_functor.py
+  effort_definition:
+    runtime_owner: relic.computation.operators.iphs.IPHSStructureSpec.canonical_drift
+    value_key: energy_effort
+    derivative_of: storage_functional
+    method: autograd
+    validation_test: test\unit\test_chemistry_functor.py
+  dissipation_audit:
+    runtime_owner: relic.computation.operators.iphs.IPHSStructureSpec.validate
+    operator_owner: relic.scientific.atmosphere.chemistry.ChemistryFunctor._evaluate_closed_constant_volume_box
+    operator_kind: mobility_M
+    value_key: entropy_production
+    balance_key: closed_box_entropy_rate
+    inequality: dS_dt>=port_entropy_flow
+    tolerance_parameter_key: validation.iphs.runtime_point_tolerance
+    validation_test: test\unit\test_chemistry_functor.py
+  port_power_audit:
+    runtime_owner: relic.computation.operators.iphs.IPHSStructureSpec.canonical_drift
+    balance_key: closed_box_port_power
+    sign_convention: into_system
+    tolerance_parameter_key: validation.iphs.runtime_point_tolerance
+    validation_test: test\unit\test_chemistry_functor.py
+  energy_entropy_pair:
+    energy_owner: relic.scientific.atmosphere.chemistry.ChemistryFunctor._evaluate_closed_constant_volume_box
+    entropy_owner: relic.scientific.atmosphere.chemistry.ChemistryFunctor.ideal_gas_mixture_properties
+    energy_key: energy
+    entropy_key: entropy
+    validation_test: test\unit\test_chemistry_functor.py
+  generic_degeneracy:
+    structure_owner: relic.computation.operators.iphs.IPHSStructureSpec.validate
+    j_entropy_residual_key: J_entropy_gradient_residual
+    m_energy_residual_key: M_energy_gradient_residual
+    reversible_operator_state_dependence: zero_field
+    jacobi_identity_basis: canonical_zero_field
+    tolerance_parameter_key: validation.iphs.runtime_point_tolerance
+    validation_test: test\unit\test_chemistry_functor.py
+  entropy_production:
+    runtime_owner: relic.computation.operators.iphs.IPHSStructureSpec.validate
+    value_key: entropy_production
+    lower_bound: 0.0
+    tolerance_parameter_key: validation.iphs.runtime_point_tolerance
+    validation_test: test\unit\test_chemistry_functor.py
+  level_5_scope: Level 5 holds for the executed runtime point of each emitted closed-box step; the process-bound witness (governed FunctorBase call, committed state outputs, accepted step) must accompany this certificate when validated, otherwise it remains descriptive and process-unbound
+theory_document: docs\source\theory\chemistry.md
+theory_document_status: updated
+legacy_formula: dn/dt = nu r, r = k(T) N_A n_NO n_O3 / (c_v V), k(T) = k_298 * exp(Ea/R * (1/T_ref - 1/T)), T_ref = 298.15 K; dU/dt = 0 (closed, adiabatic, rigid)
+literature_formula: A = -nu^T mu; mu_i = h_i(T) - T s_i(T) + R T ln(p_i / p0); sigma = A r / T >= 0; x_dot = L_h e_E + M_h e_S with L_h = 0 and M_h = (r T / A) nu nu^T (Grmela and Ottinger 1997; Mielke 2011; Kondepudi and Prigogine 1998)
+iphs_formula: x_dot = L_h e_E + M_h e_S, L_h = 0 (zero_field), M_h = (r T / A) nu nu^T, absorbed reaction with M_h e_S = N r checked against the declared N r, M_h e_E = 0
+legacy_expression: dn/dt = nu r, r = k(T) N_A n_NO n_O3 / (c_v V), k(T) = k_298 * exp(Ea/R * (1/T_ref - 1/T)), T_ref = 298.15 K; dU/dt = 0 (closed, adiabatic, rigid)
+iphs_expression: x_dot = L_h e_E + M_h e_S, L_h = 0 (zero_field), M_h = (r T / A) nu nu^T, absorbed reaction with M_h e_S = N r checked against the declared N r, M_h e_E = 0
+input_variables:
+- box_no_amount
+- box_no2_amount
+- box_o3_amount
+- box_o2_amount
+- box_internal_energy
+- box_volume
+output_variables:
+- box_no_amount
+- box_no2_amount
+- box_o3_amount
+- box_o2_amount
+- box_internal_energy
+- diagnostics.chemistry.box_temperature
+- diagnostics.chemistry.box_pressure
+- diagnostics.chemistry.box_entropy
+- diagnostics.chemistry.box_entropy_production_rate
+- diagnostics.chemistry.box_reaction_affinity
+- diagnostics.chemistry.box_reaction_rate
+- diagnostics.chemistry.box_reaction_power
+- diagnostics.chemistry.box_rate_constant_no_o3
+parameter_keys:
+- atmosphere.chemistry.k_no_o3_298
+- atmosphere.chemistry.k_no_o3_activation_energy
+- atmosphere.chemistry.nasa7.a1
+- atmosphere.chemistry.nasa7.a2
+- atmosphere.chemistry.nasa7.a3
+- atmosphere.chemistry.nasa7.a4
+- atmosphere.chemistry.nasa7.a5
+- atmosphere.chemistry.nasa7.a6
+- atmosphere.chemistry.nasa7.a7
+- atmosphere.chemistry.nasa7.model
+- atmosphere.chemistry.nasa7.species_order
+- atmosphere.chemistry.nasa7.temperature_ranges
+- atmosphere.chemistry.temperature_max
+- atmosphere.chemistry.temperature_min
+- computation.solvers.bracketed_bisection.atol
+- computation.solvers.bracketed_bisection.max_iterations
+- computation.solvers.bracketed_bisection.rtol
+- validation.iphs.runtime_point_tolerance
+composition_ports: []
+references:
+- Grmela, M. & Ottinger, H.C. (1997). Phys. Rev. E 56, 6620-6632
+- Ottinger, H.C. (2005). Beyond Equilibrium Thermodynamics, Wiley
+- Mielke, A. (2011). Nonlinearity 24, 1329-1346
+- Kondepudi, D. & Prigogine, I. (1998). Modern Thermodynamics, Wiley
+- McBride, B.J., Gordon, S. & Reno, M.A. (1993). NASA TM-4513
+- Seinfeld, J.H. & Pandis, S.N. (2016). Atmospheric Chemistry and Physics
+- Atkinson, R. et al. (2004). Atmos. Chem. Phys. 4, 1461-1738
+baseline_tests:
+- test\unit\test_chemistry_functor.py
+- test\atmosphere\test_chemistry_parameters.py
+validation_tests:
+- test\unit\test_chemistry_functor.py
+- test\integration\test_chemistry_integration.py
+- test\atmosphere\test_chemistry_parameters.py
+state_map:
+  box_no_amount: n_NO molar inventory, component 1 of the GENERIC state x
+  box_no2_amount: n_NO2 molar inventory, component 2 of the GENERIC state x
+  box_o3_amount: n_O3 molar inventory, component 3 of the GENERIC state x
+  box_o2_amount: n_O2 molar inventory, component 4 of the GENERIC state x
+  box_internal_energy: U total internal energy including NASA7 formation terms, component 5 of x and the energy functional E
+  box_volume: fixed box volume V entering p_i = n_i R T / V; never advanced
+parameter_map:
+  atmosphere.chemistry.k_no_o3_298: ParameterManager-backed NO and ozone rate coefficient at 298 K
+  atmosphere.chemistry.k_no_o3_activation_energy: ParameterManager-backed NO and ozone activation energy
+  atmosphere.chemistry.nasa7.a1: NASA7 coefficient array, species by temperature interval
+  atmosphere.chemistry.nasa7.a2: NASA7 coefficient array, species by temperature interval
+  atmosphere.chemistry.nasa7.a3: NASA7 coefficient array, species by temperature interval
+  atmosphere.chemistry.nasa7.a4: NASA7 coefficient array, species by temperature interval
+  atmosphere.chemistry.nasa7.a5: NASA7 coefficient array, species by temperature interval
+  atmosphere.chemistry.nasa7.a6: NASA7 coefficient array, species by temperature interval
+  atmosphere.chemistry.nasa7.a7: NASA7 coefficient array, species by temperature interval
+  atmosphere.chemistry.nasa7.model: NASA7 model identifier guarding against NASA9 tables
+  atmosphere.chemistry.nasa7.species_order: declared species order NO, NO2, O3, O2
+  atmosphere.chemistry.nasa7.temperature_ranges: NASA7 fit intervals 200-1000-6000 K
+  atmosphere.chemistry.temperature_max: upper kinetic temperature domain and inversion bracket
+  atmosphere.chemistry.temperature_min: lower kinetic temperature domain and inversion bracket
+  computation.solvers.bracketed_bisection.atol: absolute tolerance of the temperature inversion T(U, n)
+  computation.solvers.bracketed_bisection.max_iterations: iteration limit of the temperature inversion T(U, n)
+  computation.solvers.bracketed_bisection.rtol: relative tolerance of the temperature inversion T(U, n)
+  validation.iphs.runtime_point_tolerance: tolerance of the Level 5 runtime-point audit of each emitted step
+operator_map:
+  L_h: zero Poisson operator declared through poisson_operator=zero_field; the Jacobi identity holds on the canonical zero-field basis verified by IPHSStructureSpec.validate
+  M_h: (r T / A) nu nu^T, symmetric positive semidefinite for A > 0 and r >= 0, with a zero energy row and column so that M_h e_E = 0
+  G_h: none, closed box without ports
+  N: nu = (-1, +1, -1, +1, 0) reshaped to 5 by 1; reaction_representation=absorbed, so N r is not added a second time
+unit_map:
+  box_no_amount: mol
+  box_no2_amount: mol
+  box_o3_amount: mol
+  box_o2_amount: mol
+  box_internal_energy: J
+  box_volume: m3
+  diagnostics.chemistry.box_temperature: K
+  diagnostics.chemistry.box_pressure: Pa
+  diagnostics.chemistry.box_entropy: J K-1
+  diagnostics.chemistry.box_entropy_production_rate: J K-1 s-1
+  diagnostics.chemistry.box_reaction_affinity: J mol-1
+  diagnostics.chemistry.box_reaction_rate: mol s-1
+  diagnostics.chemistry.box_reaction_power: W
+  diagnostics.chemistry.box_rate_constant_no_o3: cm3 molecule-1 s-1
+input_output_map:
+  box_no_amount: canonical state input and accumulated state increment
+  box_no2_amount: canonical state input and accumulated state increment
+  box_o3_amount: canonical state input and accumulated state increment
+  box_o2_amount: canonical state input and accumulated state increment
+  box_internal_energy: canonical state input and exactly zero accumulated increment emitted from M_h e_E = 0
+  box_volume: canonical fixed forcing input, never written
+  diagnostics.chemistry.box_temperature: canonical derived temperature observation
+  diagnostics.chemistry.box_pressure: canonical derived pressure observation
+  diagnostics.chemistry.box_entropy: canonical entropy observation
+  diagnostics.chemistry.box_entropy_production_rate: canonical entropy-production observation
+  diagnostics.chemistry.box_reaction_affinity: canonical affinity observation
+  diagnostics.chemistry.box_reaction_rate: canonical reaction-rate observation
+  diagnostics.chemistry.box_reaction_power: canonical affinity-rate power observation
+  diagnostics.chemistry.box_rate_constant_no_o3: canonical rate-coefficient observation
+interface_map:
+  forward_signature: forward(self, state, time, dt, **kwargs)
+  bridge_class: PhysicalFieldFunctor
+  abstraction_contract: PhysicalField
+  constructor_selection: ChemistryFunctor(physical_boundary="closed_constant_volume")
+  state_write_mode: canonical UpdateItem ACCUMULATE increments for the five state components and REPLACE observations for diagnostics
+  legacy_inputs:
+  - box_no_amount
+  - box_no2_amount
+  - box_o3_amount
+  - box_o2_amount
+  - box_internal_energy
+  - box_volume
+  iphs_inputs:
+  - box_no_amount
+  - box_no2_amount
+  - box_o3_amount
+  - box_o2_amount
+  - box_internal_energy
+  - box_volume
+  legacy_outputs:
+  - box_no_amount
+  - box_no2_amount
+  - box_o3_amount
+  - box_o2_amount
+  - box_internal_energy
+  - diagnostics.chemistry.box_temperature
+  - diagnostics.chemistry.box_pressure
+  - diagnostics.chemistry.box_entropy
+  - diagnostics.chemistry.box_entropy_production_rate
+  - diagnostics.chemistry.box_reaction_affinity
+  - diagnostics.chemistry.box_reaction_rate
+  - diagnostics.chemistry.box_reaction_power
+  - diagnostics.chemistry.box_rate_constant_no_o3
+  iphs_outputs:
+  - box_no_amount
+  - box_no2_amount
+  - box_o3_amount
+  - box_o2_amount
+  - box_internal_energy
+  - diagnostics.chemistry.box_temperature
+  - diagnostics.chemistry.box_pressure
+  - diagnostics.chemistry.box_entropy
+  - diagnostics.chemistry.box_entropy_production_rate
+  - diagnostics.chemistry.box_reaction_affinity
+  - diagnostics.chemistry.box_reaction_rate
+  - diagnostics.chemistry.box_reaction_power
+  - diagnostics.chemistry.box_rate_constant_no_o3
+runtime_replacement_map:
+  runtime_uses_iphs: true
+  legacy_removed: true
+  legacy_never_existed: true
+  runtime_owner: relic.scientific.atmosphere.chemistry.ChemistryFunctor._forward_closed_constant_volume
+  removed_legacy_symbols: []
+  replacement_entrypoint: forward
+  validation_test: test\integration\test_chemistry_integration.py
+  preserved_numerics: The single forward path builds E and S from the same-step state, evaluates IPHSStructureSpec.canonical_drift once, verifies the Level 5 runtime point, and commits Delta x = dt x_dot; no alternative kinetic branch exists for this selection and no legacy implementation ever existed.
+  no_legacy_mode: true
+state_advancement_map:
+  potential_basis: E = U and S(U, n, V) evaluated by standard_molar_properties, ideal_gas_mixture_properties, and temperature_from_internal_energy on the same autograd state graph
+  effort_variable: e_E = grad(E) = (0, 0, 0, 0, 1) and e_S = grad(S) = (-mu / T, 1 / T) obtained by torch.autograd.grad inside canonical_drift
+  state_advancer: Delta x = dt x_dot with x_dot = L_h e_E + M_h e_S = nu r; the actual tensor candidate x + Delta x must retain strictly positive species inventories, valid T(U,n) and ideal-mixture properties, and A > 0 before emission
+  explicit_stoichiometric_usage: forward declares stoichiometric_N = nu reshaped to 5 by 1 with reaction_representation=absorbed in IPHSStructureSpec, and passes the same N, reaction rate, C_N, C_O, and affinity to advance_reaction_network with dt=None for the audits only.
+  runtime_usage: ChemistryFunctor.forward evaluates one GENERIC absorbed-reaction path through canonical_drift, verifies M_h e_S = N r to reduction roundoff, validates the bound pre-step runtime point at required_level=5, and audits C_N nu = 0, C_O nu = 0, and A r >= 0; before publishing the audit or emitting five ACCUMULATE increments plus eight REPLACE diagnostics, the same pure thermodynamic-point owner checks the actual tensor Euler candidate for n_i > 0, valid T(U,n), and A > 0, without a second drift or state advance. Discrete entropy monotonicity, stiff-stability and accuracy are not certified.
+parameter_management_map:
+  atmosphere.chemistry.k_no_o3_298: {source: ParameterManager YAML}
+  atmosphere.chemistry.k_no_o3_activation_energy: {source: ParameterManager YAML}
+  atmosphere.chemistry.nasa7.a1: {source: ParameterManager YAML}
+  atmosphere.chemistry.nasa7.a2: {source: ParameterManager YAML}
+  atmosphere.chemistry.nasa7.a3: {source: ParameterManager YAML}
+  atmosphere.chemistry.nasa7.a4: {source: ParameterManager YAML}
+  atmosphere.chemistry.nasa7.a5: {source: ParameterManager YAML}
+  atmosphere.chemistry.nasa7.a6: {source: ParameterManager YAML}
+  atmosphere.chemistry.nasa7.a7: {source: ParameterManager YAML}
+  atmosphere.chemistry.nasa7.model: {source: ParameterManager YAML}
+  atmosphere.chemistry.nasa7.species_order: {source: ParameterManager YAML}
+  atmosphere.chemistry.nasa7.temperature_ranges: {source: ParameterManager YAML}
+  atmosphere.chemistry.temperature_max: {source: ParameterManager YAML}
+  atmosphere.chemistry.temperature_min: {source: ParameterManager YAML}
+  computation.solvers.bracketed_bisection.atol: {source: ParameterManager YAML}
+  computation.solvers.bracketed_bisection.max_iterations: {source: ParameterManager YAML}
+  computation.solvers.bracketed_bisection.rtol: {source: ParameterManager YAML}
+  validation.iphs.runtime_point_tolerance: {source: ParameterManager YAML}
+composition_management_map:
+  functor_metadata: FunctorMetadata for this selection declares six inputs, five state outputs, eight diagnostics, no dependencies, and the nitrogen_atoms, oxygen_atoms, and internal_energy conservation laws
+  state_contract: SCM contracts box_no_amount, box_no2_amount, box_o3_amount, box_o2_amount (mol), box_internal_energy (J), box_volume (m3 forcing) and the eight diagnostics.chemistry.box_* contracts type the GraphIR ports
+  validation_rule: equivalence certificate checks with the process-bound runtime point audit, plus the closed-box unit and integration tests
+dependency_interconnection_map:
+  dependencies: no Functor dependencies; get_dependencies() returns an empty list and config dependencies must be empty for this selection
+  direct_functor_calls: none declared by certificate
+overflow_routing_map:
+  invalid_species_route: non-finite or non-scalar inventories, internal energy, or volume, or inputs with different dtype/device, fail before emission; inventories and volume must be strictly positive, while internal energy must admit the declared thermodynamic inversion
+  inadmissible_timestep_route: an actual tensor Euler candidate outside the closed-box thermodynamic domain fails before any UpdateItem or audit is published; meeting the nominal current-state depletion bound alone does not guarantee strictly positive rounded inventories, valid T(U,n), or A > 0
+  affinity_domain_route: both initial and actual Euler-candidate thermodynamic points require finite positive A = -nu^T mu; the forward mass-action law and the declared positive semidefinite M_h are only used in the A > 0 domain
+  discarded_residuals: none because no clipping, flooring, or residual disposal exists on this path
+conservation_map:
+  conserved_quantities: nitrogen atoms, oxygen atoms, and internal energy of the closed adiabatic rigid box
+  balance_expression: C_N nu = 0 with C_N = (1, 1, 0, 0, 0), C_O nu = 0 with C_O = (1, 2, 3, 2, 0), and Delta U = dt (M_h e_E)_U = 0; check_conservation_laws returns the normalized residuals nitrogen_atoms, oxygen_atoms, and internal_energy which are exactly zero for the emitted increments
+entropy_audit:
+  operator_sign: M_h = (r T / A) nu nu^T is symmetric positive semidefinite because A > 0 is enforced and r >= 0 by mass action with positive inventories
+  sigma_expression: sigma = e_S^T M_h e_S = A r / T >= 0, emitted as diagnostics.chemistry.box_entropy_production_rate, verified against an independent autograd oracle in the unit tests and by IPHSStructureSpec.validate(required_level=5) on every emitted step
+equivalence_type: exact

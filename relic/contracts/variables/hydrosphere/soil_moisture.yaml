@@ -1,0 +1,66 @@
+variable: soil_moisture
+title: "Soil Moisture"
+description: "Volumetric liquid water content theta of the effective soil layer (volume of liquid water per volume of bulk soil) [m3 m-3], advanced by the selected soil water model (bucket, Richards or soil water transport) or supplied with the initial state. It is also the theta of the equilibrium_sorption index-1 DAE, which partitions the total solute mass y = theta C + rho_b S and requires 0 < theta <= 1 (the former forcing volume_fraction_of_water_in_soil was this quantity and is merged into it). No cf_standard_name: in the CF v94 table volume_fraction_of_water_in_soil is an alias of volume_fraction_of_condensed_water_in_soil, which counts liquid water and ice, while RELIC carries liquid water only and has no soil ice state."
+kind: state
+dimension:
+  udunits: "m3 m-3"
+  cf_standard_name: null
+support:
+  spatial_kind: grid_cell
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+# Column volumetric water content of the effective soil layer; its thickness
+# is the state variable soil_depth [m] (bucket/hydrosphere interface
+# "Effective soil layer depth"), read pointwise for m3 m-3 <-> kg m-2 conversions.
+layer_thickness_variable: soil_depth
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+numerics:
+  lower_bound: null
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "bucket_soil_moisture"
+      module: "relic.scientific.hydrosphere.soil_moisture.bucket"
+      provides: ["soil_moisture"]
+      unit: "m3 m-3"
+    - name: "richards_soil_moisture"
+      module: "relic.scientific.hydrosphere.soil_moisture.richards"
+      provides: ["soil_moisture"]
+      unit: "m3 m-3"
+    - name: "soil_water_transport"
+      module: "relic.scientific.pedosphere.transport.SoilWaterTransportFunctor"
+      provides: ["soil_moisture"]
+      unit: "m3 m-3"
+    - name: "observation_state_feedback"
+      module: "relic.coupling.observation.state_feedback"
+      provides: ["soil_moisture"]
+      unit: "m3 m-3"
+references:
+  - "Hillel, D. (1998). Environmental Soil Physics, Academic Press (volumetric water content)"
+  - "Jury, W.A. and Horton, R. (2004). Soil Physics, 6th ed., Wiley, ch. 7 (volumetric water content in the solute partition theta C + rho_b S)"
+  - "CF Standard Name Table v94: volume_fraction_of_water_in_soil (alias of volume_fraction_of_condensed_water_in_soil, liquid water and ice, canonical units 1)"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/pedosphere/transport/SoilWaterTransportFunctor.py"
+  runtime_role: "mutually_exclusive_soil_water_storage"
+  runtime_writer: "selected_soil_water_model"
+  runtime_writers:
+    - "bucket_soil_moisture"
+    - "richards_soil_moisture"
+    - "soil_water_transport"

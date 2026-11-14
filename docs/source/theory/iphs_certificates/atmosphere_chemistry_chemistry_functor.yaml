@@ -1,0 +1,461 @@
+certificate_version: '1.0'
+process_id: relic.scientific.atmosphere.chemistry.ChemistryFunctor
+module_name: ChemistryFunctor
+canonical_role: field
+iphs_level: 3
+iphs_level_evidence:
+  classification: IPHS-structured field process certificate
+  compatible_basis: Process declares retained species cochains, an explicit reduced stoichiometric map, ParameterManager-backed reaction rates, and a radiation photolysis port
+  runtime_replacement: Production forward evaluates the existing advance_reaction_network owner once with x_dot = N_h r_h, C_NOx N_h = 0, and an explicit boundary_export route; strict thermodynamic replacement is not claimed at this certificate level.
+  canonical_operator: x_dot = N_h r_h for NO, NO2, O3, and conditional isoprene, with C_NOx = [1, 1, 0, 0]
+  structural_contribution: Field state, operator, and audit maps are declared
+  assembly_participation: Certificate participates in Phase 8 inventory and GraphIR structural audit
+  level_3_limit: Typed form, Hodge, port, or related structure is declared, but no runtime-linked IPHSStructureSpec contribution and executable level 4 or 5 certificate binding is present.
+theory_document: docs\source\theory\chemistry.md
+theory_document_status: updated
+legacy_formula: d[NO]/dt = J_NO2*[NO2] - k_NO_O3*[NO]*[O3]; d[NO2]/dt = k_NO_O3*[NO]*[O3] - J_NO2*[NO2]; d[O3]/dt = J_NO2*[NO2] - k_NO_O3*[NO]*[O3]; k(T) = k_298 * exp(Ea/R * (1/T_ref - 1/T)), T_ref = 298.15 K; J_NO2 = (1 + alpha) * (B1 * G + B2 * G^2) * R_NO2(T, theta), G = SW held at G_v = B1/(2|B2|) above (Trebs et al. 2009); J_O1D = (1 + alpha) * (B1 * G + B2 * G^2) * rho(theta) * R_O1D(T, theta), rho = (l1/l4) cos(theta)^(m1-m4) exp(-(n1-n4)/cos(theta)); R_X = 1 (mode none) or sum sigma_X phi_X F0 exp(-tau/cos(theta)) / same at T_ref (mode spectral_quantum_yield); [OH] = y f J_O1D [O3] / (k_OH_CO[CO] + k_OH_CH4[CH4] + k_OH_NO2[NO2] + k_OH_C5H8[C5H8]), f = k_H2O[H2O] / (k_H2O[H2O] + k_N2[N2] + k_O2[O2]); BVOC + OH -> products (k_BVOC_OH)
+literature_formula: d[NO]/dt = J_NO2*[NO2] - k_NO_O3*[NO]*[O3]; d[NO2]/dt = k_NO_O3*[NO]*[O3] - J_NO2*[NO2]; d[O3]/dt = J_NO2*[NO2] - k_NO_O3*[NO]*[O3]; k(T) = k_298 * exp(Ea/R * (1/T_ref - 1/T)), T_ref = 298.15 K; J_NO2 = (1 + alpha) * (B1 * G + B2 * G^2) * R_NO2(T, theta), G = SW held at G_v = B1/(2|B2|) above (Trebs et al. 2009); J_O1D = (1 + alpha) * (B1 * G + B2 * G^2) * rho(theta) * R_O1D(T, theta), rho = (l1/l4) cos(theta)^(m1-m4) exp(-(n1-n4)/cos(theta)); R_X = 1 (mode none) or sum sigma_X phi_X F0 exp(-tau/cos(theta)) / same at T_ref (mode spectral_quantum_yield); [OH] = y f J_O1D [O3] / (k_OH_CO[CO] + k_OH_CH4[CH4] + k_OH_NO2[NO2] + k_OH_C5H8[C5H8]), f = k_H2O[H2O] / (k_H2O[H2O] + k_N2[N2] + k_O2[O2]); BVOC + OH -> products (k_BVOC_OH)
+iphs_formula: x_dot = N_h r_h, with photolysis and kinetic rates as ParameterManager-backed reaction entries and C_NOx N_h = 0
+legacy_expression: d[NO]/dt = J_NO2*[NO2] - k_NO_O3*[NO]*[O3]; d[NO2]/dt = k_NO_O3*[NO]*[O3] - J_NO2*[NO2]; d[O3]/dt = J_NO2*[NO2] - k_NO_O3*[NO]*[O3]; k(T) = k_298 * exp(Ea/R * (1/T_ref - 1/T)), T_ref = 298.15 K; J_NO2 = (1 + alpha) * (B1 * G + B2 * G^2) * R_NO2(T, theta), G = SW held at G_v = B1/(2|B2|) above (Trebs et al. 2009); J_O1D = (1 + alpha) * (B1 * G + B2 * G^2) * rho(theta) * R_O1D(T, theta), rho = (l1/l4) cos(theta)^(m1-m4) exp(-(n1-n4)/cos(theta)); R_X = 1 (mode none) or sum sigma_X phi_X F0 exp(-tau/cos(theta)) / same at T_ref (mode spectral_quantum_yield); [OH] = y f J_O1D [O3] / (k_OH_CO[CO] + k_OH_CH4[CH4] + k_OH_NO2[NO2] + k_OH_C5H8[C5H8]), f = k_H2O[H2O] / (k_H2O[H2O] + k_N2[N2] + k_O2[O2]); BVOC + OH -> products (k_BVOC_OH)
+iphs_expression: x_dot = N_h r_h, with an explicit boundary_export route for unretained oxygen, radical, and oxidation-product species
+input_variables:
+- air_temperature
+- atmospheric_pressure
+- shortwave_down
+- cos_zenith
+- no_mixing_ratio
+- no2_mixing_ratio
+- o3_mixing_ratio
+- isoprene_mixing_ratio
+- co_mixing_ratio
+- ch4_mixing_ratio
+- specific_humidity
+output_variables:
+- no_mixing_ratio
+- no2_mixing_ratio
+- o3_mixing_ratio
+- isoprene_mixing_ratio
+- diagnostics.chemistry.photolysis_rate_no2
+- diagnostics.chemistry.isoprene_oxidation_rate
+- diagnostics.chemistry.reaction_no_o3_rate
+- diagnostics.chemistry.photolysis_no2_rate
+- diagnostics.chemistry.rate_constant_no_o3
+- diagnostics.chemistry.shortwave_radiation_used
+- diagnostics.chemistry.oh_concentration
+- diagnostics.chemistry.air_number_density
+- diagnostics.chemistry.ro2_no_conversion_rate
+- diagnostics.chemistry.ro2_no_branching_fraction
+- diagnostics.chemistry.ox_net_chemical_tendency
+- diagnostics.chemistry.carbon_oxidized_rate
+parameter_keys:
+- atmosphere.chemistry.chemistry_temperature_q10
+- atmosphere.chemistry.isoprene_carbon_atoms
+- atmosphere.chemistry.isoprene_ro2_no2_stoichiometric_yield
+- atmosphere.chemistry.j_no2_irradiance_linear_coefficient
+- atmosphere.chemistry.j_no2_irradiance_quadratic_coefficient
+- atmosphere.chemistry.k_isoprene_no3_298
+- atmosphere.chemistry.k_isoprene_no3_activation_energy
+- atmosphere.chemistry.k_isoprene_o3_298
+- atmosphere.chemistry.k_isoprene_o3_activation_energy
+- atmosphere.chemistry.k_isoprene_oh_298
+- atmosphere.chemistry.k_isoprene_oh_activation_energy
+- atmosphere.chemistry.k_no_o3_298
+- atmosphere.chemistry.k_no_o3_activation_energy
+- atmosphere.chemistry.k_o1d_h2o_298
+- atmosphere.chemistry.k_o1d_h2o_activation_energy
+- atmosphere.chemistry.k_o1d_n2_298
+- atmosphere.chemistry.k_o1d_n2_activation_energy
+- atmosphere.chemistry.k_o1d_o2_298
+- atmosphere.chemistry.k_o1d_o2_activation_energy
+- atmosphere.chemistry.k_oh_ch4_298
+- atmosphere.chemistry.k_oh_ch4_activation_energy
+- atmosphere.chemistry.k_oh_co_298
+- atmosphere.chemistry.k_oh_co_activation_energy
+- atmosphere.chemistry.k_oh_no2_298
+- atmosphere.chemistry.k_oh_no2_activation_energy
+- atmosphere.chemistry.k_ro2_no_298
+- atmosphere.chemistry.k_ro2_no_activation_energy
+- atmosphere.chemistry.k_ro2_termination_loss
+- atmosphere.chemistry.mcm_no2_photolysis_l
+- atmosphere.chemistry.mcm_no2_photolysis_m
+- atmosphere.chemistry.mcm_no2_photolysis_n
+- atmosphere.chemistry.mcm_o1d_photolysis_l
+- atmosphere.chemistry.mcm_o1d_photolysis_m
+- atmosphere.chemistry.mcm_o1d_photolysis_n
+- atmosphere.chemistry.minimum_concentration
+- atmosphere.chemistry.o1d_water_oh_yield
+- atmosphere.chemistry.photolysis.matsumi_amplitudes
+- atmosphere.chemistry.photolysis.matsumi_band_centers
+- atmosphere.chemistry.photolysis.matsumi_band_widths
+- atmosphere.chemistry.photolysis.matsumi_energy_gap
+- atmosphere.chemistry.photolysis.matsumi_offset
+- atmosphere.chemistry.photolysis.matsumi_reference_temperature
+- atmosphere.chemistry.photolysis.matsumi_temperature_max
+- atmosphere.chemistry.photolysis.matsumi_temperature_min
+- atmosphere.chemistry.photolysis.matsumi_wavelength_max
+- atmosphere.chemistry.photolysis.matsumi_wavelength_min
+- atmosphere.chemistry.photolysis.no2_cross_section
+- atmosphere.chemistry.photolysis.no2_cross_section_wavelength
+- atmosphere.chemistry.photolysis.no2_quantum_yield_high_temperature
+- atmosphere.chemistry.photolysis.no2_quantum_yield_low_temperature
+- atmosphere.chemistry.photolysis.no2_quantum_yield_temperature_high
+- atmosphere.chemistry.photolysis.no2_quantum_yield_temperature_low
+- atmosphere.chemistry.photolysis.no2_quantum_yield_wavelength
+- atmosphere.chemistry.photolysis.o1d_integration_wavelength
+- atmosphere.chemistry.photolysis.o1d_quantum_yield_long_wavelength
+- atmosphere.chemistry.photolysis.o1d_quantum_yield_short_wavelength
+- atmosphere.chemistry.photolysis.o3_cross_section_high_temperature
+- atmosphere.chemistry.photolysis.o3_cross_section_low_temperature
+- atmosphere.chemistry.photolysis.o3_cross_section_temperature_high
+- atmosphere.chemistry.photolysis.o3_cross_section_temperature_low
+- atmosphere.chemistry.photolysis.o3_cross_section_wavelength
+- atmosphere.chemistry.photolysis.rayleigh_denominator_inverse_square
+- atmosphere.chemistry.photolysis.rayleigh_denominator_square
+- atmosphere.chemistry.photolysis.rayleigh_numerator_constant
+- atmosphere.chemistry.photolysis.rayleigh_numerator_inverse_square
+- atmosphere.chemistry.photolysis.rayleigh_numerator_square
+- atmosphere.chemistry.photolysis.rayleigh_scale
+- atmosphere.chemistry.photolysis.reference_ozone_column
+- atmosphere.chemistry.photolysis.reference_temperature
+- atmosphere.chemistry.photolysis.solar_flux_wavelength
+- atmosphere.chemistry.photolysis.solar_photon_flux
+- atmosphere.chemistry.photolysis_temperature_mode
+- atmosphere.chemistry.temperature_max
+- atmosphere.chemistry.temperature_min
+- atmosphere.chemistry.uv_a_surface_albedo
+composition_ports:
+- atmospheric_radiation_photolysis_port
+references:
+- Seinfeld, J.H. & Pandis, S.N. (2016). Atmospheric Chemistry and Physics
+- Finlayson-Pitts, B.J. & Pitts, J.N. (2000). Chemistry of Upper and Lower Atmosphere
+- Atkinson, R. & Arey, J. (2003). Atmospheric degradation of volatile organic compounds
+- Jenkin, M.E. & Clemitshaw, K.C. (2000). Ozone and secondary photochemical pollutants
+- Warneck, P. & Williams, J. (2012). The Atmospheric Chemist's Companion, Springer
+- Matsumi, Y. et al. (2002). J. Geophys. Res. 107(D3), 4024
+- Saunders, S.M. et al. (2003). Atmos. Chem. Phys. 3, 161-180
+- Bodhaine, B.A. et al. (1999). J. Atmos. Oceanic Technol. 16, 1854-1861
+- Sander, S.P. et al. (2006). JPL Publication 06-2, Evaluation Number 15
+- Trebs, I. et al. (2009). Atmos. Meas. Tech. 2, 725-739, doi:10.5194/amt-2-725-2009
+- Peeters, J. et al. (2014). J. Phys. Chem. A 118, 8625-8643
+baseline_tests:
+- test\atmosphere\test_chemistry_parameters.py
+- test\unit\test_chemistry_functor.py
+- test\unit\atmosphere\test_chemistry_comprehensive.py
+- test\audit\phase8_scientific_inventory.test.py
+validation_tests:
+- test\atmosphere\test_chemistry_parameters.py
+- test\integration\test_chemistry_integration.py
+- test\unit\atmosphere\test_chemistry_comprehensive.py
+- test\validation\l1_unit\test_scientific_atmosphere.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  air_temperature: air_temperature mapped to canonical Phase 8 cochain basis
+  atmospheric_pressure: atmospheric_pressure p of the ideal-gas number density n = p / (k_B T)
+  shortwave_down: shortwave_down solar global irradiance G of J_NO2 = (1 + alpha)(B1 G + B2 G^2) (Trebs et al. 2009) through the radiation input port
+  cos_zenith: cos_zenith cos(chi) of the MCM ratio rho(chi) = J(O1D)/J(NO2) and of the direct-beam slant path of the spectral temperature factor, a required input
+  no_mixing_ratio: no_mixing_ratio mapped to canonical Phase 8 cochain basis
+  no2_mixing_ratio: no2_mixing_ratio mapped to canonical Phase 8 cochain basis
+  o3_mixing_ratio: o3_mixing_ratio mapped to canonical Phase 8 cochain basis
+  isoprene_mixing_ratio: isoprene_mixing_ratio mapped to canonical Phase 8 cochain basis when present
+  co_mixing_ratio: co_mixing_ratio [CO] of the OH loss k_OH+CO [CO], a required input
+  ch4_mixing_ratio: ch4_mixing_ratio [CH4] of the OH loss k_OH+CH4 [CH4], a required input
+  specific_humidity: specific_humidity q of the water-vapour mole fraction x_w = (q/M_w) / (q/M_w + (1-q)/M_d) in the O(1D) + H2O fraction f, a required input
+parameter_map:
+  atmosphere.chemistry.chemistry_temperature_q10: ParameterManager-backed multiplier of the maximum Trebs J_NO2 in the audit-only Hodge mobility
+  atmosphere.chemistry.isoprene_carbon_atoms: ParameterManager-backed carbon atoms per isoprene molecule for the reactive carbon oxidation ledger
+  atmosphere.chemistry.isoprene_ro2_no2_stoichiometric_yield: ParameterManager-backed stoichiometric NO-to-NO2 conversions per OH-oxidized isoprene molecule
+  atmosphere.chemistry.j_no2_irradiance_linear_coefficient: ParameterManager-backed Trebs et al. (2009) linear coefficient B1 of J_NO2
+  atmosphere.chemistry.j_no2_irradiance_quadratic_coefficient: ParameterManager-backed Trebs et al. (2009) quadratic coefficient B2 of J_NO2
+  atmosphere.chemistry.k_isoprene_no3_298: ParameterManager-backed isoprene and NO3 rate coefficient of the isoprene chemical lifetime diagnostic
+  atmosphere.chemistry.k_isoprene_no3_activation_energy: ParameterManager-backed isoprene and NO3 activation energy of the isoprene chemical lifetime diagnostic
+  atmosphere.chemistry.k_isoprene_o3_298: ParameterManager-backed isoprene and ozone rate coefficient
+  atmosphere.chemistry.k_isoprene_o3_activation_energy: ParameterManager-backed isoprene and ozone activation energy
+  atmosphere.chemistry.k_isoprene_oh_298: ParameterManager-backed isoprene and OH rate coefficient
+  atmosphere.chemistry.k_isoprene_oh_activation_energy: ParameterManager-backed isoprene and OH activation energy
+  atmosphere.chemistry.k_no_o3_298: ParameterManager-backed NO and ozone rate coefficient
+  atmosphere.chemistry.k_no_o3_activation_energy: ParameterManager-backed NO and ozone activation energy
+  atmosphere.chemistry.k_o1d_h2o_298: ParameterManager-backed O(1D) and H2O rate coefficient
+  atmosphere.chemistry.k_o1d_h2o_activation_energy: ParameterManager-backed O(1D) and H2O activation energy
+  atmosphere.chemistry.k_o1d_n2_298: ParameterManager-backed O(1D) and N2 quenching rate coefficient
+  atmosphere.chemistry.k_o1d_n2_activation_energy: ParameterManager-backed O(1D) and N2 activation energy
+  atmosphere.chemistry.k_o1d_o2_298: ParameterManager-backed O(1D) and O2 quenching rate coefficient
+  atmosphere.chemistry.k_o1d_o2_activation_energy: ParameterManager-backed O(1D) and O2 activation energy
+  atmosphere.chemistry.k_oh_ch4_298: ParameterManager-backed OH and CH4 rate coefficient
+  atmosphere.chemistry.k_oh_ch4_activation_energy: ParameterManager-backed OH and CH4 activation energy
+  atmosphere.chemistry.k_oh_co_298: ParameterManager-backed OH and CO rate coefficient
+  atmosphere.chemistry.k_oh_co_activation_energy: ParameterManager-backed OH and CO activation energy
+  atmosphere.chemistry.k_oh_no2_298: ParameterManager-backed OH and NO2 rate coefficient
+  atmosphere.chemistry.k_oh_no2_activation_energy: ParameterManager-backed OH and NO2 activation energy
+  atmosphere.chemistry.k_ro2_no_298: ParameterManager-backed RO2 and NO rate coefficient at 298.15 K
+  atmosphere.chemistry.k_ro2_no_activation_energy: ParameterManager-backed RO2 and NO activation energy
+  atmosphere.chemistry.k_ro2_termination_loss: ParameterManager-backed first-order RO2 termination and isomerization loss rate
+  atmosphere.chemistry.mcm_no2_photolysis_l: ParameterManager-backed MCM J4 parameter l of the J(O1D)/J(NO2) ratio
+  atmosphere.chemistry.mcm_no2_photolysis_m: ParameterManager-backed MCM J4 parameter m of the J(O1D)/J(NO2) ratio
+  atmosphere.chemistry.mcm_no2_photolysis_n: ParameterManager-backed MCM J4 parameter n of the J(O1D)/J(NO2) ratio
+  atmosphere.chemistry.mcm_o1d_photolysis_l: ParameterManager-backed MCM J1 parameter l of the J(O1D)/J(NO2) ratio
+  atmosphere.chemistry.mcm_o1d_photolysis_m: ParameterManager-backed MCM J1 parameter m of the J(O1D)/J(NO2) ratio
+  atmosphere.chemistry.mcm_o1d_photolysis_n: ParameterManager-backed MCM J1 parameter n of the J(O1D)/J(NO2) ratio
+  atmosphere.chemistry.minimum_concentration: ParameterManager-backed positive metric scale used only by the level-3 Hodge audit; not a runtime species floor
+  atmosphere.chemistry.o1d_water_oh_yield: ParameterManager-backed OH stoichiometric yield of O(1D) + H2O
+  atmosphere.chemistry.photolysis.matsumi_amplitudes: ParameterManager-backed spectral reference datum of the photolysis temperature factor, Matsumi amplitudes A1, A2, A3 [dimensionless]
+  atmosphere.chemistry.photolysis.matsumi_band_centers: ParameterManager-backed spectral reference datum of the photolysis temperature factor, Matsumi band centres x1, x2, x3 [um]
+  atmosphere.chemistry.photolysis.matsumi_band_widths: ParameterManager-backed spectral reference datum of the photolysis temperature factor, Matsumi band widths w1, w2, w3 [um]
+  atmosphere.chemistry.photolysis.matsumi_energy_gap: ParameterManager-backed spectral reference datum of the photolysis temperature factor, Matsumi energy nu2 of q = exp(-nu2/(R T)) [cm-1]
+  atmosphere.chemistry.photolysis.matsumi_offset: ParameterManager-backed spectral reference datum of the photolysis temperature factor, Matsumi constant C [dimensionless]
+  atmosphere.chemistry.photolysis.matsumi_reference_temperature: ParameterManager-backed spectral reference datum of the photolysis temperature factor, Matsumi normalization temperature [K]
+  atmosphere.chemistry.photolysis.matsumi_temperature_max: ParameterManager-backed spectral reference datum of the photolysis temperature factor, Upper evaluated temperature of the Matsumi expression [K]
+  atmosphere.chemistry.photolysis.matsumi_temperature_min: ParameterManager-backed spectral reference datum of the photolysis temperature factor, Lower evaluated temperature of the Matsumi expression [K]
+  atmosphere.chemistry.photolysis.matsumi_wavelength_max: ParameterManager-backed spectral reference datum of the photolysis temperature factor, Upper wavelength limit of the Matsumi expression [um]
+  atmosphere.chemistry.photolysis.matsumi_wavelength_min: ParameterManager-backed spectral reference datum of the photolysis temperature factor, Lower wavelength limit of the Matsumi expression [um]
+  atmosphere.chemistry.photolysis.no2_cross_section: ParameterManager-backed spectral reference datum of the photolysis temperature factor, NO2 absorption cross section at 298 K [cm2]
+  atmosphere.chemistry.photolysis.no2_cross_section_wavelength: ParameterManager-backed spectral reference datum of the photolysis temperature factor, Centres of the 5-nm NO2 cross-section intervals [um]
+  atmosphere.chemistry.photolysis.no2_quantum_yield_high_temperature: ParameterManager-backed spectral reference datum of the photolysis temperature factor, NO2 -> NO + O(3P) quantum yield at 298 K [dimensionless]
+  atmosphere.chemistry.photolysis.no2_quantum_yield_low_temperature: ParameterManager-backed spectral reference datum of the photolysis temperature factor, NO2 -> NO + O(3P) quantum yield at 248 K [dimensionless]
+  atmosphere.chemistry.photolysis.no2_quantum_yield_temperature_high: ParameterManager-backed spectral reference datum of the photolysis temperature factor, Temperature of the upper NO2 yield table [K]
+  atmosphere.chemistry.photolysis.no2_quantum_yield_temperature_low: ParameterManager-backed spectral reference datum of the photolysis temperature factor, Temperature of the lower NO2 yield table [K]
+  atmosphere.chemistry.photolysis.no2_quantum_yield_wavelength: ParameterManager-backed spectral reference datum of the photolysis temperature factor, NO2 quantum-yield wavelengths and integration grid [um]
+  atmosphere.chemistry.photolysis.o1d_integration_wavelength: ParameterManager-backed spectral reference datum of the photolysis temperature factor, Integration grid of the O(1D) factor [um]
+  atmosphere.chemistry.photolysis.o1d_quantum_yield_long_wavelength: ParameterManager-backed spectral reference datum of the photolysis temperature factor, O(1D) yield above 328 nm [dimensionless]
+  atmosphere.chemistry.photolysis.o1d_quantum_yield_short_wavelength: ParameterManager-backed spectral reference datum of the photolysis temperature factor, O(1D) yield below 306 nm [dimensionless]
+  atmosphere.chemistry.photolysis.o3_cross_section_high_temperature: ParameterManager-backed spectral reference datum of the photolysis temperature factor, O3 cross section at the upper tabulated temperature [cm2]
+  atmosphere.chemistry.photolysis.o3_cross_section_low_temperature: ParameterManager-backed spectral reference datum of the photolysis temperature factor, O3 cross section at the lower tabulated temperature [cm2]
+  atmosphere.chemistry.photolysis.o3_cross_section_temperature_high: ParameterManager-backed spectral reference datum of the photolysis temperature factor, Upper tabulation temperature of each O3 point [K]
+  atmosphere.chemistry.photolysis.o3_cross_section_temperature_low: ParameterManager-backed spectral reference datum of the photolysis temperature factor, Lower tabulation temperature of each O3 point [K]
+  atmosphere.chemistry.photolysis.o3_cross_section_wavelength: ParameterManager-backed spectral reference datum of the photolysis temperature factor, Wavelengths of the O3 cross sections [um]
+  atmosphere.chemistry.photolysis.rayleigh_denominator_inverse_square: ParameterManager-backed spectral reference datum of the photolysis temperature factor, Bodhaine Eq. 30 lambda^-2 denominator coefficient [dimensionless]
+  atmosphere.chemistry.photolysis.rayleigh_denominator_square: ParameterManager-backed spectral reference datum of the photolysis temperature factor, Bodhaine Eq. 30 lambda^2 denominator coefficient [dimensionless]
+  atmosphere.chemistry.photolysis.rayleigh_numerator_constant: ParameterManager-backed spectral reference datum of the photolysis temperature factor, Bodhaine Eq. 30 numerator constant [dimensionless]
+  atmosphere.chemistry.photolysis.rayleigh_numerator_inverse_square: ParameterManager-backed spectral reference datum of the photolysis temperature factor, Bodhaine Eq. 30 lambda^-2 numerator coefficient [dimensionless]
+  atmosphere.chemistry.photolysis.rayleigh_numerator_square: ParameterManager-backed spectral reference datum of the photolysis temperature factor, Bodhaine Eq. 30 lambda^2 numerator coefficient [dimensionless]
+  atmosphere.chemistry.photolysis.rayleigh_scale: ParameterManager-backed spectral reference datum of the photolysis temperature factor, Bodhaine Eq. 30 leading factor [dimensionless]
+  atmosphere.chemistry.photolysis.reference_ozone_column: ParameterManager-backed spectral reference datum of the photolysis temperature factor, Reference vertical ozone column [molecule cm-2]
+  atmosphere.chemistry.photolysis.reference_temperature: ParameterManager-backed spectral reference datum of the photolysis temperature factor, Reference temperature T_ref of R(T) [K]
+  atmosphere.chemistry.photolysis.solar_flux_wavelength: ParameterManager-backed spectral reference datum of the photolysis temperature factor, Centres of the 1-nm solar flux intervals [um]
+  atmosphere.chemistry.photolysis.solar_photon_flux: ParameterManager-backed spectral reference datum of the photolysis temperature factor, Extraterrestrial solar photon flux [photons cm-2 s-1 um-1]
+  atmosphere.chemistry.photolysis_temperature_mode: ParameterManager-backed selection of the photolysis temperature factor (none or spectral_quantum_yield)
+  atmosphere.chemistry.temperature_max: ParameterManager-backed upper valid temperature
+  atmosphere.chemistry.temperature_min: ParameterManager-backed lower valid temperature
+  atmosphere.chemistry.uv_a_surface_albedo: ParameterManager-backed UV-A surface albedo of the J_NO2 relation
+operator_map:
+  J_h: zero reversible operator; reversible_structure returns None
+  M_h: positive semidefinite diagonal field Hodge declared for level-3 structural audit, not a strict runtime state advancer
+  G_h: declared radiation photolysis port map
+unit_map:
+  air_temperature: K
+  atmospheric_pressure: Pa
+  shortwave_down: W m-2
+  cos_zenith: dimensionless
+  no_mixing_ratio: mol mol-1
+  no2_mixing_ratio: mol mol-1
+  o3_mixing_ratio: mol mol-1
+  isoprene_mixing_ratio: mol mol-1
+  co_mixing_ratio: mol mol-1
+  ch4_mixing_ratio: mol mol-1
+  specific_humidity: kg kg-1
+  diagnostics.chemistry.photolysis_rate_no2: s-1
+  diagnostics.chemistry.isoprene_oxidation_rate: mol mol-1 s-1
+  diagnostics.chemistry.reaction_no_o3_rate: mol mol-1 s-1
+  diagnostics.chemistry.photolysis_no2_rate: mol mol-1 s-1
+  diagnostics.chemistry.rate_constant_no_o3: cm3 molecule-1 s-1
+  diagnostics.chemistry.shortwave_radiation_used: W m-2
+  diagnostics.chemistry.oh_concentration: molecule cm-3
+  diagnostics.chemistry.air_number_density: molecule cm-3
+  diagnostics.chemistry.ro2_no_conversion_rate: mol mol-1 s-1
+  diagnostics.chemistry.ro2_no_branching_fraction: dimensionless
+  diagnostics.chemistry.ox_net_chemical_tendency: mol mol-1 s-1
+  diagnostics.chemistry.carbon_oxidized_rate: mol mol-1 s-1
+input_output_map:
+  air_temperature: canonical required temperature input
+  atmospheric_pressure: canonical required pressure input; its alias air_pressure is not read and no standard atmosphere is substituted
+  shortwave_down: canonical required solar global irradiance of the Trebs et al. (2009) J_NO2 relation
+  cos_zenith: canonical required solar-geometry input; a missing value raises and no geometry is derived from shortwave_down
+  no_mixing_ratio: canonical state input and accumulated state increment
+  no2_mixing_ratio: canonical state input and accumulated state increment
+  o3_mixing_ratio: canonical state input and accumulated state increment
+  isoprene_mixing_ratio: canonical optional state input and conditionally emitted accumulated state increment
+  co_mixing_ratio: canonical required OH-loss input; a missing value raises and no background value is substituted
+  ch4_mixing_ratio: canonical required OH-loss input; a missing value raises and no background value is substituted
+  specific_humidity: canonical required humidity input of the O(1D) + H2O OH source; a missing value raises and no humidity is substituted
+  diagnostics.chemistry.photolysis_rate_no2: canonical photolysis-rate observation
+  diagnostics.chemistry.isoprene_oxidation_rate: canonical isoprene oxidation-rate observation
+  diagnostics.chemistry.reaction_no_o3_rate: canonical NO and ozone reaction-rate observation
+  diagnostics.chemistry.photolysis_no2_rate: canonical NO2 photolysis tendency observation
+  diagnostics.chemistry.rate_constant_no_o3: canonical NO and ozone rate-coefficient observation
+  diagnostics.chemistry.shortwave_radiation_used: canonical resolved radiation observation
+  diagnostics.chemistry.oh_concentration: canonical OH number-density observation
+  diagnostics.chemistry.air_number_density: canonical air number-density observation
+  diagnostics.chemistry.ro2_no_conversion_rate: canonical peroxy radical NO-to-NO2 conversion rate observation
+  diagnostics.chemistry.ro2_no_branching_fraction: canonical peroxy radical NO branching fraction observation
+  diagnostics.chemistry.ox_net_chemical_tendency: canonical net odd-oxygen chemical production tendency observation
+  diagnostics.chemistry.carbon_oxidized_rate: canonical reactive carbon oxidation export rate observation
+interface_map:
+  forward_signature: forward(self, state, time, dt, **kwargs)
+  bridge_class: PhysicalFieldFunctor
+  abstraction_contract: PhysicalField
+  state_write_mode: canonical UpdateItem ACCUMULATE increments for species and REPLACE observations for diagnostics
+  legacy_inputs:
+  - air_temperature
+  - atmospheric_pressure
+  - shortwave_down
+  - cos_zenith
+  - no_mixing_ratio
+  - no2_mixing_ratio
+  - o3_mixing_ratio
+  - isoprene_mixing_ratio
+  - co_mixing_ratio
+  - ch4_mixing_ratio
+  - specific_humidity
+  iphs_inputs:
+  - air_temperature
+  - atmospheric_pressure
+  - shortwave_down
+  - cos_zenith
+  - no_mixing_ratio
+  - no2_mixing_ratio
+  - o3_mixing_ratio
+  - isoprene_mixing_ratio
+  - co_mixing_ratio
+  - ch4_mixing_ratio
+  - specific_humidity
+  legacy_outputs:
+  - no_mixing_ratio
+  - no2_mixing_ratio
+  - o3_mixing_ratio
+  - isoprene_mixing_ratio
+  - diagnostics.chemistry.photolysis_rate_no2
+  - diagnostics.chemistry.isoprene_oxidation_rate
+  - diagnostics.chemistry.reaction_no_o3_rate
+  - diagnostics.chemistry.photolysis_no2_rate
+  - diagnostics.chemistry.rate_constant_no_o3
+  - diagnostics.chemistry.shortwave_radiation_used
+  - diagnostics.chemistry.oh_concentration
+  - diagnostics.chemistry.air_number_density
+  - diagnostics.chemistry.ro2_no_conversion_rate
+  - diagnostics.chemistry.ro2_no_branching_fraction
+  - diagnostics.chemistry.ox_net_chemical_tendency
+  - diagnostics.chemistry.carbon_oxidized_rate
+  iphs_outputs:
+  - no_mixing_ratio
+  - no2_mixing_ratio
+  - o3_mixing_ratio
+  - isoprene_mixing_ratio
+  - diagnostics.chemistry.photolysis_rate_no2
+  - diagnostics.chemistry.isoprene_oxidation_rate
+  - diagnostics.chemistry.reaction_no_o3_rate
+  - diagnostics.chemistry.photolysis_no2_rate
+  - diagnostics.chemistry.rate_constant_no_o3
+  - diagnostics.chemistry.shortwave_radiation_used
+  - diagnostics.chemistry.oh_concentration
+  - diagnostics.chemistry.air_number_density
+  - diagnostics.chemistry.ro2_no_conversion_rate
+  - diagnostics.chemistry.ro2_no_branching_fraction
+  - diagnostics.chemistry.ox_net_chemical_tendency
+  - diagnostics.chemistry.carbon_oxidized_rate
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: The single forward path evaluates ParameterManager-backed reduced chemistry through advance_reaction_network and emits its integrated species deltas plus namespaced observations.
+  no_legacy_mode: true
+  non_strict_reason: Level 3 declares IPHS structure hooks but does not claim a strict runtime-linked Hamiltonian or GENERIC state advance.
+state_advancement_map:
+  potential_basis: declared RELIC state, port, or observation cochain basis
+  effort_variable: radiation and species fields used by the declared level 3 structural closure; no strict variational effort is claimed
+  state_advancer: Delta x = dt N_h r_h with canonical per-step UpdateItem accumulation, admitted only when x + Delta x is non-negative for every retained species
+  explicit_stoichiometric_usage: ChemistryFunctor.forward passes the four retained species, five named reactions, signed 4 by 5 N_h, ParameterManager-backed r_h, C_NOx, dt, and boundary_export route to advance_reaction_network exactly once.
+  runtime_usage: ChemistryFunctor.forward evaluates one gas-phase reduced-kinetics path through advance_reaction_network, validates C_NOx N_h = 0, and rejects an explicit Euler candidate when dt exceeds the exact current-state positivity bound min(x_i / -f_i) over negative tendencies. The open boundary route contains unretained O/O2/OH and oxidation products. This is not a general stiff-stability, accuracy, Hamiltonian, entropy, or GENERIC proof. Dry deposition remains exclusively owned by DryDepositionAggregator, and no alternate chemistry formula branch is executable.
+parameter_management_map:
+  atmosphere.chemistry.chemistry_temperature_q10: {source: ParameterManager YAML}
+  atmosphere.chemistry.isoprene_carbon_atoms: {source: ParameterManager YAML}
+  atmosphere.chemistry.isoprene_ro2_no2_stoichiometric_yield: {source: ParameterManager YAML}
+  atmosphere.chemistry.j_no2_irradiance_linear_coefficient: {source: ParameterManager YAML}
+  atmosphere.chemistry.j_no2_irradiance_quadratic_coefficient: {source: ParameterManager YAML}
+  atmosphere.chemistry.k_isoprene_no3_298: {source: ParameterManager YAML}
+  atmosphere.chemistry.k_isoprene_no3_activation_energy: {source: ParameterManager YAML}
+  atmosphere.chemistry.k_isoprene_o3_298: {source: ParameterManager YAML}
+  atmosphere.chemistry.k_isoprene_o3_activation_energy: {source: ParameterManager YAML}
+  atmosphere.chemistry.k_isoprene_oh_298: {source: ParameterManager YAML}
+  atmosphere.chemistry.k_isoprene_oh_activation_energy: {source: ParameterManager YAML}
+  atmosphere.chemistry.k_no_o3_298: {source: ParameterManager YAML}
+  atmosphere.chemistry.k_no_o3_activation_energy: {source: ParameterManager YAML}
+  atmosphere.chemistry.k_o1d_h2o_298: {source: ParameterManager YAML}
+  atmosphere.chemistry.k_o1d_h2o_activation_energy: {source: ParameterManager YAML}
+  atmosphere.chemistry.k_o1d_n2_298: {source: ParameterManager YAML}
+  atmosphere.chemistry.k_o1d_n2_activation_energy: {source: ParameterManager YAML}
+  atmosphere.chemistry.k_o1d_o2_298: {source: ParameterManager YAML}
+  atmosphere.chemistry.k_o1d_o2_activation_energy: {source: ParameterManager YAML}
+  atmosphere.chemistry.k_oh_ch4_298: {source: ParameterManager YAML}
+  atmosphere.chemistry.k_oh_ch4_activation_energy: {source: ParameterManager YAML}
+  atmosphere.chemistry.k_oh_co_298: {source: ParameterManager YAML}
+  atmosphere.chemistry.k_oh_co_activation_energy: {source: ParameterManager YAML}
+  atmosphere.chemistry.k_oh_no2_298: {source: ParameterManager YAML}
+  atmosphere.chemistry.k_oh_no2_activation_energy: {source: ParameterManager YAML}
+  atmosphere.chemistry.k_ro2_no_298: {source: ParameterManager YAML}
+  atmosphere.chemistry.k_ro2_no_activation_energy: {source: ParameterManager YAML}
+  atmosphere.chemistry.k_ro2_termination_loss: {source: ParameterManager YAML}
+  atmosphere.chemistry.mcm_no2_photolysis_l: {source: ParameterManager YAML}
+  atmosphere.chemistry.mcm_no2_photolysis_m: {source: ParameterManager YAML}
+  atmosphere.chemistry.mcm_no2_photolysis_n: {source: ParameterManager YAML}
+  atmosphere.chemistry.mcm_o1d_photolysis_l: {source: ParameterManager YAML}
+  atmosphere.chemistry.mcm_o1d_photolysis_m: {source: ParameterManager YAML}
+  atmosphere.chemistry.mcm_o1d_photolysis_n: {source: ParameterManager YAML}
+  atmosphere.chemistry.minimum_concentration: {source: ParameterManager YAML}
+  atmosphere.chemistry.o1d_water_oh_yield: {source: ParameterManager YAML}
+  atmosphere.chemistry.photolysis.matsumi_amplitudes: {source: ParameterManager YAML}
+  atmosphere.chemistry.photolysis.matsumi_band_centers: {source: ParameterManager YAML}
+  atmosphere.chemistry.photolysis.matsumi_band_widths: {source: ParameterManager YAML}
+  atmosphere.chemistry.photolysis.matsumi_energy_gap: {source: ParameterManager YAML}
+  atmosphere.chemistry.photolysis.matsumi_offset: {source: ParameterManager YAML}
+  atmosphere.chemistry.photolysis.matsumi_reference_temperature: {source: ParameterManager YAML}
+  atmosphere.chemistry.photolysis.matsumi_temperature_max: {source: ParameterManager YAML}
+  atmosphere.chemistry.photolysis.matsumi_temperature_min: {source: ParameterManager YAML}
+  atmosphere.chemistry.photolysis.matsumi_wavelength_max: {source: ParameterManager YAML}
+  atmosphere.chemistry.photolysis.matsumi_wavelength_min: {source: ParameterManager YAML}
+  atmosphere.chemistry.photolysis.no2_cross_section: {source: ParameterManager YAML}
+  atmosphere.chemistry.photolysis.no2_cross_section_wavelength: {source: ParameterManager YAML}
+  atmosphere.chemistry.photolysis.no2_quantum_yield_high_temperature: {source: ParameterManager YAML}
+  atmosphere.chemistry.photolysis.no2_quantum_yield_low_temperature: {source: ParameterManager YAML}
+  atmosphere.chemistry.photolysis.no2_quantum_yield_temperature_high: {source: ParameterManager YAML}
+  atmosphere.chemistry.photolysis.no2_quantum_yield_temperature_low: {source: ParameterManager YAML}
+  atmosphere.chemistry.photolysis.no2_quantum_yield_wavelength: {source: ParameterManager YAML}
+  atmosphere.chemistry.photolysis.o1d_integration_wavelength: {source: ParameterManager YAML}
+  atmosphere.chemistry.photolysis.o1d_quantum_yield_long_wavelength: {source: ParameterManager YAML}
+  atmosphere.chemistry.photolysis.o1d_quantum_yield_short_wavelength: {source: ParameterManager YAML}
+  atmosphere.chemistry.photolysis.o3_cross_section_high_temperature: {source: ParameterManager YAML}
+  atmosphere.chemistry.photolysis.o3_cross_section_low_temperature: {source: ParameterManager YAML}
+  atmosphere.chemistry.photolysis.o3_cross_section_temperature_high: {source: ParameterManager YAML}
+  atmosphere.chemistry.photolysis.o3_cross_section_temperature_low: {source: ParameterManager YAML}
+  atmosphere.chemistry.photolysis.o3_cross_section_wavelength: {source: ParameterManager YAML}
+  atmosphere.chemistry.photolysis.rayleigh_denominator_inverse_square: {source: ParameterManager YAML}
+  atmosphere.chemistry.photolysis.rayleigh_denominator_square: {source: ParameterManager YAML}
+  atmosphere.chemistry.photolysis.rayleigh_numerator_constant: {source: ParameterManager YAML}
+  atmosphere.chemistry.photolysis.rayleigh_numerator_inverse_square: {source: ParameterManager YAML}
+  atmosphere.chemistry.photolysis.rayleigh_numerator_square: {source: ParameterManager YAML}
+  atmosphere.chemistry.photolysis.rayleigh_scale: {source: ParameterManager YAML}
+  atmosphere.chemistry.photolysis.reference_ozone_column: {source: ParameterManager YAML}
+  atmosphere.chemistry.photolysis.reference_temperature: {source: ParameterManager YAML}
+  atmosphere.chemistry.photolysis.solar_flux_wavelength: {source: ParameterManager YAML}
+  atmosphere.chemistry.photolysis.solar_photon_flux: {source: ParameterManager YAML}
+  atmosphere.chemistry.photolysis_temperature_mode: {source: ParameterManager YAML}
+  atmosphere.chemistry.temperature_max: {source: ParameterManager YAML}
+  atmosphere.chemistry.temperature_min: {source: ParameterManager YAML}
+  atmosphere.chemistry.uv_a_surface_albedo: {source: ParameterManager YAML}
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares interfaces, execution phase, and conservation semantics
+  state_contract: existing simulator state update path is preserved
+  validation_rule: phase8 scientific inventory and equivalence certificate checks
+dependency_interconnection_map:
+  dependencies: 'atmospheric_radiation (optional same-step provider of shortwave_down and cos_zenith for the open mechanism; otherwise both are external forcing)'
+  direct_functor_calls: none declared by certificate
+overflow_routing_map:
+  invalid_species_route: negative, NaN, or infinite mixing ratios fail before a state UpdateItem is emitted
+  inadmissible_timestep_route: an explicit Euler candidate that would make a retained species negative fails before any UpdateItem; the reported current-state dt bound must be met directly or through simulator-managed substeps
+  diagnostic_bounds: the steady-state OH diagnostic is P_OH / L_OH without lower or upper bounds or a loss floor; it drives the isoprene + OH sink of the prognostic isoprene state, and a non-positive OH loss frequency raises before any UpdateItem
+  discarded_residuals: none because the production chemistry path performs no species-state clipping, flooring, or negative-residual disposal
+conservation_map:
+  conserved_quantities: local NO plus NO2 reaction-family identity only
+  balance_expression: C_NOx N_h = 0 and UpdateItem(no_mixing_ratio).value + UpdateItem(no2_mixing_ratio).value = 0 for the gas-phase NOx interconversion family; check_conservation_laws reports the normalized residual and fails fast on malformed increments; total mass is not claimed because products and O2 are outside the reduced state
+entropy_audit:
+  operator_sign: Declared level 3 mobility is positive semidefinite in the structural hook; this is not a strict runtime thermodynamic proof.
+  sigma_expression: Independent entropy-production closure has not been verified, so strict IPHS or GENERIC behavior is not claimed.
+equivalence_type: exact

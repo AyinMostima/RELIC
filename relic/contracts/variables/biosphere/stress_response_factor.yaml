@@ -1,0 +1,49 @@
+variable: stress_response_factor
+title: "Sesquiterpene Stress Response Factor"
+description: "Dimensionless multiplier of the stress-induced sesquiterpene emission potential emitted by the sesquiterpene_stress_model Functor from the dimensionless stress_level S: f = clip(1 + max(S - S_th, 0) * A, 1, 1 + A), with S_th the parameter biosphere.bvoc.sesquiterpene.stress_threshold and A the parameter biosphere.bvoc.sesquiterpene.stress_amplification. f = 1 means no enhancement; f > 1 amplifies the emission potential once the stress exceeds the threshold. Algebraic in S and independent of dt; it carries no carbon flux of its own. Only f >= 1 is a structural bound; the upper limit 1 + A follows a parameter and is not declared. No relic Functor reads it."
+kind: diagnostic
+dimension:
+  udunits: "1"
+  cf_standard_name: null
+support:
+  spatial_kind: grid_cell
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: "sesquiterpene_stress_model"
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "relic/scientific/biosphere/bvoc/synthesis/sesquiterpene.py: SesquiterpeneStressModel threshold-linear response, a reduced calibrated choice rather than a universal stress law"
+  - "Duhl, T.R., Helmig, D. and Guenther, A. (2008). Sesquiterpene emissions from vegetation: a review. Biogeosciences 5, 761-777"
+  - "Loreto, F. and Schnitzler, J.-P. (2010). Abiotic stresses and induced BVOCs. Trends in Plant Science 15, 154-166"
+numerics:
+  # f = clip(1 + max(S - S_th, 0) * A, 1, 1 + A) is >= 1 by construction; the
+  # upper limit 1 + A depends on stress_amplification and is not declared.
+  lower_bound: 1.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "sesquiterpene_stress_model"
+      module: "relic.scientific.biosphere.bvoc.synthesis.sesquiterpene"
+      provides: ["stress_response_factor"]
+      unit: "1"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/biosphere/bvoc/synthesis/sesquiterpene.py"
+  runtime_role: "algebraic_sesquiterpene_stress_amplification_diagnostic"
+  runtime_writer: "sesquiterpene_stress_model"
+  note: "Declared output at sesquiterpene.py:854 (input stress_level at :853, VariableKind.DIAGNOSTIC at :856, empty conservation_laws at :852); computed at sesquiterpene.py:976-982 as f = min(max(1 + max(S - S_th, 0) * A, 1), 1 + A) and returned at :984-992 as UpdateItem(mode=UpdateMode.REPLACE, unit 1, per_timestep=False), so a governed step replaces the factor. The algebraic value replaces the previous one, so the contract is not incrementable and rejects the ACCUMULATE coercion that a raw Tensor would receive without RunSpecs (_coerce_runtime_update_item, relic/core/simulator/execution_group.py). S_th and A are read from relic/parameters/database/relic/biosphere/bvoc_parameters.yaml:3581 and :3604. No other relic code reads stress_response_factor."

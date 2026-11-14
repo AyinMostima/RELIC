@@ -1,0 +1,31 @@
+variable: water_filled_pore_space
+title: "Water Filled Pore Space"
+kind: forcing
+dimension:
+  udunits: "1"
+  cf_standard_name: null
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+numerics:
+  lower_bound: 0.0
+  upper_bound: 1.0
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies: []
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "external_state_adapter"
+  runtime_role: "external_water_filled_pore_space"
+  runtime_writer: null
+  note: "No RELIC Functor writes water_filled_pore_space. Readers: MethaneOxidationFunctor, which requires it in (0, 1] (phi * WFPS is the water volume per soil volume of C_CH4 = M / (M_C z phi WFPS), CLM4.5 Technical Note Eq. 19.1), MethaneTransportFunctor, pedosphere_methane_scale (the gating weight), NitrificationProcess, which requires it in [0, 1] for the oxygen limitation f_O2 = max((1 - WFPS)/(1 - WFPS_opt), f_O2_min) above WFPS_opt (Linn and Doran 1984), and DenitrificationProcess, which requires it in [0, 1] for the anaerobic factor f_anoxic = max(clip((WFPS - WFPS_thr)/w, 0, 1), f_min) (DAYCENT WFPS basis, Del Grosso et al. 2000)."

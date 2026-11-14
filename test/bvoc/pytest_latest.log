@@ -1,0 +1,2295 @@
+..........................sF.FF.FF.F..F.......FFFFFFFF.............F..F. [ 87%]
+F....FFFFF                                                               [100%]
+================================== FAILURES ===================================
+___________ TestLongTermStability.test_annual_simulation_stability ____________
+
+self = <test_bvoc_system.TestLongTermStability object at 0x00000245BBA97C10>
+
+    def test_annual_simulation_stability(self):
+        """Test stability over annual simulation.
+    
+        Mathematical Expression: Numerical stability requires bounded emissions
+        References: Long-term model stability requirements
+        """
+        # Simulate full year with realistic forcing
+        n_days = 365
+        hourly_emissions = []
+        daily_totals = []
+    
+        # Base conditions
+        base_temp = 288.15  # 15°C annual average
+        base_par = 800.0    # Average PAR
+    
+        for day in range(n_days):
+            # Seasonal variations
+            seasonal_temp_offset = 15.0 * np.sin(2 * np.pi * (day - 80) / 365)  # Spring peak
+            seasonal_par_multiplier = 0.5 + 0.5 * np.sin(2 * np.pi * (day - 80) / 365)
+    
+            daily_emission_total = 0.0
+    
+            for hour in range(24):
+                # Diurnal variations
+                diurnal_temp_offset = 8.0 * np.sin(np.pi * (hour - 6) / 12)
+                diurnal_par_multiplier = max(0, np.sin(np.pi * (hour - 6) / 12))
+    
+                # Calculate conditions
+                temperature = base_temp + seasonal_temp_offset + diurnal_temp_offset
+                par = base_par * seasonal_par_multiplier * diurnal_par_multiplier
+    
+                # Seasonal foliar density (deciduous forest)
+                if day < 90 or day > 310:  # Winter
+                    foliar_density = 10.0
+                elif day < 150:  # Spring growth
+                    foliar_density = 10.0 + 290.0 * (day - 90) / 60
+                elif day < 270:  # Summer plateau
+                    foliar_density = 300.0
+                else:  # Fall senescence
+                    foliar_density = 300.0 - 290.0 * (day - 270) / 40
+    
+                state = {
+                    'temperature': torch.tensor(temperature),
+                    'par': torch.tensor(par),
+                    'foliar_density': torch.tensor(foliar_density),
+                    'water_stress': torch.tensor(0.9),
+                    'temperature_stress': torch.tensor(1.0),
+                    'gross_photosynthesis': torch.tensor(max(0, 20.0 * par / 1000)),
+                    'net_photosynthesis': torch.tensor(max(0, 16.0 * par / 1000))
+                }
+    
+>               result = self.model.forward(state, time=day*24*3600 + hour*3600, dt=3600)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+test\bvoc\test_bvoc_system.py:828: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ppavem\scientific\biosphere\bvoc\megan_model.py:1018: in forward
+    self._validate_inputs(temperature, par, foliar_density)
+ppavem\scientific\biosphere\bvoc\megan_model.py:1546: in _validate_inputs
+    validate_temperature_range(temperature, min_temp=T_FREEZE, max_temp=T_FREEZE + 60.0)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+temperature = tensor(265.4304, device='cuda:0', dtype=torch.float32)
+min_temp = 273.15, max_temp = 333.15
+
+    def validate_temperature_range(temperature: torch.Tensor, min_temp: float = 233.15, max_temp: float = 333.15):
+        """Validate temperature is within reasonable range for biological processes."""
+        # Convert scalar to tensor if necessary
+        if not isinstance(temperature, torch.Tensor):
+            temperature = torch.tensor(temperature)
+    
+        # Handle both scalar and tensor inputs properly
+        tolerance = 1e-5  # Tolerance for floating point comparison
+        if temperature.numel() == 1:
+            # Single value - use comparison with tolerance
+            temp_val = temperature.item()
+            if temp_val < (min_temp - tolerance) or temp_val > (max_temp + tolerance):
+>               raise ValueError(f"Temperature outside valid range [{min_temp}-{max_temp}] K")
+E               ValueError: Temperature outside valid range [273.15-333.15] K
+
+ppavem\utils\unified_response_functions.py:770: ValueError
+----------------------------- Captured log setup ------------------------------
+WARNING  ppavem.parameters.manager:manager.py:2113 Overwriting existing parameter: biological_process.megan_bvoc_model.jmax25
+WARNING  ppavem.parameters.manager:manager.py:2113 Overwriting existing parameter: biological_process.megan_bvoc_model.vcmax25
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'seasonal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'seasonal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'seasonal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'seasonal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'seasonal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'coupling_parameter', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'coupling_parameter', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'scaling_factor', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'scaling_factor', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'coupling_parameter', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'diagnostic_configuration', falling back to 'model_parameter'
+___________ TestParameterLoading.test_parameter_manager_integration ___________
+
+self = <test_bvoc_unit.TestParameterLoading object at 0x00000245BBA9A590>
+
+    def test_parameter_manager_integration(self):
+        """Test that BVOC models properly integrate with ParameterManager.
+    
+        References:
+        - PPA-VEM Architecture: Unified parameter management
+        - Parameters: All BVOC parameters registered in parameter database
+        """
+        # Mock ParameterManager to test parameter loading
+        with patch('ppavem.parameters.manager.get_global_manager') as mock_manager:
+            mock_instance = create_parameter_manager_mock()
+            mock_manager.return_value = mock_instance
+    
+            # Configure mock to return known test values
+            mock_instance.get.side_effect = lambda key, default=None, **kwargs: {
+                "biosphere.bvoc.default.isoprene": 24.0,
+                "biosphere.bvoc.default.monoterpenes": 2.3,
+                "biosphere.bvoc.megan.alpha_light": 0.0027,
+                "biosphere.bvoc.megan.topt_isoprene": 313.15
+            }.get(key, default)
+    
+            # Create MEGAN model
+>           model = MEGANModel(name="test_megan")
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+test\bvoc\test_bvoc_unit.py:86: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ppavem\scientific\biosphere\bvoc\megan_model.py:386: in __init__
+    self._initialize_parameter_buffers(conf)
+ppavem\scientific\biosphere\bvoc\megan_model.py:408: in _initialize_parameter_buffers
+    self.get_parameter_value(
+ppavem\core\functor_bridges.py:324: in get_parameter_value
+    return FunctorBase.get_parameter_value(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = MEGANModel(name='test_megan', category=biological_process, dependencies=[], executions=0, state=initialized)
+name = 'hybrid_weight', default = None, units = 'dimensionless', bounds = None
+validate = True, namespace = 'biosphere.bvoc.megan'
+source_order = ('manager', 'config', 'default'), register_if_missing = False
+required = True
+
+    def get_parameter_value(self,
+                           name: str,
+                           default: Any = None,
+                           units: Optional[str] = None,
+                           bounds: Optional[Tuple[float, float]] = None,
+                           validate: bool = True,  # Changed default to True for better safety
+                           namespace: Optional[str] = None,
+                           source_order: Tuple[str, ...] = ("manager", "config", "default"),
+                           register_if_missing: bool = False,  # Changed default to False to enforce YAML-first policy
+                           required: bool = False) -> Any:  # Added required parameter for test compatibility
+        """
+        Enhanced parameter value getter with validation and registration.
+    
+        This method provides a unified interface for parameter access with
+        support for units, bounds, validation, and automatic registration.
+    
+        Parameters:
+            name : str
+                Parameter name
+            default : Any
+                Default value if parameter not found
+            units : Optional[str]
+                Expected units for validation
+            bounds : Optional[Tuple[float, float]]
+                Expected bounds for validation
+            validate : bool
+                Whether to validate the parameter
+            namespace : Optional[str]
+                Override namespace (default uses functor category)
+            source_order : Tuple[str, ...]
+                Priority order for parameter sources
+            register_if_missing : bool
+                Register parameter if not found (default: False)
+                IMPORTANT: Default changed to False to enforce YAML-first policy.
+                All parameters MUST be defined in YAML database before use.
+            required : bool
+                Whether parameter is required (default: False)
+                If True and parameter not found, raises ValueError
+    
+        Returns:
+            Any: Parameter value (as Tensor if numeric)
+    
+        Examples:
+            >>> value = self.get_parameter_value(
+            ...     "vcmax25",
+            ...     default=60.0,
+            ...     units="umol m-2 s-1",
+            ...     bounds=(10, 200),
+            ...     validate=True
+            ... )
+        """
+        full_key, query_name, query_namespace = self._resolve_parameter_lookup(name, namespace)
+    
+        # Try sources in order
+        value = None
+        found_source = None
+    
+        for source in source_order:
+            if source == "manager" and PARAMETER_MANAGER_AVAILABLE:
+                try:
+                    param_manager = self.get_parameter_manager()
+                    if param_manager is None:
+                        continue
+                    value = param_manager.get(full_key)
+                    if value is not None:
+                        found_source = "manager"
+                        break
+                except Exception:
+                    pass
+    
+            elif source == "config":
+                # Check in original config - first try parameters section, then root level
+                if self._original_config:
+                    config_value = None
+                    # First try parameters section
+                    if "parameters" in self._original_config:
+                        params = self._original_config["parameters"]
+                        for candidate in (query_name, name):
+                            if candidate in params:
+                                config_value = params[candidate]
+                                break
+                    # If not found, try root level
+                    if config_value is None:
+                        for candidate in (query_name, name):
+                            if candidate in self._original_config:
+                                config_value = self._original_config.get(candidate)
+                                if config_value is not None:
+                                    break
+    
+                    if config_value is not None:
+                        # If value is a dict with 'value' key, extract it
+                        if isinstance(config_value, dict) and 'value' in config_value:
+                            value = config_value['value']
+                        else:
+                            value = config_value
+                        found_source = "config"
+                        break
+    
+            elif source == "default":
+                # Check local parameter_values
+                value = self.parameter_values.get(query_name)
+                if value is not None:
+                    found_source = "local"
+                    break
+    
+        # Use provided default if not found
+        if value is None:
+            if required and default is None:
+>               raise ValueError(f"Required parameter '{full_key}' not found in any source")
+E               ValueError: Required parameter 'biosphere.bvoc.megan.hybrid_weight' not found in any source
+
+ppavem\core\functor_base.py:936: ValueError
+____________ TestParameterLoading.test_parameter_fallback_behavior ____________
+
+self = <test_bvoc_unit.TestParameterLoading object at 0x00000245BBA9A8D0>
+
+    def test_parameter_fallback_behavior(self):
+        """Test fallback to default values when ParameterManager unavailable.
+    
+        Mathematical Expression: All parameters should have scientifically valid fallback values
+        References: Default values from Guenther et al. (2012)
+        """
+        # Mock ParameterManager to be unavailable
+        with patch('ppavem.parameters.manager.get_global_manager', return_value=None):
+    
+>           model = MEGANModel(name="test_fallback")
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+test\bvoc\test_bvoc_unit.py:106: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ppavem\scientific\biosphere\bvoc\megan_model.py:386: in __init__
+    self._initialize_parameter_buffers(conf)
+ppavem\scientific\biosphere\bvoc\megan_model.py:408: in _initialize_parameter_buffers
+    self.get_parameter_value(
+ppavem\core\functor_bridges.py:324: in get_parameter_value
+    return FunctorBase.get_parameter_value(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = MEGANModel(name='test_fallback', category=biological_process, dependencies=[], executions=0, state=initialized)
+name = 'hybrid_weight', default = None, units = 'dimensionless', bounds = None
+validate = True, namespace = 'biosphere.bvoc.megan'
+source_order = ('manager', 'config', 'default'), register_if_missing = False
+required = True
+
+    def get_parameter_value(self,
+                           name: str,
+                           default: Any = None,
+                           units: Optional[str] = None,
+                           bounds: Optional[Tuple[float, float]] = None,
+                           validate: bool = True,  # Changed default to True for better safety
+                           namespace: Optional[str] = None,
+                           source_order: Tuple[str, ...] = ("manager", "config", "default"),
+                           register_if_missing: bool = False,  # Changed default to False to enforce YAML-first policy
+                           required: bool = False) -> Any:  # Added required parameter for test compatibility
+        """
+        Enhanced parameter value getter with validation and registration.
+    
+        This method provides a unified interface for parameter access with
+        support for units, bounds, validation, and automatic registration.
+    
+        Parameters:
+            name : str
+                Parameter name
+            default : Any
+                Default value if parameter not found
+            units : Optional[str]
+                Expected units for validation
+            bounds : Optional[Tuple[float, float]]
+                Expected bounds for validation
+            validate : bool
+                Whether to validate the parameter
+            namespace : Optional[str]
+                Override namespace (default uses functor category)
+            source_order : Tuple[str, ...]
+                Priority order for parameter sources
+            register_if_missing : bool
+                Register parameter if not found (default: False)
+                IMPORTANT: Default changed to False to enforce YAML-first policy.
+                All parameters MUST be defined in YAML database before use.
+            required : bool
+                Whether parameter is required (default: False)
+                If True and parameter not found, raises ValueError
+    
+        Returns:
+            Any: Parameter value (as Tensor if numeric)
+    
+        Examples:
+            >>> value = self.get_parameter_value(
+            ...     "vcmax25",
+            ...     default=60.0,
+            ...     units="umol m-2 s-1",
+            ...     bounds=(10, 200),
+            ...     validate=True
+            ... )
+        """
+        full_key, query_name, query_namespace = self._resolve_parameter_lookup(name, namespace)
+    
+        # Try sources in order
+        value = None
+        found_source = None
+    
+        for source in source_order:
+            if source == "manager" and PARAMETER_MANAGER_AVAILABLE:
+                try:
+                    param_manager = self.get_parameter_manager()
+                    if param_manager is None:
+                        continue
+                    value = param_manager.get(full_key)
+                    if value is not None:
+                        found_source = "manager"
+                        break
+                except Exception:
+                    pass
+    
+            elif source == "config":
+                # Check in original config - first try parameters section, then root level
+                if self._original_config:
+                    config_value = None
+                    # First try parameters section
+                    if "parameters" in self._original_config:
+                        params = self._original_config["parameters"]
+                        for candidate in (query_name, name):
+                            if candidate in params:
+                                config_value = params[candidate]
+                                break
+                    # If not found, try root level
+                    if config_value is None:
+                        for candidate in (query_name, name):
+                            if candidate in self._original_config:
+                                config_value = self._original_config.get(candidate)
+                                if config_value is not None:
+                                    break
+    
+                    if config_value is not None:
+                        # If value is a dict with 'value' key, extract it
+                        if isinstance(config_value, dict) and 'value' in config_value:
+                            value = config_value['value']
+                        else:
+                            value = config_value
+                        found_source = "config"
+                        break
+    
+            elif source == "default":
+                # Check local parameter_values
+                value = self.parameter_values.get(query_name)
+                if value is not None:
+                    found_source = "local"
+                    break
+    
+        # Use provided default if not found
+        if value is None:
+            if required and default is None:
+>               raise ValueError(f"Required parameter '{full_key}' not found in any source")
+E               ValueError: Required parameter 'biosphere.bvoc.megan.hybrid_weight' not found in any source
+
+ppavem\core\functor_base.py:936: ValueError
+________ TestMEGANModelCalculations.test_standard_emission_calculation ________
+
+manager = <Mock id='2498536218448'>, key = 'entropy_isoprene'
+namespace = 'biosphere.bvoc.megan', units = 'J mol-1 K-1'
+variable_name = 'generic'
+
+    def _require_scalar(manager, key: str, namespace: str, units: str, variable_name: str = "generic") -> float:
+        """Fetch a scalar parameter with unit validation without direct get calls."""
+        full_key = normalize_parameter_key(f"{namespace}.{key}" if namespace else key)
+        spec = manager.get_spec(full_key)
+        if spec is None:
+            raise KeyError(f"Parameter specification '{full_key}' not found in ParameterManager")
+    
+        value = spec.value if spec.value is not None else spec.default
+        if value is None:
+            raise KeyError(f"Parameter '{full_key}' is missing a value and default in ParameterManager")
+    
+        source_units = spec.units or units
+        if units and source_units and source_units != units:
+            try:
+>               value = unit_converter.convert(
+                    value,
+                    variable_name=variable_name,
+                    source_units=source_units,
+                    target_units=units
+                )
+
+ppavem\scientific\biosphere\bvoc\responses.py:81: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <ppavem.data.standards.unit_converter.UnitConverter object at 0x00000245FE535010>
+data = <Mock name='mock.get_spec().value' id='2498530816720'>
+variable_name = 'generic'
+source_units = <Mock name='mock.get_spec().units' id='2498525631120'>
+target_units = 'J mol-1 K-1', context = None
+
+    def convert(
+        self,
+        data: Union[Tensor, float, int, 'np.ndarray'],
+        variable_name: str,
+        source_units: str,
+        target_units: str,
+        context: Optional[ConversionContext] = None
+    ) -> Union[Tensor, float, int]:
+        """
+        Convert data between units with conservation validation.
+    
+        Supports multiple input types: Tensor, float, int, numpy array
+        Returns same type as input for seamless integration.
+    
+        Parameters:
+            data : Tensor, float, int, or numpy.ndarray
+                Data to convert (auto-normalized to Tensor internally)
+            variable_name : str
+                CF standard name or variable identifier
+            source_units : str
+                Source unit specification
+            target_units : str
+                Target unit specification
+            context : ConversionContext
+                Additional context for conversion (e.g., soil depth)
+    
+        Returns:
+            Tensor, float, or int: Converted data with same type as input
+    
+        Raises:
+            ValueError: If conversion is not supported or context is insufficient
+        """
+        # Track input type for proper output formatting
+        import numpy as np
+        input_type = type(data)
+        is_scalar = isinstance(data, (int, float))
+        is_numpy = isinstance(data, np.ndarray)
+    
+        # Normalize input to Tensor
+        if is_scalar:
+            data_tensor = torch.tensor(data, dtype=torch.float32)
+        elif is_numpy:
+            data_tensor = torch.from_numpy(data.astype(np.float32))
+        elif isinstance(data, Tensor):
+            data_tensor = data
+        else:
+>           raise TypeError(
+                f"Unsupported data type for unit conversion: {type(data)}. "
+                f"Expected Tensor, float, int, or numpy.ndarray"
+            )
+E           TypeError: Unsupported data type for unit conversion: <class 'unittest.mock.Mock'>. Expected Tensor, float, int, or numpy.ndarray
+
+ppavem\data\standards\unit_converter.py:228: TypeError
+
+The above exception was the direct cause of the following exception:
+
+self = <test_bvoc_unit.TestMEGANModelCalculations object at 0x00000245BBA9B4D0>
+
+    def test_standard_emission_calculation(self):
+        """Test standard MEGAN emission rate calculation.
+    
+        Mathematical Expression: E = epsilon * gamma_T * gamma_L * rho_f / 3600
+        References: Guenther et al. (2012), MEGAN 2.1 algorithm
+        Parameters: epsilon [ug g-1 DW h-1], gamma_T [dimensionless],
+                   gamma_L [dimensionless], rho_f [g DW m-2]
+        """
+        # Standard test conditions from MEGAN literature
+        temperature = torch.tensor(303.15)  # 30°C (MEGAN standard)
+        par = torch.tensor(1000.0)  # 1000 μmol m-2 s-1 (MEGAN standard)
+        foliar_density = torch.tensor(200.0)  # 200 g DW m-2 (typical forest)
+    
+        # Calculate emission rate for isoprene
+>       emission_rate = self.model._compute_standard_emission(
+            'isoprene', temperature, par, foliar_density
+        )
+
+test\bvoc\test_bvoc_unit.py:173: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ppavem\scientific\biosphere\bvoc\megan_model.py:1176: in _compute_standard_emission
+    temp_factor = self._get_temperature_factor(compound, temperature)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ppavem\scientific\biosphere\bvoc\megan_model.py:1273: in _get_temperature_factor
+    factor = BVOCTemperatureResponse.isoprene_temperature_response(
+ppavem\scientific\biosphere\bvoc\responses.py:334: in isoprene_temperature_response
+    entropy_value = _require_scalar(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+manager = <Mock id='2498536218448'>, key = 'entropy_isoprene'
+namespace = 'biosphere.bvoc.megan', units = 'J mol-1 K-1'
+variable_name = 'generic'
+
+    def _require_scalar(manager, key: str, namespace: str, units: str, variable_name: str = "generic") -> float:
+        """Fetch a scalar parameter with unit validation without direct get calls."""
+        full_key = normalize_parameter_key(f"{namespace}.{key}" if namespace else key)
+        spec = manager.get_spec(full_key)
+        if spec is None:
+            raise KeyError(f"Parameter specification '{full_key}' not found in ParameterManager")
+    
+        value = spec.value if spec.value is not None else spec.default
+        if value is None:
+            raise KeyError(f"Parameter '{full_key}' is missing a value and default in ParameterManager")
+    
+        source_units = spec.units or units
+        if units and source_units and source_units != units:
+            try:
+                value = unit_converter.convert(
+                    value,
+                    variable_name=variable_name,
+                    source_units=source_units,
+                    target_units=units
+                )
+            except Exception as exc:
+>               raise ValueError(
+                    f"Failed to convert '{full_key}' from {source_units} to {units}: {exc}"
+E                   ValueError: Failed to convert 'biosphere.bvoc.megan.entropy_isoprene' from <Mock name='mock.get_spec().units' id='2498525631120'> to J mol-1 K-1: Unsupported data type for unit conversion: <class 'unittest.mock.Mock'>. Expected Tensor, float, int, or numpy.ndarray
+
+ppavem\scientific\biosphere\bvoc\responses.py:88: ValueError
+_______ TestMEGANModelCalculations.test_temperature_response_functions ________
+
+manager = <Mock id='2498529492368'>, key = 'entropy_isoprene'
+namespace = 'biosphere.bvoc.megan', units = 'J mol-1 K-1'
+variable_name = 'generic'
+
+    def _require_scalar(manager, key: str, namespace: str, units: str, variable_name: str = "generic") -> float:
+        """Fetch a scalar parameter with unit validation without direct get calls."""
+        full_key = normalize_parameter_key(f"{namespace}.{key}" if namespace else key)
+        spec = manager.get_spec(full_key)
+        if spec is None:
+            raise KeyError(f"Parameter specification '{full_key}' not found in ParameterManager")
+    
+        value = spec.value if spec.value is not None else spec.default
+        if value is None:
+            raise KeyError(f"Parameter '{full_key}' is missing a value and default in ParameterManager")
+    
+        source_units = spec.units or units
+        if units and source_units and source_units != units:
+            try:
+>               value = unit_converter.convert(
+                    value,
+                    variable_name=variable_name,
+                    source_units=source_units,
+                    target_units=units
+                )
+
+ppavem\scientific\biosphere\bvoc\responses.py:81: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <ppavem.data.standards.unit_converter.UnitConverter object at 0x00000245FE535010>
+data = <Mock name='mock.get_spec().value' id='2498528749072'>
+variable_name = 'generic'
+source_units = <Mock name='mock.get_spec().units' id='2498525837008'>
+target_units = 'J mol-1 K-1', context = None
+
+    def convert(
+        self,
+        data: Union[Tensor, float, int, 'np.ndarray'],
+        variable_name: str,
+        source_units: str,
+        target_units: str,
+        context: Optional[ConversionContext] = None
+    ) -> Union[Tensor, float, int]:
+        """
+        Convert data between units with conservation validation.
+    
+        Supports multiple input types: Tensor, float, int, numpy array
+        Returns same type as input for seamless integration.
+    
+        Parameters:
+            data : Tensor, float, int, or numpy.ndarray
+                Data to convert (auto-normalized to Tensor internally)
+            variable_name : str
+                CF standard name or variable identifier
+            source_units : str
+                Source unit specification
+            target_units : str
+                Target unit specification
+            context : ConversionContext
+                Additional context for conversion (e.g., soil depth)
+    
+        Returns:
+            Tensor, float, or int: Converted data with same type as input
+    
+        Raises:
+            ValueError: If conversion is not supported or context is insufficient
+        """
+        # Track input type for proper output formatting
+        import numpy as np
+        input_type = type(data)
+        is_scalar = isinstance(data, (int, float))
+        is_numpy = isinstance(data, np.ndarray)
+    
+        # Normalize input to Tensor
+        if is_scalar:
+            data_tensor = torch.tensor(data, dtype=torch.float32)
+        elif is_numpy:
+            data_tensor = torch.from_numpy(data.astype(np.float32))
+        elif isinstance(data, Tensor):
+            data_tensor = data
+        else:
+>           raise TypeError(
+                f"Unsupported data type for unit conversion: {type(data)}. "
+                f"Expected Tensor, float, int, or numpy.ndarray"
+            )
+E           TypeError: Unsupported data type for unit conversion: <class 'unittest.mock.Mock'>. Expected Tensor, float, int, or numpy.ndarray
+
+ppavem\data\standards\unit_converter.py:228: TypeError
+
+The above exception was the direct cause of the following exception:
+
+self = <test_bvoc_unit.TestMEGANModelCalculations object at 0x00000245BBA9BB10>
+
+    def test_temperature_response_functions(self):
+        """Test temperature response calculations for different compounds.
+    
+        Mathematical Expressions:
+        - Isoprene: gamma_T = E_opt * CT2 * exp(CT1*x) / (CT2 - CT1*(1-exp(CT2*x)))
+          where x = (T-T_opt)/(R*T*T_opt)
+        - Monoterpenes: gamma_T = exp(beta*(T - T_std))
+    
+        References:
+        - Guenther et al. (2012): Temperature response algorithms
+        - Niinemets et al. (2010): Response function parameters
+        Parameters: E_opt [dimensionless], CT1 [J mol-1], CT2 [J mol-1],
+                   beta [K-1], T_opt [K], T_std [K]
+        """
+        # Test temperature range from 15°C to 45°C
+        temperatures = torch.linspace(288.15, 318.15, 7)  # 15-45°C
+    
+        # Test isoprene temperature response
+        for temp in temperatures:
+>           iso_factor = self.model._get_temperature_factor('isoprene', temp)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+test\bvoc\test_bvoc_unit.py:209: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ppavem\scientific\biosphere\bvoc\megan_model.py:1273: in _get_temperature_factor
+    factor = BVOCTemperatureResponse.isoprene_temperature_response(
+ppavem\scientific\biosphere\bvoc\responses.py:334: in isoprene_temperature_response
+    entropy_value = _require_scalar(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+manager = <Mock id='2498529492368'>, key = 'entropy_isoprene'
+namespace = 'biosphere.bvoc.megan', units = 'J mol-1 K-1'
+variable_name = 'generic'
+
+    def _require_scalar(manager, key: str, namespace: str, units: str, variable_name: str = "generic") -> float:
+        """Fetch a scalar parameter with unit validation without direct get calls."""
+        full_key = normalize_parameter_key(f"{namespace}.{key}" if namespace else key)
+        spec = manager.get_spec(full_key)
+        if spec is None:
+            raise KeyError(f"Parameter specification '{full_key}' not found in ParameterManager")
+    
+        value = spec.value if spec.value is not None else spec.default
+        if value is None:
+            raise KeyError(f"Parameter '{full_key}' is missing a value and default in ParameterManager")
+    
+        source_units = spec.units or units
+        if units and source_units and source_units != units:
+            try:
+                value = unit_converter.convert(
+                    value,
+                    variable_name=variable_name,
+                    source_units=source_units,
+                    target_units=units
+                )
+            except Exception as exc:
+>               raise ValueError(
+                    f"Failed to convert '{full_key}' from {source_units} to {units}: {exc}"
+E                   ValueError: Failed to convert 'biosphere.bvoc.megan.entropy_isoprene' from <Mock name='mock.get_spec().units' id='2498525837008'> to J mol-1 K-1: Unsupported data type for unit conversion: <class 'unittest.mock.Mock'>. Expected Tensor, float, int, or numpy.ndarray
+
+ppavem\scientific\biosphere\bvoc\responses.py:88: ValueError
+_________ TestMEGANModelCalculations.test_coupling_factor_calculation _________
+
+self = <test_bvoc_unit.TestMEGANModelCalculations object at 0x00000245BBAB8810>
+
+    def test_coupling_factor_calculation(self):
+        """Test photosynthesis coupling factor calculation.
+    
+        Mathematical Expression: coupling = A_n / (A_g + epsilon)
+        References: Niinemets et al. (2010), Morfopoulos et al. (2014)
+        Parameters: A_n [μmol CO2 m-2 s-1], A_g [μmol CO2 m-2 s-1]
+        """
+        # Test states with photosynthesis data
+        state_with_ps = {
+            'net_photosynthesis': torch.tensor(15.0),
+            'gross_photosynthesis': torch.tensor(20.0)
+        }
+    
+        coupling_factor = self.model._compute_coupling_factor(state_with_ps)
+    
+        assert coupling_factor > 0.0
+        assert coupling_factor <= 1.0
+        assert torch.allclose(coupling_factor, torch.tensor(0.75), rtol=0.01)
+    
+        # Test state without photosynthesis data
+        state_no_ps = {'temperature': torch.tensor(298.15)}
+    
+        coupling_factor_default = self.model._compute_coupling_factor(state_no_ps)
+>       assert torch.allclose(coupling_factor_default, torch.ones(1))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       RuntimeError: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu!
+
+test\bvoc\test_bvoc_unit.py:281: RuntimeError
+_____________ TestMEGANModelCalculations.test_numerical_stability _____________
+
+manager = <Mock id='2498535673104'>, key = 'entropy_isoprene'
+namespace = 'biosphere.bvoc.megan', units = 'J mol-1 K-1'
+variable_name = 'generic'
+
+    def _require_scalar(manager, key: str, namespace: str, units: str, variable_name: str = "generic") -> float:
+        """Fetch a scalar parameter with unit validation without direct get calls."""
+        full_key = normalize_parameter_key(f"{namespace}.{key}" if namespace else key)
+        spec = manager.get_spec(full_key)
+        if spec is None:
+            raise KeyError(f"Parameter specification '{full_key}' not found in ParameterManager")
+    
+        value = spec.value if spec.value is not None else spec.default
+        if value is None:
+            raise KeyError(f"Parameter '{full_key}' is missing a value and default in ParameterManager")
+    
+        source_units = spec.units or units
+        if units and source_units and source_units != units:
+            try:
+>               value = unit_converter.convert(
+                    value,
+                    variable_name=variable_name,
+                    source_units=source_units,
+                    target_units=units
+                )
+
+ppavem\scientific\biosphere\bvoc\responses.py:81: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <ppavem.data.standards.unit_converter.UnitConverter object at 0x00000245FE535010>
+data = <Mock name='mock.get_spec().value' id='2498528112912'>
+variable_name = 'generic'
+source_units = <Mock name='mock.get_spec().units' id='2498529608144'>
+target_units = 'J mol-1 K-1', context = None
+
+    def convert(
+        self,
+        data: Union[Tensor, float, int, 'np.ndarray'],
+        variable_name: str,
+        source_units: str,
+        target_units: str,
+        context: Optional[ConversionContext] = None
+    ) -> Union[Tensor, float, int]:
+        """
+        Convert data between units with conservation validation.
+    
+        Supports multiple input types: Tensor, float, int, numpy array
+        Returns same type as input for seamless integration.
+    
+        Parameters:
+            data : Tensor, float, int, or numpy.ndarray
+                Data to convert (auto-normalized to Tensor internally)
+            variable_name : str
+                CF standard name or variable identifier
+            source_units : str
+                Source unit specification
+            target_units : str
+                Target unit specification
+            context : ConversionContext
+                Additional context for conversion (e.g., soil depth)
+    
+        Returns:
+            Tensor, float, or int: Converted data with same type as input
+    
+        Raises:
+            ValueError: If conversion is not supported or context is insufficient
+        """
+        # Track input type for proper output formatting
+        import numpy as np
+        input_type = type(data)
+        is_scalar = isinstance(data, (int, float))
+        is_numpy = isinstance(data, np.ndarray)
+    
+        # Normalize input to Tensor
+        if is_scalar:
+            data_tensor = torch.tensor(data, dtype=torch.float32)
+        elif is_numpy:
+            data_tensor = torch.from_numpy(data.astype(np.float32))
+        elif isinstance(data, Tensor):
+            data_tensor = data
+        else:
+>           raise TypeError(
+                f"Unsupported data type for unit conversion: {type(data)}. "
+                f"Expected Tensor, float, int, or numpy.ndarray"
+            )
+E           TypeError: Unsupported data type for unit conversion: <class 'unittest.mock.Mock'>. Expected Tensor, float, int, or numpy.ndarray
+
+ppavem\data\standards\unit_converter.py:228: TypeError
+
+The above exception was the direct cause of the following exception:
+
+self = <test_bvoc_unit.TestMEGANModelCalculations object at 0x00000245BBAB9AD0>
+
+    def test_numerical_stability(self):
+        """Test numerical stability with edge cases and extreme values."""
+        # Test with very small values
+        small_state = {
+            'temperature': torch.tensor(273.16),  # Just above freezing
+            'par': torch.tensor(0.1),  # Very low light
+            'foliar_density': torch.tensor(0.1)  # Very sparse canopy
+        }
+    
+>       result = self.model.forward(small_state, time=0.0, dt=3600.0)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+test\bvoc\test_bvoc_unit.py:337: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ppavem\scientific\biosphere\bvoc\megan_model.py:1045: in forward
+    emission_rate = self._compute_standard_emission(
+ppavem\scientific\biosphere\bvoc\megan_model.py:1176: in _compute_standard_emission
+    temp_factor = self._get_temperature_factor(compound, temperature)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ppavem\scientific\biosphere\bvoc\megan_model.py:1273: in _get_temperature_factor
+    factor = BVOCTemperatureResponse.isoprene_temperature_response(
+ppavem\scientific\biosphere\bvoc\responses.py:334: in isoprene_temperature_response
+    entropy_value = _require_scalar(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+manager = <Mock id='2498535673104'>, key = 'entropy_isoprene'
+namespace = 'biosphere.bvoc.megan', units = 'J mol-1 K-1'
+variable_name = 'generic'
+
+    def _require_scalar(manager, key: str, namespace: str, units: str, variable_name: str = "generic") -> float:
+        """Fetch a scalar parameter with unit validation without direct get calls."""
+        full_key = normalize_parameter_key(f"{namespace}.{key}" if namespace else key)
+        spec = manager.get_spec(full_key)
+        if spec is None:
+            raise KeyError(f"Parameter specification '{full_key}' not found in ParameterManager")
+    
+        value = spec.value if spec.value is not None else spec.default
+        if value is None:
+            raise KeyError(f"Parameter '{full_key}' is missing a value and default in ParameterManager")
+    
+        source_units = spec.units or units
+        if units and source_units and source_units != units:
+            try:
+                value = unit_converter.convert(
+                    value,
+                    variable_name=variable_name,
+                    source_units=source_units,
+                    target_units=units
+                )
+            except Exception as exc:
+>               raise ValueError(
+                    f"Failed to convert '{full_key}' from {source_units} to {units}: {exc}"
+E                   ValueError: Failed to convert 'biosphere.bvoc.megan.entropy_isoprene' from <Mock name='mock.get_spec().units' id='2498529608144'> to J mol-1 K-1: Unsupported data type for unit conversion: <class 'unittest.mock.Mock'>. Expected Tensor, float, int, or numpy.ndarray
+
+ppavem\scientific\biosphere\bvoc\responses.py:88: ValueError
+_________________ TestSynthesisModels.test_mep_pathway_model __________________
+
+self = <test_bvoc_unit.TestSynthesisModels object at 0x00000245BBABC490>
+
+    def test_mep_pathway_model(self):
+        """Test MEP pathway model for isoprene precursor synthesis.
+    
+        Mathematical Expression: J_MEP = V_max * [G3P] * [Pyr] / ((K_G3P + [G3P]) * (K_Pyr + [Pyr]))
+        References: Lichtenthaler (1999), Vickers et al. (2009)
+        Parameters: V_max [μmol m-2 s-1], K_G3P [μmol m-3], K_Pyr [μmol m-3]
+        """
+        mep_model = MEPPathwayModel()
+    
+        # Test with realistic substrate concentrations
+        g3p = torch.tensor(100.0)  # μmol m-3
+        pyruvate = torch.tensor(50.0)  # μmol m-3
+        atp = torch.tensor(10.0)  # μmol m-2 s-1
+        nadph = torch.tensor(8.0)  # μmol m-2 s-1
+        temperature = torch.tensor(298.15)  # 25°C
+    
+        result = mep_model(g3p, pyruvate, atp, nadph, temperature)
+    
+        # Verify output structure
+        assert 'dmapp_flux' in result
+        assert 'dxs_flux' in result
+        assert 'energy_limitation' in result
+    
+        # Verify physical constraints
+        assert result['dmapp_flux'] >= 0.0
+        assert result['energy_limitation'] >= 0.0
+        assert result['energy_limitation'] <= 1.0
+    
+        # Energy limitation should affect DMAPP flux
+        limited_atp = torch.tensor(1.0)  # Very low ATP
+        result_limited = mep_model(g3p, pyruvate, limited_atp, nadph, temperature)
+    
+>       assert result_limited['dmapp_flux'] < result['dmapp_flux']
+E       assert tensor(0.0245) < tensor(0.0245)
+
+test\bvoc\test_bvoc_unit.py:592: AssertionError
+______________ TestSynthesisModels.test_isoprene_synthesis_model ______________
+
+self = <test_bvoc_unit.TestSynthesisModels object at 0x00000245BBABC7D0>
+
+    def test_isoprene_synthesis_model(self):
+        """Test mechanistic isoprene synthesis model.
+    
+        Mathematical Expression: J_IS = V_max_IS * [DMAPP] / (K_DMAPP + [DMAPP])
+        References: Rasulov et al. (2009), Morfopoulos et al. (2014)
+        Parameters: V_max_IS [μmol m-2 s-1], K_DMAPP [μmol m-3]
+        """
+        with patch('ppavem.parameters.manager.get_global_manager') as mock_manager:
+            mock_instance = create_parameter_manager_mock()
+            mock_manager.return_value = mock_instance
+            mock_instance.get.side_effect = lambda key, default=None, **kwargs: default
+    
+>           isoprene_model = IsopreneSynthesis()
+                             ^^^^^^^^^^^^^^^^^^^
+
+test\bvoc\test_bvoc_unit.py:607: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ppavem\scientific\biosphere\bvoc\synthesis\isoprene.py:477: in __init__
+    self.mep_pathway = MEPPathwayModel(
+ppavem\scientific\biosphere\bvoc\synthesis\isoprene.py:130: in __init__
+    _register_buffer("v_max_dxs", "v_max_dxs", "biosphere.bvoc.mep", "umol m-2 s-1")
+ppavem\scientific\biosphere\bvoc\synthesis\isoprene.py:124: in _register_buffer
+    value = self._parameter_getter(param_name, units, namespace)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ppavem\scientific\biosphere\bvoc\synthesis\isoprene.py:478: in <lambda>
+    parameter_getter=lambda name, units, namespace: _require_parameter(name, units, namespace),
+                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ppavem\scientific\biosphere\bvoc\synthesis\isoprene.py:468: in _require_parameter
+    self.get_parameter_value(
+ppavem\core\functor_bridges.py:324: in get_parameter_value
+    return FunctorBase.get_parameter_value(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = IsopreneSynthesis(name='mechanistic_isoprene_synthesis', category=biological_process, dependencies=[], executions=0, state=initialized)
+name = 'v_max_dxs', default = None, units = 'umol m-2 s-1', bounds = None
+validate = True, namespace = 'biosphere.bvoc.mep'
+source_order = ('manager', 'config', 'default'), register_if_missing = False
+required = True
+
+    def get_parameter_value(self,
+                           name: str,
+                           default: Any = None,
+                           units: Optional[str] = None,
+                           bounds: Optional[Tuple[float, float]] = None,
+                           validate: bool = True,  # Changed default to True for better safety
+                           namespace: Optional[str] = None,
+                           source_order: Tuple[str, ...] = ("manager", "config", "default"),
+                           register_if_missing: bool = False,  # Changed default to False to enforce YAML-first policy
+                           required: bool = False) -> Any:  # Added required parameter for test compatibility
+        """
+        Enhanced parameter value getter with validation and registration.
+    
+        This method provides a unified interface for parameter access with
+        support for units, bounds, validation, and automatic registration.
+    
+        Parameters:
+            name : str
+                Parameter name
+            default : Any
+                Default value if parameter not found
+            units : Optional[str]
+                Expected units for validation
+            bounds : Optional[Tuple[float, float]]
+                Expected bounds for validation
+            validate : bool
+                Whether to validate the parameter
+            namespace : Optional[str]
+                Override namespace (default uses functor category)
+            source_order : Tuple[str, ...]
+                Priority order for parameter sources
+            register_if_missing : bool
+                Register parameter if not found (default: False)
+                IMPORTANT: Default changed to False to enforce YAML-first policy.
+                All parameters MUST be defined in YAML database before use.
+            required : bool
+                Whether parameter is required (default: False)
+                If True and parameter not found, raises ValueError
+    
+        Returns:
+            Any: Parameter value (as Tensor if numeric)
+    
+        Examples:
+            >>> value = self.get_parameter_value(
+            ...     "vcmax25",
+            ...     default=60.0,
+            ...     units="umol m-2 s-1",
+            ...     bounds=(10, 200),
+            ...     validate=True
+            ... )
+        """
+        full_key, query_name, query_namespace = self._resolve_parameter_lookup(name, namespace)
+    
+        # Try sources in order
+        value = None
+        found_source = None
+    
+        for source in source_order:
+            if source == "manager" and PARAMETER_MANAGER_AVAILABLE:
+                try:
+                    param_manager = self.get_parameter_manager()
+                    if param_manager is None:
+                        continue
+                    value = param_manager.get(full_key)
+                    if value is not None:
+                        found_source = "manager"
+                        break
+                except Exception:
+                    pass
+    
+            elif source == "config":
+                # Check in original config - first try parameters section, then root level
+                if self._original_config:
+                    config_value = None
+                    # First try parameters section
+                    if "parameters" in self._original_config:
+                        params = self._original_config["parameters"]
+                        for candidate in (query_name, name):
+                            if candidate in params:
+                                config_value = params[candidate]
+                                break
+                    # If not found, try root level
+                    if config_value is None:
+                        for candidate in (query_name, name):
+                            if candidate in self._original_config:
+                                config_value = self._original_config.get(candidate)
+                                if config_value is not None:
+                                    break
+    
+                    if config_value is not None:
+                        # If value is a dict with 'value' key, extract it
+                        if isinstance(config_value, dict) and 'value' in config_value:
+                            value = config_value['value']
+                        else:
+                            value = config_value
+                        found_source = "config"
+                        break
+    
+            elif source == "default":
+                # Check local parameter_values
+                value = self.parameter_values.get(query_name)
+                if value is not None:
+                    found_source = "local"
+                    break
+    
+        # Use provided default if not found
+        if value is None:
+            if required and default is None:
+>               raise ValueError(f"Required parameter '{full_key}' not found in any source")
+E               ValueError: Required parameter 'biosphere.bvoc.mep.v_max_dxs' not found in any source
+
+ppavem\core\functor_base.py:936: ValueError
+___________ TestSynthesisModels.test_parameter_sensitivity_analysis ___________
+
+self = <test_bvoc_unit.TestSynthesisModels object at 0x00000245BBABCB10>
+
+    def test_parameter_sensitivity_analysis(self):
+        """Test parameter sensitivity analysis functionality.
+    
+        Mathematical Expression: sensitivity = ∂E/∂θ ≈ (E(θ+δ) - E(θ-δ))/(2δ)
+        References: Saltelli et al. (2008) - Global sensitivity analysis
+        Parameters: θ [parameter], δ [perturbation], E [emission rate]
+        """
+        with patch('ppavem.parameters.manager.get_global_manager') as mock_manager:
+            mock_instance = create_parameter_manager_mock()
+            mock_manager.return_value = mock_instance
+            mock_instance.get.side_effect = lambda key, default=None, **kwargs: default
+    
+>           model = MEGANModel()
+                    ^^^^^^^^^^^^
+
+test\bvoc\test_bvoc_unit.py:650: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ppavem\scientific\biosphere\bvoc\megan_model.py:386: in __init__
+    self._initialize_parameter_buffers(conf)
+ppavem\scientific\biosphere\bvoc\megan_model.py:408: in _initialize_parameter_buffers
+    self.get_parameter_value(
+ppavem\core\functor_bridges.py:324: in get_parameter_value
+    return FunctorBase.get_parameter_value(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = MEGANModel(name='megan_bvoc_model', category=biological_process, dependencies=[], executions=0, state=initialized)
+name = 'hybrid_weight', default = None, units = 'dimensionless', bounds = None
+validate = True, namespace = 'biosphere.bvoc.megan'
+source_order = ('manager', 'config', 'default'), register_if_missing = False
+required = True
+
+    def get_parameter_value(self,
+                           name: str,
+                           default: Any = None,
+                           units: Optional[str] = None,
+                           bounds: Optional[Tuple[float, float]] = None,
+                           validate: bool = True,  # Changed default to True for better safety
+                           namespace: Optional[str] = None,
+                           source_order: Tuple[str, ...] = ("manager", "config", "default"),
+                           register_if_missing: bool = False,  # Changed default to False to enforce YAML-first policy
+                           required: bool = False) -> Any:  # Added required parameter for test compatibility
+        """
+        Enhanced parameter value getter with validation and registration.
+    
+        This method provides a unified interface for parameter access with
+        support for units, bounds, validation, and automatic registration.
+    
+        Parameters:
+            name : str
+                Parameter name
+            default : Any
+                Default value if parameter not found
+            units : Optional[str]
+                Expected units for validation
+            bounds : Optional[Tuple[float, float]]
+                Expected bounds for validation
+            validate : bool
+                Whether to validate the parameter
+            namespace : Optional[str]
+                Override namespace (default uses functor category)
+            source_order : Tuple[str, ...]
+                Priority order for parameter sources
+            register_if_missing : bool
+                Register parameter if not found (default: False)
+                IMPORTANT: Default changed to False to enforce YAML-first policy.
+                All parameters MUST be defined in YAML database before use.
+            required : bool
+                Whether parameter is required (default: False)
+                If True and parameter not found, raises ValueError
+    
+        Returns:
+            Any: Parameter value (as Tensor if numeric)
+    
+        Examples:
+            >>> value = self.get_parameter_value(
+            ...     "vcmax25",
+            ...     default=60.0,
+            ...     units="umol m-2 s-1",
+            ...     bounds=(10, 200),
+            ...     validate=True
+            ... )
+        """
+        full_key, query_name, query_namespace = self._resolve_parameter_lookup(name, namespace)
+    
+        # Try sources in order
+        value = None
+        found_source = None
+    
+        for source in source_order:
+            if source == "manager" and PARAMETER_MANAGER_AVAILABLE:
+                try:
+                    param_manager = self.get_parameter_manager()
+                    if param_manager is None:
+                        continue
+                    value = param_manager.get(full_key)
+                    if value is not None:
+                        found_source = "manager"
+                        break
+                except Exception:
+                    pass
+    
+            elif source == "config":
+                # Check in original config - first try parameters section, then root level
+                if self._original_config:
+                    config_value = None
+                    # First try parameters section
+                    if "parameters" in self._original_config:
+                        params = self._original_config["parameters"]
+                        for candidate in (query_name, name):
+                            if candidate in params:
+                                config_value = params[candidate]
+                                break
+                    # If not found, try root level
+                    if config_value is None:
+                        for candidate in (query_name, name):
+                            if candidate in self._original_config:
+                                config_value = self._original_config.get(candidate)
+                                if config_value is not None:
+                                    break
+    
+                    if config_value is not None:
+                        # If value is a dict with 'value' key, extract it
+                        if isinstance(config_value, dict) and 'value' in config_value:
+                            value = config_value['value']
+                        else:
+                            value = config_value
+                        found_source = "config"
+                        break
+    
+            elif source == "default":
+                # Check local parameter_values
+                value = self.parameter_values.get(query_name)
+                if value is not None:
+                    found_source = "local"
+                    break
+    
+        # Use provided default if not found
+        if value is None:
+            if required and default is None:
+>               raise ValueError(f"Required parameter '{full_key}' not found in any source")
+E               ValueError: Required parameter 'biosphere.bvoc.megan.hybrid_weight' not found in any source
+
+ppavem\core\functor_base.py:936: ValueError
+_________ TestErrorHandlingAndEdgeCases.test_missing_required_inputs __________
+
+self = <test_bvoc_unit.TestErrorHandlingAndEdgeCases object at 0x00000245BBABCFD0>
+
+    def test_missing_required_inputs(self):
+        """Test behavior with missing required inputs."""
+        with patch('ppavem.parameters.manager.get_global_manager') as mock_manager:
+            mock_instance = create_parameter_manager_mock()
+            mock_manager.return_value = mock_instance
+            mock_instance.get.side_effect = lambda key, default=None, **kwargs: default
+    
+>           model = MEGANModel()
+                    ^^^^^^^^^^^^
+
+test\bvoc\test_bvoc_unit.py:681: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ppavem\scientific\biosphere\bvoc\megan_model.py:386: in __init__
+    self._initialize_parameter_buffers(conf)
+ppavem\scientific\biosphere\bvoc\megan_model.py:408: in _initialize_parameter_buffers
+    self.get_parameter_value(
+ppavem\core\functor_bridges.py:324: in get_parameter_value
+    return FunctorBase.get_parameter_value(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = MEGANModel(name='megan_bvoc_model', category=biological_process, dependencies=[], executions=0, state=initialized)
+name = 'hybrid_weight', default = None, units = 'dimensionless', bounds = None
+validate = True, namespace = 'biosphere.bvoc.megan'
+source_order = ('manager', 'config', 'default'), register_if_missing = False
+required = True
+
+    def get_parameter_value(self,
+                           name: str,
+                           default: Any = None,
+                           units: Optional[str] = None,
+                           bounds: Optional[Tuple[float, float]] = None,
+                           validate: bool = True,  # Changed default to True for better safety
+                           namespace: Optional[str] = None,
+                           source_order: Tuple[str, ...] = ("manager", "config", "default"),
+                           register_if_missing: bool = False,  # Changed default to False to enforce YAML-first policy
+                           required: bool = False) -> Any:  # Added required parameter for test compatibility
+        """
+        Enhanced parameter value getter with validation and registration.
+    
+        This method provides a unified interface for parameter access with
+        support for units, bounds, validation, and automatic registration.
+    
+        Parameters:
+            name : str
+                Parameter name
+            default : Any
+                Default value if parameter not found
+            units : Optional[str]
+                Expected units for validation
+            bounds : Optional[Tuple[float, float]]
+                Expected bounds for validation
+            validate : bool
+                Whether to validate the parameter
+            namespace : Optional[str]
+                Override namespace (default uses functor category)
+            source_order : Tuple[str, ...]
+                Priority order for parameter sources
+            register_if_missing : bool
+                Register parameter if not found (default: False)
+                IMPORTANT: Default changed to False to enforce YAML-first policy.
+                All parameters MUST be defined in YAML database before use.
+            required : bool
+                Whether parameter is required (default: False)
+                If True and parameter not found, raises ValueError
+    
+        Returns:
+            Any: Parameter value (as Tensor if numeric)
+    
+        Examples:
+            >>> value = self.get_parameter_value(
+            ...     "vcmax25",
+            ...     default=60.0,
+            ...     units="umol m-2 s-1",
+            ...     bounds=(10, 200),
+            ...     validate=True
+            ... )
+        """
+        full_key, query_name, query_namespace = self._resolve_parameter_lookup(name, namespace)
+    
+        # Try sources in order
+        value = None
+        found_source = None
+    
+        for source in source_order:
+            if source == "manager" and PARAMETER_MANAGER_AVAILABLE:
+                try:
+                    param_manager = self.get_parameter_manager()
+                    if param_manager is None:
+                        continue
+                    value = param_manager.get(full_key)
+                    if value is not None:
+                        found_source = "manager"
+                        break
+                except Exception:
+                    pass
+    
+            elif source == "config":
+                # Check in original config - first try parameters section, then root level
+                if self._original_config:
+                    config_value = None
+                    # First try parameters section
+                    if "parameters" in self._original_config:
+                        params = self._original_config["parameters"]
+                        for candidate in (query_name, name):
+                            if candidate in params:
+                                config_value = params[candidate]
+                                break
+                    # If not found, try root level
+                    if config_value is None:
+                        for candidate in (query_name, name):
+                            if candidate in self._original_config:
+                                config_value = self._original_config.get(candidate)
+                                if config_value is not None:
+                                    break
+    
+                    if config_value is not None:
+                        # If value is a dict with 'value' key, extract it
+                        if isinstance(config_value, dict) and 'value' in config_value:
+                            value = config_value['value']
+                        else:
+                            value = config_value
+                        found_source = "config"
+                        break
+    
+            elif source == "default":
+                # Check local parameter_values
+                value = self.parameter_values.get(query_name)
+                if value is not None:
+                    found_source = "local"
+                    break
+    
+        # Use provided default if not found
+        if value is None:
+            if required and default is None:
+>               raise ValueError(f"Required parameter '{full_key}' not found in any source")
+E               ValueError: Required parameter 'biosphere.bvoc.megan.hybrid_weight' not found in any source
+
+ppavem\core\functor_base.py:936: ValueError
+_________ TestErrorHandlingAndEdgeCases.test_invalid_parameter_values _________
+
+self = <test_bvoc_unit.TestErrorHandlingAndEdgeCases object at 0x00000245BBABD390>
+
+    def test_invalid_parameter_values(self):
+        """Test behavior with invalid parameter values."""
+        with patch('ppavem.parameters.manager.get_global_manager') as mock_manager:
+            mock_instance = create_parameter_manager_mock()
+            mock_manager.return_value = mock_instance
+            mock_instance.get.side_effect = lambda key, default=None, **kwargs: default
+    
+            # Test with negative emission factors
+>           model = MEGANModel()
+                    ^^^^^^^^^^^^
+
+test\bvoc\test_bvoc_unit.py:700: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ppavem\scientific\biosphere\bvoc\megan_model.py:386: in __init__
+    self._initialize_parameter_buffers(conf)
+ppavem\scientific\biosphere\bvoc\megan_model.py:408: in _initialize_parameter_buffers
+    self.get_parameter_value(
+ppavem\core\functor_bridges.py:324: in get_parameter_value
+    return FunctorBase.get_parameter_value(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = MEGANModel(name='megan_bvoc_model', category=biological_process, dependencies=[], executions=0, state=initialized)
+name = 'hybrid_weight', default = None, units = 'dimensionless', bounds = None
+validate = True, namespace = 'biosphere.bvoc.megan'
+source_order = ('manager', 'config', 'default'), register_if_missing = False
+required = True
+
+    def get_parameter_value(self,
+                           name: str,
+                           default: Any = None,
+                           units: Optional[str] = None,
+                           bounds: Optional[Tuple[float, float]] = None,
+                           validate: bool = True,  # Changed default to True for better safety
+                           namespace: Optional[str] = None,
+                           source_order: Tuple[str, ...] = ("manager", "config", "default"),
+                           register_if_missing: bool = False,  # Changed default to False to enforce YAML-first policy
+                           required: bool = False) -> Any:  # Added required parameter for test compatibility
+        """
+        Enhanced parameter value getter with validation and registration.
+    
+        This method provides a unified interface for parameter access with
+        support for units, bounds, validation, and automatic registration.
+    
+        Parameters:
+            name : str
+                Parameter name
+            default : Any
+                Default value if parameter not found
+            units : Optional[str]
+                Expected units for validation
+            bounds : Optional[Tuple[float, float]]
+                Expected bounds for validation
+            validate : bool
+                Whether to validate the parameter
+            namespace : Optional[str]
+                Override namespace (default uses functor category)
+            source_order : Tuple[str, ...]
+                Priority order for parameter sources
+            register_if_missing : bool
+                Register parameter if not found (default: False)
+                IMPORTANT: Default changed to False to enforce YAML-first policy.
+                All parameters MUST be defined in YAML database before use.
+            required : bool
+                Whether parameter is required (default: False)
+                If True and parameter not found, raises ValueError
+    
+        Returns:
+            Any: Parameter value (as Tensor if numeric)
+    
+        Examples:
+            >>> value = self.get_parameter_value(
+            ...     "vcmax25",
+            ...     default=60.0,
+            ...     units="umol m-2 s-1",
+            ...     bounds=(10, 200),
+            ...     validate=True
+            ... )
+        """
+        full_key, query_name, query_namespace = self._resolve_parameter_lookup(name, namespace)
+    
+        # Try sources in order
+        value = None
+        found_source = None
+    
+        for source in source_order:
+            if source == "manager" and PARAMETER_MANAGER_AVAILABLE:
+                try:
+                    param_manager = self.get_parameter_manager()
+                    if param_manager is None:
+                        continue
+                    value = param_manager.get(full_key)
+                    if value is not None:
+                        found_source = "manager"
+                        break
+                except Exception:
+                    pass
+    
+            elif source == "config":
+                # Check in original config - first try parameters section, then root level
+                if self._original_config:
+                    config_value = None
+                    # First try parameters section
+                    if "parameters" in self._original_config:
+                        params = self._original_config["parameters"]
+                        for candidate in (query_name, name):
+                            if candidate in params:
+                                config_value = params[candidate]
+                                break
+                    # If not found, try root level
+                    if config_value is None:
+                        for candidate in (query_name, name):
+                            if candidate in self._original_config:
+                                config_value = self._original_config.get(candidate)
+                                if config_value is not None:
+                                    break
+    
+                    if config_value is not None:
+                        # If value is a dict with 'value' key, extract it
+                        if isinstance(config_value, dict) and 'value' in config_value:
+                            value = config_value['value']
+                        else:
+                            value = config_value
+                        found_source = "config"
+                        break
+    
+            elif source == "default":
+                # Check local parameter_values
+                value = self.parameter_values.get(query_name)
+                if value is not None:
+                    found_source = "local"
+                    break
+    
+        # Use provided default if not found
+        if value is None:
+            if required and default is None:
+>               raise ValueError(f"Required parameter '{full_key}' not found in any source")
+E               ValueError: Required parameter 'biosphere.bvoc.megan.hybrid_weight' not found in any source
+
+ppavem\core\functor_base.py:936: ValueError
+_____ TestErrorHandlingAndEdgeCases.test_extreme_environmental_conditions _____
+
+self = <test_bvoc_unit.TestErrorHandlingAndEdgeCases object at 0x00000245BBABD990>
+
+    def test_extreme_environmental_conditions(self):
+        """Test model behavior under extreme environmental conditions."""
+        with patch('ppavem.parameters.manager.get_global_manager') as mock_manager:
+            mock_instance = create_parameter_manager_mock()
+            mock_manager.return_value = mock_instance
+            mock_instance.get.side_effect = lambda key, default=None, **kwargs: default
+    
+>           model = MEGANModel(validate_inputs=False)  # Disable validation for extreme tests
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+test\bvoc\test_bvoc_unit.py:722: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ppavem\scientific\biosphere\bvoc\megan_model.py:386: in __init__
+    self._initialize_parameter_buffers(conf)
+ppavem\scientific\biosphere\bvoc\megan_model.py:408: in _initialize_parameter_buffers
+    self.get_parameter_value(
+ppavem\core\functor_bridges.py:324: in get_parameter_value
+    return FunctorBase.get_parameter_value(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = MEGANModel(name='megan_bvoc_model', category=biological_process, dependencies=[], executions=0, state=initialized)
+name = 'hybrid_weight', default = None, units = 'dimensionless', bounds = None
+validate = True, namespace = 'biosphere.bvoc.megan'
+source_order = ('manager', 'config', 'default'), register_if_missing = False
+required = True
+
+    def get_parameter_value(self,
+                           name: str,
+                           default: Any = None,
+                           units: Optional[str] = None,
+                           bounds: Optional[Tuple[float, float]] = None,
+                           validate: bool = True,  # Changed default to True for better safety
+                           namespace: Optional[str] = None,
+                           source_order: Tuple[str, ...] = ("manager", "config", "default"),
+                           register_if_missing: bool = False,  # Changed default to False to enforce YAML-first policy
+                           required: bool = False) -> Any:  # Added required parameter for test compatibility
+        """
+        Enhanced parameter value getter with validation and registration.
+    
+        This method provides a unified interface for parameter access with
+        support for units, bounds, validation, and automatic registration.
+    
+        Parameters:
+            name : str
+                Parameter name
+            default : Any
+                Default value if parameter not found
+            units : Optional[str]
+                Expected units for validation
+            bounds : Optional[Tuple[float, float]]
+                Expected bounds for validation
+            validate : bool
+                Whether to validate the parameter
+            namespace : Optional[str]
+                Override namespace (default uses functor category)
+            source_order : Tuple[str, ...]
+                Priority order for parameter sources
+            register_if_missing : bool
+                Register parameter if not found (default: False)
+                IMPORTANT: Default changed to False to enforce YAML-first policy.
+                All parameters MUST be defined in YAML database before use.
+            required : bool
+                Whether parameter is required (default: False)
+                If True and parameter not found, raises ValueError
+    
+        Returns:
+            Any: Parameter value (as Tensor if numeric)
+    
+        Examples:
+            >>> value = self.get_parameter_value(
+            ...     "vcmax25",
+            ...     default=60.0,
+            ...     units="umol m-2 s-1",
+            ...     bounds=(10, 200),
+            ...     validate=True
+            ... )
+        """
+        full_key, query_name, query_namespace = self._resolve_parameter_lookup(name, namespace)
+    
+        # Try sources in order
+        value = None
+        found_source = None
+    
+        for source in source_order:
+            if source == "manager" and PARAMETER_MANAGER_AVAILABLE:
+                try:
+                    param_manager = self.get_parameter_manager()
+                    if param_manager is None:
+                        continue
+                    value = param_manager.get(full_key)
+                    if value is not None:
+                        found_source = "manager"
+                        break
+                except Exception:
+                    pass
+    
+            elif source == "config":
+                # Check in original config - first try parameters section, then root level
+                if self._original_config:
+                    config_value = None
+                    # First try parameters section
+                    if "parameters" in self._original_config:
+                        params = self._original_config["parameters"]
+                        for candidate in (query_name, name):
+                            if candidate in params:
+                                config_value = params[candidate]
+                                break
+                    # If not found, try root level
+                    if config_value is None:
+                        for candidate in (query_name, name):
+                            if candidate in self._original_config:
+                                config_value = self._original_config.get(candidate)
+                                if config_value is not None:
+                                    break
+    
+                    if config_value is not None:
+                        # If value is a dict with 'value' key, extract it
+                        if isinstance(config_value, dict) and 'value' in config_value:
+                            value = config_value['value']
+                        else:
+                            value = config_value
+                        found_source = "config"
+                        break
+    
+            elif source == "default":
+                # Check local parameter_values
+                value = self.parameter_values.get(query_name)
+                if value is not None:
+                    found_source = "local"
+                    break
+    
+        # Use provided default if not found
+        if value is None:
+            if required and default is None:
+>               raise ValueError(f"Required parameter '{full_key}' not found in any source")
+E               ValueError: Required parameter 'biosphere.bvoc.megan.hybrid_weight' not found in any source
+
+ppavem\core\functor_base.py:936: ValueError
+_____________ TestErrorHandlingAndEdgeCases.test_device_handling ______________
+
+self = <test_bvoc_unit.TestErrorHandlingAndEdgeCases object at 0x00000245BBABDFD0>
+
+    def test_device_handling(self):
+        """Test proper device handling for tensors."""
+        if torch.cuda.is_available():
+            device = torch.device('cuda')
+        else:
+            device = torch.device('cpu')
+    
+        with patch('ppavem.parameters.manager.get_global_manager') as mock_manager:
+            mock_instance = create_parameter_manager_mock()
+            mock_manager.return_value = mock_instance
+            mock_instance.get.side_effect = lambda key, default=None, **kwargs: default
+    
+>           model = MEGANModel(device=device)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+test\bvoc\test_bvoc_unit.py:749: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ppavem\scientific\biosphere\bvoc\megan_model.py:386: in __init__
+    self._initialize_parameter_buffers(conf)
+ppavem\scientific\biosphere\bvoc\megan_model.py:408: in _initialize_parameter_buffers
+    self.get_parameter_value(
+ppavem\core\functor_bridges.py:324: in get_parameter_value
+    return FunctorBase.get_parameter_value(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = MEGANModel(name='megan_bvoc_model', category=biological_process, dependencies=[], executions=0, state=initialized)
+name = 'hybrid_weight', default = None, units = 'dimensionless', bounds = None
+validate = True, namespace = 'biosphere.bvoc.megan'
+source_order = ('manager', 'config', 'default'), register_if_missing = False
+required = True
+
+    def get_parameter_value(self,
+                           name: str,
+                           default: Any = None,
+                           units: Optional[str] = None,
+                           bounds: Optional[Tuple[float, float]] = None,
+                           validate: bool = True,  # Changed default to True for better safety
+                           namespace: Optional[str] = None,
+                           source_order: Tuple[str, ...] = ("manager", "config", "default"),
+                           register_if_missing: bool = False,  # Changed default to False to enforce YAML-first policy
+                           required: bool = False) -> Any:  # Added required parameter for test compatibility
+        """
+        Enhanced parameter value getter with validation and registration.
+    
+        This method provides a unified interface for parameter access with
+        support for units, bounds, validation, and automatic registration.
+    
+        Parameters:
+            name : str
+                Parameter name
+            default : Any
+                Default value if parameter not found
+            units : Optional[str]
+                Expected units for validation
+            bounds : Optional[Tuple[float, float]]
+                Expected bounds for validation
+            validate : bool
+                Whether to validate the parameter
+            namespace : Optional[str]
+                Override namespace (default uses functor category)
+            source_order : Tuple[str, ...]
+                Priority order for parameter sources
+            register_if_missing : bool
+                Register parameter if not found (default: False)
+                IMPORTANT: Default changed to False to enforce YAML-first policy.
+                All parameters MUST be defined in YAML database before use.
+            required : bool
+                Whether parameter is required (default: False)
+                If True and parameter not found, raises ValueError
+    
+        Returns:
+            Any: Parameter value (as Tensor if numeric)
+    
+        Examples:
+            >>> value = self.get_parameter_value(
+            ...     "vcmax25",
+            ...     default=60.0,
+            ...     units="umol m-2 s-1",
+            ...     bounds=(10, 200),
+            ...     validate=True
+            ... )
+        """
+        full_key, query_name, query_namespace = self._resolve_parameter_lookup(name, namespace)
+    
+        # Try sources in order
+        value = None
+        found_source = None
+    
+        for source in source_order:
+            if source == "manager" and PARAMETER_MANAGER_AVAILABLE:
+                try:
+                    param_manager = self.get_parameter_manager()
+                    if param_manager is None:
+                        continue
+                    value = param_manager.get(full_key)
+                    if value is not None:
+                        found_source = "manager"
+                        break
+                except Exception:
+                    pass
+    
+            elif source == "config":
+                # Check in original config - first try parameters section, then root level
+                if self._original_config:
+                    config_value = None
+                    # First try parameters section
+                    if "parameters" in self._original_config:
+                        params = self._original_config["parameters"]
+                        for candidate in (query_name, name):
+                            if candidate in params:
+                                config_value = params[candidate]
+                                break
+                    # If not found, try root level
+                    if config_value is None:
+                        for candidate in (query_name, name):
+                            if candidate in self._original_config:
+                                config_value = self._original_config.get(candidate)
+                                if config_value is not None:
+                                    break
+    
+                    if config_value is not None:
+                        # If value is a dict with 'value' key, extract it
+                        if isinstance(config_value, dict) and 'value' in config_value:
+                            value = config_value['value']
+                        else:
+                            value = config_value
+                        found_source = "config"
+                        break
+    
+            elif source == "default":
+                # Check local parameter_values
+                value = self.parameter_values.get(query_name)
+                if value is not None:
+                    found_source = "local"
+                    break
+    
+        # Use provided default if not found
+        if value is None:
+            if required and default is None:
+>               raise ValueError(f"Required parameter '{full_key}' not found in any source")
+E               ValueError: Required parameter 'biosphere.bvoc.megan.hybrid_weight' not found in any source
+
+ppavem\core\functor_base.py:936: ValueError
+_________ TestParameterNamespaceLoading.test_megan_parameter_loading __________
+
+self = <test_bvoc_unit_fixed.TestParameterNamespaceLoading object at 0x00000245BBAD0210>
+
+    def test_megan_parameter_loading(self):
+        """Test MEGAN model loads parameters from correct namespaces.
+    
+        Verifies that parameters are loaded from:
+        - biosphere.bvoc namespace for BVOC-specific parameters
+        - physical_constants namespace for universal constants
+        """
+        model = MEGANModel(name="test_megan")
+    
+        # Check base emission factors loaded from biosphere.bvoc.default.*
+        assert model.isoprene_ef.item() == pytest.approx(24.0, rel=1e-6)  # Default from yaml
+        assert model.monoterpenes_ef.item() == pytest.approx(2.3, rel=1e-6)
+        assert model.sesquiterpenes_ef.item() == pytest.approx(0.45, rel=1e-6)
+        assert model.ovocs_ef.item() == pytest.approx(1.8, rel=1e-6)
+    
+        # Check MEGAN parameters loaded from biosphere.bvoc.megan.*
+        assert abs(model.alpha_light.item() - 0.0027) < 1e-6
+        assert abs(model.cl_factor.item() - 1.066) < 1e-3
+>       assert abs(model.topt_iso.item() - 313.15) < 0.1
+E       AssertionError: assert 10.000006103515602 < 0.1
+E        +  where 10.000006103515602 = abs((303.1499938964844 - 313.15))
+E        +    where 303.1499938964844 = <built-in method item of Tensor object at 0x000002480B0C3230>()
+E        +      where <built-in method item of Tensor object at 0x000002480B0C3230> = tensor(303.1500, device='cuda:0', dtype=torch.float32).item
+E        +        where tensor(303.1500, device='cuda:0', dtype=torch.float32) = MEGANModel(name='test_megan', category=biological_process, dependencies=[], executions=0, state=initialized).topt_iso
+
+test\bvoc\test_bvoc_unit_fixed.py:52: AssertionError
+------------------------------ Captured log call ------------------------------
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'seasonal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'seasonal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'seasonal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'seasonal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'seasonal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'coupling_parameter', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'coupling_parameter', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'scaling_factor', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'scaling_factor', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'coupling_parameter', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'diagnostic_configuration', falling back to 'model_parameter'
+_______________ TestNumericalStability.test_device_consistency ________________
+
+self = <test_bvoc_unit_fixed.TestNumericalStability object at 0x00000245BBAD49D0>
+
+    def test_device_consistency(self):
+        """Test tensor device handling."""
+        device = self.model.device
+    
+        # All model parameters should be on correct device
+>       assert self.model.isoprene_ef.device == device
+E       AssertionError: assert device(type='cuda', index=0) == device(type='cuda')
+E        +  where device(type='cuda', index=0) = tensor(24., device='cuda:0', dtype=torch.float32).device
+E        +    where tensor(24., device='cuda:0', dtype=torch.float32) = MEGANModel(name='test_stability', category=biological_process, dependencies=[], executions=0, state=initialized).isoprene_ef
+E        +      where MEGANModel(name='test_stability', category=biological_process, dependencies=[], executions=0, state=initialized) = <test_bvoc_unit_fixed.TestNumericalStability object at 0x00000245BBAD49D0>.model
+
+test\bvoc\test_bvoc_unit_fixed.py:348: AssertionError
+----------------------------- Captured log setup ------------------------------
+WARNING  ppavem.parameters.manager:manager.py:2113 Overwriting existing parameter: biological_process.test_stability.jmax25
+WARNING  ppavem.parameters.manager:manager.py:2113 Overwriting existing parameter: biological_process.test_stability.vcmax25
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'seasonal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'seasonal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'seasonal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'seasonal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'seasonal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'coupling_parameter', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'coupling_parameter', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'scaling_factor', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'scaling_factor', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'coupling_parameter', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'diagnostic_configuration', falling back to 'model_parameter'
+_____________ TestParameterIntegration.test_namespace_resolution ______________
+
+self = <test_parameter_integration.TestParameterIntegration object at 0x00000245BBAD79D0>
+megan_model = MEGANModel(name='test_megan', category=biological_process, dependencies=[], executions=0, state=initialized)
+param_manager = <bvoc_parameter_manager_helper.build_realistic_parameter_manager.<locals>.OverrideManager object at 0x00000245BC37BBD0>
+
+    def test_namespace_resolution(self, megan_model, param_manager):
+        """Test that parameter namespaces resolve correctly to YAML structure."""
+    
+        # Test cases: (parameter_key, expected_section, expected_value_range)
+        test_cases = [
+            # Default emission factors
+            ("default.isoprene", "default", (10, 50)),
+            ("default.monoterpenes", "default", (0.5, 5.0)),
+            ("default.sesquiterpenes", "default", (0.1, 1.0)),
+            ("default.ovocs", "default", (0.5, 3.0)),
+    
+            # MEGAN parameters
+            ("megan.alpha_light", "megan", (0.001, 0.01)),
+            ("megan.cl_light", "megan", (0.8, 1.5)),
+            ("megan.eopt_isoprene", "megan", (1.0, 3.0)),
+            ("megan.topt_isoprene", "megan", (303.15, 323.15)),
+            ("megan.ct1_isoprene", "megan", (80000, 110000)),
+            ("megan.ct2_isoprene", "megan", (200000, 260000)),
+    
+            # Molecular properties
+            ("molecular_weights.isoprene", "molecular_weights", (68, 69)),
+            ("carbon_atoms.isoprene", "carbon_atoms", (5, 5)),
+    
+            # CO2 inhibition
+            ("co2_inhibition.k_co2", "co2_inhibition", (200, 400)),
+            ("co2_inhibition.baseline_co2", "co2_inhibition", (250, 300)),
+    
+            # Water stress
+            ("water_stress.wilting_point", "water_stress", (-2.0, -1.0)),
+            ("water_stress.field_capacity", "water_stress", (-0.2, -0.05)),
+        ]
+    
+        for param_key, section, expected_range in test_cases:
+            # Get parameter value
+            value = param_manager.get(param_key)
+    
+            # Check that value is within expected range
+>           assert expected_range[0] <= float(value) <= expected_range[1], \
+                                        ^^^^^^^^^^^^
+                f"Parameter {param_key} value {value} not in expected range {expected_range}"
+E           TypeError: float() argument must be a string or a real number, not 'NoneType'
+
+test\bvoc\test_parameter_integration.py:88: TypeError
+----------------------------- Captured log setup ------------------------------
+WARNING  ppavem.parameters.manager:manager.py:2113 Overwriting existing parameter: biological_process.test_megan.jmax25
+WARNING  ppavem.parameters.manager:manager.py:2113 Overwriting existing parameter: biological_process.test_megan.vcmax25
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'seasonal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'seasonal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'seasonal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'seasonal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'seasonal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'coupling_parameter', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'coupling_parameter', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'scaling_factor', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'scaling_factor', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'coupling_parameter', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'diagnostic_configuration', falling back to 'model_parameter'
+______________ TestParameterIntegration.test_bounds_enforcement _______________
+
+self = <test_parameter_integration.TestParameterIntegration object at 0x00000245BBAE46D0>
+param_manager = <bvoc_parameter_manager_helper.build_realistic_parameter_manager.<locals>.OverrideManager object at 0x00000245BC50F390>
+
+    def test_bounds_enforcement(self, param_manager):
+        """Test that parameter bounds are enforced when setting values."""
+    
+        # Test setting values outside bounds
+        test_cases = [
+            ("megan.alpha_light", 0.0001, (0.001, 0.01)),  # Below min
+            ("megan.alpha_light", 0.1, (0.001, 0.01)),      # Above max
+            ("default.isoprene", 5.0, (10, 50)),            # Below min
+            ("default.isoprene", 100.0, (10, 50)),          # Above max
+        ]
+    
+        for param_key, test_value, bounds in test_cases:
+            # Try to set value outside bounds
+            param_manager.set(param_key, test_value)
+    
+            # Get the value back
+            actual_value = float(param_manager.get(param_key))
+    
+            # Check if value was clamped to bounds or warning was issued
+            # (Implementation may vary - could clamp or warn)
+>           assert bounds[0] <= actual_value <= bounds[1], \
+                f"Parameter {param_key} value {actual_value} not properly bounded to {bounds}"
+E           AssertionError: Parameter megan.alpha_light value 0.0001 not properly bounded to (0.001, 0.01)
+E           assert 0.001 <= 0.0001
+
+test\bvoc\test_parameter_integration.py:135: AssertionError
+_________ TestParameterIntegration.test_parameter_update_propagation __________
+
+self = <test_parameter_integration.TestParameterIntegration object at 0x00000245BBAE41D0>
+param_manager = <bvoc_parameter_manager_helper.build_realistic_parameter_manager.<locals>.OverrideManager object at 0x00000245BC600150>
+
+    def test_parameter_update_propagation(self, param_manager):
+        """Test that parameter updates propagate correctly to dependent modules."""
+    
+        # Update a parameter
+        original_value = param_manager.get("megan.alpha_light")
+        new_value = 0.005
+        param_manager.set("megan.alpha_light", new_value)
+    
+        # Create new model instance
+        model = MEGANModel(name="test_update")
+    
+        # Check if model picked up the new value
+        model_value = float(model.alpha_light.item()) if hasattr(model, 'alpha_light') else None
+    
+        if model_value is not None:
+>           assert abs(model_value - new_value) < 0.0001, \
+                f"Parameter update not propagated: expected {new_value}, got {model_value}"
+E           AssertionError: Parameter update not propagated: expected 0.005, got 0.0027000000700354576
+E           assert 0.0022999999299645425 < 0.0001
+E            +  where 0.0022999999299645425 = abs((0.0027000000700354576 - 0.005))
+
+test\bvoc\test_parameter_integration.py:244: AssertionError
+------------------------------ Captured log call ------------------------------
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'seasonal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'seasonal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'seasonal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'seasonal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'seasonal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'temporal_profile', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'coupling_parameter', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'coupling_parameter', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'scaling_factor', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'scaling_factor', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'coupling_parameter', falling back to 'model_parameter'
+WARNING  ppavem.parameters.manager:category_aliases.py:208 Unknown category 'diagnostic_configuration', falling back to 'model_parameter'
+_________ TestParameterIntegration.test_comprehensive_parameter_audit _________
+
+self = <test_parameter_integration.TestParameterIntegration object at 0x00000245BBAE5AD0>
+param_manager = <bvoc_parameter_manager_helper.build_realistic_parameter_manager.<locals>.OverrideManager object at 0x00000245BBAD4B10>
+
+    def test_comprehensive_parameter_audit(self, param_manager):
+        """Run comprehensive audit of parameter system."""
+    
+        # Run parameter audit
+        audit_report = param_manager.run_registry_audit()
+    
+        # Check for missing parameters
+        missing = param_manager.get_missing_requests()
+    
+        # Log any issues found
+        if missing:
+            print(f"Warning: {len(missing)} missing parameter requests detected:")
+            for param in list(missing)[:5]:  # Show first 5
+                print(f"  - {param}")
+    
+        # Basic assertions
+        assert audit_report is not None, "Audit report should not be None"
+    
+        # Check that critical BVOC parameters are present
+        critical_params = [
+            "default.isoprene",
+            "megan.alpha_light",
+            "molecular_weights.isoprene",
+            "co2_inhibition_factor"
+        ]
+    
+        for param in critical_params:
+            value = param_manager.get(param)
+>           assert value is not None, f"Critical parameter {param} not found in database"
+E           AssertionError: Critical parameter default.isoprene not found in database
+E           assert None is not None
+
+test\bvoc\test_parameter_integration.py:278: AssertionError
+---------------------------- Captured stdout call -----------------------------
+Warning: 121 missing parameter requests detected:
+  - diffusivity
+  - spatial_dims
+  - boundary_method
+  - check_stability
+  - enforce_non_negative
+____________ TestParameterValidation.test_invalid_units_rejection _____________
+
+self = <test_parameter_integration.TestParameterValidation object at 0x00000245BBAE6010>
+param_manager = <bvoc_parameter_manager_helper.build_realistic_parameter_manager.<locals>.OverrideManager object at 0x00000245BC8A9FD0>
+
+    def test_invalid_units_rejection(self, param_manager):
+        """Test that invalid units are properly rejected."""
+    
+        # Try to get parameter with wrong units (should trigger validation)
+>       with pytest.warns(UserWarning, match=".*unit.*"):
+E       Failed: DID NOT WARN. No warnings of type (<class 'UserWarning'>,) were emitted.
+E        Emitted warnings: [].
+
+test\bvoc\test_parameter_integration.py:288: Failed
+___________ TestParameterValidation.test_parameter_type_conversion ____________
+
+self = <test_parameter_integration.TestParameterValidation object at 0x00000245BBAE63D0>
+param_manager = <bvoc_parameter_manager_helper.build_realistic_parameter_manager.<locals>.OverrideManager object at 0x00000245BBFE0350>
+
+    def test_parameter_type_conversion(self, param_manager):
+        """Test automatic type conversion for parameters."""
+    
+        # Get parameter as different types
+        alpha_float = float(param_manager.get("megan.alpha_light"))
+>       alpha_tensor = param_manager.get_as_tensor("megan.alpha_light")
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+test\bvoc\test_parameter_integration.py:297: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <bvoc_parameter_manager_helper.build_realistic_parameter_manager.<locals>.OverrideManager object at 0x00000245BBFE0350>
+name = 'get_as_tensor'
+
+    def __getattr__(self, name: str) -> Any:
+>       return getattr(self._base, name)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'UnifiedParameterManager' object has no attribute 'get_as_tensor'
+
+bvoc_parameter_manager_helper.py:84: AttributeError
+________ TestParameterValidation.test_parameter_metadata_completeness _________
+
+self = <test_parameter_integration.TestParameterValidation object at 0x00000245BBAE6790>
+param_manager = <bvoc_parameter_manager_helper.build_realistic_parameter_manager.<locals>.OverrideManager object at 0x00000245BBC59D50>
+
+    def test_parameter_metadata_completeness(self, param_manager):
+        """Verify that all parameters have complete metadata."""
+    
+        # List of parameters to check
+        params_to_check = [
+            "default.isoprene",
+            "megan.alpha_light",
+            "molecular_weights.isoprene",
+            "co2_inhibition.k_co2"
+        ]
+    
+        required_fields = ['value', 'units', 'description']
+    
+        for param_key in params_to_check:
+            spec = param_manager.get_spec(param_key)
+>           assert spec is not None, f"No spec found for {param_key}"
+E           AssertionError: No spec found for default.isoprene
+E           assert None is not None
+
+test\bvoc\test_parameter_integration.py:318: AssertionError
+============================== warnings summary ===============================
+ppavem\coupling\external\common\io.py:72
+  F:\Homework\GEOBIOCHE\PPA-VEM-REBUILD\ppavem\coupling\external\common\io.py:72: UserWarning: zarr not available - cloud storage support limited
+    warnings.warn("zarr not available - cloud storage support limited")
+
+ppavem\data\streaming\__init__.py:166
+  F:\Homework\GEOBIOCHE\PPA-VEM-REBUILD\ppavem\data\streaming\__init__.py:166: UserWarning: Streaming functionality is experimental and disabled by default. Set PPAVEM_EXPERIMENTAL_STREAMING=1 to enable streaming capabilities. Requires optional dependencies: pip install watchdog aiofiles zarr
+    warnings.warn(
+
+bvoc/test_bvoc_import.py::test_basic_imports
+  E:\condaenv\PPA-VEM\Lib\site-packages\_pytest\python.py:161: PytestReturnNotNoneWarning: Test functions should return None, but bvoc/test_bvoc_import.py::test_basic_imports returned <class 'bool'>.
+  Did you mean to use `assert` instead of `return`?
+  See https://docs.pytest.org/en/stable/how-to/assert.html#return-not-none for more information.
+    warnings.warn(
+
+bvoc/test_bvoc_import.py::test_emission_factors
+  E:\condaenv\PPA-VEM\Lib\site-packages\_pytest\python.py:161: PytestReturnNotNoneWarning: Test functions should return None, but bvoc/test_bvoc_import.py::test_emission_factors returned <class 'bool'>.
+  Did you mean to use `assert` instead of `return`?
+  See https://docs.pytest.org/en/stable/how-to/assert.html#return-not-none for more information.
+    warnings.warn(
+
+bvoc/test_bvoc_import.py::test_megan_model
+  E:\condaenv\PPA-VEM\Lib\site-packages\_pytest\python.py:161: PytestReturnNotNoneWarning: Test functions should return None, but bvoc/test_bvoc_import.py::test_megan_model returned <class 'bool'>.
+  Did you mean to use `assert` instead of `return`?
+  See https://docs.pytest.org/en/stable/how-to/assert.html#return-not-none for more information.
+    warnings.warn(
+
+bvoc/test_bvoc_import.py::test_response_functions
+  E:\condaenv\PPA-VEM\Lib\site-packages\_pytest\python.py:161: PytestReturnNotNoneWarning: Test functions should return None, but bvoc/test_bvoc_import.py::test_response_functions returned <class 'bool'>.
+  Did you mean to use `assert` instead of `return`?
+  See https://docs.pytest.org/en/stable/how-to/assert.html#return-not-none for more information.
+    warnings.warn(
+
+bvoc/test_bvoc_unit.py::TestParameterLoading::test_parameter_manager_integration
+bvoc/test_bvoc_unit.py::TestMEGANModelCalculations::test_standard_emission_calculation
+bvoc/test_bvoc_unit.py::TestMEGANModelCalculations::test_temperature_response_functions
+bvoc/test_bvoc_unit.py::TestMEGANModelCalculations::test_light_response_functions
+bvoc/test_bvoc_unit.py::TestMEGANModelCalculations::test_coupling_factor_calculation
+bvoc/test_bvoc_unit.py::TestMEGANModelCalculations::test_co2_inhibition_factor
+bvoc/test_bvoc_unit.py::TestMEGANModelCalculations::test_input_validation
+bvoc/test_bvoc_unit.py::TestMEGANModelCalculations::test_numerical_stability
+  F:\Homework\GEOBIOCHE\PPA-VEM-REBUILD\ppavem\core\functor_base.py:527: UserWarning: Failed to load parameters from manager for test_megan: 'Mock' object is not iterable
+    warnings.warn(f"Failed to load parameters from manager for {self.name}: {e}")
+
+bvoc/test_bvoc_unit.py::TestEmissionFactorDatabase::test_emission_factor_retrieval
+  F:\Homework\GEOBIOCHE\PPA-VEM-REBUILD\ppavem\scientific\biosphere\bvoc\emission_factors.py:436: UserWarning: Unknown PFT 'unknown_pft', using default
+    warnings.warn(f"Unknown PFT '{pft}', using default")
+
+bvoc/test_bvoc_unit.py::TestSynthesisModels::test_isoprene_synthesis_model
+  F:\Homework\GEOBIOCHE\PPA-VEM-REBUILD\ppavem\core\functor_base.py:527: UserWarning: Failed to load parameters from manager for mechanistic_isoprene_synthesis: 'Mock' object is not iterable
+    warnings.warn(f"Failed to load parameters from manager for {self.name}: {e}")
+
+bvoc/test_bvoc_unit.py::TestSynthesisModels::test_parameter_sensitivity_analysis
+bvoc/test_bvoc_unit.py::TestErrorHandlingAndEdgeCases::test_missing_required_inputs
+bvoc/test_bvoc_unit.py::TestErrorHandlingAndEdgeCases::test_invalid_parameter_values
+bvoc/test_bvoc_unit.py::TestErrorHandlingAndEdgeCases::test_extreme_environmental_conditions
+bvoc/test_bvoc_unit.py::TestErrorHandlingAndEdgeCases::test_device_handling
+  F:\Homework\GEOBIOCHE\PPA-VEM-REBUILD\ppavem\core\functor_base.py:527: UserWarning: Failed to load parameters from manager for megan_bvoc_model: 'Mock' object is not iterable
+    warnings.warn(f"Failed to load parameters from manager for {self.name}: {e}")
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED test\bvoc\test_bvoc_system.py::TestLongTermStability::test_annual_simulation_stability
+FAILED test\bvoc\test_bvoc_unit.py::TestParameterLoading::test_parameter_manager_integration
+FAILED test\bvoc\test_bvoc_unit.py::TestParameterLoading::test_parameter_fallback_behavior
+FAILED test\bvoc\test_bvoc_unit.py::TestMEGANModelCalculations::test_standard_emission_calculation
+FAILED test\bvoc\test_bvoc_unit.py::TestMEGANModelCalculations::test_temperature_response_functions
+FAILED test\bvoc\test_bvoc_unit.py::TestMEGANModelCalculations::test_coupling_factor_calculation
+FAILED test\bvoc\test_bvoc_unit.py::TestMEGANModelCalculations::test_numerical_stability
+FAILED test\bvoc\test_bvoc_unit.py::TestSynthesisModels::test_mep_pathway_model
+FAILED test\bvoc\test_bvoc_unit.py::TestSynthesisModels::test_isoprene_synthesis_model
+FAILED test\bvoc\test_bvoc_unit.py::TestSynthesisModels::test_parameter_sensitivity_analysis
+FAILED test\bvoc\test_bvoc_unit.py::TestErrorHandlingAndEdgeCases::test_missing_required_inputs
+FAILED test\bvoc\test_bvoc_unit.py::TestErrorHandlingAndEdgeCases::test_invalid_parameter_values
+FAILED test\bvoc\test_bvoc_unit.py::TestErrorHandlingAndEdgeCases::test_extreme_environmental_conditions
+FAILED test\bvoc\test_bvoc_unit.py::TestErrorHandlingAndEdgeCases::test_device_handling
+FAILED test\bvoc\test_bvoc_unit_fixed.py::TestParameterNamespaceLoading::test_megan_parameter_loading
+FAILED test\bvoc\test_bvoc_unit_fixed.py::TestNumericalStability::test_device_consistency
+FAILED test\bvoc\test_parameter_integration.py::TestParameterIntegration::test_namespace_resolution
+FAILED test\bvoc\test_parameter_integration.py::TestParameterIntegration::test_bounds_enforcement
+FAILED test\bvoc\test_parameter_integration.py::TestParameterIntegration::test_parameter_update_propagation
+FAILED test\bvoc\test_parameter_integration.py::TestParameterIntegration::test_comprehensive_parameter_audit
+FAILED test\bvoc\test_parameter_integration.py::TestParameterValidation::test_invalid_units_rejection
+FAILED test\bvoc\test_parameter_integration.py::TestParameterValidation::test_parameter_type_conversion
+FAILED test\bvoc\test_parameter_integration.py::TestParameterValidation::test_parameter_metadata_completeness
+23 failed, 58 passed, 1 skipped, 21 warnings in 294.02s (0:04:54)
+ERROR conda.cli.main_run:execute(125): `conda run pytest test\bvoc -q` failed. (See above for error)

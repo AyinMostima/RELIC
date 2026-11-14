@@ -1,0 +1,116 @@
+certificate_version: '1.0'
+process_id: relic.scientific.hydrosphere.runoff.surface_ponding.SurfacePondingFunctor
+module_name: SurfacePondingFunctor
+canonical_role: transport
+iphs_level: 2
+iphs_level_evidence:
+  classification: IPHS-wrapped surface ponding store certificate (linear-reservoir overland flow, connected only between the ponding_onset and ponding_cessation topology transitions)
+  compatible_basis: One prognostic cochain on the cell basis, the ponded depth surface_ponded_depth [mm], fed by the infiltration excess and drained with the ParameterManager-backed residence time
+  runtime_replacement: forward applies the exact linear-reservoir recession h' = (h + E) exp(-dt/tau) and emits the storage increment with the drained overland-flow depth and the budget residual; no legacy branch exists
+  canonical_operator: dh/dt = -h/tau with the excess entering at the start of the step; q = (h + E)(1 - exp(-dt/tau))
+  level_2_limit: The canonical dissipative-store runtime wrapper is declared and executed, but no typed-cochain IPHS structure, Hamiltonian, or entropy functional is claimed for the depth store; strict level 4 or 5 evidence is not applicable.
+theory_document: docs\source\theory\hydrosphere_surface_ponding.md
+theory_document_status: updated
+legacy_formula: dh/dt = E/dt - h/tau
+literature_formula: Linear reservoir overland-flow recession (Dooge 1973; Beven 2012)
+iphs_formula: h_{n+1} = (h_n + E_n) exp(-dt/tau), q_n = h_n + E_n - h_{n+1}; no IPHS operator is claimed
+legacy_expression: h_{n+1} = (h_n + E_n) exp(-dt/tau)
+iphs_expression: Delta h = h_{n+1} - h_n emitted as ACCUMULATE; q_n and the residual Delta h - E_n + q_n emitted as observations
+input_variables:
+- surface_ponded_depth
+- surface_ponding_excess
+output_variables:
+- surface_ponded_depth
+- diagnostics.surface_ponding.runoff_depth
+- diagnostics.surface_ponding.water_balance_residual
+parameter_keys:
+- hydrosphere.runoff.ponding_drainage_time
+composition_ports: []
+references:
+- Dooge, J.C.I. (1973). Linear Theory of Hydrologic Systems, USDA Tech. Bull. 1468
+- Beven, K.J. (2012). Rainfall-Runoff Modelling, The Primer, 2nd ed., Wiley
+- Goebel, R., Sanfelice, R.G. & Teel, A.R. (2012). Hybrid Dynamical Systems, Princeton
+baseline_tests:
+- test\unit\hydrosphere\test_surface_ponding.py
+- test\audit\phase8_scientific_inventory.test.py
+validation_tests:
+- test\unit\hydrosphere\test_surface_ponding.py
+- test\core\simulator_topology_transition.test.py
+- test\integration\test_surface_ponding_topology_integration.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  surface_ponded_depth: prognostic ponded depth h [mm]; input state and accumulated storage increment
+  surface_ponding_excess: infiltration excess E of the step [mm] written by the ponding event detector
+  diagnostics.surface_ponding.runoff_depth: overland-flow depth q drained in the step [mm]
+  diagnostics.surface_ponding.water_balance_residual: Delta h - E + q of the emitted step [mm]
+parameter_map:
+  hydrosphere.runoff.ponding_drainage_time: linear-reservoir residence time tau from ParameterManager [s]
+operator_map:
+  recession: h' = (h + E) exp(-dt/tau), exact solution of dh/dt = -h/tau over the step after the excess enters
+  runoff: q = h + E - h' is the drained overland-flow depth of the step (mass transfer to the channel routing port)
+  budget: residual = (h' - h) - E + q vanishes to rounding and is reported every step
+  connectivity: the store is registered by ponding_onset and retired by ponding_cessation through the registration owner; it never runs while disconnected
+unit_map:
+  surface_ponded_depth: mm
+  surface_ponding_excess: mm
+  diagnostics.surface_ponding.runoff_depth: mm
+  diagnostics.surface_ponding.water_balance_residual: mm
+input_output_map:
+  surface_ponded_depth: canonical state input and UpdateItem ACCUMULATE increment in mm, per_timestep true
+  surface_ponding_excess: canonical state input
+  diagnostics.surface_ponding.runoff_depth: canonical REPLACE observation
+  diagnostics.surface_ponding.water_balance_residual: canonical REPLACE observation
+interface_map:
+  forward_signature: forward(self, state, time, dt, **kwargs)
+  bridge_class: TransportMechanismFunctor
+  abstraction_contract: TransportMechanism
+  constructor_selection: "SurfacePondingFunctor(config={'event_provider': 'ponding_event'})"
+  state_write_mode: UpdateItem ACCUMULATE with per_timestep true for the ponded depth and REPLACE observations for diagnostics
+  legacy_inputs:
+  - surface_ponded_depth
+  - surface_ponding_excess
+  iphs_inputs:
+  - surface_ponded_depth
+  - surface_ponding_excess
+  legacy_outputs:
+  - surface_ponded_depth
+  - diagnostics.surface_ponding.runoff_depth
+  - diagnostics.surface_ponding.water_balance_residual
+  iphs_outputs:
+  - surface_ponded_depth
+  - diagnostics.surface_ponding.runoff_depth
+  - diagnostics.surface_ponding.water_balance_residual
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: The single forward path applies the exact exponential recession and emits the exact increment, the drained depth, and the residual; no alternative branch exists.
+  no_legacy_mode: No selectable legacy runtime branch is exposed; the Functor was introduced directly as the connectable ponding store.
+  non_strict_reason: Level 2 declares the canonical dissipative-store runtime wrapper; no IPHS structure, Hamiltonian, or entropy claim is made.
+state_advancement_map:
+  potential_basis: ponded depth on the declared cell basis; no storage functional is claimed
+  effort_variable: none; the recession is linear in the stored depth
+  state_advancer: Delta h = (h + E) exp(-dt/tau) - h emitted as one ACCUMULATE increment per step
+  runtime_usage: SurfacePondingFunctor.forward validates the inputs and the step, applies the exact recession, and emits the increment plus two REPLACE diagnostics; check_conservation_laws reports the budget residual to the local conservation hook.
+parameter_management_map:
+  hydrosphere.runoff.ponding_drainage_time:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares two state inputs, one state output, two diagnostics, one dependency (the ponding event detector), and the mass law
+  state_contract: SCM contracts surface_ponded_depth (increment writer surface_ponding, topology writers) and surface_ponding_excess (owner ponding_event) and the diagnostics.surface_ponding.* contracts type the GraphIR ports
+  validation_rule: stochastic_sdae_check with the topology_change execution binding on the ponding event detector, phase8 scientific inventory, and equivalence certificate checks
+  lifecycle: registered and retired only by relic.core.simulator.registration.apply_topology_transition with one epoch per transition
+dependency_interconnection_map:
+  dependencies: get_dependencies() returns the ponding event detector name (default ponding_event)
+  direct_functor_calls: none; the store is invoked only by the simulator on the committed provider view
+overflow_routing_map:
+  invalid_state_route: missing, non-tensor, non-floating, non-finite, negative, or shape-mismatched states fail before any UpdateItem
+  inadmissible_timestep_route: a non-positive or non-finite step or a non-positive residence time fails before any output
+  discarded_residuals: no residual is discarded; the drained depth is reported and the budget residual is emitted every step
+conservation_map:
+  conserved_quantities: mass (ponded water depth budget)
+  balance_expression: Delta h = E - q exactly; residual Delta h - E + q reported as diagnostics.surface_ponding.water_balance_residual
+entropy_audit:
+  operator_sign: tau > 0 by ParameterManager bounds; q >= 0 and h' <= h + E
+  sigma_expression: no entropy-production claim is made; the recession is a dissipative linear store
+equivalence_type: exact

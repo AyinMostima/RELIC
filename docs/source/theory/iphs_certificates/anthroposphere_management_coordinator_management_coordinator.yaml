@@ -1,0 +1,471 @@
+certificate_version: '1.0'
+process_id: relic.scientific.anthroposphere.management.coordinator.ManagementCoordinator
+module_name: management_coordinator
+canonical_role: scale_coupling
+iphs_level: 3
+iphs_level_evidence:
+  classification: IPHS-structured non-strict scale-coupling certificate
+  compatible_basis: Typed management priority, control, and resource-allocation cochain spaces are declared.
+  runtime_replacement: The production forward path uses one explicit observation/control port map; strict runtime replacement is not claimed.
+  canonical_operator: A positive diagonal management-priority Hodge map and one typed management port are declared.
+  structural_contribution: declared_forms, build_hodge_contract, and ports contribute typed structure to existing audits.
+  assembly_participation: The certificate participates in the Phase 8 inventory and GraphIR structural audit.
+  level_3_limit: No independently validated Hamiltonian, effort, port-power, degeneracy, or strict GENERIC runtime evidence is present.
+theory_document: docs\source\theory\anthroposphere_management_coordinator.md
+theory_document_status: updated
+legacy_formula: Management priorities, event scheduling, and per-resource quotas define an open observation/control coordinator.
+literature_formula: Multi-objective farm management uses configurable priorities and resource constraints; retained coefficients are calibratable policy heuristics rather than universal laws.
+iphs_formula: q_i = w_i(1+s_i); p_i = q_i/sum_j(q_j); H_m = diag(w_i/sum_j(w_j)); 0 <= U_r <= Q_r for each resource r.
+legacy_expression: P_eff = P_base W_resource W_timing W_conflict.
+iphs_expression: The non-strict priority projection and positive Hodge metric expose observations and next-step controls through the declared management port.
+input_variables:
+- soil_moisture
+- soil_nitrogen
+- soil_organic_carbon
+- crop_maturity
+- aboveground_biomass
+- air_temperature
+- irrigation_flux
+- harvest_flux
+- grazing_flux
+- co2_emission
+- field_capacity
+- wilting_point
+- evapotranspiration_flux
+- precipitation_flux
+- day_of_year
+output_variables:
+- coordination_status
+- total_irrigation_flux
+- total_harvest_flux
+- total_grazing_flux
+- total_fire_co2_flux
+- irrigation_demand_flux
+- fertilizer_product_flux
+- tillage_intensity
+- diagnostics.management_coordinator.active
+- diagnostics.management_coordinator.events_executed
+- diagnostics.management_coordinator.irrigation_events_count
+- diagnostics.management_coordinator.tillage_events_count
+- diagnostics.management_coordinator.harvest_events_count
+- diagnostics.management_coordinator.grazing_events_count
+- diagnostics.management_coordinator.fire_events_count
+- diagnostics.management_coordinator.priority_weights_sum
+- diagnostics.management_coordinator.interaction_effects_count
+- diagnostics.management_coordinator.conflict_resolution_applied
+- diagnostics.coordinator_mass_balance_error
+- diagnostics.management_coordinator.canonical_iphs_runtime
+parameter_keys:
+- anthroposphere.management.coordinator.management_strategy
+- anthroposphere.management.coordinator.coordination_mode
+- anthroposphere.management.coordinator.conflict_resolution_strategy
+- anthroposphere.management.coordinator.coordination_interval_days
+- anthroposphere.management.coordinator.planning_horizon_days
+- anthroposphere.management.coordinator.statistics_history_limit
+- anthroposphere.management.coordinator.decision_threshold
+- anthroposphere.management.coordinator.high_priority_threshold
+- anthroposphere.management.coordinator.candidate_need_threshold
+- anthroposphere.management.coordinator.coordination_efficiency
+- anthroposphere.management.coordinator.interaction_factor
+- anthroposphere.management.coordinator.interaction_multiplier_min
+- anthroposphere.management.coordinator.interaction_multiplier_max
+- anthroposphere.management.coordinator.maturity_factor_min
+- anthroposphere.management.coordinator.maturity_factor_max
+- anthroposphere.management.coordinator.harvest_biomass_threshold
+- anthroposphere.management.coordinator.score_limits.benefit_max
+- anthroposphere.management.coordinator.event_defaults.tillage_intensity_class
+- anthroposphere.management.coordinator.priority_weights.productivity
+- anthroposphere.management.coordinator.priority_weights.environmental
+- anthroposphere.management.coordinator.priority_weights.water
+- anthroposphere.management.coordinator.priority_weights.nutrients
+- anthroposphere.management.coordinator.priority_weights.soil_health
+- anthroposphere.management.coordinator.objectives.*
+- anthroposphere.management.coordinator.objective_scoring.*
+- anthroposphere.management.coordinator.strategies.*
+- anthroposphere.management.coordinator.reference.*
+- anthroposphere.management.coordinator.resource_quotas.*
+- anthroposphere.management.coordinator.resource_requirements.*
+- anthroposphere.management.coordinator.need_scores.*
+- anthroposphere.management.coordinator.event_delay_days.*
+- anthroposphere.management.coordinator.event_duration_hours.*
+- anthroposphere.management.coordinator.season_boundaries.*
+- anthroposphere.management.coordinator.status.*
+- anthroposphere.management.clamp_min
+- anthroposphere.management.clamp_max
+- anthroposphere.management.fertilization.spring_urea_product_mass
+- anthroposphere.management.irrigation.default_application_depth
+- anthroposphere.management.tillage.low_intensity_factor
+- anthroposphere.management.fire.default_fire_type
+- anthroposphere.management.fire.default_fuel_load_fraction
+- anthroposphere.management.fire.fuel_consumption_fraction
+- anthroposphere.management.grazing.base_efficiency
+- anthroposphere.management.grazing.daily_intake_rate
+- anthroposphere.management.grazing.manure_return_fraction
+- anthroposphere.management.grazing.default_schedule.spring.body_weight
+- anthroposphere.management.grazing.default_schedule.spring.stocking_rate
+- anthroposphere.management.harvest.default_harvest_index
+- validation.conservation.conservation_tolerance
+physical_constant_ssot:
+  seconds_per_day: get_physical_constant("seconds_per_day")
+  seconds_per_hour: get_physical_constant("seconds_per_hour")
+composition_ports:
+- management_coordination_control_port
+references:
+- Allen et al. (1998), FAO Irrigation and Drainage Paper 56.
+- Lal (2004), Science 304, 1623-1627.
+- Matson et al. (1997), Science 277, 504-509.
+- Robertson and Swinton (2005), Frontiers in Ecology and the Environment 3, 38-46.
+- van der Schaft and Maschke (1995), AEU 49, 362-371.
+baseline_tests:
+- test\anthroposphere\management\test_coordinator_l1.py
+- test\anthroposphere\management\coordinator_phase8.test.py
+- test\anthroposphere\test_management_coordinator.py
+- test\anthroposphere\test_management_coordinator_l1.py
+- test\anthroposphere\test_management_integration_l2.py
+validation_tests:
+- test\anthroposphere\management\test_coordinator_l1.py
+- test\anthroposphere\management\coordinator_phase8.test.py
+- test\anthroposphere\test_management_coordinator.py
+- test\anthroposphere\test_management_coordinator_l1.py
+- test\anthroposphere\test_management_integration_l2.py
+- test\scientific\anthroposphere\management\coordinator_no_inplace_mutation.test.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  management_priority_state: Five-component dimensionless priority observation cochain.
+  management_control_projection: Three-component next-step management control projection.
+  management_resource_allocation: Per-resource administrative allocation port; resources are never added before quota normalization.
+  lagged_management_fluxes: irrigation_flux, harvest_flux, grazing_flux, and co2_emission are explicit previous accepted-step observations.
+  public_outputs: Eight non-prognostic observations or controls are committed through StateManager.
+  ephemeral_diagnostics: Twelve namespaced diagnostics are removed before current StateManager provenance tracking.
+parameter_map:
+  anthroposphere.management.coordinator.management_strategy: Configured management policy selector [dimensionless]
+  anthroposphere.management.coordinator.coordination_mode: Mode of coordination between activities [dimensionless]
+  anthroposphere.management.coordinator.conflict_resolution_strategy: Strategy for resolving management conflicts [dimensionless]
+  anthroposphere.management.coordinator.coordination_interval_days: Policy evaluation interval [day]
+  anthroposphere.management.coordinator.planning_horizon_days: Planning horizon for management scheduling decisions [day]
+  anthroposphere.management.coordinator.statistics_history_limit: Number of recent coordination results kept by the statistics [dimensionless]
+  anthroposphere.management.coordinator.decision_threshold: Threshold for applying coordination decisions [dimensionless]
+  anthroposphere.management.coordinator.high_priority_threshold: Need score above which an event is high priority [dimensionless]
+  anthroposphere.management.coordinator.candidate_need_threshold: Minimum need score of a candidate event [dimensionless]
+  anthroposphere.management.coordinator.coordination_efficiency: Efficiency scalar for coordination decisions [dimensionless]
+  anthroposphere.management.coordinator.interaction_factor: Interaction multiplier between management practices [dimensionless]
+  anthroposphere.management.coordinator.interaction_multiplier_min: Lower bound of the management interaction multiplier [dimensionless]
+  anthroposphere.management.coordinator.interaction_multiplier_max: Upper bound of the management interaction multiplier [dimensionless]
+  anthroposphere.management.coordinator.maturity_factor_min: Lower bound of the crop-maturity multiplier [dimensionless]
+  anthroposphere.management.coordinator.maturity_factor_max: Upper bound of the crop-maturity multiplier [dimensionless]
+  anthroposphere.management.coordinator.harvest_biomass_threshold: Aboveground biomass threshold for harvest readiness [kg m-2]
+  anthroposphere.management.coordinator.score_limits.benefit_max: Upper bound of the normalized productivity and soil-health benefit scores [dimensionless]
+  anthroposphere.management.coordinator.event_defaults.tillage_intensity_class: Tillage intensity class of a coordinated tillage event [dimensionless]
+  anthroposphere.management.coordinator.priority_weights.productivity: Base weight for productivity objectives [dimensionless]
+  anthroposphere.management.coordinator.priority_weights.environmental: Base weight for environmental impact objectives [dimensionless]
+  anthroposphere.management.coordinator.priority_weights.water: Base weight for water management objectives [dimensionless]
+  anthroposphere.management.coordinator.priority_weights.nutrients: Base weight for nutrient objectives [dimensionless]
+  anthroposphere.management.coordinator.priority_weights.soil_health: Base weight for soil health objectives [dimensionless]
+  anthroposphere.management.coordinator.objectives.*: Scoring weight of each management objective [dimensionless]
+  anthroposphere.management.coordinator.objective_scoring.*: Objective score coefficients and neutral score [dimensionless]
+  anthroposphere.management.coordinator.strategies.*: Nutrient and objective weight multipliers per management strategy [dimensionless]
+  anthroposphere.management.coordinator.reference.*: Positive reference states that normalize the need scores [units per key]
+  anthroposphere.management.coordinator.resource_quotas.*: Scheduling quota per resource (fuel, labor, machinery, nitrogen, phosphorus, water) [units per key]
+  anthroposphere.management.coordinator.resource_requirements.*: Resource requirement per event of each activity, in the quota units [units per key]
+  anthroposphere.management.coordinator.need_scores.*: Need-score coefficients per activity [units per key]
+  anthroposphere.management.coordinator.event_delay_days.*: Scheduling delay per activity [day]
+  anthroposphere.management.coordinator.event_duration_hours.*: Event duration per activity [h]
+  anthroposphere.management.coordinator.season_boundaries.*: Day of year at which each season starts [day]
+  anthroposphere.management.coordinator.status.*: Coordination-status weights and neutral score [dimensionless]
+  anthroposphere.management.clamp_min: Lower bound of the management response factors [dimensionless]
+  anthroposphere.management.clamp_max: Upper bound of the management response factors [dimensionless]
+  anthroposphere.management.fertilization.spring_urea_product_mass: Urea product mass of the coordinated spring fertilization [kg product m-2]
+  anthroposphere.management.irrigation.default_application_depth: Irrigation depth per coordinated event [mm]
+  anthroposphere.management.tillage.low_intensity_factor: Intensity multiplier of low-intensity tillage [dimensionless]
+  anthroposphere.management.fire.default_fire_type: Fire type of a coordinated fire event [dimensionless]
+  anthroposphere.management.fire.default_fuel_load_fraction: Fraction of aboveground biomass treated as fuel [dimensionless]
+  anthroposphere.management.fire.fuel_consumption_fraction: Fraction of the available fuel consumed [dimensionless]
+  anthroposphere.management.grazing.base_efficiency: Baseline efficiency scalar of grazing management [dimensionless]
+  anthroposphere.management.grazing.daily_intake_rate: Daily dry-matter intake per body weight [kg DM kg-1 body weight day-1]
+  anthroposphere.management.grazing.manure_return_fraction: Fraction of consumed nutrients returned as manure [dimensionless]
+  anthroposphere.management.grazing.default_schedule.spring.body_weight: Animal body weight of the spring grazing event [kg]
+  anthroposphere.management.grazing.default_schedule.spring.stocking_rate: Stocking rate of the spring grazing event [animals ha-1]
+  anthroposphere.management.harvest.default_harvest_index: Harvest index of a coordinated harvest [dimensionless]
+  validation.conservation.conservation_tolerance: General relative tolerance of the conservation checks [dimensionless]
+  physical_constant_ssot: seconds_per_day and seconds_per_hour are read only through get_physical_constant.
+operator_map:
+  Pi_h: ParameterManager-backed priority projection from canonical state inputs.
+  H_m: Positive-semidefinite diagonal priority Hodge metric with non-negative weights and positive total.
+  G_m: Typed management coordination control port.
+  resource_normalization: c = sum_r R_r/Q_r is dimensionless because each requirement and quota pair has the same unit.
+  state_advance: No prognostic state advance is owned by this observer/controller.
+state_advancement_map:
+  potential_basis: Five-component management-priority observation basis.
+  effort_variable: Normalized priority vector and per-resource quota-normalized scheduling score.
+  state_advancer: No prognostic state advance; forward returns explicit UpdateItem(REPLACE, per_timestep=False) observations and next-step controls.
+  runtime_usage: The simulator commits eight public ports; current diagnostic routing keeps twelve namespaced diagnostics ephemeral.
+unit_map:
+  soil_moisture: m3 m-3
+  soil_nitrogen: kg N m-2
+  soil_organic_carbon: kg C m-2
+  crop_maturity: '1'
+  aboveground_biomass: kg DM m-2
+  air_temperature: K
+  irrigation_flux: kg m-2 s-1
+  harvest_flux: kg DM m-2 s-1
+  grazing_flux: kg DM m-2 s-1
+  co2_emission: kg CO2 m-2 s-1
+  field_capacity: m3 m-3
+  wilting_point: m3 m-3
+  evapotranspiration_flux: kg m-2 s-1
+  precipitation_flux: kg m-2 s-1
+  day_of_year: '1'
+  coordination_status: '1'
+  total_irrigation_flux: kg m-2 s-1
+  total_harvest_flux: kg DM m-2 s-1
+  total_grazing_flux: kg DM m-2 s-1
+  total_fire_co2_flux: kg CO2 m-2 s-1
+  irrigation_demand_flux: kg m-2 s-1
+  fertilizer_product_flux: kg product m-2 s-1
+  tillage_intensity: '1'
+  diagnostics.management_coordinator.active: '1'
+  diagnostics.management_coordinator.events_executed: '1'
+  diagnostics.management_coordinator.irrigation_events_count: '1'
+  diagnostics.management_coordinator.tillage_events_count: '1'
+  diagnostics.management_coordinator.harvest_events_count: '1'
+  diagnostics.management_coordinator.grazing_events_count: '1'
+  diagnostics.management_coordinator.fire_events_count: '1'
+  diagnostics.management_coordinator.priority_weights_sum: '1'
+  diagnostics.management_coordinator.interaction_effects_count: '1'
+  diagnostics.management_coordinator.conflict_resolution_applied: '1'
+  diagnostics.coordinator_mass_balance_error: kg DM m-2 s-1
+  diagnostics.management_coordinator.canonical_iphs_runtime: '1'
+  management_priority_state: '1'
+  management_control_projection: '1'
+  management_resource_allocation: '1'
+input_output_map:
+  lagged_observations: Four explicit previous accepted-step management fluxes map one-to-one to four total flux observations.
+  priority_controls: Canonical state inputs drive fertilizer_product_flux and tillage_intensity through the priority heuristic; irrigation_demand_flux is the FAO-24 net irrigation requirement max(evapotranspiration_flux - precipitation_flux, 0).
+  coordination_observation: coordination_status reports the ParameterManager-backed scheduling score.
+  diagnostics: Counts, priority summaries, conflict status, biomass residual, and runtime marker are namespaced diagnostics.
+interface_map:
+  forward_signature: forward(self, state, time, dt, calendar_type=None)
+  bridge_class: ScaleCouplingFunctor
+  abstraction_contract: ScaleCoupling
+  state_write_mode: Every output is UpdateItem(REPLACE, per_timestep=False) with explicit unit and source_functor.
+  legacy_inputs:
+  - soil_moisture
+  - soil_nitrogen
+  - soil_organic_carbon
+  - crop_maturity
+  - aboveground_biomass
+  - air_temperature
+  - irrigation_flux
+  - harvest_flux
+  - grazing_flux
+  - co2_emission
+  - field_capacity
+  - wilting_point
+  - evapotranspiration_flux
+  - precipitation_flux
+  - day_of_year
+  iphs_inputs:
+  - soil_moisture
+  - soil_nitrogen
+  - soil_organic_carbon
+  - crop_maturity
+  - aboveground_biomass
+  - air_temperature
+  - irrigation_flux
+  - harvest_flux
+  - grazing_flux
+  - co2_emission
+  - field_capacity
+  - wilting_point
+  - evapotranspiration_flux
+  - precipitation_flux
+  - day_of_year
+  legacy_outputs:
+  - coordination_status
+  - total_irrigation_flux
+  - total_harvest_flux
+  - total_grazing_flux
+  - total_fire_co2_flux
+  - irrigation_demand_flux
+  - fertilizer_product_flux
+  - tillage_intensity
+  - diagnostics.management_coordinator.active
+  - diagnostics.management_coordinator.events_executed
+  - diagnostics.management_coordinator.irrigation_events_count
+  - diagnostics.management_coordinator.tillage_events_count
+  - diagnostics.management_coordinator.harvest_events_count
+  - diagnostics.management_coordinator.grazing_events_count
+  - diagnostics.management_coordinator.fire_events_count
+  - diagnostics.management_coordinator.priority_weights_sum
+  - diagnostics.management_coordinator.interaction_effects_count
+  - diagnostics.management_coordinator.conflict_resolution_applied
+  - diagnostics.coordinator_mass_balance_error
+  - diagnostics.management_coordinator.canonical_iphs_runtime
+  iphs_outputs:
+  - coordination_status
+  - total_irrigation_flux
+  - total_harvest_flux
+  - total_grazing_flux
+  - total_fire_co2_flux
+  - irrigation_demand_flux
+  - fertilizer_product_flux
+  - tillage_intensity
+  - diagnostics.management_coordinator.active
+  - diagnostics.management_coordinator.events_executed
+  - diagnostics.management_coordinator.irrigation_events_count
+  - diagnostics.management_coordinator.tillage_events_count
+  - diagnostics.management_coordinator.harvest_events_count
+  - diagnostics.management_coordinator.grazing_events_count
+  - diagnostics.management_coordinator.fire_events_count
+  - diagnostics.management_coordinator.priority_weights_sum
+  - diagnostics.management_coordinator.interaction_effects_count
+  - diagnostics.management_coordinator.conflict_resolution_applied
+  - diagnostics.coordinator_mass_balance_error
+  - diagnostics.management_coordinator.canonical_iphs_runtime
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: ParameterManager-backed scheduling heuristics define the single non-strict production observation/control path.
+  no_legacy_mode: No subordinate Functor registry, direct Functor calls, legacy mode, alias input, or hidden zero fallback is exposed.
+parameter_management_map:
+  anthroposphere.management.coordinator.management_strategy:
+    source: ParameterManager YAML
+  anthroposphere.management.coordinator.coordination_mode:
+    source: ParameterManager YAML
+  anthroposphere.management.coordinator.conflict_resolution_strategy:
+    source: ParameterManager YAML
+  anthroposphere.management.coordinator.coordination_interval_days:
+    source: ParameterManager YAML
+  anthroposphere.management.coordinator.planning_horizon_days:
+    source: ParameterManager YAML
+  anthroposphere.management.coordinator.statistics_history_limit:
+    source: ParameterManager YAML
+  anthroposphere.management.coordinator.decision_threshold:
+    source: ParameterManager YAML
+  anthroposphere.management.coordinator.high_priority_threshold:
+    source: ParameterManager YAML
+  anthroposphere.management.coordinator.candidate_need_threshold:
+    source: ParameterManager YAML
+  anthroposphere.management.coordinator.coordination_efficiency:
+    source: ParameterManager YAML
+  anthroposphere.management.coordinator.interaction_factor:
+    source: ParameterManager YAML
+  anthroposphere.management.coordinator.interaction_multiplier_min:
+    source: ParameterManager YAML
+  anthroposphere.management.coordinator.interaction_multiplier_max:
+    source: ParameterManager YAML
+  anthroposphere.management.coordinator.maturity_factor_min:
+    source: ParameterManager YAML
+  anthroposphere.management.coordinator.maturity_factor_max:
+    source: ParameterManager YAML
+  anthroposphere.management.coordinator.harvest_biomass_threshold:
+    source: ParameterManager YAML
+  anthroposphere.management.coordinator.score_limits.benefit_max:
+    source: ParameterManager YAML
+  anthroposphere.management.coordinator.event_defaults.tillage_intensity_class:
+    source: ParameterManager YAML
+  anthroposphere.management.coordinator.priority_weights.productivity:
+    source: ParameterManager YAML
+  anthroposphere.management.coordinator.priority_weights.environmental:
+    source: ParameterManager YAML
+  anthroposphere.management.coordinator.priority_weights.water:
+    source: ParameterManager YAML
+  anthroposphere.management.coordinator.priority_weights.nutrients:
+    source: ParameterManager YAML
+  anthroposphere.management.coordinator.priority_weights.soil_health:
+    source: ParameterManager YAML
+  anthroposphere.management.coordinator.objectives.*:
+    source: ParameterManager YAML
+  anthroposphere.management.coordinator.objective_scoring.*:
+    source: ParameterManager YAML
+  anthroposphere.management.coordinator.strategies.*:
+    source: ParameterManager YAML
+  anthroposphere.management.coordinator.reference.*:
+    source: ParameterManager YAML
+  anthroposphere.management.coordinator.resource_quotas.*:
+    source: ParameterManager YAML
+  anthroposphere.management.coordinator.resource_requirements.*:
+    source: ParameterManager YAML
+  anthroposphere.management.coordinator.need_scores.*:
+    source: ParameterManager YAML
+  anthroposphere.management.coordinator.event_delay_days.*:
+    source: ParameterManager YAML
+  anthroposphere.management.coordinator.event_duration_hours.*:
+    source: ParameterManager YAML
+  anthroposphere.management.coordinator.season_boundaries.*:
+    source: ParameterManager YAML
+  anthroposphere.management.coordinator.status.*:
+    source: ParameterManager YAML
+  anthroposphere.management.clamp_min:
+    source: ParameterManager YAML
+  anthroposphere.management.clamp_max:
+    source: ParameterManager YAML
+  anthroposphere.management.fertilization.spring_urea_product_mass:
+    source: ParameterManager YAML
+  anthroposphere.management.irrigation.default_application_depth:
+    source: ParameterManager YAML
+  anthroposphere.management.tillage.low_intensity_factor:
+    source: ParameterManager YAML
+  anthroposphere.management.fire.default_fire_type:
+    source: ParameterManager YAML
+  anthroposphere.management.fire.default_fuel_load_fraction:
+    source: ParameterManager YAML
+  anthroposphere.management.fire.fuel_consumption_fraction:
+    source: ParameterManager YAML
+  anthroposphere.management.grazing.base_efficiency:
+    source: ParameterManager YAML
+  anthroposphere.management.grazing.daily_intake_rate:
+    source: ParameterManager YAML
+  anthroposphere.management.grazing.manure_return_fraction:
+    source: ParameterManager YAML
+  anthroposphere.management.grazing.default_schedule.spring.body_weight:
+    source: ParameterManager YAML
+  anthroposphere.management.grazing.default_schedule.spring.stocking_rate:
+    source: ParameterManager YAML
+  anthroposphere.management.harvest.default_harvest_index:
+    source: ParameterManager YAML
+  validation.conservation.conservation_tolerance:
+    source: ParameterManager YAML
+  physical_constant_ssot:
+    source: Physical constants SSOT through get_physical_constant, not ParameterManager parameter_keys
+composition_management_map:
+  functor_metadata: FunctorMetadata declares the exact 15-input and 20-output non-prognostic interface.
+  structural_protocol: declared_forms, build_hodge_contract, build_hodge_terms, reversible_structure, dissipative_structure, and ports use existing DEC/IPHS owners.
+  simulator_owner: RELICSimulator exclusively registers and executes subordinate management Functors; the coordinator has no module registry.
+  physical_constant_ssot: seconds_per_day and seconds_per_hour come from the existing physical constants owner.
+  ports:
+  - management_coordination_control_port
+dependency_interconnection_map:
+  required: none_no_required_synchronous_functor_dependencies
+  optional: none_no_optional_synchronous_functor_dependencies
+  lagged:
+  - irrigation_management
+  - harvest_management
+  - grazing_management
+  - fire_management
+  dependencies: Four lagged edges observe explicit previous accepted-step fluxes without creating a synchronous cycle.
+  direct_functor_calls: none_no_direct_functor_calls
+  chain_maps:
+  - Canonical state inputs enter the priority projection.
+  - Previous accepted-step management fluxes map to total observation ports.
+  - Next-step controls leave through the management coordination control port.
+overflow_routing_map:
+  missing_inputs: Missing required state or lagged flux inputs fail fast; the coordinator never inserts hidden zero values.
+  no_events: With no executed events, total observations preserve explicitly supplied previous accepted-step fluxes.
+  resource_exhaustion: EventScheduler rejects or defers events under per-resource quota constraints.
+  conservation_residual: diagnostics.coordinator_mass_balance_error exposes aboveground biomass removal excess.
+  diagnostics_provenance: Twelve namespaced diagnostics are explicitly identified as ephemeral under current simulator routing.
+  discarded_residuals: none_no_management_mass_or_resource_quota_residual_is_discarded
+conservation_map:
+  system_type: Open management observation/control boundary; no closed mass-reaction ownership is claimed.
+  biomass_expression: R = relu(max(F_harvest,0) + max(F_grazing,0) - max(B_ag,0)/dt - tolerance) + relu(-F_harvest) + relu(-F_grazing).
+  quota_expression: R_quota = max_r(relu(U_r-Q_r) + relu(-U_r)); each U_r and Q_r use the same resource-specific unit.
+  open_routes: Irrigation and fertilizer controls are open inputs; harvest, grazing, and fire observations are open exports.
+  runtime_checker: check_conservation_laws consumes the explicit biomass residual and separately audits EventScheduler quotas.
+entropy_audit:
+  operator_sign: H_m is diagonal positive semidefinite for non-negative weights with strictly positive total.
+  sigma_expression: sigma = z.T H_m z >= 0.
+  validation_hook: build_hodge_contract(strict=True)
+  strict_boundary: This structural PSD audit is not strict IPHS or GENERIC runtime evidence.
+equivalence_type: port_equivalent

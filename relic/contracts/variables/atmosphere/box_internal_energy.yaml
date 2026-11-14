@@ -1,0 +1,46 @@
+variable: box_internal_energy
+title: "Closed Box Internal Energy"
+kind: state
+dimension:
+  udunits: "J"
+  cf_standard_name: null
+support:
+  spatial_kind: null
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: []
+owner: null
+aliases: []
+incrementable: true
+accumulates: null
+references:
+  - "McBride, Gordon & Reno (1993). NASA TM-4513, NASA7 standard-state polynomials"
+  - "Kondepudi, D. & Prigogine, I. (1998). Modern Thermodynamics, closed constant-volume systems"
+numerics:
+  lower_bound: null
+  upper_bound: null
+  atol: 1.0e-30
+  rtol: 1.0e-12
+writers:
+  increments:
+    - name: "atmospheric_chemistry"
+      module: "relic.scientific.atmosphere.chemistry"
+      provides:
+        - "box_internal_energy"
+      unit: "J"
+  tendencies: []
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-30
+      rtol: 1.0e-12
+provenance:
+  source_file: "relic/scientific/atmosphere/chemistry.py"
+  runtime_role: "closed_constant_volume_box_internal_energy"
+  runtime_writer: "atmospheric_chemistry"
+  note: "Total internal energy U = sum_i n_i u_i(T) of the closed box, including NASA7 formation terms, so negative values are valid. The closed adiabatic constant-volume box emits an exactly zero increment from the GENERIC degeneracy M grad(E) = 0; temperature is a derived diagnostic."

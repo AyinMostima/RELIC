@@ -1,0 +1,309 @@
+certificate_version: '1.0'
+process_id: relic.scientific.biosphere.growth.biomass_allocation.BiomassAllocation
+module_name: BiomassAllocation
+canonical_role: reaction
+iphs_level: 2
+iphs_level_evidence:
+  classification: IPHS-wrapped reaction process certificate
+  compatible_basis: Reaction process is expressed through conserved or open stoichiometric ledgers
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: N_h r_h reaction-network state advance
+  level_2_limit: The canonical runtime wrapper is declared, but no executable typed-cochain or IPHS structural contribution is bound; strict level 4 or 5 evidence is not claimed.
+theory_document: docs\source\theory\growth.md
+theory_document_status: updated
+legacy_formula: dB_i/dt = f_i * NPP_eff * eta_i, where NPP_eff = NPP * M_pheno and eta_i applied a second construction-respiration loss
+literature_formula: dB_i/dt = f_i * (NPP - F_BVOC,C), with sum_i(f_i) = 1, construction respiration accounted before NPP, and the BVOC debit enabled only by an explicit graph-selected owner
+iphs_formula: x_dot = N_h r_h with r_h = f_i * (NPP - F_BVOC,C), ParameterManager-backed allocation coefficients, and declared stoichiometric/output map N_h
+legacy_expression: dB_i/dt = f_i * NPP_eff * eta_i with un-routed phenology suppression and duplicated construction loss
+iphs_expression: x_dot = N_h r_h with ParameterManager-backed process rates r_h and declared stoichiometric/output map N_h
+input_variables:
+- net_primary_productivity
+- air_temperature
+- water_stress_factor
+- leaf_area_index
+- phenology_phase
+- leaf_biomass_c
+- wood_biomass_c
+- root_biomass_c
+output_variables:
+- growth_rate_leaf
+- growth_rate_stem
+- growth_rate_root
+- leaf_biomass_c
+- wood_biomass_c
+- root_biomass_c
+- diagnostics.biomass_allocation.total_growth_rate
+- diagnostics.biomass_allocation.allocation_fraction_leaf
+- diagnostics.biomass_allocation.allocation_fraction_stem
+- diagnostics.biomass_allocation.allocation_fraction_root
+- diagnostics.biomass_allocation.allocation_sum
+- diagnostics.biomass_allocation.environmental_modifier
+- diagnostics.biomass_allocation.phenology_modifier
+- diagnostics.biomass_allocation.carbon_balance_residual
+parameter_keys:
+- biosphere.growth.allocation.f_leaf_base
+- biosphere.growth.allocation.f_stem_base
+- biosphere.growth.allocation.f_root_base
+- biosphere.growth.allocation.root_alloc_temp_coeff
+- biosphere.growth.allocation.root_alloc_temp_ref
+- biosphere.growth.allocation.root_alloc_temp_mult
+- biosphere.growth.allocation.water_stress_threshold
+- biosphere.growth.allocation.temperature_stress_factor
+- biosphere.growth.allocation.temperature_opt
+- biosphere.growth.allocation.lai_max_threshold
+- biosphere.growth.allocation.lai_min_threshold
+- biosphere.growth.allocation.greenup_f_leaf
+- biosphere.growth.allocation.allometry_leaf_stem_exp
+- biosphere.growth.allocation.allometry_root_shoot_exp
+- biosphere.growth.allocation.allometric_blend_weight
+- biosphere.growth.allocation.min_allocation_frac
+- biosphere.growth.allocation.max_allocation_frac
+- biosphere.growth.allocation.allocation_sum_tolerance
+- biosphere.growth.allocation.normalization_epsilon
+- biosphere.growth.allocation.fraction_zero_tolerance
+- biosphere.growth.allocation.woody_stem_fraction_threshold
+- biosphere.growth.allocation.allometry_biomass_floor
+- biosphere.growth.allocation.allometry_ratio_max
+- biosphere.growth.allocation.emergency_stem_fraction
+- biosphere.growth.allocation.emergency_root_fraction
+- biosphere.growth.allocation.defaults.default_environmental_modifier
+- biosphere.growth.allocation.defaults.default_phenological_modifier
+- biosphere.growth.allocation.defaults.temp_root_factor_min
+- biosphere.growth.allocation.defaults.temp_root_factor_max
+- biosphere.growth.allocation.phenology.dormant_phase_code
+- biosphere.growth.allocation.phenology.greenup_phase_code
+- biosphere.growth.allocation.phenology.mature_phase_code
+- biosphere.growth.allocation.phenology.senescence_phase_code
+- biosphere.growth.allocation.phenology.dormant_phase_modifier
+- biosphere.growth.allocation.phenology.greenup_phase_modifier
+- biosphere.growth.allocation.phenology.mature_phase_modifier
+- biosphere.growth.allocation.phenology.senescence_phase_modifier
+- biosphere.growth.allocation.phenology.dormant_leaf_allocation
+- biosphere.growth.allocation.phenology.lai_max_leaf_allocation
+- biosphere.growth.allocation.phenology.herbaceous_stem_allocation
+- biosphere.growth.allocation.phenology.herbaceous_lai_min_stem_allocation
+- validation.conservation.conservation_tolerance
+- biosphere.pft.*.allocation.f_leaf
+- biosphere.pft.*.allocation.f_stem
+- biosphere.pft.*.allocation.f_root
+composition_ports:
+- net_primary_productivity
+- bvoc_carbon_allocation_flux
+- leaf_biomass_c
+- wood_biomass_c
+- root_biomass_c
+references:
+- 'Gao et al. (2025). pnetr: An R package for the PnET model family'
+- Zhang et al. (2011). CASA-CNP allocation routines
+- Sands & Landsberg (2002). 3-PG allocation strategies
+- Franklin et al. (2012). Modeling carbon allocation in trees
+- Kesselmeier et al. (2002). VOC emissions and the terrestrial carbon budget
+- Niinemets et al. (2014). Synthesis and release can be uncoupled for stored terpenoids
+baseline_tests:
+- test\unit\biosphere\growth\test_biomass_allocation_l1.py
+- test\unit\biosphere\growth\test_allocation_parameter_integration_l1.py
+- test\audit\phase8_scientific_inventory.test.py
+validation_tests:
+- test\integration\biosphere\test_growth_integration.py
+- test\integration\biosphere\simple_photosynthesis_opt_in_contract.test.py
+- test\growth\test_growth_module_L2.py
+- test\growth\test_growth_module_L3.py
+- test\audit\conservation_laws_policy.spec.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  net_primary_productivity: required post-respiration carbon input from AutotrophicRespiration
+  bvoc_carbon_allocation_flux: conditional non-negative carbon debit required only when a compile-time BVOC owner is selected; values above NPP require an explicit reserve model and fail here
+  air_temperature: conditional finite environmental driver in K
+  water_stress_factor: conditional bounded environmental control in the interval [0,1]
+  leaf_area_index: conditional non-negative phenology state used to redistribute allocation
+  phenology_phase: conditional integer phase observation used to redistribute allocation
+  leaf_biomass_c: conditional non-negative canonical plant carbon stock for allometric control and per-step ACCUMULATE output
+  wood_biomass_c: conditional non-negative canonical plant carbon stock for allometric control and per-step ACCUMULATE output
+  root_biomass_c: conditional non-negative canonical plant carbon stock for allometric control and per-step ACCUMULATE output
+parameter_map:
+  allocation_fractions: biosphere.growth.allocation f_leaf_base, f_stem_base, and f_root_base from ParameterManager
+  environmental_controls: root allocation temperature and water-stress coefficients from ParameterManager
+  phenology_controls: phase codes, phase modifiers, LAI thresholds, and emergency fractions from ParameterManager
+  allometry_controls: exponents, blend weight, biomass floor, and ratio bound from ParameterManager
+  numerical_controls: allocation bounds, normalization epsilon, zero tolerance, and conservation tolerance from ParameterManager
+  pft_controls: optional f_leaf, f_stem and f_root allocation triple of the configured pft_name, read from the biosphere.pft.*.allocation keys (template over the 15 PFTs of the parameter database) in ParameterManager, the one source of the triple; an unknown PFT (none of the three keys) raises KeyError naming the known PFTs, and an incomplete triple raises KeyError
+operator_map:
+  N_h: explicit three-channel identity wrapper for leaf, wood, and root allocation rates
+  r_h: vector [f_leaf*(NPP-F_BVOC,C), f_stem*(NPP-F_BVOC,C), f_root*(NPP-F_BVOC,C)] evaluated once by the production forward path
+  boundary_route: net_primary_productivity and the graph-selected bvoc_carbon_allocation_flux close the local partition; growth_rate_leaf, growth_rate_stem, and growth_rate_root are the only carbon.total input boundaries for the tracked structural stocks
+unit_map:
+  net_primary_productivity: kg C m-2 s-1
+  bvoc_carbon_allocation_flux: kg C m-2 s-1
+  air_temperature: K
+  water_stress_factor: '1'
+  leaf_area_index: m2 m-2
+  phenology_phase: '1'
+  leaf_biomass_c: kg C m-2
+  wood_biomass_c: kg C m-2
+  root_biomass_c: kg C m-2
+  growth_rate_leaf: kg C m-2 s-1
+  growth_rate_stem: kg C m-2 s-1
+  growth_rate_root: kg C m-2 s-1
+  diagnostics.biomass_allocation.total_growth_rate: kg C m-2 s-1
+  diagnostics.biomass_allocation.allocation_fraction_leaf: '1'
+  diagnostics.biomass_allocation.allocation_fraction_stem: '1'
+  diagnostics.biomass_allocation.allocation_fraction_root: '1'
+  diagnostics.biomass_allocation.allocation_sum: '1'
+  diagnostics.biomass_allocation.environmental_modifier: '1'
+  diagnostics.biomass_allocation.phenology_modifier: '1'
+  diagnostics.biomass_allocation.carbon_balance_residual: kg C m-2 s-1
+input_output_map:
+  net_primary_productivity: required upstream carbon budget is allocated without a second respiration deduction
+  bvoc_carbon_allocation_flux: conditional selected-owner plant-carbon debit subtracted before organ allocation without echoing or accumulating a second state
+  air_temperature: conditional environmental driver that redistributes organ fractions
+  water_stress_factor: conditional water control that redistributes organ fractions
+  leaf_area_index: conditional phenology state that redistributes organ fractions
+  phenology_phase: conditional phenology observation that redistributes organ fractions
+  leaf_biomass_c: canonical per-step leaf carbon ACCUMULATE output and optional allometry input
+  wood_biomass_c: canonical per-step wood carbon ACCUMULATE output and optional allometry input
+  root_biomass_c: canonical per-step root carbon ACCUMULATE output and optional allometry input
+  growth_rate_leaf: canonical leaf allocation flux and explicit carbon.total input boundary
+  growth_rate_stem: canonical wood allocation flux and explicit carbon.total input boundary
+  growth_rate_root: canonical root allocation flux and explicit carbon.total input boundary
+  diagnostics.biomass_allocation.total_growth_rate: exact sum of the three organ fluxes
+  diagnostics.biomass_allocation.allocation_fraction_leaf: normalized leaf fraction observation
+  diagnostics.biomass_allocation.allocation_fraction_stem: normalized stem fraction observation
+  diagnostics.biomass_allocation.allocation_fraction_root: normalized root fraction observation
+  diagnostics.biomass_allocation.allocation_sum: exact normalized fraction sum
+  diagnostics.biomass_allocation.environmental_modifier: environmental-control observation only
+  diagnostics.biomass_allocation.phenology_modifier: phenology-control observation only
+  diagnostics.biomass_allocation.carbon_balance_residual: NPP minus the three allocated organ fluxes
+interface_map:
+  forward_signature: forward(self, state, time, dt)
+  bridge_class: BiologicalProcessFunctor
+  abstraction_contract: BiologicalProcess
+  state_write_mode: organ rates and diagnostics use UpdateItem(REPLACE, per_timestep=False); three biomass stocks use UpdateItem(ACCUMULATE, per_timestep=True) with already integrated kg C m-2 values
+  conditional_inputs:
+  - bvoc_carbon_allocation_flux
+  legacy_inputs:
+  - net_primary_productivity
+  - air_temperature
+  - water_stress_factor
+  - leaf_area_index
+  - phenology_phase
+  - leaf_biomass_c
+  - wood_biomass_c
+  - root_biomass_c
+  iphs_inputs:
+  - net_primary_productivity
+  - air_temperature
+  - water_stress_factor
+  - leaf_area_index
+  - phenology_phase
+  - leaf_biomass_c
+  - wood_biomass_c
+  - root_biomass_c
+  legacy_outputs:
+  - growth_rate_leaf
+  - growth_rate_stem
+  - growth_rate_root
+  - leaf_biomass_c
+  - wood_biomass_c
+  - root_biomass_c
+  - diagnostics.biomass_allocation.total_growth_rate
+  - diagnostics.biomass_allocation.allocation_fraction_leaf
+  - diagnostics.biomass_allocation.allocation_fraction_stem
+  - diagnostics.biomass_allocation.allocation_fraction_root
+  - diagnostics.biomass_allocation.allocation_sum
+  - diagnostics.biomass_allocation.environmental_modifier
+  - diagnostics.biomass_allocation.phenology_modifier
+  - diagnostics.biomass_allocation.carbon_balance_residual
+  iphs_outputs:
+  - growth_rate_leaf
+  - growth_rate_stem
+  - growth_rate_root
+  - leaf_biomass_c
+  - wood_biomass_c
+  - root_biomass_c
+  - diagnostics.biomass_allocation.total_growth_rate
+  - diagnostics.biomass_allocation.allocation_fraction_leaf
+  - diagnostics.biomass_allocation.allocation_fraction_stem
+  - diagnostics.biomass_allocation.allocation_fraction_root
+  - diagnostics.biomass_allocation.allocation_sum
+  - diagnostics.biomass_allocation.environmental_modifier
+  - diagnostics.biomass_allocation.phenology_modifier
+  - diagnostics.biomass_allocation.carbon_balance_residual
+  historical_aliases_removed: total_growth_rate, effective_net_primary_production, three *_biomass_c_increment names, construction-respiration outputs, gross-allocation outputs, and unnamespaced modifiers or fractions
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: Existing ParameterManager-backed calculations define canonical IPHS operator coefficients, rates, ports, or observations.
+  no_legacy_mode: No selectable legacy runtime branch is exposed for Phase 8 completion.
+state_advancement_map:
+  potential_basis: declared RELIC state, port, or observation cochain basis
+  effort_variable: empirical NPP boundary flux and allocation controls; no Hamiltonian effort is claimed at level 2
+  state_advancer: x_dot = N_h r_h with a three-channel identity N_h and r_h = [f_leaf*(NPP-F_BVOC,C), f_stem*(NPP-F_BVOC,C), f_root*(NPP-F_BVOC,C)]
+  runtime_usage: BiomassAllocation.forward resolves the graph-selected BVOC debit, normalizes organ fractions, evaluates all three rates once through advance_reaction_network, and emits the integrated state_delta as per-step ACCUMULATE updates.
+  explicit_stoichiometric_usage: The identity N_h wrapper is explicit level-2 runtime structure and is not strict stoichiometric, Hamiltonian, or GENERIC evidence.
+parameter_management_map:
+  biosphere.growth.allocation.f_leaf_base: ParameterManager YAML
+  biosphere.growth.allocation.f_stem_base: ParameterManager YAML
+  biosphere.growth.allocation.f_root_base: ParameterManager YAML
+  biosphere.growth.allocation.root_alloc_temp_coeff: ParameterManager YAML
+  biosphere.growth.allocation.root_alloc_temp_ref: ParameterManager YAML
+  biosphere.growth.allocation.root_alloc_temp_mult: ParameterManager YAML
+  biosphere.growth.allocation.water_stress_threshold: ParameterManager YAML
+  biosphere.growth.allocation.temperature_stress_factor: ParameterManager YAML
+  biosphere.growth.allocation.temperature_opt: ParameterManager YAML
+  biosphere.growth.allocation.lai_max_threshold: ParameterManager YAML
+  biosphere.growth.allocation.lai_min_threshold: ParameterManager YAML
+  biosphere.growth.allocation.greenup_f_leaf: ParameterManager YAML
+  biosphere.growth.allocation.allometry_leaf_stem_exp: ParameterManager YAML
+  biosphere.growth.allocation.allometry_root_shoot_exp: ParameterManager YAML
+  biosphere.growth.allocation.allometric_blend_weight: ParameterManager YAML
+  biosphere.growth.allocation.min_allocation_frac: ParameterManager YAML
+  biosphere.growth.allocation.max_allocation_frac: ParameterManager YAML
+  biosphere.growth.allocation.allocation_sum_tolerance: ParameterManager YAML
+  biosphere.growth.allocation.normalization_epsilon: ParameterManager YAML
+  biosphere.growth.allocation.fraction_zero_tolerance: ParameterManager YAML
+  biosphere.growth.allocation.woody_stem_fraction_threshold: ParameterManager YAML
+  biosphere.growth.allocation.allometry_biomass_floor: ParameterManager YAML
+  biosphere.growth.allocation.allometry_ratio_max: ParameterManager YAML
+  biosphere.growth.allocation.emergency_stem_fraction: ParameterManager YAML
+  biosphere.growth.allocation.emergency_root_fraction: ParameterManager YAML
+  biosphere.growth.allocation.defaults.default_environmental_modifier: ParameterManager YAML
+  biosphere.growth.allocation.defaults.default_phenological_modifier: ParameterManager YAML
+  biosphere.growth.allocation.defaults.temp_root_factor_min: ParameterManager YAML
+  biosphere.growth.allocation.defaults.temp_root_factor_max: ParameterManager YAML
+  biosphere.growth.allocation.phenology.dormant_phase_code: ParameterManager YAML
+  biosphere.growth.allocation.phenology.greenup_phase_code: ParameterManager YAML
+  biosphere.growth.allocation.phenology.mature_phase_code: ParameterManager YAML
+  biosphere.growth.allocation.phenology.senescence_phase_code: ParameterManager YAML
+  biosphere.growth.allocation.phenology.dormant_phase_modifier: ParameterManager YAML
+  biosphere.growth.allocation.phenology.greenup_phase_modifier: ParameterManager YAML
+  biosphere.growth.allocation.phenology.mature_phase_modifier: ParameterManager YAML
+  biosphere.growth.allocation.phenology.senescence_phase_modifier: ParameterManager YAML
+  biosphere.growth.allocation.phenology.dormant_leaf_allocation: ParameterManager YAML
+  biosphere.growth.allocation.phenology.lai_max_leaf_allocation: ParameterManager YAML
+  biosphere.growth.allocation.phenology.herbaceous_stem_allocation: ParameterManager YAML
+  biosphere.growth.allocation.phenology.herbaceous_lai_min_stem_allocation: ParameterManager YAML
+  validation.conservation.conservation_tolerance: ParameterManager YAML
+  biosphere.pft.*.allocation.f_leaf: ParameterManager YAML (template over the 15 PFTs of the parameter database), read for the configured PFT
+  biosphere.pft.*.allocation.f_stem: ParameterManager YAML (template over the 15 PFTs of the parameter database), read for the configured PFT
+  biosphere.pft.*.allocation.f_root: ParameterManager YAML (template over the 15 PFTs of the parameter database), read for the configured PFT
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares interfaces, execution phase, and conservation semantics
+  state_contract: existing simulator StateManager balances the three SCM-declared carbon.total growth-rate inputs against the three integrated biomass updates
+  validation_rule: phase8 scientific inventory and equivalence certificate checks
+dependency_interconnection_map:
+  dependencies: autotrophic_respiration always; water_stress when environmental control is enabled; the compile-time selected phenology owner when phenology control is enabled; the selected BVOC owner when bvoc_carbon_allocation_flux is enabled
+  direct_functor_calls: none; forward consumes only simulator state produced by dependency scheduling
+overflow_routing_map:
+  diagnostic_residuals: diagnostics.biomass_allocation.carbon_balance_residual reports NPP minus the selected BVOC debit and exact sum of organ allocation fluxes
+  invalid_state_route: missing or non-finite required inputs, negative NPP or BVOC debit, BVOC debit above NPP without an explicit reserve, unselected BVOC state, invalid phase codes, and non-positive dt fail before state advance
+  discarded_residuals: NPP and the optional BVOC debit are routed to leaf, stem, and root growth and biomass updates; the exact remainder is exported as diagnostics.biomass_allocation.carbon_balance_residual and a non-closing ledger is rejected
+conservation_map:
+  conserved_quantities: carbon_partition open boundary ledger; no closed plant or ecosystem carbon stock is claimed
+  balance_expression: carbon_partition audits net_primary_productivity - bvoc_carbon_allocation_flux - growth_rate_leaf - growth_rate_stem - growth_rate_root = 0 when a BVOC owner is selected; the BVOC term is structurally absent otherwise
+  step_balance_expression: delta(leaf_biomass_c + wood_biomass_c + root_biomass_c) - (growth_rate_leaf + growth_rate_stem + growth_rate_root)*dt = 0
+  open_system_routes: net_primary_productivity is partitioned locally between the selected BVOC debit and organ growth; only the three organ growth ports enter carbon.total, avoiding double counting of NPP and BVOC
+entropy_audit:
+  operator_sign: NPP and normalized allocation fractions are non-negative; no mobility operator is claimed
+  sigma_expression: no strict entropy-production or GENERIC degeneracy claim is made at level 2
+equivalence_type: reaction_network

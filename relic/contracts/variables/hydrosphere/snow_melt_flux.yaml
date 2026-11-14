@@ -1,0 +1,53 @@
+variable: snow_melt_flux
+title: "Snow Melt Mass Flux"
+description: "Liquid water mass flux released by melting of the surface snowpack, computed by snow_pack with the degree-day scheme M = min(DDF * max(0, T_air - T_melt) / seconds_per_day, SWE / dt) (Hock 2003; Anderson 1976). Non-negative magnitude, positive out of the snowpack onto the land surface; surface_runoff reads it with rain_flux as the surface water input P = P_rain + M, and bucket_soil_moisture reads the same sum as the water input of the soil store when hydrosphere.soil_moisture.water_input_source is rain_flux_plus_snow_melt_flux. CF v94 surface_snow_melt_flux (kg m-2 s-1)."
+kind: flux
+dimension:
+  udunits: "kg m-2 s-1"
+  cf_standard_name: "surface_snow_melt_flux"
+support:
+  spatial_kind: grid_cell
+  area_basis: ground_area
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: "snow_pack"
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Anderson, E.A. (1976). A point energy and mass balance model of a snow cover. NOAA Technical Report NWS 19"
+  - "Hock, R. (2003). Temperature index melt modelling in mountain areas. Journal of Hydrology 282, 104-115"
+  - "CF Standard Name Table v94: surface_snow_melt_flux (kg m-2 s-1)"
+# Sign convention: non-negative magnitude, positive out of the snowpack. The
+# degree-day demand uses max(0, T_air - T_melt) and is limited by SWE / dt >= 0;
+# surface_runoff rejects a negative surface water input.
+numerics:
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "snow_pack"
+      module: "relic.scientific.hydrosphere.snow.snowpack"
+      provides: ["snow_melt_flux"]
+      unit: "kg m-2 s-1"
+flux_contract:
+  allowed_in:
+    - "snow_pack"
+  allowed_out:
+    - "surface_runoff"
+    - "bucket_soil_moisture"
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/hydrosphere/snow/snowpack.py"
+  runtime_role: "snowpack_melt_release_boundary_flux"
+  runtime_writer: "snow_pack"
+  note: "Written only by snow_pack as UpdateItem(REPLACE, per_timestep=False) in kg m-2 s-1 (snowpack.py:124 output_variables; degree-day demand :606-607; limited by available SWE :624-626; mm s-1 -> kg m-2 s-1 at :655; update :685; melt release port flow_var :459, out_of_system :463). Read by surface_runoff only when hydrosphere.runoff.surface_water_input_source is rain_flux_plus_snow_melt_flux (surface.py:179 input_variables; :206 optional_input_variables; :766-767 P = rain_flux + snow_melt_flux; :773-774 rejects negative input), with snow_pack, the SCM owner of both fluxes, as a required dependency (surface.py:276-279, :333-344); with the default source precipitation_flux it is never read, so no precipitation is counted twice. bucket_soil_moisture reads it with rain_flux only when hydrosphere.soil_moisture.water_input_source is rain_flux_plus_snow_melt_flux (bucket.py WATER_INPUT_SOURCES; P = rain_flux + snow_melt_flux in forward), with snow_pack as a lagged provider whose committed outflow it consumes (a zero-order hold when snow_pack runs in a slower execution group); with its default source precipitation_flux it never reads it."

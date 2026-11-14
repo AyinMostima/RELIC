@@ -1,0 +1,864 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CLI and Extensions &mdash; RELIC 1.0.0 Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=mono5" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=a12e3537"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/language_switch.js?v=mono5"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Graph Orchestration" href="../orchestration.html" />
+    <link rel="prev" title="Devices and Distributed Execution" href="devices_and_distributed.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            RELIC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">RELIC Guide</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../architecture.html">System Architecture</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#scope-and-architectural-contract">Scope and architectural contract</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#architecture-capability-map">Architecture capability map</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#package-ownership-and-seven-layer-map">Package ownership and seven-layer map</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#four-scientific-abstractions">Four scientific abstractions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#functor-lifecycle-and-metadata">Functor lifecycle and metadata</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#variable-roles-and-state-ownership">Variable roles and state ownership</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#parameters-constants-units-and-time">Parameters, constants, units, and time</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#simulator-execution-rates-and-device-policy">Simulator, execution rates, and device policy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#structural-scientific-layer">Structural scientific layer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#end-to-end-assembly-and-execution">End-to-end assembly and execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#connection-and-conservation-rules">Connection and conservation rules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../theory/index.html">Scientific Theory and Governing Equations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../theory/foundations.html">Mathematical Foundations, State, Units, and Conservation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#architectural-contract-and-notation">Architectural contract and notation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#four-scientific-abstractions-and-functor-lifecycle">Four scientific abstractions and Functor lifecycle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#spatial-quantity-basis-and-temporal-overlap-laws">Spatial quantity basis and temporal overlap laws</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#universal-conservation-and-balance-laws">Universal conservation and balance laws</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#transactional-statemanager-governance-i1-i7">Transactional StateManager governance (<code class="docutils literal notranslate"><span class="pre">I1</span></code>–<code class="docutils literal notranslate"><span class="pre">I7</span></code>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#centralized-parametermanager-and-physical-constant-ssot">Centralized ParameterManager and physical-constant SSOT</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#piecewise-smooth-discrete-adjoint-differentiation-and-device-policy">Piecewise-smooth discrete adjoint differentiation and device policy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#bounded-mathematical-contracts-and-runtime-boundary-i-vs-n">Bounded mathematical contracts and runtime boundary (<code class="docutils literal notranslate"><span class="pre">[I]</span></code> vs <code class="docutils literal notranslate"><span class="pre">[N]</span></code>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/foundations.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/dec_iphs_generic.html">DEC, IPHS, GENERIC, Ports, and Reaction Structure</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/dec_iphs_generic.html#structural-governance-lifecycle">Structural governance lifecycle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/dec_iphs_generic.html#discrete-exterior-calculus-relic-computation-operators-dec">Discrete exterior calculus (<code class="docutils literal notranslate"><span class="pre">relic.computation.operators.dec</span></code>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/dec_iphs_generic.html#irreversible-port-hamiltonian-and-generic-lowering">Irreversible port-Hamiltonian and GENERIC lowering</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/dec_iphs_generic.html#equivalence-certificates-and-live-repository-inventory">Equivalence certificates and live repository inventory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/dec_iphs_generic.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/numerics.html">Numerical Integration, Splitting, Stability, Scale Coupling, and Hybrid Events</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#method-of-lines-formulation-and-solver-registry">Method-of-lines formulation and solver registry</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#deterministic-time-stepping-linear-and-nonlinear-solvers">Deterministic time-stepping, linear, and nonlinear solvers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#multi-rate-execution-operator-splitting-and-step-control">Multi-rate execution, operator splitting, and step control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#transport-stability-and-nonlinear-richards-closure">Transport stability and nonlinear Richards closure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#conservative-spatial-remapping-and-internal-cross-domain-couplers">Conservative spatial remapping and internal cross-domain couplers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#transverse-hybrid-events-and-saltation-matrix-sensitivities">Transverse hybrid events and saltation-matrix sensitivities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#stochastic-memory-ale-dae-and-topology-transition-families">Stochastic, memory, ALE, DAE, and topology-transition families</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/numerics.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/atmosphere.html">Atmosphere Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/atmosphere.html#scope-process-inventory-and-certificate-map">Scope, process inventory, and certificate map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/atmosphere.html#solar-thermal-and-canopy-radiation">Solar, thermal, and canopy radiation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/atmosphere.html#surface-layer-turbulence-and-boundary-layer-tracer-transport">Surface-layer turbulence and boundary-layer tracer transport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/atmosphere.html#gas-phase-chemistry-open-tropospheric-kinetics-and-closed-level-5-generic-point">Gas-phase chemistry: open tropospheric kinetics and closed Level-5 GENERIC point</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/atmosphere.html#stochastic-atmospheric-forcing-and-replay-contracts">Stochastic atmospheric forcing and replay contracts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/atmosphere.html#atmospheric-observation-operators">Atmospheric observation operators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/atmosphere.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/biosphere.html">Biosphere Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/biosphere.html#scope-process-inventory-and-certificate-map">Scope, process inventory, and certificate map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/biosphere.html#photosynthesis-and-stomatal-conductance">Photosynthesis and stomatal conductance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/biosphere.html#autotrophic-respiration-allocation-and-structural-growth">Autotrophic respiration, allocation, and structural growth</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/biosphere.html#phenology-and-abiotic-stress-closures">Phenology and abiotic stress closures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/biosphere.html#biogenic-volatile-organic-compound-bvoc-synthesis-and-emission">Biogenic volatile organic compound (BVOC) synthesis and emission</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/biosphere.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/hydrosphere.html">Hydrosphere Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/hydrosphere.html#scope-process-inventory-and-certificate-map">Scope, process inventory, and certificate map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/hydrosphere.html#evapotranspiration-closures">Evapotranspiration closures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/hydrosphere.html#snowpack-mass-energy-balance-and-snow-albedo">Snowpack mass-energy balance and snow albedo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/hydrosphere.html#soil-water-retention-bucket-storage-and-richards-vadose-flow">Soil-water retention, bucket storage, and Richards vadose flow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/hydrosphere.html#surface-runoff-and-hybrid-event-driven-hortonian-ponding">Surface runoff and hybrid event-driven Hortonian ponding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/hydrosphere.html#subsurface-stormflow-vadose-aquifer-exchange-and-groundwater">Subsurface stormflow, vadose-aquifer exchange, and groundwater</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/hydrosphere.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/pedosphere.html">Pedosphere Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/pedosphere.html#scope-process-inventory-and-certificate-map">Scope, process inventory, and certificate map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/pedosphere.html#soil-organic-carbon-turnover-and-cross-sphere-interface-maps">Soil organic carbon turnover and cross-sphere interface maps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/pedosphere.html#soil-nitrogen-root-p-uptake-and-c-n-stoichiometry-boundaries">Soil nitrogen, root P uptake, and C:N stoichiometry boundaries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/pedosphere.html#wetland-methane-request-and-coupler-architecture">Wetland methane request-and-coupler architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/pedosphere.html#porous-media-water-gas-solute-dae-ale-and-memory-transport">Porous-media water, gas, solute, DAE, ALE, and memory transport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/pedosphere.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/anthroposphere.html">Anthroposphere Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/anthroposphere.html#scope-process-inventory-and-fail-closed-boundary-status">Scope, process inventory, and fail-closed boundary status</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/anthroposphere.html#fail-closed-level-0-boundaries-vs-implemented-emission-operators">Fail-closed Level-0 boundaries vs implemented emission operators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/anthroposphere.html#continuous-time-markov-land-use-transitions-and-parameter-projection">Continuous-time Markov land-use transitions and parameter projection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/anthroposphere.html#management-coordination-and-agricultural-water-nutrient-ports">Management coordination and agricultural water-nutrient ports</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/anthroposphere.html#managed-biomass-removal-livestock-grazing-fire-and-tillage">Managed biomass removal, livestock grazing, fire, and tillage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/anthroposphere.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../theory/isotopes_transport.html">Stable Isotopes and General Transport Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../theory/isotopes_transport.html#scope-component-inventory-and-certificate-map">Scope, component inventory, and certificate map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/isotopes_transport.html#stable-isotope-ratios-exact-binary-fractionation-and-fail-closed-ledger-status">Stable-isotope ratios, exact binary fractionation, and fail-closed ledger status</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/isotopes_transport.html#general-conservative-transport-functors">General conservative transport Functors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../theory/isotopes_transport.html#references">References</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../science/index.html">Core Scientific Class Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../science/anthroposphere.html">Anthroposphere Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#atmosphere-coupling">atmosphere_coupling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#sector-allocation">sector_allocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#species-mapping">species_mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#anthroposphere-interface-mapping">anthroposphere_interface_mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#emission-inventory">emission_inventory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#land-use-parameter-mapping">land_use_parameter_mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#land-use-transitions">land_use_transitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#management-coordinator">management_coordinator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#fertilization-management">fertilization_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#fire-management">fire_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#grazing-management">grazing_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#harvest-management">harvest_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#irrigationmanagement">IrrigationManagement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#tillagemanagement">TillageManagement</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/atmosphere.html">Atmosphere Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#chemistryfunctor">ChemistryFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#class-atmosphere-chemistry-chemistry-functor-closed-constant-volume">ChemistryFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#environmentalforcingfunctor">EnvironmentalForcingFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#radiationenergyconservationvalidator">RadiationEnergyConservationValidator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#radiationfield">RadiationField</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#radiationfunctor">RadiationFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#markedpoissonrainfallfunctor">MarkedPoissonRainfallFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#ornsteinuhlenbecktemperaturefunctor">OrnsteinUhlenbeckTemperatureFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#atmosphericadvectiondiffusionfunctor">AtmosphericAdvectionDiffusionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#drydepositionaggregator">DryDepositionAggregator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#eddydiffusionblmfunctor">EddyDiffusionBLMFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#turbulencefunctor">TurbulenceFunctor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/biosphere.html">Biosphere Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#meganmodel">MEGANModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#isoprenesynthesis">IsopreneSynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#monoterpenesynthesis">MonoterpeneSynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#sesquiterpenestressmodel">SesquiterpeneStressModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#sesquiterpenesynthesis">SesquiterpeneSynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#biomassallocation">BiomassAllocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#phenologygrowth">PhenologyGrowth</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#structuralgrowth">StructuralGrowth</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#cropphenology">CropPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#gddphenology">GDDPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#gsiphenology">GSIPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#staticphenology">StaticPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#phenologyfunctor">PhenologyFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#farquharphotosynthesis">FarquharPhotosynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#medlynstomatalconductance">MedlynStomatalConductance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#autotrophicrespiration">AutotrophicRespiration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#growthrespiration">GrowthRespiration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#maintenancerespiration">MaintenanceRespiration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#nutrientstress">NutrientStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#ozonestress">OzoneStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#thermalstress">ThermalStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#waterstress">WaterStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#simplecanopyphotosynthesis">SimpleCanopyPhotosynthesis</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/hydrosphere.html">Hydrosphere Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#penman-monteith-et">penman_monteith_et</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#priestley-taylor-et">priestley_taylor_et</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#groundwater-dynamics">groundwater_dynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#subsurface-runoff">subsurface_runoff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#hortonianpondingeventfunctor">HortonianPondingEventFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#surfacepondingfunctor">SurfacePondingFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#surface-runoff">surface_runoff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#snow-albedo">snow_albedo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#snow-pack">snow_pack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#bucket-soil-moisture">bucket_soil_moisture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#soilwaterretention">SoilWaterRetention</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#richards-soil-moisture">richards_soil_moisture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#capillary-rise-transport">capillary_rise_transport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#vertical-percolation-transport">vertical_percolation_transport</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/pedosphere.html">Pedosphere Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#carbonpoolsfunctor">CarbonPoolsFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#poolsmatrix">PoolsMatrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#firstorderdecomposition">FirstOrderDecomposition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#microbialenzymedecomposition">MicrobialEnzymeDecomposition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#litterfallinterfacemapper">LitterfallInterfaceMapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#pedosphereinterfacemapper">PedosphereInterfaceMapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methanebudgetcoupler">MethaneBudgetCoupler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methaneoxidationfunctor">MethaneOxidationFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methaneproductionfunctor">MethaneProductionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methanescalecouplingfunctor">MethaneScaleCouplingFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methanetransportfunctor">MethaneTransportFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#denitrification-process">denitrification_process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#mineralizationprocess">MineralizationProcess</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#nitrification-process">nitrification_process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#nitrogenleachingprocess">NitrogenLeachingProcess</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#nitrogencycling">NitrogenCycling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#rootnutrientuptake">RootNutrientUptake</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#stoichiometryconstraint">StoichiometryConstraint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#equilibriumsorptionfunctor">EquilibriumSorptionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#gasdiffusion1d">GasDiffusion1D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#movingdomaindiffusionfunctor">MovingDomainDiffusionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#soil-water-transport">soil_water_transport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#soluteadvectiondiffusion1d">SoluteAdvectionDiffusion1D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#tworegionmasstransferfunctor">TwoRegionMassTransferFunctor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/isotopes.html">Stable-Isotope Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/isotopes.html#isotopeheartbeatfunctor">IsotopeHeartbeatFunctor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/transport.html">General Transport Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#advection-diffusion">advection_diffusion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#linear-advection">linear_advection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#fickian-diffusion">fickian_diffusion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#class-transport-diffusion-fickian-diffusion-strict-runtime-point">fickian_diffusion</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/index.html#complete-coverage-matrix">Complete coverage matrix</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">RELIC Workflows</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#learning-tracks">Learning tracks</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#how-to-use-a-tutorial">How to use a tutorial</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="installation_and_imports.html">Installation and Imports</a></li>
+<li class="toctree-l3"><a class="reference internal" href="configuration_and_parameters.html">Configuration and Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="state_functors_and_simulation.html">State, Functors, and Simulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="graph_validation_and_execution.html">Graph Validation and Execution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="persistence_outputs_and_data_io.html">Persistence, Outputs, and Data I/O</a></li>
+<li class="toctree-l3"><a class="reference internal" href="coupling_workflows.html">Coupling Workflows</a></li>
+<li class="toctree-l3"><a class="reference internal" href="calibration_sensitivity_and_uq.html">Calibration, Sensitivity Analysis, and Uncertainty Quantification</a></li>
+<li class="toctree-l3"><a class="reference internal" href="devices_and_distributed.html">Devices and Distributed Execution</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">CLI and Extensions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestration.html">Graph Orchestration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#canonical-owners">Canonical owners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#graphir">GraphIR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#portspec-and-the-contract-boundary">PortSpec and the contract boundary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#validation">Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#adapters">Adapters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#compilation-and-execution">Compilation and execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#strict-iphs-dec-boundary">Strict IPHS/DEC boundary</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../operations.html">Operations Quick Start</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#select-a-workflow">Select a workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#environment-preflight">Environment preflight</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#first-successful-run">First successful run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#benchmark-style-acceptance-checklist">Benchmark-style acceptance checklist</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#minimal-runtime-sequence">Minimal runtime sequence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#troubleshooting-order">Troubleshooting order</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#immediate-stop-conditions">Immediate stop conditions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../extension_contracts.html">Extension Contracts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#reuse-first-decision">Reuse-first decision</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#adding-a-scientific-functor">Adding a scientific Functor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#parameter-extension">Parameter extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#variable-contract-extension">Variable contract extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#graph-and-adapter-extension">Graph and adapter extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#external-extension-paths">External extension paths</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#scientific-structure-claims">Scientific structure claims</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#explicit-unavailable-scientific-boundaries">Explicit unavailable scientific boundaries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#anti-redundancy-boundary">Anti-redundancy boundary</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">Core API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/index.html#coverage-contract">Coverage contract</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/core_runtime.html">Core Runtime API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/parameters_contracts.html">Parameters and Parameter Contracts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/orchestration_validation.html">Orchestration, Contracts, and Validation API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/scientific_structure_extensions.html">Scientific Structure and Extension APIs</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">RELIC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">RELIC Workflows</a></li>
+      <li class="breadcrumb-item active">CLI and Extensions</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="cli-and-extensions">
+<h1>CLI and Extensions<a class="headerlink" href="#cli-and-extensions" title="Link to this heading"></a></h1>
+<p>RELIC exposes Command-Line Interface (CLI) modules, a FastAPI Representational
+State Transfer (REST) and WebSocket server for inspection and bounded
+operations, and a manifest-driven extension protocol for external Functors.
+Command availability does not replace the Python lifecycle or Graph
+Intermediate Representation (<code class="docutils literal notranslate"><span class="pre">GraphIR</span></code>) structural validation.</p>
+<section id="unified-command-module">
+<h2>Unified command module<a class="headerlink" href="#unified-command-module" title="Link to this heading"></a></h2>
+<p>Invoke the unified CLI (<code class="docutils literal notranslate"><span class="pre">relic\interfaces\cli\main.py</span></code>) through Python:</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">-m</span> <span class="n">relic</span><span class="p">.</span><span class="n">interfaces</span><span class="p">.</span><span class="n">cli</span><span class="p">.</span><span class="n">main</span> <span class="p">-</span><span class="n">-help</span>
+<span class="n">python</span> <span class="n">-m</span> <span class="n">relic</span><span class="p">.</span><span class="n">interfaces</span><span class="p">.</span><span class="n">cli</span><span class="p">.</span><span class="n">main</span> <span class="p">-</span><span class="n">-version</span>
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Subcommand (alias)</p></th>
+<th class="head"><p>Sub-operations</p></th>
+<th class="head"><p>Scope and status</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">params</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">list</span></code>, <code class="docutils literal notranslate"><span class="pre">get</span></code>, <code class="docutils literal notranslate"><span class="pre">set</span></code>, <code class="docutils literal notranslate"><span class="pre">validate</span></code>, <code class="docutils literal notranslate"><span class="pre">export</span></code>, <code class="docutils literal notranslate"><span class="pre">diff</span></code>, <code class="docutils literal notranslate"><span class="pre">audit</span></code></p></td>
+<td><p>Inspect, modify, validate, export, compare, and audit governed parameters.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">optimization</span></code> (<code class="docutils literal notranslate"><span class="pre">opt</span></code>)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">calibrate</span></code>, <code class="docutils literal notranslate"><span class="pre">assimilate</span></code>, <code class="docutils literal notranslate"><span class="pre">sensitivity</span></code>, <code class="docutils literal notranslate"><span class="pre">uncertainty</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[N]</span></code> <code class="docutils literal notranslate"><span class="pre">runtime_unbound</span></code>: optimization and Uncertainty Quantification (UQ) CLI entrypoints reject execution until bound to a sealed <code class="docutils literal notranslate"><span class="pre">GraphIR</span></code>/<code class="docutils literal notranslate"><span class="pre">ExecutionPlan</span></code>/<code class="docutils literal notranslate"><span class="pre">GraphExecutor</span></code> runtime.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">data</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">io</span></code>, <code class="docutils literal notranslate"><span class="pre">quality</span></code></p></td>
+<td><p>Data I/O, format conversion, quality checks, and optional streaming checks when <code class="docutils literal notranslate"><span class="pre">RELIC_EXPERIMENTAL_STREAMING=1</span></code> is set.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">compute</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">health</span></code>, <code class="docutils literal notranslate"><span class="pre">bench</span></code>, <code class="docutils literal notranslate"><span class="pre">ddp-check</span></code>, <code class="docutils literal notranslate"><span class="pre">splitting-sensitivity</span></code>, <code class="docutils literal notranslate"><span class="pre">dynamical-benchmark</span></code></p></td>
+<td><p>Computational health, benchmarks, distributed diagnostics, operator-splitting sensitivity, and dynamical benchmark metrics.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">stochastic</span></code> (<code class="docutils literal notranslate"><span class="pre">stoch</span></code>)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">uncertainty</span></code>, <code class="docutils literal notranslate"><span class="pre">weather</span></code>, <code class="docutils literal notranslate"><span class="pre">sde</span></code>, <code class="docutils literal notranslate"><span class="pre">gillespie</span></code>, <code class="docutils literal notranslate"><span class="pre">validate</span></code></p></td>
+<td><p>Parameter uncertainty propagation, bound Stochastic Differential Equation (SDE) and Gillespie Stochastic Simulation Algorithm (SSA) runs, validation, and <code class="docutils literal notranslate"><span class="pre">[N]</span></code> <code class="docutils literal notranslate"><span class="pre">weather</span></code> placeholder.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">orchestration</span></code> (<code class="docutils literal notranslate"><span class="pre">graph</span></code>)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">validate</span></code>, <code class="docutils literal notranslate"><span class="pre">compile</span></code></p></td>
+<td><p>Validate and compile <code class="docutils literal notranslate"><span class="pre">GraphIR</span></code> workflows, optionally emitting a sealed run bundle.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">healthcheck</span></code> (<code class="docutils literal notranslate"><span class="pre">health</span></code>)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">all</span></code>, <code class="docutils literal notranslate"><span class="pre">compute</span></code>, <code class="docutils literal notranslate"><span class="pre">data</span></code>, <code class="docutils literal notranslate"><span class="pre">params</span></code>, <code class="docutils literal notranslate"><span class="pre">optimize</span></code>, <code class="docutils literal notranslate"><span class="pre">stochastic</span></code>, <code class="docutils literal notranslate"><span class="pre">orchestration</span></code>, <code class="docutils literal notranslate"><span class="pre">config</span></code></p></td>
+<td><p>Subsystem and whole-system health diagnostics.</p></td>
+</tr>
+</tbody>
+</table>
+<p>The package does not install a bare <code class="docutils literal notranslate"><span class="pre">relic</span></code> console script. Always use
+<code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">...</span></code> in the active environment.</p>
+</section>
+<section id="parameter-commands">
+<h2>Parameter commands<a class="headerlink" href="#parameter-commands" title="Link to this heading"></a></h2>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">-m</span> <span class="n">relic</span><span class="p">.</span><span class="n">interfaces</span><span class="p">.</span><span class="n">cli</span><span class="p">.</span><span class="n">main</span> <span class="n">params</span> <span class="n">list</span> <span class="p">-</span><span class="n">-namespace</span> <span class="n">relic</span><span class="p">.</span><span class="n">physical</span><span class="p">.</span><span class="n">constants</span>
+<span class="n">python</span> <span class="n">-m</span> <span class="n">relic</span><span class="p">.</span><span class="n">interfaces</span><span class="p">.</span><span class="n">cli</span><span class="p">.</span><span class="n">main</span> <span class="n">params</span> <span class="n">get</span> <span class="n">relic</span><span class="p">.</span><span class="n">physical</span><span class="p">.</span><span class="n">constants</span><span class="p">.</span><span class="n">air</span><span class="p">.</span><span class="n">density_stp</span>
+<span class="n">python</span> <span class="n">-m</span> <span class="n">relic</span><span class="p">.</span><span class="n">interfaces</span><span class="p">.</span><span class="n">cli</span><span class="p">.</span><span class="n">main</span> <span class="n">params</span> <span class="n">validate</span> <span class="p">-</span><span class="n">-strict</span>
+<span class="n">python</span> <span class="n">-m</span> <span class="n">relic</span><span class="p">.</span><span class="n">interfaces</span><span class="p">.</span><span class="n">cli</span><span class="p">.</span><span class="n">main</span> <span class="n">params</span> <span class="n">export</span> <span class="p">-</span><span class="n">-namespace</span> <span class="n">relic</span><span class="p">.</span><span class="n">physical</span><span class="p">.</span><span class="n">constants</span> <span class="p">-</span><span class="n">-format</span> <span class="n">yaml</span> <span class="p">-</span><span class="n">-output</span> <span class="n">output</span><span class="p">\</span><span class="n">physical_constants</span><span class="p">.</span><span class="n">yaml</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">params</span> <span class="pre">set</span></code> changes the active manager value; it is not a substitute for
+updating the canonical YAML parameter definition when a durable architecture
+change is intended.</p>
+</section>
+<section id="data-and-health-commands">
+<h2>Data and health commands<a class="headerlink" href="#data-and-health-commands" title="Link to this heading"></a></h2>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">-m</span> <span class="n">relic</span><span class="p">.</span><span class="n">interfaces</span><span class="p">.</span><span class="n">cli</span><span class="p">.</span><span class="n">main</span> <span class="n">data</span> <span class="n">io</span> <span class="n">check</span> <span class="p">-</span><span class="n">-detailed</span>
+<span class="n">python</span> <span class="n">-m</span> <span class="n">relic</span><span class="p">.</span><span class="n">interfaces</span><span class="p">.</span><span class="n">cli</span><span class="p">.</span><span class="n">main</span> <span class="n">data</span> <span class="n">io</span> <span class="n">read</span> <span class="n">data</span><span class="p">\</span><span class="n">forcing</span><span class="p">.</span><span class="n">nc</span> <span class="p">-</span><span class="n">-info-only</span>
+<span class="n">python</span> <span class="n">-m</span> <span class="n">relic</span><span class="p">.</span><span class="n">interfaces</span><span class="p">.</span><span class="n">cli</span><span class="p">.</span><span class="n">main</span> <span class="n">health</span> <span class="n">all</span>
+<span class="n">python</span> <span class="n">-m</span> <span class="n">relic</span><span class="p">.</span><span class="n">interfaces</span><span class="p">.</span><span class="n">cli</span><span class="p">.</span><span class="n">main</span> <span class="n">health</span> <span class="n">all</span> <span class="p">-</span><span class="n">-benchmark</span> <span class="p">-</span><span class="n">-no-gpu-benchmark</span>
+<span class="n">python</span> <span class="n">-m</span> <span class="n">relic</span><span class="p">.</span><span class="n">interfaces</span><span class="p">.</span><span class="n">cli</span><span class="p">.</span><span class="n">main</span> <span class="n">compute</span> <span class="n">health</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">--benchmark</span></code> requires <code class="docutils literal notranslate"><span class="pre">--gpu-benchmark</span></code> or <code class="docutils literal notranslate"><span class="pre">--no-gpu-benchmark</span></code> unless the
+configuration sets <code class="docutils literal notranslate"><span class="pre">enable_gpu_benchmark</span></code>.</p>
+<p>Use command-specific <code class="docutils literal notranslate"><span class="pre">--help</span></code> for required paths and formats:</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">-m</span> <span class="n">relic</span><span class="p">.</span><span class="n">interfaces</span><span class="p">.</span><span class="n">cli</span><span class="p">.</span><span class="n">main</span> <span class="n">data</span> <span class="n">io</span> <span class="n">convert</span> <span class="p">-</span><span class="n">-help</span>
+</pre></div>
+</div>
+</section>
+<section id="orchestration-commands">
+<h2>Orchestration commands<a class="headerlink" href="#orchestration-commands" title="Link to this heading"></a></h2>
+<p>Unified form:</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">-m</span> <span class="n">relic</span><span class="p">.</span><span class="n">interfaces</span><span class="p">.</span><span class="n">cli</span><span class="p">.</span><span class="n">main</span> <span class="n">orchestration</span> <span class="n">validate</span> <span class="n">path</span><span class="p">\</span><span class="n">to</span><span class="p">\</span><span class="n">graph</span><span class="p">.</span><span class="n">yaml</span> <span class="p">-</span><span class="n">-strict</span>
+<span class="n">python</span> <span class="n">-m</span> <span class="n">relic</span><span class="p">.</span><span class="n">interfaces</span><span class="p">.</span><span class="n">cli</span><span class="p">.</span><span class="n">main</span> <span class="n">orchestration</span> <span class="n">compile</span> <span class="n">path</span><span class="p">\</span><span class="n">to</span><span class="p">\</span><span class="n">graph</span><span class="p">.</span><span class="n">yaml</span> <span class="p">-</span><span class="n">-strict</span> <span class="p">-</span><span class="n">-run-bundle</span> <span class="n">output</span><span class="p">\</span><span class="n">run_bundle</span>
+</pre></div>
+</div>
+<p>Dedicated form:</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">-m</span> <span class="n">relic</span><span class="p">.</span><span class="n">orchestration</span> <span class="n">validate</span> <span class="n">path</span><span class="p">\</span><span class="n">to</span><span class="p">\</span><span class="n">graph</span><span class="p">.</span><span class="n">yaml</span> <span class="p">-</span><span class="n">-strict</span>
+<span class="n">python</span> <span class="n">-m</span> <span class="n">relic</span><span class="p">.</span><span class="n">orchestration</span> <span class="n">compile</span> <span class="n">path</span><span class="p">\</span><span class="n">to</span><span class="p">\</span><span class="n">graph</span><span class="p">.</span><span class="n">yaml</span> <span class="p">-</span><span class="n">-strict</span> <span class="p">-</span><span class="n">-run-bundle</span> <span class="n">output</span><span class="p">\</span><span class="n">run_bundle</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">path\to\graph.yaml</span></code> stands for a GraphIR file that you write; the repository
+ships no example GraphIR file. A <code class="docutils literal notranslate"><span class="pre">.yaml</span></code> or <code class="docutils literal notranslate"><span class="pre">.yml</span></code> file is read as YAML and any
+other suffix as JSON. The payload must be a mapping with a non-empty
+<code class="docutils literal notranslate"><span class="pre">schema_version</span></code> and a <code class="docutils literal notranslate"><span class="pre">nodes</span></code> mapping in which every node names a
+<code class="docutils literal notranslate"><span class="pre">class_type</span></code>; see <a class="reference internal" href="graph_validation_and_execution.html"><span class="std std-doc">Graph Validation and Execution</span></a>.</p>
+<p>Both forms include the topology audit; only the dedicated form provides
+<code class="docutils literal notranslate"><span class="pre">--no-topology-audit</span></code>. Both paths load the GraphIR and use the canonical
+registry, validation, and compile functions. <code class="docutils literal notranslate"><span class="pre">--auto-adapt</span></code> (compile only)
+lowers each required context-free <code class="docutils literal notranslate"><span class="pre">unit_cast</span></code> into an executable adapter node
+and validates the graph again; any other required adapter type is rejected
+(<code class="docutils literal notranslate"><span class="pre">unsupported_auto_adapter</span></code>). The adapter rules are described in
+<a class="reference internal" href="graph_validation_and_execution.html"><span class="std std-doc">Graph Validation and Execution</span></a>.</p>
+</section>
+<section id="layered-runner-boundary">
+<h2>Layered runner boundary<a class="headerlink" href="#layered-runner-boundary" title="Link to this heading"></a></h2>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">-m</span> <span class="n">relic</span><span class="p">.</span><span class="n">interfaces</span><span class="p">.</span><span class="n">cli</span><span class="p">.</span><span class="n">run_layered</span> <span class="p">-</span><span class="n">-help</span>
+</pre></div>
+</div>
+<p>The layered runner provides an explicit state-oriented runtime shell. It does
+not map every <code class="docutils literal notranslate"><span class="pre">RELICConfig</span></code> field to runtime keys and does not
+discover and register a complete scientific model. Use the Python workflow or
+a validated GraphIR when scientific Functor composition is required.</p>
+</section>
+<section id="extension-manifest">
+<h2>Extension manifest<a class="headerlink" href="#extension-manifest" title="Link to this heading"></a></h2>
+<p>Every extension root contains:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>relic_extension.yaml
+</pre></div>
+</div>
+<p>Top-level <code class="docutils literal notranslate"><span class="pre">ExtensionManifest</span></code> fields are:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Field</p></th>
+<th class="head"><p>Required</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">name</span></code></p></td>
+<td><p>Yes</p></td>
+<td><p>Non-empty extension identity.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">version</span></code></p></td>
+<td><p>Yes</p></td>
+<td><p>Semantic version in <code class="docutils literal notranslate"><span class="pre">X.Y.Z</span></code> form.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">author</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Author or organization.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">description</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Extension purpose.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">min_relic_version</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Minimum compatible RELIC semantic version.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">calibrated_output</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Optional calibrated-output declaration.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">functors</span></code></p></td>
+<td><p>Yes</p></td>
+<td><p>One or more Functor declarations.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">parameters</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Parameter-file declarations.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">dependencies</span></code></p></td>
+<td><p>No</p></td>
+<td><p>Required and optional Functor dependencies.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Each Functor declaration contains:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Field</p></th>
+<th class="head"><p>Allowed values or meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">class</span></code></p></td>
+<td><p>Dotted import path to the concrete class.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bridge</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">BiologicalProcessFunctor</span></code>, <code class="docutils literal notranslate"><span class="pre">PhysicalFieldFunctor</span></code>, <code class="docutils literal notranslate"><span class="pre">TransportMechanismFunctor</span></code>, or <code class="docutils literal notranslate"><span class="pre">ScaleCouplingFunctor</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">category</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">biological_process</span></code>, <code class="docutils literal notranslate"><span class="pre">physical_field</span></code>, <code class="docutils literal notranslate"><span class="pre">transport_mechanism</span></code>, or <code class="docutils literal notranslate"><span class="pre">scale_coupling</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">execution_group</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">fast</span></code>, <code class="docutils literal notranslate"><span class="pre">medium</span></code>, or <code class="docutils literal notranslate"><span class="pre">slow</span></code>; required, and a manifest without it fails validation.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">config</span></code></p></td>
+<td><p>Constructor configuration mapping.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Parameter declarations contain <code class="docutils literal notranslate"><span class="pre">path</span></code> and an optional <code class="docutils literal notranslate"><span class="pre">namespace_prefix</span></code>.
+Dependency declarations contain <code class="docutils literal notranslate"><span class="pre">required</span></code> and <code class="docutils literal notranslate"><span class="pre">optional</span></code> Functor-name lists.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example_extension</span>
+<span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.0.0</span>
+<span class="nt">author</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Example Team</span>
+<span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Example RELIC transport extension.</span>
+<span class="nt">min_relic_version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.0.0</span>
+
+<span class="nt">functors</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">class</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example_extension.transport.ExampleTransport</span>
+<span class="w">    </span><span class="nt">bridge</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TransportMechanismFunctor</span>
+<span class="w">    </span><span class="nt">category</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">transport_mechanism</span>
+<span class="w">    </span><span class="nt">execution_group</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">medium</span>
+<span class="w">    </span><span class="nt">config</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+
+<span class="nt">parameters</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">parameters\transport.yaml</span>
+<span class="w">    </span><span class="nt">namespace_prefix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">extension.example</span>
+
+<span class="nt">dependencies</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">required</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="w">  </span><span class="nt">optional</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+</pre></div>
+</div>
+<p>Unknown manifest fields are ignored by the protocol model. Invalid semantic
+versions, empty names, missing Functors, invalid class paths, or unsupported
+bridge, category, and execution-group values raise manifest validation
+errors.</p>
+</section>
+<section id="extension-discovery">
+<h2>Extension discovery<a class="headerlink" href="#extension-discovery" title="Link to this heading"></a></h2>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>discover_extensions(
+    extra_dirs: Optional[list[pathlib.Path]] = None,
+    use_entry_points: bool = True,
+    use_env_dirs: bool = True,
+) -&gt; list[ExtensionInfo]
+</pre></div>
+</div>
+<p>Discovery order is:</p>
+<ol class="arabic simple">
+<li><p>caller-provided <code class="docutils literal notranslate"><span class="pre">extra_dirs</span></code>;</p></li>
+<li><p>semicolon-separated directories in <code class="docutils literal notranslate"><span class="pre">RELIC_EXTENSION_DIRS</span></code>;</p></li>
+<li><p>Python entry points in the <code class="docutils literal notranslate"><span class="pre">relic.extensions</span></code> group.</p></li>
+</ol>
+<p>Duplicate extension names keep the first discovered entry.</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="nv">$env:RELIC_EXTENSION_DIRS</span> <span class="p">=</span> <span class="s2">&quot;C:\models\relic_ext_a;C:\models\relic_ext_b&quot;</span>
+<span class="n">python</span> <span class="n">-m</span> <span class="n">relic</span><span class="p">.</span><span class="n">extensions</span><span class="p">.</span><span class="nb">cli </span><span class="n">list</span>
+<span class="nb">Remove-Item</span> <span class="n">Env</span><span class="p">:</span><span class="n">RELIC_EXTENSION_DIRS</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">ExtensionInfo</span></code> reports name, root path, discovery source, and parsed
+manifest. Discovery proves that a manifest can be found and parsed; it does
+not instantiate the declared Functors.</p>
+</section>
+<section id="extension-loading">
+<h2>Extension loading<a class="headerlink" href="#extension-loading" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">relic.extensions</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_single_extension</span><span class="p">,</span> <span class="n">unload_extension</span>
+
+<span class="n">loaded</span> <span class="o">=</span> <span class="n">load_single_extension</span><span class="p">(</span>
+    <span class="n">Path</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;extensions\custom_functor&quot;</span><span class="p">),</span>
+    <span class="n">validate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">populate_core_registry</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">loaded</span><span class="p">))</span>
+<span class="n">unload_extension</span><span class="p">(</span><span class="s2">&quot;custom_functor_example&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>load_single_extension(
+    extension_path: pathlib.Path,
+    validate: bool = True,
+    strict: bool = True,
+    populate_core_registry: bool = False,
+) -&gt; LoadedFunctors
+</pre></div>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>load_extensions(
+    extra_dirs: Optional[list[pathlib.Path]] = None,
+    validate: bool = True,
+    strict: bool = True,
+    populate_core_registry: bool = False,
+    discovered_infos: Optional[list[ExtensionInfo]] = None,
+) -&gt; LoadedFunctors
+</pre></div>
+</div>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Argument</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">validate</span></code></p></td>
+<td><p>Validate the manifest, import path, bridge/category contract, parameters, and construction surface before loading.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">strict</span></code></p></td>
+<td><p>Default True: a validation failure raises <code class="docutils literal notranslate"><span class="pre">ExtensionValidationError</span></code> before anything is loaded and a duplicate instance name raises <code class="docutils literal notranslate"><span class="pre">ExtensionLoadError</span></code>. <code class="docutils literal notranslate"><span class="pre">strict=False</span></code> loads the valid extensions and lists each skipped extension or duplicate with its reason in <code class="docutils literal notranslate"><span class="pre">skipped_extensions</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">populate_core_registry</span></code></p></td>
+<td><p>Add loaded classes to the existing scientific registry. It does not create another registry.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">discovered_infos</span></code></p></td>
+<td><p>Reuse an explicit discovery result without repeating filesystem and entry-point discovery.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Duplicate Functor names across extensions raise <code class="docutils literal notranslate"><span class="pre">ExtensionLoadError</span></code> in strict
+mode; in non-strict mode the first instance is kept and the duplicate is
+listed in <code class="docutils literal notranslate"><span class="pre">skipped_extensions</span></code>. Use <code class="docutils literal notranslate"><span class="pre">get_loaded_extensions()</span></code> and
+<code class="docutils literal notranslate"><span class="pre">get_extension_registry()</span></code> for inspection. <code class="docutils literal notranslate"><span class="pre">unload_extension()</span></code> removes
+extension-owned simulator and node-registry entries when <code class="docutils literal notranslate"><span class="pre">simulator=</span></code> and
+<code class="docutils literal notranslate"><span class="pre">registry=</span></code> are passed explicitly.</p>
+</section>
+<section id="extension-commands">
+<h2>Extension commands<a class="headerlink" href="#extension-commands" title="Link to this heading"></a></h2>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">-m</span> <span class="n">relic</span><span class="p">.</span><span class="n">extensions</span><span class="p">.</span><span class="nb">cli </span><span class="p">-</span><span class="n">-help</span>
+<span class="n">python</span> <span class="n">-m</span> <span class="n">relic</span><span class="p">.</span><span class="n">extensions</span><span class="p">.</span><span class="nb">cli </span><span class="n">scaffold</span> <span class="n">my_extension</span> <span class="p">-</span><span class="n">-bridge</span> <span class="n">transport_mechanism</span> <span class="p">-</span><span class="n">-execution-group</span> <span class="n">fast</span> <span class="p">-</span><span class="n">-output</span> <span class="n">C</span><span class="p">:\</span><span class="n">models</span><span class="p">\</span><span class="n">my_extension</span>
+<span class="n">python</span> <span class="n">-m</span> <span class="n">relic</span><span class="p">.</span><span class="n">extensions</span><span class="p">.</span><span class="nb">cli </span><span class="n">validate</span> <span class="n">C</span><span class="p">:\</span><span class="n">models</span><span class="p">\</span><span class="n">my_extension</span>
+<span class="n">python</span> <span class="n">-m</span> <span class="n">relic</span><span class="p">.</span><span class="n">extensions</span><span class="p">.</span><span class="nb">cli </span><span class="n">list</span> <span class="p">-</span><span class="n">-source</span> <span class="n">all</span>
+<span class="n">python</span> <span class="n">-m</span> <span class="n">relic</span><span class="p">.</span><span class="n">extensions</span><span class="p">.</span><span class="nb">cli </span><span class="n">info</span> <span class="n">my_extension</span>
+</pre></div>
+</div>
+<p>Scaffold bridge choices are <code class="docutils literal notranslate"><span class="pre">biological_process</span></code>, <code class="docutils literal notranslate"><span class="pre">physical_field</span></code>,
+<code class="docutils literal notranslate"><span class="pre">transport_mechanism</span></code>, and <code class="docutils literal notranslate"><span class="pre">scale_coupling</span></code>. <code class="docutils literal notranslate"><span class="pre">--execution-group</span></code> (<code class="docutils literal notranslate"><span class="pre">fast</span></code>,
+<code class="docutils literal notranslate"><span class="pre">medium</span></code>, or <code class="docutils literal notranslate"><span class="pre">slow</span></code>) is required.</p>
+<p>Validation confirms the extension protocol and runtime construction checks.
+It does not prove scientific validity, conservation, unit correctness for all
+states, or Gate 0 completeness. A scientific extension still requires theory
+documentation, parameter metadata, Functor metadata, state and port
+contracts, and the applicable structural assertions.</p>
+</section>
+<section id="register-a-loaded-extension">
+<h2>Register a loaded extension<a class="headerlink" href="#register-a-loaded-extension" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">relic.core.simulator</span><span class="w"> </span><span class="kn">import</span> <span class="n">RELICSimulator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">relic.extensions</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_single_extension</span><span class="p">,</span> <span class="n">unload_extension</span>
+
+<span class="n">loaded</span> <span class="o">=</span> <span class="n">load_single_extension</span><span class="p">(</span>
+    <span class="n">Path</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;extensions\custom_functor&quot;</span><span class="p">),</span>
+    <span class="n">validate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">populate_core_registry</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">simulator</span> <span class="o">=</span> <span class="n">RELICSimulator</span><span class="p">({</span><span class="s2">&quot;time_step&quot;</span><span class="p">:</span> <span class="mf">60.0</span><span class="p">})</span>
+<span class="k">for</span> <span class="n">functor</span> <span class="ow">in</span> <span class="n">loaded</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+    <span class="n">simulator</span><span class="o">.</span><span class="n">register_functor</span><span class="p">(</span><span class="n">functor</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">simulator</span><span class="o">.</span><span class="n">functors</span><span class="p">))</span>
+<span class="n">unload_extension</span><span class="p">(</span><span class="s2">&quot;custom_functor_example&quot;</span><span class="p">,</span> <span class="n">simulator</span><span class="o">=</span><span class="n">simulator</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Or register the instance for <code class="docutils literal notranslate"><span class="pre">GraphIR</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">relic.extensions</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_single_extension</span><span class="p">,</span> <span class="n">unload_extension</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">relic.orchestration</span><span class="w"> </span><span class="kn">import</span> <span class="n">NodeRegistry</span><span class="p">,</span> <span class="n">SSOTCatalog</span>
+
+<span class="n">loaded</span> <span class="o">=</span> <span class="n">load_single_extension</span><span class="p">(</span>
+    <span class="n">Path</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;extensions\custom_functor&quot;</span><span class="p">),</span>
+    <span class="n">validate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">populate_core_registry</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">registry</span> <span class="o">=</span> <span class="n">NodeRegistry</span><span class="p">(</span><span class="n">SSOTCatalog</span><span class="o">.</span><span class="n">from_parameter_manager</span><span class="p">())</span>
+<span class="n">node_definition</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">register_functor_instance</span><span class="p">(</span>
+    <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">loaded</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">node_definition</span><span class="o">.</span><span class="n">node_type_id</span><span class="p">)</span>
+<span class="n">unload_extension</span><span class="p">(</span><span class="s2">&quot;custom_functor_example&quot;</span><span class="p">,</span> <span class="n">registry</span><span class="o">=</span><span class="n">registry</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Registration applies the same duplicate-name, output-ownership, dependency,
+bridge, device, and state rules as built-in Functors.</p>
+</section>
+<section id="stochastic-cli-boundary">
+<h2>Stochastic CLI boundary<a class="headerlink" href="#stochastic-cli-boundary" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">stochastic</span> <span class="pre">sde</span></code> executes a bound continuous-SDE process through the canonical
+GraphIR/Functor path (strict compile, <code class="docutils literal notranslate"><span class="pre">GraphExecutor</span></code>, StateManager commit).
+The seed is mandatory because the Functor owns its Wiener substream, and the
+drift/diffusion coefficients come from the ParameterManager database, so the
+command accepts no per-run parameter overrides:</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">-m</span> <span class="n">relic</span><span class="p">.</span><span class="n">interfaces</span><span class="p">.</span><span class="n">cli</span><span class="p">.</span><span class="n">main</span> <span class="n">stochastic</span> <span class="p">-</span><span class="n">-seed</span> <span class="n">7</span> <span class="p">-</span><span class="n">-output</span> <span class="n">sde_run</span> <span class="p">-</span><span class="n">-format</span> <span class="n">netcdf</span> <span class="n">sde</span> <span class="p">-</span><span class="n">-process</span> <span class="n">stochastic_air_temperature</span> <span class="p">-</span><span class="n">-samples</span> <span class="n">8</span> <span class="p">-</span><span class="n">-steps</span> <span class="n">24</span> <span class="p">-</span><span class="n">-dt</span> <span class="n">3600</span> <span class="p">-</span><span class="n">-initial-value</span> <span class="n">1</span><span class="p">.</span><span class="n">0</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">stochastic</span> <span class="pre">gillespie</span></code> executes a bound marked-jump process the same way
+(direct-SSA event clock plus the Functor’s mark law, counts and marks
+starting from zero); arbitrary reaction-network declarations are rejected:</p>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">-m</span> <span class="n">relic</span><span class="p">.</span><span class="n">interfaces</span><span class="p">.</span><span class="n">cli</span><span class="p">.</span><span class="n">main</span> <span class="n">stochastic</span> <span class="p">-</span><span class="n">-seed</span> <span class="n">7</span> <span class="p">-</span><span class="n">-output</span> <span class="n">rain_run</span> <span class="p">-</span><span class="n">-format</span> <span class="n">netcdf</span> <span class="n">gillespie</span> <span class="p">-</span><span class="n">-process</span> <span class="n">stochastic_rainfall</span> <span class="p">-</span><span class="n">-samples</span> <span class="n">8</span> <span class="p">-</span><span class="n">-steps</span> <span class="n">24</span> <span class="p">-</span><span class="n">-dt</span> <span class="n">21600</span>
+</pre></div>
+</div>
+<p>The NetCDF output of both commands carries <code class="docutils literal notranslate"><span class="pre">trajectory_&lt;state&gt;</span></code> on
+<code class="docutils literal notranslate"><span class="pre">(sample,</span> <span class="pre">time)</span></code> for every bound state, the elapsed clock <code class="docutils literal notranslate"><span class="pre">time_seconds</span></code> on
+<code class="docutils literal notranslate"><span class="pre">time</span></code>, ensemble and exact analytic moments, and the compile assertion audit.
+<code class="docutils literal notranslate"><span class="pre">stochastic</span> <span class="pre">weather</span></code> remains <code class="docutils literal notranslate"><span class="pre">[N]</span></code> until its forcing operator has the same
+kind of validated runtime binding.</p>
+</section>
+<section id="optimization-cli-boundary">
+<h2>Optimization CLI boundary<a class="headerlink" href="#optimization-cli-boundary" title="Link to this heading"></a></h2>
+<p>The optimization subcommands (<code class="docutils literal notranslate"><span class="pre">calibrate</span></code>, <code class="docutils literal notranslate"><span class="pre">assimilate</span></code>, <code class="docutils literal notranslate"><span class="pre">sensitivity</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">uncertainty</span></code>) are visible in the unified CLI and marked <code class="docutils literal notranslate"><span class="pre">[N]</span></code>
+<code class="docutils literal notranslate"><span class="pre">runtime_unbound</span></code>; they fail closed before running an optimizer or mutating
+parameters because no sealed <code class="docutils literal notranslate"><span class="pre">GraphIR</span></code>/<code class="docutils literal notranslate"><span class="pre">ExecutionPlan</span></code>/<code class="docutils literal notranslate"><span class="pre">GraphExecutor</span></code> runtime
+is bound. Use
+<a class="reference internal" href="calibration_sensitivity_and_uq.html"><span class="std std-doc">Calibration, Sensitivity Analysis, and Uncertainty Quantification</span></a>
+for supported Python component operation.</p>
+</section>
+<section id="fastapi-rest-and-websocket-server">
+<h2>FastAPI REST and WebSocket server<a class="headerlink" href="#fastapi-rest-and-websocket-server" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">relic\interfaces\api\server.py</span></code> exposes <code class="docutils literal notranslate"><span class="pre">create_app()</span></code> and <code class="docutils literal notranslate"><span class="pre">run_server()</span></code> for
+HTTP and WebSocket inspection and orchestration. <code class="docutils literal notranslate"><span class="pre">create_app(enable_docs=False)</span></code>
+registers 38 application routes (37 HTTP endpoints plus 1 WebSocket endpoint
+<code class="docutils literal notranslate"><span class="pre">/graph/ws</span></code>); <code class="docutils literal notranslate"><span class="pre">create_app(enable_docs=True)</span></code> (the default) adds 4 OpenAPI and
+interactive documentation routes (<code class="docutils literal notranslate"><span class="pre">/openapi.json</span></code>, <code class="docutils literal notranslate"><span class="pre">/docs</span></code>,
+<code class="docutils literal notranslate"><span class="pre">/docs/oauth2-redirect</span></code>, and <code class="docutils literal notranslate"><span class="pre">/redoc</span></code>) for 42 total entries on <code class="docutils literal notranslate"><span class="pre">app.routes</span></code>:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Route group</p></th>
+<th class="head"><p>Count</p></th>
+<th class="head"><p>Endpoints</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Root and metrics</p></td>
+<td><p>2 HTTP</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/</span></code>, <code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/health/metrics</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Health (<code class="docutils literal notranslate"><span class="pre">/health</span></code>)</p></td>
+<td><p>9 HTTP</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/health/</span></code>, <code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/health/compute</span></code>, <code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/health/data</span></code>, <code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/health/params</span></code>, <code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/health/optimize</span></code>, <code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/health/stochastic</span></code>, <code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/health/orchestration</span></code>, <code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/health/config</span></code>, <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/health/benchmark</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Graph (<code class="docutils literal notranslate"><span class="pre">/graph</span></code>)</p></td>
+<td><p>5 HTTP + 1 WS</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/graph/validate</span></code>, <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/graph/compile</span></code>, <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/graph/submit</span></code>, <code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/graph/history/{run_id}</span></code>, <code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/graph/artifacts/{run_id}/{artifact_id}</span></code>, <code class="docutils literal notranslate"><span class="pre">WS</span> <span class="pre">/graph/ws</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Data (<code class="docutils literal notranslate"><span class="pre">/data</span></code>)</p></td>
+<td><p>5 HTTP</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/data/</span></code>, <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/data/inspect</span></code>, <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/data/read</span></code>, <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/data/write</span></code>, <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/data/convert</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Compute (<code class="docutils literal notranslate"><span class="pre">/compute</span></code>)</p></td>
+<td><p>4 HTTP</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/compute/</span></code>, <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/compute/healthcheck</span></code>, <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/compute/benchmark</span></code>, <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/compute/ddp-check</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Optimization (<code class="docutils literal notranslate"><span class="pre">/optimization</span></code>)</p></td>
+<td><p>5 HTTP (<code class="docutils literal notranslate"><span class="pre">[N]</span></code>)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/optimization/</span></code>, <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/optimization/calibrate</span></code>, <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/optimization/assimilate</span></code>, <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/optimization/sensitivity</span></code>, <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/optimization/uncertainty</span></code> (<code class="docutils literal notranslate"><span class="pre">[N]</span></code> <code class="docutils literal notranslate"><span class="pre">runtime_unbound</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p>Stochastic (<code class="docutils literal notranslate"><span class="pre">/stochastic</span></code>)</p></td>
+<td><p>4 HTTP</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/stochastic/</span></code>, <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/stochastic/weather</span></code> (<code class="docutils literal notranslate"><span class="pre">[N]</span></code>), <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/stochastic/sde</span></code>, <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/stochastic/gillespie</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Configuration (<code class="docutils literal notranslate"><span class="pre">/config</span></code>)</p></td>
+<td><p>3 HTTP</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/config/</span></code>, <code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/config/effective</span></code>, <code class="docutils literal notranslate"><span class="pre">POST</span> <span class="pre">/config/validate</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>OpenAPI docs (<code class="docutils literal notranslate"><span class="pre">enable_docs=True</span></code>)</p></td>
+<td><p>4 HTTP</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/openapi.json</span></code>, <code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/docs</span></code>, <code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/docs/oauth2-redirect</span></code>, <code class="docutils literal notranslate"><span class="pre">GET</span> <span class="pre">/redoc</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p>All non-health application routers (<code class="docutils literal notranslate"><span class="pre">/graph/*</span></code>, <code class="docutils literal notranslate"><span class="pre">/data/*</span></code>, <code class="docutils literal notranslate"><span class="pre">/compute/*</span></code>,
+<code class="docutils literal notranslate"><span class="pre">/optimization/*</span></code>, <code class="docutils literal notranslate"><span class="pre">/stochastic/*</span></code>, and <code class="docutils literal notranslate"><span class="pre">/config/*</span></code>) enforce API key
+authentication (<code class="docutils literal notranslate"><span class="pre">X-API-Key</span></code> header or <code class="docutils literal notranslate"><span class="pre">Authorization:</span> <span class="pre">Bearer</span> <span class="pre">&lt;token&gt;</span></code>,
+configured through <code class="docutils literal notranslate"><span class="pre">RELIC_API_KEY</span></code>, <code class="docutils literal notranslate"><span class="pre">RELIC_API_KEYS</span></code>, or
+<code class="docutils literal notranslate"><span class="pre">security.api_auth.api_keys</span></code>), while rate limiting is governed by the
+parameters <code class="docutils literal notranslate"><span class="pre">interfaces.api.rate_limit.enabled</span></code> and
+<code class="docutils literal notranslate"><span class="pre">interfaces.api.rate_limit.requests_per_minute</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">relic.interfaces.api.server</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_app</span>
+
+<span class="n">app_core</span> <span class="o">=</span> <span class="n">create_app</span><span class="p">(</span><span class="n">enable_docs</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">app_full</span> <span class="o">=</span> <span class="n">create_app</span><span class="p">(</span><span class="n">enable_docs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">app_core</span><span class="o">.</span><span class="n">routes</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">app_full</span><span class="o">.</span><span class="n">routes</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+<section id="related-documentation">
+<h2>Related documentation<a class="headerlink" href="#related-documentation" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="../architecture.html"><span class="std std-doc">Architecture</span></a></p></li>
+<li><p><a class="reference internal" href="../orchestration.html"><span class="std std-doc">Orchestration</span></a></p></li>
+<li><p><a class="reference internal" href="graph_validation_and_execution.html"><span class="std std-doc">Graph Validation and Execution</span></a></p></li>
+<li><p><a class="reference internal" href="../api/scientific_structure_extensions.html"><span class="std std-doc">Scientific Structure and Extensions API</span></a></p></li>
+<li><p><a class="reference internal" href="../science/index.html"><span class="std std-doc">Science index</span></a></p></li>
+<li><p><a class="reference internal" href="../theory/index.html"><span class="std std-doc">Theory index</span></a></p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="devices_and_distributed.html" class="btn btn-neutral float-left" title="Devices and Distributed Execution" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../orchestration.html" class="btn btn-neutral float-right" title="Graph Orchestration" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

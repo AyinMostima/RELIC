@@ -1,0 +1,964 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C)
+# This file is distributed under the same license as the RELIC package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: RELIC 1.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-31 06:10-0700\n"
+"PO-Revision-Date: 2026-07-27 22:55+0800\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_Hans_CN\n"
+"Language-Team: zh_Hans_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:1
+msgid "System Architecture"
+msgstr "系统架构"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:3
+msgid "Scope and architectural contract"
+msgstr "范围与架构契约"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:5
+msgid "The Recomposable Ecosystem Library for Integrated Coupling (RELIC) is a composable framework for biogeochemical simulation built on PyTorch tensors. Gradients are available along the executed tensor path; bound clipping, events, rate-group and adaptive-step decisions, and external I/O are non-differentiable boundaries. It operates as a system of cooperating Functors under shared runtime owners, never as a single monolithic model. The package architecture follows four rules:"
+msgstr "可重组生态系统集成耦合库（Recomposable Ecosystem Library for Integrated Coupling, RELIC）是基于 PyTorch 张量构建的生物地球化学模拟可组合框架。梯度可沿实际执行的张量路径获取；边界裁剪、事件触发、速率组与自适应步长决策以及外部 I/O 均为不可微边界。它作为共享运行时所有者下相互协作的 Functor 系统运行，绝非单一的单体模型。软件包架构遵循四项准则："
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:14
+msgid "reuse the canonical owner before adding a capability;"
+msgstr "新增 capability 前，优先复用 canonical owner；"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:15
+msgid "compose processes through declared contracts without direct Functor-to-Functor calls;"
+msgstr "通过已声明的契约组合过程，禁止直接进行 Functor 到 Functor 的调用；"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:17
+msgid "route state, parameters, units, and device selection through their existing managers; and"
+msgstr "通过现有 manager 管理状态、参数、单位和设备选择；并且"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:19
+msgid "distinguish structural evidence from executed scientific behavior."
+msgstr "区分结构性证据与实际执行的科学行为。"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:21
+msgid "The package version is the public architecture version. Subsystem schema versions, such as a GraphIR schema version, describe only that subsystem."
+msgstr "软件包版本即公开架构版本。GraphIR schema version 等子系统 schema version 只描述对应子系统。"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:24
+msgid "Architecture capability map"
+msgstr "架构能力图"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "RELIC architecture from user interfaces through the core engine (autograd along tensor paths), scientific Functors, orchestration, parameter, optimization, data, validation, coupling, and computing layers"
+msgstr "RELIC 架构：从用户接口，经核心引擎（沿张量路径的 autograd）、科学 Functor、编排、参数、优化、数据、验证、耦合，直到计算层"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:31
+msgid "RELIC capability map. The executable core is the Functor, StateManager, parameter, orchestration, and validation path described in this guide; gradients are available along its tensor paths, not through clipping, event, or step-control decisions."
+msgstr "RELIC 能力图。可执行核心是本指南所述的 Functor、StateManager、参数、编排与验证路径；梯度可沿其张量路径获得，但不会穿过裁剪、事件或步长控制决策。"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:37
+msgid "This diagram is a capability map, not a statement that every optional interface, streaming backend, coupling adapter, or deployment dependency is enabled in every installation. The canonical owners and runtime boundaries below determine what is active for a configured RELIC environment."
+msgstr "本图是 capability map，并不表示每个 RELIC 安装都启用了所有可选 interface、streaming backend、coupling adapter 或部署依赖。下文的 canonical owner 与 runtime 边界决定配置后的 RELIC 环境实际启用哪些能力。"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:42
+msgid "In particular, the diagram's `Strict IPHS` label denotes the target capability boundary. In the live inventory documented in this guide, `90` unique concrete scientific `Functor` classes are registered across the four canonical bridge families (`BiologicalProcessFunctor`: `37`, `TransportMechanismFunctor`: `27`, `PhysicalFieldFunctor`: `14`, `ScaleCouplingFunctor`: `12`; `0` uncertified) and are backed by `92` YAML certificates. Every concrete class has one primary certificate, giving a 90-class distribution across Levels 0 through 5 of `4 / 15 / 39 / 32 / 0 / 0`: four unavailable Level 0 boundaries and `86` executable classes across Levels 1 through 3 (IPHS-compatible, IPHS-wrapped, or IPHS-structured). A Level 0 entry is a fail-closed boundary, not an executable scientific process."
+msgstr "具体而言，图中的 `Strict IPHS` 标签标示目标能力边界。在本指南记录的当前清单中，四个规范桥接族共注册 `90` 个唯一的具体科学 `Functor` 类（`BiologicalProcessFunctor`：`37`，`TransportMechanismFunctor`：`27`，`PhysicalFieldFunctor`：`14`，`ScaleCouplingFunctor`：`12`；未认证数为 `0`），由 `92` 份 YAML 证书支撑。每个具体类均持有一份主证书，`90` 个类在 Level 0 至 Level 5 上的分布为 `4 / 15 / 39 / 32 / 0 / 0`：即 `4` 个不可用的 Level 0 边界与分布在 Level 1 至 Level 3 的 `86` 个可执行类（互连端口哈密顿系统（Interconnected Port-Hamiltonian System, IPHS）兼容、IPHS 封装或 IPHS 结构化）。Level 0 条目属于故障封闭（fail-closed）边界，不可作为可执行科学过程调用。"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:54
+#, python-brace-format
+msgid "Two secondary certificates each cover one constructor selection, named in their `constructor_selection` field, bringing the 92-certificate totals across Levels 0 through 5 to `4 / 15 / 39 / 32 / 1 / 1`: `FickianDiffusion(strict_runtime_point=True, spatial_dims=1)` at Level 4 (strict dissipative port-Hamiltonian, `{strict_runtime_point: true, spatial_dims: 1}`) and `ChemistryFunctor(physical_boundary=\"closed_constant_volume\")` at Level 5 (strict GENERIC, `{physical_boundary: closed_constant_volume}`). `IPHSEquivalenceCertificate` accepts either one only together with the runtime-point audit of a governed, committed step; without it the certificate reports `process_bound_runtime_unavailable`. Only these two selections, within their declared domain, may be described as strict. The primary certificates of both classes remain at Level 3, and every other configuration of these classes keeps that level."
+msgstr "另有两份次级证书各自覆盖一种由 `constructor_selection` 字段命名的构造配置，使 `92` 份证书在 Level 0 至 Level 5 上的总计分布达到 `4 / 15 / 39 / 32 / 1 / 1`：Level 4 的 `FickianDiffusion(strict_runtime_point=True, spatial_dims=1)`（严格耗散端口哈密顿系统，`{strict_runtime_point: true, spatial_dims: 1}`）以及 Level 5 的 `ChemistryFunctor(physical_boundary=\"closed_constant_volume\")`（严格广义非平衡可逆-不可逆耦合方程（General Equation for Non-Equilibrium Reversible-Irreversible Coupling, GENERIC），`{physical_boundary: closed_constant_volume}`）。`IPHSEquivalenceCertificate` 仅在同时附带受治理且已提交步的运行时点审计时才接受其中任一配置；缺少该审计时，证书报告 `process_bound_runtime_unavailable`。仅这两种配置在其声明域内可称为严格形式。两个类的主证书仍为 Level 3，这两个类的其他所有配置也保持 Level 3。"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:68
+msgid "The static overview diagram also reflects an earlier snapshot on two stochastic status badges (`stochastic_graphir_binding` and `restartable_substream`). In the live tree, `GraphIR` binds both certified Level 2 (`[I]`) stochastic Functors (`OrnsteinUhlenbeckTemperatureFunctor` and `MarkedPoissonRainfallFunctor`) with deterministic per-Functor substream checkpoint and restart replay through `FunctorSubstreamMixin`. By contrast, public optimization model-evaluation execution remains `[N]` (`runtime_unbound`), and `FourDVar` in `relic.optimization.assimilation` remains an unimplemented `[N]` framework shell without an adjoint model."
+msgstr "静态概览图中的两个随机过程状态徽标（`stochastic_graphir_binding` 与 `restartable_substream`）同样对应早期快照。在当前代码树中，`GraphIR` 已绑定两个已认证的 Level 2（`[I]`）随机 Functor（`OrnsteinUhlenbeckTemperatureFunctor` 与 `MarkedPoissonRainfallFunctor`），并通过 `FunctorSubstreamMixin` 支持确定性的单 Functor 子流检查点保存与重启重放。相比之下，公开优化模型求值执行仍处于 `[N]`（`runtime_unbound`），`relic.optimization.assimilation` 中的 `FourDVar` 仍是未实现的 `[N]` 框架外壳，不含伴随模型。"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:78
+msgid "Package ownership and seven-layer map"
+msgstr "软件包职责归属与七层架构映射"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:80
+msgid "The `relic\\` package comprises `16` top-level subpackages containing `594` subpackage `.py` files (`595` Python files including `relic\\__init__.py`) and `316,129` lines of Python. Static import analysis across those `16` subpackages records `73` directed cross-package edge pairs, `973` cross-package import statements, and `11` mutual package pairs governed by the layered dependency rules."
+msgstr "`relic\\` 软件包由 `16` 个顶层子包组成，包含 `594` 个子包 `.py` 文件（含 `relic\\__init__.py` 共 `595` 个 Python 文件）与 `316,129` 行 Python 代码。对这 `16` 个子包的静态导入分析共记录 `73` 对有向跨包依赖边、`973` 条跨包导入语句，以及受分层依赖规则治理的 `11` 对双向包依赖。"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Area"
+msgstr "区域"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Canonical responsibility"
+msgstr "规范职责"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`relic\\core\\`"
+msgstr "`relic\\core\\`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Scientific abstractions, Functor lifecycle, simulator, state management, dependency graph, and device policy"
+msgstr "科学抽象、Functor lifecycle、simulator、状态管理、dependency graph 和 device policy"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`relic\\scientific\\`"
+msgstr "`relic\\scientific\\`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Concrete atmosphere, biosphere, hydrosphere, pedosphere, transport, and isotope processes"
+msgstr "具体的大气圈、生物圈、水圈、土壤圈、输运和同位素过程"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`relic\\parameters\\`"
+msgstr "`relic\\parameters\\`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`UnifiedParameterManager`, parameter database, unit-aware resolution, and metadata"
+msgstr "`UnifiedParameterManager`、参数数据库、unit-aware 解析和 metadata"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`relic\\contracts\\`"
+msgstr "`relic\\contracts\\`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Variable ownership, writer permissions, aliases, update semantics, and conservation-domain contracts"
+msgstr "变量 owner、writer 权限、alias、更新语义和守恒域契约"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`relic\\orchestration\\`"
+msgstr "`relic\\orchestration\\`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "GraphIR, typed ports, structural validation, compilation, execution plans, and graph execution"
+msgstr "GraphIR、typed port、结构验证、编译、execution plan 和图执行"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`relic\\computation\\`"
+msgstr "`relic\\computation\\`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Numerical solvers, DEC/IPHS operators, and compute backends"
+msgstr "数值 solver、DEC/IPHS operator 和计算 backend"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`relic\\coupling\\`"
+msgstr "`relic\\coupling\\`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Internal, external, scale, protocol, and C ABI coupling"
+msgstr "内部、外部、尺度、protocol 和 C ABI coupling"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`relic\\data\\`"
+msgstr "`relic\\data\\`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "I/O, standards, quality control, streaming, and transformations"
+msgstr "I/O、标准、质量控制、流式处理和数据变换"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`relic\\optimization\\`"
+msgstr "`relic\\optimization\\`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Calibration, assimilation, sensitivity analysis, and uncertainty algorithm components (`[N]` `runtime_unbound` for public model execution)"
+msgstr "校准、同化、敏感性分析与不确定性算法组件（公开模型执行路径处于 `[N]` `runtime_unbound`）"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`relic\\validation\\`"
+msgstr "`relic\\validation\\`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Shared validation models, rules, conservation checks, and cross-domain checks"
+msgstr "共享的验证模型、规则、守恒检查和跨域检查"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`relic\\interfaces\\`"
+msgstr "`relic\\interfaces\\`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "CLI, API, Web, and Notebook-facing surfaces"
+msgstr "面向 CLI、API、Web 和 Notebook 的接口"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`relic\\extensions\\`"
+msgstr "`relic\\extensions\\`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Python and manifest-based extension discovery and loading"
+msgstr "基于 Python 和 manifest 的 extension 发现与加载"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:102
+msgid "`relic\\models\\`, `relic\\monitoring\\`, `relic\\stochastic\\`, and `relic\\utils\\` provide bounded support services. They do not replace the simulator or any manager listed above."
+msgstr "`relic\\models\\`、`relic\\monitoring\\`、`relic\\stochastic\\` 和 `relic\\utils\\` 提供边界明确的支持服务。它们不会替代 simulator 或上述任何 manager。"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:106
+msgid "Across these `16` subpackages, the mathematical and runtime architecture is organized into seven layers plus an orthogonal control plane:"
+msgstr "在这 `16` 个子包之上，数学与运行时架构划分为七个层次外加一个正交控制平面："
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Layer"
+msgstr "层次"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Mathematical and runtime role"
+msgstr "数学与运行时职责"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Canonical owners"
+msgstr "规范所有者"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Status"
+msgstr "状态"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`1 Semantic`"
+msgstr "`1 Semantic`（语义层）"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Parameter space, variable contracts, units, dimensionality, support, and calendar rules"
+msgstr "参数空间、变量契约、单位、量纲、支撑域与日历规则"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`relic\\parameters\\`, `relic\\contracts\\`, `relic\\data\\standards\\`, `relic\\coupling\\scales\\temporal\\`"
+msgstr "`relic\\parameters\\`, `relic\\contracts\\`, `relic\\data\\standards\\`, `relic\\coupling\\scales\\temporal\\`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`[I]`"
+msgstr "`[I]`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`2 Declaration`"
+msgstr "`2 Declaration`（声明层）"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Declared dependency graph, typed `PortSpec` contracts, extensions, and graph assertions"
+msgstr "已声明的依赖图、类型化 `PortSpec` 契约、扩展与图断言"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`relic\\orchestration\\graph_ir.py`, `node_registry.py`, `port_spec.py`, `validator.py`, `relic\\core\\functor\\functor_types.py`"
+msgstr "`relic\\orchestration\\graph_ir.py`, `node_registry.py`, `port_spec.py`, `validator.py`, `relic\\core\\functor\\functor_types.py`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`3 Resolution`"
+msgstr "`3 Resolution`（解析层）"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Provider identity digests, immutable `CommittedProviderView` epochs, topological orders, and sealed `ExecutionPlan`"
+msgstr "提供方标识摘要、不可变 `CommittedProviderView` 纪元、拓扑序与封存的 `ExecutionPlan`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`relic\\core\\simulator\\registration.py`, `relic\\core\\dependency_graph.py`, `relic\\orchestration\\compiler.py`, `executor.py`"
+msgstr "`relic\\core\\simulator\\registration.py`, `relic\\core\\dependency_graph.py`, `relic\\orchestration\\compiler.py`, `executor.py`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`4 Execution`"
+msgstr "`4 Execution`（执行层）"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Governed call `FunctorBase.__call__` wrapping kernel `forward`, local conservation hook, and output partitioning"
+msgstr "封装核函数 `forward`、局部守恒钩子与输出划分的受治理调用 `FunctorBase.__call__`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`relic\\core\\functor\\functor_base.py`, `*_bridge.py`, `relic\\core\\state\\types.py` (`partition_outputs`)"
+msgstr "`relic\\core\\functor\\functor_base.py`, `*_bridge.py`, `relic\\core\\state\\types.py` (`partition_outputs`)"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`5 Transaction`"
+msgstr "`5 Transaction`（事务层）"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Per-group-call `StateManager.apply_updates` commits, outer step savepoint and rollback, and durable checkpoint replay"
+msgstr "按组调用执行的 `StateManager.apply_updates` 提交、外层步保存点与回滚，以及持久化检查点重放"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`relic\\core\\state\\manager.py`, `relic\\core\\simulator\\execution_group.py`, `execution_loop.py`, `checkpoint.py`"
+msgstr "`relic\\core\\state\\manager.py`, `relic\\core\\simulator\\execution_group.py`, `execution_loop.py`, `checkpoint.py`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`6 Scientific structure`"
+msgstr "`6 Scientific structure`（科学结构层）"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Physical exchange ledgers, DEC cochains, `LinearChainMap`, `HodgeStarSpec`, `IPHSStructureSpec`, and certificates"
+msgstr "物理交换账本、离散外微分（Discrete Exterior Calculus, DEC）上链、`LinearChainMap`、`HodgeStarSpec`、`IPHSStructureSpec` 与证书"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`relic\\computation\\operators\\dec\\`, `iphs.py`, `iphs_certificate.py`, `relic\\validation\\framework\\rules\\`"
+msgstr "`relic\\computation\\operators\\dec\\`, `iphs.py`, `iphs_certificate.py`, `relic\\validation\\framework\\rules\\`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`7 Evidence`"
+msgstr "`7 Evidence`（证据层）"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Fingerprinted audit bundles, claim provenance, and verification scripts"
+msgstr "带指纹的审计包、声明溯源记录与验证脚本"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`scripts\\` validators and `analysis_results\\` artifacts"
+msgstr "`scripts\\` 校验器与 `analysis_results\\` 产物"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`Control plane`"
+msgstr "`Control plane`（控制平面）"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Provider lifecycle receipts, device fences, distributed coordination, and C ABI `PluginHost` drain/unload"
+msgstr "提供方生命周期凭据、设备栅栏、分布式协调，以及 C ABI `PluginHost` 排空与卸载"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`registration.py`, `relic\\core\\device_policy.py`, `relic\\computation\\distributed\\launcher.py`, `relic\\coupling\\plugin\\host.py`, `relic\\extensions\\loader.py`"
+msgstr "`registration.py`, `relic\\core\\device_policy.py`, `relic\\computation\\distributed\\launcher.py`, `relic\\coupling\\plugin\\host.py`, `relic\\extensions\\loader.py`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:120
+msgid "Four scientific abstractions"
+msgstr "四类科学抽象"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:122
+msgid "Every executable scientific process declares one primary scientific contract:"
+msgstr "每个可执行科学过程都声明一个主要科学契约："
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Abstract contract"
+msgstr "抽象契约"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Meaning"
+msgstr "含义"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Bridge family"
+msgstr "Bridge Class 系列"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`PhysicalField`"
+msgstr "`PhysicalField`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "A spatial or environmental field with physical semantics"
+msgstr "具有物理语义的空间场或环境场"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`PhysicalFieldFunctor`"
+msgstr "`PhysicalFieldFunctor`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`BiologicalProcess`"
+msgstr "`BiologicalProcess`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "A biological or biogeochemical transformation"
+msgstr "生物或生物地球化学转化"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`BiologicalProcessFunctor`"
+msgstr "`BiologicalProcessFunctor`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`TransportMechanism`"
+msgstr "`TransportMechanism`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Movement of matter, energy, or tracers"
+msgstr "物质、能量或 tracer 的输运"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`TransportMechanismFunctor`"
+msgstr "`TransportMechanismFunctor`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`ScaleCoupling`"
+msgstr "`ScaleCoupling`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Mapping or aggregation across declared scales"
+msgstr "在已声明尺度之间进行映射或聚合"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`ScaleCouplingFunctor`"
+msgstr "`ScaleCouplingFunctor`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:131
+msgid "![Four RELIC scientific abstractions](../../../assets/readme/relic_scientific_contracts.png)"
+msgstr "![RELIC 的四种科学 abstraction](../../../assets/readme/relic_scientific_contracts.png)"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:131
+msgid "Four RELIC scientific abstractions"
+msgstr "RELIC 四类科学抽象"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:133
+msgid "The required lifecycle chain is:"
+msgstr "必须遵循的 lifecycle chain 为："
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:146
+msgid "Bridge Classes connect the scientific interface to the system lifecycle. They do not waive conservation, gradient, metadata, or unit obligations defined by the abstraction."
+msgstr "Bridge Class 将科学接口接入系统 lifecycle，但不会免除抽象层定义的守恒、梯度、metadata 或单位义务。"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:150
+msgid "Functor lifecycle and metadata"
+msgstr "Functor lifecycle 与 metadata"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:152
+msgid "`FunctorBase` owns parameter namespace resolution, metadata, device migration, forward execution hooks, diagnostics, and local conservation integration. Concrete Functors implement `forward(state, time, dt, **kwargs)` and return declared updates. The simulator calls the Functor object; it does not bypass the `__call__()` lifecycle."
+msgstr "`FunctorBase` 负责参数 namespace 解析、metadata、设备迁移、forward 执行 hook、diagnostic 和局部守恒集成。具体 Functor 实现 `forward(state, time, dt, **kwargs)` 并返回已声明的更新。simulator 调用 Functor 对象，不会绕过 `__call__()` lifecycle。"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:158
+msgid "`FunctorMetadata` identifies inputs, outputs, dependencies, execution stage, spatial scale, variable kind, references, equations, units, and conserved quantities. Empty input and output declarations reduce auditability. Competing writers for the same non-diagnostic output are detected during registration and may be rejected in strict dependency mode."
+msgstr "`FunctorMetadata` 标识输入、输出、依赖、execution stage、spatial scale、variable kind、参考文献、方程、单位和守恒量。空的输入与输出声明会降低可审计性。注册时会检测同一非 diagnostic 输出的竞争 writer，并可在 strict dependency mode 下拒绝注册。"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:164
+msgid "Variable roles and state ownership"
+msgstr "变量角色与状态归属"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:166
+msgid "The framework distinguishes five variable roles:"
+msgstr "框架区分五类变量角色："
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Role"
+msgstr "角色"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Runtime meaning"
+msgstr "Runtime 含义"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`STATE`"
+msgstr "`STATE`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Prognostic quantity committed through `StateManager`"
+msgstr "通过 `StateManager` 提交的预报量"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`FLUX`"
+msgstr "`FLUX`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Rate or transfer used to produce a state update"
+msgstr "用于产生状态更新的速率或传输量"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`FORCING`"
+msgstr "`FORCING`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Externally supplied driver"
+msgstr "由外部提供的驱动量"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`PARAMETER`"
+msgstr "`PARAMETER`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Configuration resolved through `UnifiedParameterManager`"
+msgstr "通过 `UnifiedParameterManager` 解析的配置"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`DIAGNOSTIC`"
+msgstr "`DIAGNOSTIC`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Read-only reported quantity"
+msgstr "只读的报告量"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:176
+msgid "![Five RELIC variable roles](../../../assets/readme/relic_variable_roles.png)"
+msgstr "![RELIC 的五种 variable role](../../../assets/readme/relic_variable_roles.png)"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:176
+msgid "Five RELIC variable roles"
+msgstr "RELIC 五类变量角色"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:178
+msgid "`ContractRegistry` provides aliases, owners, permitted writers, increment semantics, and conservation-domain membership when contracts are enabled. `StateManager.apply_updates(...)` is the governed commit path. It resolves aliases, authorizes writes, applies update semantics, maintains element ledgers, records provenance, and rolls back failed transactional commits."
+msgstr "启用契约时，`ContractRegistry` 提供 alias、owner、获准 writer、增量语义和守恒域成员关系。`StateManager.apply_updates(...)` 是受控提交路径，负责解析 alias、授权写入、应用更新语义、维护元素 ledger、记录 provenance，并回滚失败的事务性提交。"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:184
+msgid "Parameters, constants, units, and time"
+msgstr "参数、常量、单位与时间"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:186
+msgid "Scientific Functors obtain runtime values only through `self.get_parameter_value(...)`. Non-Functor infrastructure uses `get_global_manager().get(...)`. Parameter values, units, dtype, bounds, references, provenance, tags, and gradient settings belong in the parameter YAML database. Under default runtime settings, `UnifiedParameterManager` loads `4,643` active parameters (`810` with `requires_grad=True`), backed by `138` YAML files (`134` in the base `relic` tier with `4,642` leaf entries and `4` in the `calibrated` tier with `109` leaf entries, totaling `4,751` YAML leaf entries)."
+msgstr "科学 Functor 仅通过 `self.get_parameter_value(...)` 获取运行时参数值。非 Functor 基础设施使用 `get_global_manager().get(...)`。参数值、单位、dtype、上下界、参考文献、溯源信息、标签与梯度设置均归入参数 YAML 数据库。在默认运行时设置下，`UnifiedParameterManager` 加载 `4,643` 个有效参数（其中 `810` 个设置 `requires_grad=True`），由 `138` 个 YAML 文件支撑（基础 `relic` 层含 `134` 个文件、`4,642` 个叶条目，`calibrated` 层含 `4` 个文件、`109` 个叶条目，合计 `4,751` 个 YAML 叶条目）。"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:196
+msgid "Physical constants are owned only by `relic\\parameters\\database\\relic\\physical\\constants.yaml` and are accessed through `get_physical_constant(...)`. Time conversion values are resolved through `UnifiedParameterManager`; derived fallbacks may use already resolved values. Scientific modules must not define duplicate constants or unit registries."
+msgstr "物理常数仅由 `relic\\parameters\\database\\relic\\physical\\constants.yaml` 管理，并通过 `get_physical_constant(...)` 访问。时间换算值通过 `UnifiedParameterManager` 解析；derived fallback 可以使用已解析的值。科学模块不得定义重复的常数或 unit registry。"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:216
+msgid "Simulator, execution rates, and device policy"
+msgstr "Simulator、执行频率与 device policy"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:218
+msgid "`RELICSimulator` owns registration, dependency ordering, fast/medium/slow execution groups, stepping, output storage, checkpoint integration, provenance, and diagnostics."
+msgstr "`RELICSimulator` 负责注册、依赖排序、fast/medium/slow execution group、时间推进、输出存储、checkpoint 集成、provenance 和 diagnostic。"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Execution group"
+msgstr "Execution group"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Trigger"
+msgstr "触发条件"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Effective `dt`"
+msgstr "有效 `dt`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`fast`"
+msgstr "`fast`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Every global step"
+msgstr "每个全局时间步"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Current step size"
+msgstr "当前步长"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`medium`"
+msgstr "`medium`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Configured interval or event"
+msgstr "已配置的间隔或事件"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Time since the previous medium execution"
+msgstr "自上次 medium 执行以来的时间"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`slow`"
+msgstr "`slow`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Configured interval, calendar boundary, or event"
+msgstr "已配置的间隔、日历边界或事件"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Time since the previous slow execution"
+msgstr "自上次 slow 执行以来的时间"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:228
+msgid "A Functor's group is fixed at registration by one priority chain: the `execution_group` argument, then the Functor's own `execution_group` attribute, then its characteristic time compared with two classification thresholds from the parameter database (`computation.scheduling.fast_group_max_characteristic_days` and `computation.scheduling.medium_group_max_characteristic_days`; current configuration example: 1 day and 10 days), then its temporal scale, then the `process_groups` configuration entry, and finally `fast` when nothing is declared. Every declared value is checked, also when a higher rule decides: an invalid group name, a characteristic time that is not a finite non-negative number of days, a temporal scale name that names no scale (rejected already when the Functor's metadata is built), or a `process_groups` entry that disagrees with the attribute, characteristic time, or temporal scale raises `ValueError` before anything is registered. To override a `process_groups` entry, pass the group as the argument. The thresholds classify processes; they are not execution intervals. The medium interval is `medium_interval_seconds`; the slow interval is `slow_interval_seconds` or, when that key is unset, the month of the configured calendar. A medium or slow group also runs when one of its Functors requests a bootstrap execution or when a registered event trigger fires; a bootstrap request is used up whenever the group runs. A group runs at most once per step: a step that crosses several boundaries runs it once over the whole elapsed interval."
+msgstr "Functor 的执行组在注册时按唯一优先链确定：先看 `execution_group` 参数，再看 Functor 自身的 `execution_group` 属性，再比较其特征时间与参数数据库中的两个分类阈值（`computation.scheduling.fast_group_max_characteristic_days` 和 `computation.scheduling.medium_group_max_characteristic_days`；当前配置示例为 1 天和 10 天），之后看时间尺度、`process_groups` 配置项，最后在完全未声明时采用 `fast`。即使较高优先规则已作出决定，也要检查所有声明：组名无效、特征时间不是有限且非负的天数、时间尺度名无对应尺度（构建 Functor 元数据时就会拒绝），或 `process_groups` 与属性、特征时间或时间尺度不一致，都会在注册任何内容之前抛出 `ValueError`。要覆盖 `process_groups` 配置项，应通过参数传入执行组。阈值只用于过程分类，不是执行间隔。中速间隔为 `medium_interval_seconds`；慢速间隔为 `slow_interval_seconds`，未设置该键时按配置历法的月份执行。某个 Functor 请求引导执行或已注册事件触发器触发时，中速或慢速组也会执行；该组一旦执行，引导请求即被消耗。每组每步最多执行一次：若一步跨过多个边界，则只针对全部已过去区间执行一次。"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:252
+msgid "Every call receives the start of the interval it covers as its `time` argument, plus any sub-step offset. The fast group starts at the step start; in Strang mode the second half-steps start half a step later; a medium or slow group starts at its last execution time. For example, a medium group last run at 0 s is called in the step from 1 s to 2 s with `time = 0` and `dt = 2`. How a process samples time-dependent forcing inside that interval is still a property of the process."
+msgstr "每次调用都将覆盖区间的起始时间，加上子步偏移，作为 `time` 参数。快速组从步骤起点开始；Strang 模式的后半步从半步之后开始；中速或慢速组从上次执行时刻开始。例如，上次在 0 s 执行的中速组，在 1 s 到 2 s 的步骤中接收 `time = 0` 和 `dt = 2`。过程如何在该区间内采样随时间变化的强迫，仍由过程自身决定。"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:260
+msgid "The adaptive option uses a scaled RMS metric over the state changes that the fast group committed. It is a control heuristic, not a Richardson or local-truncation-error estimate. A rejected first attempt is rolled back and retried at most once, over a shorter interval, and only when it is longer than the minimum step; an attempt at or below the minimum step is accepted with a warning. Only fast-group updates enter the metric. The retry result is accepted without a second check, so an accepted step can exceed the tolerance."
+msgstr "自适应选项对快速组已提交的状态变化计算缩放 RMS 指标。它是控制启发式方法，不是 Richardson 外推或局部截断误差估计。首次尝试被拒绝时会回滚，且仅在其步长大于最小步长时，才在更短区间上最多重试一次；步长等于或小于最小步长的尝试会被接受并记录警告。只有快速组更新进入指标。重试结果不经第二次检查就接受，因此已接受步骤仍可能超出容差。"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:269
+#, python-brace-format
+msgid "`RELICSimulator(None)` normalizes `None` to the empty configuration `{}`, under which `enable_auto_scale` defaults to `False`. Device selection is centralized in `relic\\core\\device_policy.py`. Pre-registration construction places every `FunctorBase` instance on a CPU placeholder until simulator registration migrates it to its resolved runtime device. `resolve_device(...)` evaluates seven precedence tiers:"
+msgstr "`RELICSimulator(None)` 会将 `None` 规范化为空配置 `{}`，在此配置下 `enable_auto_scale` 默认设为 `False`。设备选择集中由 `relic\\core\\device_policy.py` 管理。注册前的构造阶段会将每个 `FunctorBase` 实例置于 CPU 占位设备上，直至模拟器注册阶段将其迁移至解析后的运行时设备。`resolve_device(...)` 按顺序评估七个优先级层："
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:276
+msgid "`explicit_device` argument (unless `\"auto\"` or `\"default\"`);"
+msgstr "`explicit_device` 参数（值为 `\"auto\"` 或 `\"default\"` 时除外）；"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:277
+msgid "configuration per-functor or per-module overrides (`device_overrides` and `module_device_overrides` at root, `simulator`, or `runtime`);"
+msgstr "配置中的单 Functor 或单模块覆盖项（位于根级、`simulator` 或 `runtime` 节的 `device_overrides` 与 `module_device_overrides`）；"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:279
+msgid "runtime overrides from `set_device_overrides(...)` and environment overrides from `RELIC_DEVICE_OVERRIDES_JSON`;"
+msgstr "来自 `set_device_overrides(...)` 的运行时覆盖项与来自 `RELIC_DEVICE_OVERRIDES_JSON` 的环境变量覆盖项；"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:281
+msgid "configuration global `device` (at root, `simulator`, or `runtime`);"
+msgstr "配置中的全局 `device`（位于根级、`simulator` 或 `runtime` 节）；"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:282
+msgid "process-wide default device from `set_default_device(...)`;"
+msgstr "来自 `set_default_device(...)` 的进程级默认设备；"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:283
+msgid "`RELIC_DEFAULT_DEVICE` environment variable; and"
+msgstr "`RELIC_DEFAULT_DEVICE` 环境变量；以及"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:284
+msgid "distributed CUDA-first selection with automatic fallback to CPU when `distributed=True`, or the caller's `default` (`\"cpu\"` by default)."
+msgstr "`distributed=True` 时的分布式 CUDA 优先选择（不可用时回退至 CPU），或调用方传入的 `default`（默认为 `\"cpu\"`）。"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:287
+msgid "Invalid override mappings raise `TypeError` and unparseable device entries raise `RuntimeError`. Distributed and `auto` execution prefer CUDA and fall back automatically to CPU when CUDA is unavailable (unless `require_gpu=True` requires failure), whereas an explicit `enable_distributed: true` configuration that cannot be satisfied raises `RuntimeError`. Scientific modules must not perform scattered CUDA availability checks outside `relic\\core\\device_policy.py`."
+msgstr "无效的覆盖映射会抛出 `TypeError`，无法解析的设备条目会抛出 `RuntimeError`。分布式与 `auto` 执行模式优先选择 CUDA，并在 CUDA 不可用时回退至 CPU（除非 `require_gpu=True` 要求直接报错）；若显式设置的 `enable_distributed: true` 配置无法满足，则抛出 `RuntimeError`。科学模块不得在 `relic\\core\\device_policy.py` 之外零散检查 CUDA 可用性。"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:294
+msgid "Structural scientific layer"
+msgstr "结构化科学层"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:296
+msgid "RELIC reuses DEC and IPHS structures through `relic\\computation\\operators\\dec\\` and `relic\\computation\\operators\\iphs.py`. Structural declarations can establish typed cochain relationships, selected topological identities, operator symmetry or skew-symmetry, and declared port relationships."
+msgstr "RELIC 通过 `relic\\computation\\operators\\dec\\` 和 `relic\\computation\\operators\\iphs.py` 复用 DEC 与 IPHS 结构。结构声明可以建立 typed cochain 关系、选定的拓扑恒等式、operator 对称性或反对称性，以及已声明的 port 关系。"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:302
+msgid "They do not by themselves prove an executable reaction law, a closed material ledger, an energy or entropy closure, or a strict GENERIC implementation. Reaction processes that claim structured execution must evaluate the declared stoichiometric operator and rate law in the runtime path. Closed ledgers need a runtime conservation matrix; open ledgers need an explicit route."
+msgstr "这些结构本身不能证明存在可执行的反应定律、闭合的物质 ledger、能量或熵闭合，也不能证明实现了 strict GENERIC。声称采用结构化执行的反应过程，必须在 runtime path 中计算已声明的 stoichiometric operator 和 rate law。闭合 ledger 需要运行时 conservation matrix；开放 ledger 需要显式 route。"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:308
+msgid "`IPHSEquivalenceCertificate` is the only owner of the IPHS standardization level. Levels below strict IPHS must not be described as strict merely because they expose compatible fields or diagnostics."
+msgstr "`IPHSEquivalenceCertificate` 是 IPHS standardization level 的唯一 owner。低于 strict IPHS 的 level 不能仅因暴露了兼容字段或 diagnostic 就被描述为 strict。"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:312
+msgid "End-to-end assembly and execution"
+msgstr "端到端装配与执行"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:314
+msgid "RELIC separates model declaration, structural compilation, numerical execution, and state commitment. The separation is functional: passing one stage does not imply that a later stage has passed."
+msgstr "RELIC 将模型声明、结构编译、数值执行和状态提交分开。该分离具有实际执行含义：某一阶段通过，并不表示其后的阶段也已通过。"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:318
+msgid "`GraphExecutor` builds the planned Functors and registers them into one `RELICSimulator` per prepared run. The simulator's `step(...)` is the only scientific state advance; `GraphExecutor` never commits state itself. Three graphs are kept apart: the declared graph (GraphIR links and Functor dependencies), the resolved execution order used by the simulator, and the physical exchange graph of stocks and fluxes. An execution edge orders computations; it does not establish a conserved transfer."
+msgstr "`GraphExecutor` 构建计划中的 Functor，并在每次已准备的运行中将它们注册到一个 `RELICSimulator` 中。模拟器的 `step(...)` 是唯一的科学状态推进；`GraphExecutor` 自身从不进行状态提交。三种图相互分离：声明图（GraphIR 链接与 Functor 依赖）、模拟器使用的解析执行顺序，以及由储量和通量构成的物理交换图。执行边只决定计算的先后顺序，并不建立守恒的转移。"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:326
+msgid "The graph path is"
+msgstr "图装配路径为"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:328
+msgid ""
+"\n"
+"\\mathrm{GraphIR}\n"
+"\\xrightarrow{\\mathrm{validate\\_graph}}\n"
+"\\mathrm{ValidationReport}\n"
+"\\xrightarrow{\\mathrm{compile\\_graph}}\n"
+"\\mathrm{ExecutionPlan}.\n"
+msgstr ""
+"\n"
+"\\mathrm{GraphIR}\n"
+"\\xrightarrow{\\mathrm{validate\\_graph}}\n"
+"\\mathrm{ValidationReport}\n"
+"\\xrightarrow{\\mathrm{compile\\_graph}}\n"
+"\\mathrm{ExecutionPlan}.\n"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:336
+msgid "`compile_graph(...)` may proceed only under its selected strictness policy; a blocking validation issue is not converted into an executable scientific result. The runtime path for one Functor call can be written as"
+msgstr "`compile_graph(...)` 只能在所选严格性策略下继续；阻断性验证问题不会被转换为可执行的科学结果。单次 Functor 调用的运行时路径可写为"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:340
+msgid ""
+"\n"
+"\\mathcal{F}_i:\n"
+"(x,s_g,h_g,\\theta_i)\n"
+"\\longmapsto U_i,\n"
+"\\qquad\n"
+"U_i=\\{\\mathrm{UpdateItem}_{i,k}\\}_k,\n"
+msgstr ""
+"\n"
+"\\mathcal{F}_i:\n"
+"(x,s_g,h_g,\\theta_i)\n"
+"\\longmapsto U_i,\n"
+"\\qquad\n"
+"U_i=\\{\\mathrm{UpdateItem}_{i,k}\\}_k,\n"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:348
+msgid "followed by one governed commit per group call $g$ (the fast group, or each Strang sub-execution, then the medium and slow groups when due), all inside one step transaction"
+msgstr "随后，每个组调用 $g$（fast 组或每个 Strang 子执行，然后是到期的 medium 与 slow 组）各进行一次受治理的状态提交，全部位于同一个步事务之内"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:352
+msgid ""
+"\n"
+"x^{(g)}\n"
+"=\n"
+"\\mathcal{C}_{\\mathrm{StateManager}}\n"
+"\\left(\n"
+"x^{(g-1)},\n"
+"\\bigcup_{i\\in\\mathcal{A}_g}U_i;\n"
+"h_g,\\Gamma\n"
+"\\right),\n"
+"\\qquad x^{(0)}=x^n,\\quad x^{n+1}=x^{(G)},\n"
+msgstr ""
+"\n"
+"x^{(g)}\n"
+"=\n"
+"\\mathcal{C}_{\\mathrm{StateManager}}\n"
+"\\left(\n"
+"x^{(g-1)},\n"
+"\\bigcup_{i\\in\\mathcal{A}_g}U_i;\n"
+"h_g,\\Gamma\n"
+"\\right),\n"
+"\\qquad x^{(0)}=x^n,\\quad x^{n+1}=x^{(G)},\n"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:364
+msgid "where $\\theta_i$ is resolved by `UnifiedParameterManager`, $x$ is the committed or provisional state that Functor $i$ reads, $s_g$ is the start of the interval covered by group call $g$, $\\mathcal{A}_g$ is the dependency- and rate-selected active Functor set of group call $g$, $G$ is the number of group calls in the step, and $\\Gamma$ contains variable contracts, update modes, writer permissions, units, and conservation-domain membership. The interval $h_g$ is the step length for the fast group (the half or full step of a Strang sub-execution) and $t_{\\mathrm{future}}-t_{\\mathrm{last}}$ for a medium or slow group. The start $s_g$ is the step start $t_n$ for the fast group, for the first Strang half-steps, and for the middle full step; $t_n+h/2$ for the second Strang half-steps; and $t_{\\mathrm{last}}$ for a medium or slow group. A Functor with $m$ sub-steps is called $m$ times with $h_g/m$ at the times $s_g+k\\,h_g/m$, $k=0,\\ldots,m-1$. The step is accepted or rolled back as a whole: a failure later in the step restores every group commit of that step. The commit operator is not an unconditional sum: `REPLACE`, `ACCUMULATE`, flux integration, aliases, projections, and rejection or rollback retain their declared semantics."
+msgstr "其中 $\\theta_i$ 由 `UnifiedParameterManager` 解析，$x$ 是 Functor $i$ 读取的已提交或临时状态，$s_g$ 是组调用 $g$ 所覆盖区间的起始时间，$\\mathcal{A}_g$ 是组调用 $g$ 根据依赖和执行速率选择的活跃 Functor 集合，$G$ 为该步骤中的组调用次数，$\\Gamma$ 包含变量契约、更新模式、写入权限、单位和守恒域归属。快速组的区间 $h_g$ 为步长（Strang 子执行的半步或整步），中速或慢速组则采用 $t_{\\mathrm{future}}-t_{\\mathrm{last}}$。起点 $s_g$ 对快速组、Strang 的前半步和中间整步取步骤起点 $t_n$；后半步取 $t_n+h/2$；中速或慢速组取 $t_{\\mathrm{last}}$。具有 $m$ 个子步的 Functor 会在时刻 $s_g+k\\,h_g/m$、$k=0,\\ldots,m-1$ 被调用 $m$ 次，每次步长为 $h_g/m$。整个步骤统一接受或回滚：步骤后续阶段失败时，会恢复该步骤的所有组提交。提交算子不是无条件求和：`REPLACE`、`ACCUMULATE`、通量积分、别名、投影以及拒绝或回滚都保留各自声明的语义。"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Stage"
+msgstr "阶段"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Canonical owner"
+msgstr "规范 owner"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Consumes"
+msgstr "输入"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Produces"
+msgstr "输出"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Blocking condition"
+msgstr "阻断条件"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Parameter and contract loading"
+msgstr "参数与契约加载"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`UnifiedParameterManager`, `ContractRegistry`"
+msgstr "`UnifiedParameterManager`、`ContractRegistry`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Parameter YAML and variable contracts"
+msgstr "参数 YAML 与变量契约"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Typed values, metadata, aliases, writer and ledger rules"
+msgstr "类型化数值、metadata、alias、writer 与账本规则"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Missing required value, invalid unit/bounds, or inconsistent contract"
+msgstr "缺少必需值、单位或 bounds 非法、契约不一致"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Graph declaration"
+msgstr "图声明"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`GraphIR`"
+msgstr "`GraphIR`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`NodeSpec`, `LinkSpec`, ports, assertions, and configuration"
+msgstr "`NodeSpec`、`LinkSpec`、port、assertion 与配置"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Declarative model graph"
+msgstr "声明式模型图"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Malformed or contradictory declarations"
+msgstr "声明格式错误或相互矛盾"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Definition and port binding"
+msgstr "定义与 port 绑定"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`NodeRegistry`, `SSOTCatalog`"
+msgstr "`NodeRegistry`、`SSOTCatalog`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Class types and variable identities"
+msgstr "类类型与变量 identity"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`NodeDefinition` and authoritative `PortSpec` objects"
+msgstr "`NodeDefinition` 与权威 `PortSpec` 对象"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Unknown class, missing port, or unit/dimension mismatch"
+msgstr "类未知、port 缺失、单位或量纲不匹配"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Structural validation"
+msgstr "结构验证"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`validate_graph(...)`, `ValidationRegistry`"
+msgstr "`validate_graph(...)`、`ValidationRegistry`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Graph, registry, SSOT catalog, and assertion payloads"
+msgstr "图、registry、SSOT catalog 与 assertion payload"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`ValidationReport`"
+msgstr "`ValidationReport`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Blocking graph, dependency, port, unit, topology, or scientific assertion issue"
+msgstr "阻断性的图、依赖、port、单位、拓扑或科学 assertion 问题"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Compilation"
+msgstr "编译"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`compile_graph(...)`"
+msgstr "`compile_graph(...)`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Validated graph and registered definitions"
+msgstr "已验证的图与已注册定义"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Sealed `ExecutionPlan` and compile report"
+msgstr "带 seal 的 `ExecutionPlan` 与编译报告"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Unresolved adapter, definition, topology, or compiler invariant"
+msgstr "adapter、定义或拓扑未解析，或编译器不变量不成立"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Registration and scheduling"
+msgstr "注册与调度"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`RELICSimulator` dependency and registration owners"
+msgstr "`RELICSimulator` 的依赖与注册 owner"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Functor instances and execution plan"
+msgstr "Functor 实例与执行计划"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Device-assigned fast/medium/slow execution order"
+msgstr "已分配设备的 fast/medium/slow 执行顺序"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Duplicate writer, unresolved required dependency, or invalid device policy"
+msgstr "writer 重复、必需依赖未解析或 device policy 非法"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Functor execution"
+msgstr "Functor 执行"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`FunctorBase.__call__(...)` and the concrete `forward(...)`"
+msgstr "`FunctorBase.__call__(...)` 与具体 `forward(...)`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Current or provisional state, time, `dt`, and resolved parameters"
+msgstr "当前或 provisional state、时间、`dt` 与已解析参数"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "State proposals (`UpdateItem`), diagnostics (`diagnostics.*` names or `DERIVED` outputs), and top-level `ExternalIntent` requests that are delivered only after the step is accepted"
+msgstr "状态提议（`UpdateItem`）、诊断量（`diagnostics.*` 名称或 `DERIVED` 输出），以及仅在该步被接受后才投递的顶层 `ExternalIntent` 请求"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Invalid input, execution failure, local conservation failure, or validation failure"
+msgstr "输入非法、执行失败、局部守恒失败或验证失败"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Transactional state commit"
+msgstr "事务性状态提交"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "`StateManager.apply_updates(...)`"
+msgstr "`StateManager.apply_updates(...)`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Numeric updates, source map, increment metadata, contracts, and `dt`"
+msgstr "数值更新、source map、increment metadata、契约与 `dt`"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Committed state, provenance, and conservation ledger"
+msgstr "已提交状态、provenance 与守恒账本"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Unauthorized write, incompatible update, non-finite result, failed constraint, or rollback condition"
+msgstr "未授权写入、更新不兼容、结果非有限、约束失败或触发回滚"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Persistence and publication output"
+msgstr "持久化与发布输出"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Existing checkpoint and data-writer owners"
+msgstr "现有 checkpoint 与 data-writer owner"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Committed state and run identity"
+msgstr "已提交状态与运行 identity"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Checkpoint receipt, data artifact, metadata, and hash"
+msgstr "checkpoint receipt、数据工件、metadata 与哈希"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:26
+msgid "Incompatible checkpoint, incomplete output contract, or write failure"
+msgstr "checkpoint 不兼容、输出契约不完整或写入失败"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:395
+msgid "Within one group call, the simulator builds a provisional state so that a later Functor of the same call, such as a declared downstream dependency, can consume an upstream result. That provisional state is not an independent state owner; the authoritative state changes only through the `StateManager.apply_updates(...)` call at the end of that group call. A failure later in the same step restores all group commits of that step. In `strang` mode every sub-execution is its own group call, so a downstream Functor reads the upstream result from the state committed by the upstream's earlier sub-execution, not from a shared provisional state. A Functor that declares `subprocess_outputs` receives the upstream's returned outputs from the dependency-output map that all `2n - 1` sub-executions of the fast-group composition share; these are the outputs of the upstream's most recent earlier sub-execution, its first half-step over `[t, t + h/2]`. The same composition merges each Functor's diagnostics over its sub-executions by the rule that merges the returned outputs, and StateManager stores the merged values, so the stored diagnostics of a step equal the returned ones."
+msgstr "一次组调用内，模拟器构建临时状态，使同次调用中较晚执行的 Functor（例如已声明的下游依赖）能够使用上游结果。该临时状态不是独立的状态所有者；权威状态只通过该组调用结束时的 `StateManager.apply_updates(...)` 改变。同一步骤后续阶段失败时，会恢复该步骤的全部组提交。在 `strang` 模式下，每次子执行都是独立的组调用，因此下游 Functor 从上游先前子执行已提交的状态读取结果，而不是从共享临时状态读取。声明 `subprocess_outputs` 的 Functor 从依赖输出映射接收上游返回值；快速组组合的全部 `2n - 1` 次子执行共享该映射。读到的是上游最近一次先行子执行的输出，即 `[t, t + h/2]` 上的首个半步结果。同一组合也按返回输出的合并规则，合并每个 Functor 各次子执行的诊断量；StateManager 存储合并值，因此步骤存储的诊断量与返回值一致。"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:412
+msgid "Connection and conservation rules"
+msgstr "连接与守恒规则"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:414
+msgid "An execution dependency is a declared ordering and data contract. If an edge $i\\rightarrow j$ is active, $j$ may consume only the declared output of $i$ with compatible identity, units, shape, support, and temporal semantics. The following rules apply:"
+msgstr "执行依赖是一项已声明的顺序与数据契约。当边 $i\\rightarrow j$ 生效时，$j$ 只能读取 $i$ 已声明且在 identity、单位、shape、support 和时间语义上兼容的输出。具体规则如下："
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:419
+msgid "A concrete Functor does not call another concrete Functor directly. Composition is expressed through metadata, GraphIR links, ports, adapters, and the simulator dependency graph."
+msgstr "具体 Functor 不直接调用另一个具体 Functor。组合关系通过 metadata、GraphIR link、port、adapter 和 simulator dependency graph 表达。"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:422
+msgid "Parameters flow from `UnifiedParameterManager` into Functors; GraphIR and `StateManager` do not become secondary parameter stores."
+msgstr "参数从 `UnifiedParameterManager` 流入 Functor；GraphIR 和 `StateManager` 不成为第二参数存储。"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:424
+msgid "Diagnostics are reported outputs. They do not acquire prognostic ownership unless a separate variable contract explicitly authorizes that role."
+msgstr "Diagnostic 是报告输出。除非独立变量契约明确授权，否则 diagnostic 不获得预报状态所有权。"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:426
+msgid "Unit, support, temporal, and spatial changes require a declared executable adapter. A metadata relabel is not a conversion."
+msgstr "单位、support、时间或空间尺度变换需要已声明的可执行 adapter。只修改 metadata 标签不构成转换。"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:428
+msgid "A Functor-level conservation check proves only its declared local ledger or constitutive relation. System conservation also requires compatible ports, common support and units, and the relevant storage change."
+msgstr "Functor 级守恒检查仅证明其已声明的局部账本或本构关系。系统级守恒还要求端口兼容、支撑域与单位一致，并计入相应的储量变化。"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:432
+msgid "For a declared storage $S$, a step ledger has the form"
+msgstr "对于已声明储量 $S$，单步账本形式为"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:434
+msgid ""
+"\n"
+"R_S\n"
+"=\n"
+"\\left(S^{n+1}-S^n\\right)\n"
+"-\n"
+"\\Delta t\n"
+"\\left(\n"
+"\\sum F_{\\mathrm{in}}\n"
+"-\n"
+"\\sum F_{\\mathrm{out}}\n"
+"\\right).\n"
+msgstr ""
+"\n"
+"R_S\n"
+"=\n"
+"\\left(S^{n+1}-S^n\\right)\n"
+"-\n"
+"\\Delta t\n"
+"\\left(\n"
+"\\sum F_{\\mathrm{in}}\n"
+"-\n"
+"\\sum F_{\\mathrm{out}}\n"
+"\\right).\n"
+
+#: <RELIC_ROOT>/docs/source/public/architecture.md:447
+msgid "The residual is meaningful only after every term is mapped to the same quantity, unit, spatial support, and time interval. A zero structural residual, a successful process exit, or `C N = 0` for one closed reaction ledger does not by itself prove whole-system mass, energy, entropy, or strict GENERIC closure. The detailed equations and applicability conditions are maintained in the [theory guide](theory/index.rst); class-specific ports and runtime equations are maintained in the [scientific class reference](science/index.rst)."
+msgstr "只有当每一项都映射到相同物理量、单位、空间 support 和时间区间后，该 residual 才有意义。结构 residual 为零、进程成功退出，或某个闭合反应账本满足 `C N = 0`，均不能单独证明全系统质量、能量、熵或 strict GENERIC 闭合。详细方程和适用条件由[理论指南](theory/index.rst)维护；类级 port 与运行方程由[科学类参考](science/index.rst)维护。"
+

@@ -1,0 +1,35 @@
+variable: diagnostics.water_carbon.temperature_response_factor_uncapped
+title: "Water-Carbon Uncapped Temperature Response"
+description: "Q10 soil temperature response f_T [1] of WaterCarbonCoupling before the cap c_T; the factor of the decomposition rate modifier k_dec = f_theta f_T, which may exceed one at warm temperatures."
+kind: diagnostic
+dimension:
+  udunits: "1"
+  cf_standard_name: null
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Davidson, E.A., Samanta, S., Caramori, S.S. and Savage, K. (2012). Global Change Biology 18, 371-384"
+  - "Moyano, F.E., Manzoni, S. and Chenu, C. (2013). Soil Biology and Biochemistry 59, 72-85"
+numerics:
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies: []
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/coupling/internal/water_carbon.py"
+  runtime_role: "water_carbon_response_factor_diagnostic"
+  runtime_writer: null
+  note: "Declared diagnostics output of WaterCarbonCoupling (instance name chosen by the caller); partition_outputs routes it to the diagnostics channel, so it is never committed as state. Readers: WaterCarbonCoupling.check_conservation_laws (local consistency check of every governed call) and diagnose_conservation."

@@ -1,0 +1,163 @@
+schema_version: 2.0.0
+tier: relic
+namespace: computation.diagnostics
+description: Settings of the computation CLI diagnostics (operator-splitting sensitivity scan and synthetic dynamical-feature
+  benchmark) used when the command line does not state them
+metadata:
+  created_by: RELIC Parameter System
+  last_modified: '2026-09-26T00:00:00Z'
+  schema_url: https://github.com/relic/parameter-schema/v2.0.0
+  version: 1.0.0
+parameters:
+  computation.diagnostics.splitting_sensitivity.max_permutations:
+    value: 6
+    default: 6
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 5040
+    category: computational
+    description: Maximum number of fast-group orderings sampled by `relic compute splitting-sensitivity` when
+      --n-permutations is not given. Six covers every ordering of three Functors (3! = 6); larger groups are sampled.
+      The value is a RELIC convention, not a literature threshold.
+    references:
+    - Strang, G. (1968). On the construction and comparison of difference schemes. SIAM J. Numer. Anal. 5, 506-517
+    - RELIC convention value (no literature threshold; 3! orderings of a three-Functor group)
+    tags:
+    - computation
+    - diagnostics
+    - operator_splitting
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  computation.diagnostics.dynamical_benchmark.series_length:
+    value: 256
+    default: 256
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 16
+    - 1048576
+    category: computational
+    description: Number of samples of the synthetic trajectory of `relic compute dynamical-benchmark` when --series-length
+      is not given. With the sampling interval it sets the spectral resolution 1 / (N dt) of the reported metrics. The
+      value is a RELIC convention (a power of two for the FFT), not a literature threshold.
+    references:
+    - Press, W.H. et al. (2007). Numerical Recipes, 3rd ed., Cambridge University Press, Sect. 12.2 (FFT length)
+    - RELIC convention value (no literature threshold)
+    tags:
+    - computation
+    - diagnostics
+    - benchmark
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  computation.diagnostics.dynamical_benchmark.sampling_interval:
+    value: 60.0
+    default: 60.0
+    units: s
+    dtype: float64
+    bounds:
+    - 1.0e-06
+    - 86400.0
+    category: computational
+    description: Sampling interval of the synthetic trajectory of `relic compute dynamical-benchmark` when --dt is not
+      given. The value is a RELIC convention, not a literature threshold.
+    references:
+    - RELIC convention value (no literature threshold)
+    tags:
+    - computation
+    - diagnostics
+    - benchmark
+    dimension: time
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  computation.diagnostics.dynamical_benchmark.dominant_frequency:
+    value: 2.777777777777778e-04
+    default: 2.777777777777778e-04
+    units: s-1
+    dtype: float64
+    bounds:
+    - 1.0e-09
+    - 1000.0
+    category: computational
+    description: Dominant frequency of the synthetic signal of `relic compute dynamical-benchmark` when --frequency is not
+      given (one cycle per hour, 1/3600 s-1). It must stay below the Nyquist frequency 1 / (2 dt). The value is a RELIC
+      convention, not a literature threshold.
+    references:
+    - RELIC convention value (no literature threshold; one cycle per hour)
+    tags:
+    - computation
+    - diagnostics
+    - benchmark
+    dimension: frequency
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  computation.diagnostics.dynamical_benchmark.structure_function_max_lag:
+    value: 50
+    default: 50
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 1000000
+    category: computational
+    description: Upper cap of the largest lag (in samples) of the second-order structure function of `relic compute
+      dynamical-benchmark`; the largest lag is min(cap, max(1, n // d)) with n the series length and d
+      computation.diagnostics.dynamical_benchmark.structure_function_lag_divisor. A RELIC convention value.
+    references:
+    - Pope, S.B. (2000). Turbulent Flows. Cambridge University Press (structure functions)
+    - RELIC convention value (documented as an operational choice)
+    tags:
+    - computation
+    - diagnostics
+    - benchmark
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  computation.diagnostics.dynamical_benchmark.structure_function_lag_divisor:
+    value: 4
+    default: 4
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 1000000
+    category: computational
+    description: Divisor d of the series length n in the largest structure-function lag min(cap, max(1, n // d)) of `relic
+      compute dynamical-benchmark`, so that every lag keeps at least (1 - 1/d) n increments. A RELIC convention
+      value.
+    references:
+    - RELIC convention value (documented as an operational choice)
+    tags:
+    - computation
+    - diagnostics
+    - benchmark
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'

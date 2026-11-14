@@ -1,0 +1,86 @@
+schema_version: 2.0.0
+tier: relic
+namespace: coupling.scales.efficiencies
+description: Definitions for dimensionless efficiency diagnostics used in multi-cycle conservation tests
+metadata:
+  version: 1.0.0
+parameters:
+  coupling.scales.efficiencies.efficiency_max_clamp:
+    value: 0.00099
+    default: 0.00099
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: numerical_threshold
+    description: Maximum allowed value for efficiency-like ratios used in temporal aggregation diagnostics
+    references:
+    - Beer et al. (2009) water use efficiency ranges
+    tags:
+    - efficiency
+    - clamp
+    - quality_control
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: coupling.scales.spec
+      schema_version: 2.0.0
+      created_by: relic-parameter-cleanup
+      last_modified: '2025-12-08T00:00:00Z'
+  coupling.scales.efficiencies.water_use_efficiency:
+    value:
+      numerator_state: carbon_input
+      denominator_state: water_input
+      scale_factor: 86400000.0
+      aggregation_method: mean
+      notes: Converts carbon flux (kg m-2 s-1) and water depth flux (m s-1) into kg C per kg H2O
+    default: null
+    units: dimensionless
+    dtype: object
+    bounds:
+    - 0.0
+    - 1000.0
+    category: efficiency_definition
+    description: Water use efficiency derived from flux ratios following Beer et al. (2009)
+    references:
+    - 'Beer et al. (2009), Science 329: 940-943'
+    - FAO-56 Crop Evapotranspiration
+    tags:
+    - water_use_efficiency
+    - ratio_definition
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: coupling.scales.spec
+      schema_version: 2.0.0
+      created_by: relic-parameter-cleanup
+      last_modified: '2025-11-12T00:00:00Z'
+  coupling.scales.efficiencies.energy_use_efficiency:
+    value:
+      numerator_state: carbon_input
+      denominator_state: energy_input
+      scale_factor: 0.0864
+      aggregation_method: mean
+      notes: Converts energy flux (W m-2) into MJ m-2 day-1 before forming kg C per MJ
+    default: null
+    units: dimensionless
+    dtype: object
+    bounds:
+    - 0.0
+    - 1000.0
+    category: efficiency_definition
+    description: Energy use efficiency defined as carbon uptake per unit absorbed energy
+    references:
+    - 'Field et al. (1998), Science 281: 237-240'
+    - Monteith & Unsworth (2013) Principles of Environmental Physics
+    tags:
+    - energy_use_efficiency
+    - ratio_definition
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: coupling.scales.spec
+      schema_version: 2.0.0
+      created_by: relic-parameter-cleanup
+      last_modified: '2025-11-12T00:00:00Z'

@@ -1,0 +1,97 @@
+schema_version: 2.0.0
+tier: relic
+namespace: validation.numerical_stability
+description: Global numerical stability thresholds shared across scientific functors
+metadata:
+  created_by: RELIC Parameter System
+  last_modified: '2026-01-07T14:20:26Z'
+  schema_url: https://github.com/relic/parameter-schema/v2.0.0
+  version: 1.0.0
+parameters:
+  validation.numerical_stability.max_newton_iterations:
+    value: 12
+    default: 12
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 5
+    - 20
+    category: numerical_stability
+    description: Maximum Newton iterations before triggering sub-stepping or damping
+    references:
+    - Press et al. (2007) Numerical Recipes
+    - Kelley (1995) Iterative Methods for Linear and Nonlinear Equations
+    tags:
+    - solver
+    - stability_guard
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_recipes_defaults
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-11-10T00:00:00Z'
+  validation.numerical_stability.min_time_step:
+    value: 1.0
+    default: 1.0
+    units: s
+    dtype: float64
+    bounds:
+    - 1.0
+    - 3600.0
+    category: numerical_stability
+    description: Absolute minimum time step allowed after sub-stepping
+    references:
+    - Guenther et al. (2012) MEGAN2.1
+    tags:
+    - adaptive_time_step
+    dimension: time
+    requires_grad: false
+    provenance:
+      source: coupled_process_defaults
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-11-10T00:00:00Z'
+  validation.numerical_stability.max_time_step:
+    value: 86400.0
+    default: 86400.0
+    units: s
+    dtype: float64
+    bounds:
+    - 3600.0
+    - 172800.0
+    category: numerical_stability
+    description: Upper guard on adaptive step re-growth to keep diagnostics stable
+    references:
+    - Press et al. (2007) Numerical Recipes
+    tags:
+    - adaptive_time_step
+    dimension: time
+    requires_grad: false
+    provenance:
+      source: coupled_process_defaults
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-11-10T00:00:00Z'
+  validation.numerical_stability.damping_factor:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 0.9
+    category: numerical_stability
+    description: Line-search damping factor applied when Newton step diverges
+    references:
+    - Press et al. (2007) Numerical Recipes
+    tags:
+    - solver
+    - damping
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_recipes_defaults
+      schema_version: 2.0.0
+      created_by: relic
+      last_modified: '2025-11-10T00:00:00Z'

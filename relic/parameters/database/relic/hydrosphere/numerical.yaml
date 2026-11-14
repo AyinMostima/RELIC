@@ -1,0 +1,901 @@
+schema_version: 2.0.0
+tier: relic
+namespace: hydrosphere.numerical
+description: Numerical computation parameters for hydrosphere processes including convergence criteria, stability limits, and solver configurations
+metadata:
+  created_by: RELIC Parameter System
+  last_modified: '2026-01-07T14:20:26Z'
+  schema_url: https://github.com/relic/parameter-schema/v2.0.0
+  version: 1.0.0
+parameters:
+  hydrosphere.numerical.richards_cfl_coefficient:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 1.0
+    category: numerical_stability
+    description: Courant-Friedrichs-Lewy (CFL) stability coefficient for Richards equation time stepping
+    references:
+    - Courant et al. (1928) Math. Ann. 100:32-74
+    - Celia et al. (1990) Water Resour. Res. 26:1483-1496
+    tags:
+    - cfl_condition
+    - time_stepping
+    - stability
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_methods_literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-08-25T00:00:00Z'
+  hydrosphere.numerical.richards_convergence_tolerance:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: m3 m-3
+    dtype: float32
+    bounds:
+    - 1.0e-12
+    - 0.001
+    category: convergence_criterion
+    description: Primary convergence tolerance for Richards equation Picard iteration
+    references:
+    - Celia et al. (1990) Water Resour. Res. 26:1483-1496
+    - Lehmann & Ackerer (1998) Adv. Water Resour. 21:97-107
+    tags:
+    - convergence
+    - picard_iteration
+    - numerical_tolerance
+    dimension: volume_fraction
+    requires_grad: false
+    provenance:
+      source: numerical_methods_optimization
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-08-25T00:00:00Z'
+  hydrosphere.numerical.richards_newton_absolute_tolerance:
+    value: 1.0e-08
+    default: 1.0e-08
+    units: m3 m-3
+    dtype: float32
+    bounds:
+    - 1.0e-16
+    - 0.001
+    category: convergence_criterion
+    description: Absolute tolerance for Newton-Raphson method in Richards equation solver
+    references:
+    - Lehmann & Ackerer (1998) Adv. Water Resour. 21:97-107
+    - Kelley (2003) Solving Nonlinear Equations with Newton's Method
+    tags:
+    - newton_raphson
+    - absolute_tolerance
+    - nonlinear_solver
+    dimension: volume_fraction
+    requires_grad: false
+    provenance:
+      source: nonlinear_solver_theory
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-08-25T00:00:00Z'
+  hydrosphere.numerical.richards_newton_relative_tolerance:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-12
+    - 0.001
+    category: convergence_criterion
+    description: Relative tolerance for Newton-Raphson method in Richards equation solver
+    references:
+    - Lehmann & Ackerer (1998) Adv. Water Resour. 21:97-107
+    - Kelley (2003) Solving Nonlinear Equations with Newton's Method
+    tags:
+    - newton_raphson
+    - relative_tolerance
+    - nonlinear_solver
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: nonlinear_solver_theory
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-08-25T00:00:00Z'
+  hydrosphere.numerical.richards_max_picard_iterations:
+    value: 50
+    default: 50
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 100
+    category: iteration_limit
+    description: Maximum number of Picard iterations for Richards equation linearization
+    references:
+    - Celia et al. (1990) Water Resour. Res. 26:1483-1496
+    tags:
+    - picard_iteration
+    - iteration_limit
+    - linearization
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: computational_experience
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-07-23T00:00:00Z'
+  hydrosphere.numerical.richards_max_newton_iterations:
+    value: 50
+    default: 50
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 200
+    category: iteration_limit
+    description: Maximum number of Newton-Raphson iterations for Richards equation
+    references:
+    - Lehmann & Ackerer (1998) Adv. Water Resour. 21:97-107
+    - Kelley (2003) Solving Nonlinear Equations with Newton's Method
+    tags:
+    - newton_raphson
+    - iteration_limit
+    - nonlinear_solver
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: nonlinear_solver_experience
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-08-25T00:00:00Z'
+  hydrosphere.numerical.mass_conservation_tolerance:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-12
+    - 0.001
+    category: conservation_check
+    description: Tolerance for mass conservation validation in hydrosphere processes
+    references:
+    - Celia et al. (1990) Water Resour. Res. 26:1483-1496
+    tags:
+    - mass_conservation
+    - validation
+    - numerical_accuracy
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: conservation_laws
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-08-25T00:00:00Z'
+  hydrosphere.numerical.mass_conservation_tolerance_mm:
+    value: 1.0
+    default: 1.0
+    units: mm
+    dtype: float32
+    bounds:
+    - 0.0
+    - 10.0
+    category: conservation_check
+    description: Absolute mass balance tolerance for canopy interception checks in millimeters
+    references:
+    - Rutter et al. (1971) J. Appl. Ecol. 8:667-689
+    - Gash (1979) Q. J. R. Meteorol. Soc. 105:43-55
+    tags:
+    - mass_conservation
+    - canopy_interception
+    - validation
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: canopy_water_balance
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-21T00:00:00Z'
+  hydrosphere.numerical.minimum_timestep_tolerance:
+    value: 1.0e-12
+    default: 1.0e-12
+    units: s
+    dtype: float32
+    bounds:
+    - 1.0e-15
+    - 1.0e-06
+    category: numerical_stability
+    description: Minimum timestep used to avoid division by zero in groundwater updates
+    references:
+    - Numerical stability constraint for time integration
+    tags:
+    - timestep
+    - numerical_stability
+    dimension: time
+    requires_grad: false
+    provenance:
+      source: numerical_implementation
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-21T00:00:00Z'
+  hydrosphere.numerical.epsilon_small:
+    value: 1.0e-09
+    default: 1.0e-09
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-12
+    - 1.0e-06
+    category: numerical_stability
+    description: Small numerical epsilon for stability in groundwater and snow calculations
+    references:
+    - Numerical stability constraint for division and thresholding
+    tags:
+    - epsilon
+    - numerical_stability
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_implementation
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-21T00:00:00Z'
+  hydrosphere.numerical.minimum_flux_threshold:
+    value: 1.0e-08
+    default: 1.0e-08
+    units: kg m-2 s-1
+    dtype: float32
+    bounds:
+    - 1.0e-12
+    - 0.0001
+    category: numerical_stability
+    description: Minimum flux threshold used in diagnostic ratio calculations
+    references:
+    - Numerical stability constraint for flux diagnostics
+    tags:
+    - flux
+    - numerical_stability
+    - diagnostics
+    dimension: mass_flux
+    requires_grad: false
+    provenance:
+      source: numerical_implementation
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-27T00:00:00Z'
+  hydrosphere.numerical.minimum_storage_outflow:
+    value: 1.0e-08
+    default: 1.0e-08
+    units: mm
+    dtype: float32
+    bounds:
+    - 1.0e-12
+    - 0.0001
+    category: numerical_stability
+    description: Minimum storage outflow used to avoid division by zero in storage scaling
+    references:
+    - Numerical stability constraint for storage outflow scaling
+    tags:
+    - storage
+    - numerical_stability
+    - flux
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: numerical_implementation
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-27T00:00:00Z'
+  hydrosphere.numerical.recession_coefficient_minimum:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: s-1
+    dtype: float32
+    bounds:
+    - 1.0e-12
+    - 0.001
+    category: numerical_stability
+    description: Minimum recession coefficient used to avoid division by zero
+    references:
+    - Numerical stability constraint for recession time calculation
+    tags:
+    - recession
+    - numerical_stability
+    dimension: frequency
+    requires_grad: false
+    provenance:
+      source: numerical_implementation
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-27T00:00:00Z'
+  hydrosphere.numerical.aerodynamic_conductance_bounds:
+    value:
+    - 0.001
+    - 1.0
+    default: null
+    units: m s-1
+    dtype: list
+    bounds:
+    - - 0.0001
+      - 0.01
+    - - 0.1
+      - 10.0
+    category: physical_bounds
+    description: Physical bounds for aerodynamic conductance [min, max]
+    references:
+    - Monteith (1965) Symp. Soc. Exp. Biol. 19:205-224
+    - Allen et al. (1998) FAO-56 Irrigation Paper
+    tags:
+    - aerodynamic_conductance
+    - physical_bounds
+    - wind_profile
+    dimension: velocity
+    requires_grad: false
+    provenance:
+      source: boundary_layer_meteorology
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-08-25T00:00:00Z'
+  hydrosphere.numerical.saturation_epsilon:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-12
+    - 0.001
+    category: numerical_stability
+    description: Small epsilon for effective saturation bounds to avoid numerical issues
+    references:
+    - van Genuchten, M.T. (1980) Soil Sci. Soc. Am. J. 44:892-898
+    tags:
+    - effective_saturation
+    - van_genuchten
+    - numerical_bounds
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: soil_physics_modeling
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-08-25T00:00:00Z'
+  hydrosphere.numerical.temperature_bounds:
+    value:
+    - 273.15
+    - 323.15
+    default: null
+    units: K
+    dtype: list
+    bounds:
+    - - 183.15
+      - 273.15
+    - - 323.15
+      - 373.15
+    category: physical_bounds
+    description: 'Admitted near-surface air temperature for hydrosphere calculations [min, max]. The default
+      keeps 273.15 K as minimum because the default sub-freezing phase of the evapotranspiration laws is liquid.
+      A run with sub_freezing_phase ice may set the minimum down to 183.15 K (range widened on 2026-11-05 from
+      223.15 K for global daily runs, terrestrial record low -89.2 degC): the Tetens form over ice deviates
+      from Goff-Gratch by -1.6 percent at 233.15 K, -4.7 percent at 213.15 K and -7.2 percent at 203.15 K,
+      where the saturation vapour pressure is below 0.3 Pa.'
+    references:
+    - WMO Guide to Meteorological Instruments
+    - WMO Archive of Weather and Climate Extremes
+    - Murray (1967), J. Appl. Meteor. 6, 203-204; Goff and Gratch (1946)
+    tags:
+    - temperature
+    - physical_bounds
+    - environmental_limits
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: meteorological_standards
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-08-25T00:00:00Z'
+  hydrosphere.numerical.minimum_drainage_flux:
+    value: 1.0e-08
+    default: 1.0e-08
+    units: kg m-2 s-1
+    dtype: float32
+    bounds:
+    - 1.0e-12
+    - 1.0e-06
+    category: numerical_threshold
+    description: Minimum threshold for drainage flux calculations
+    references:
+    - Soil Water Dynamics Literature
+    tags:
+    - drainage
+    - flux_threshold
+    - numerical_cutoff
+    dimension: mass_flux
+    requires_grad: false
+    provenance:
+      source: hydrological_modeling
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-08-25T00:00:00Z'
+  hydrosphere.numerical.line_search_max_backtracks:
+    value: 10
+    default: 10
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 50
+    category: iteration_limit
+    description: Maximum number of backtracking steps in line search for Newton methods
+    references:
+    - Nocedal & Wright (2006) Numerical Optimization
+    - Kelley (2003) Solving Nonlinear Equations with Newton's Method
+    tags:
+    - line_search
+    - newton_raphson
+    - backtracking
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: optimization_theory
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-08-25T00:00:00Z'
+  hydrosphere.numerical.line_search_armijo_constant:
+    value: 0.0001
+    default: 0.0001
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-06
+    - 0.1
+    category: computational
+    description: Armijo constant for sufficient decrease condition in line search
+    references:
+    - Armijo (1966) Pacific J. Math. 16:1-3
+    - Nocedal & Wright (2006) Numerical Optimization
+    tags:
+    - line_search
+    - armijo_condition
+    - convergence_control
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: optimization_theory
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-08-25T00:00:00Z'
+  hydrosphere.numerical.minimum_timestep:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: s
+    dtype: float32
+    bounds:
+    - 1.0e-12
+    - 0.001
+    category: numerical_stability
+    description: Minimum time step to avoid numerical issues in Richards equation
+    references:
+    - Celia et al. (1990) Water Resour. Res. 26:1483-1496
+    tags:
+    - time_stepping
+    - numerical_stability
+    - richards_equation
+    dimension: time
+    requires_grad: false
+    provenance:
+      source: numerical_methods_optimization
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-08-25T00:00:00Z'
+  hydrosphere.numerical.minimum_pressure_term:
+    value: 1.0e-10
+    default: 1.0e-10
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-15
+    - 1.0e-06
+    category: numerical_stability
+    description: Minimum value for pressure term in van Genuchten model to avoid numerical issues
+    references:
+    - van Genuchten (1980) Soil Sci. Soc. Am. J. 44:892-898
+    tags:
+    - van_genuchten
+    - numerical_stability
+    - pressure_head
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_implementation
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-08-25T00:00:00Z'
+  hydrosphere.numerical.minimum_se_term:
+    value: 1.0e-10
+    default: 1.0e-10
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-15
+    - 1.0e-06
+    category: numerical_stability
+    description: Minimum value for effective saturation term to avoid numerical issues
+    references:
+    - van Genuchten (1980) Soil Sci. Soc. Am. J. 44:892-898
+    tags:
+    - effective_saturation
+    - numerical_stability
+    - van_genuchten
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_implementation
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-08-25T00:00:00Z'
+  hydrosphere.numerical.minimum_term1:
+    value: 1.0e-10
+    default: 1.0e-10
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-15
+    - 1.0e-06
+    category: numerical_stability
+    description: Minimum value for intermediate term1 in van Genuchten derivative calculation
+    references:
+    - van Genuchten (1980) Soil Sci. Soc. Am. J. 44:892-898
+    tags:
+    - van_genuchten
+    - numerical_stability
+    - derivative_calculation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_implementation
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-08-25T00:00:00Z'
+  hydrosphere.numerical.tridiagonal_tolerance:
+    value: 1.0e-10
+    default: 1.0e-10
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-15
+    - 1.0e-06
+    category: numerical_stability
+    description: Tolerance for tridiagonal matrix solver convergence
+    references:
+    - Press et al. (2007) Numerical Recipes, 3rd Ed.
+    tags:
+    - tridiagonal_solver
+    - numerical_tolerance
+    - matrix_solver
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_recipes
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-08-25T00:00:00Z'
+  hydrosphere.numerical.line_search_min_alpha:
+    value: 0.0001
+    default: 0.0001
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-08
+    - 0.01
+    category: computational
+    description: Minimum step size alpha in line search algorithm
+    references:
+    - Nocedal & Wright (2006) Numerical Optimization
+    tags:
+    - line_search
+    - step_size
+    - optimization
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: optimization_theory
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-08-25T00:00:00Z'
+  hydrosphere.numerical.minimum_wind_speed:
+    value: 0.1
+    default: 0.1
+    units: m s-1
+    dtype: float32
+    bounds:
+    - 0.01
+    - 0.5
+    category: numerical_stability
+    description: Minimum wind speed for aerodynamic calculations to prevent division by zero
+    references:
+    - Allen et al. (1998) FAO-56 Irrigation Paper
+    - Monteith (1965) Symp. Soc. Exp. Biol. 19:205-224
+    tags:
+    - wind_speed
+    - numerical_stability
+    - aerodynamic_resistance
+    dimension: velocity
+    requires_grad: false
+    provenance:
+      source: meteorological_modeling
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-08-25T00:00:00Z'
+  hydrosphere.numerical.minimum_wind_speed_offset:
+    value: 0.1
+    default: 0.1
+    units: m s-1
+    dtype: float32
+    bounds:
+    - 0.01
+    - 0.5
+    category: numerical_stability
+    description: Offset added to wind speed for validation to allow very low wind conditions
+    references:
+    - Meteorological Modeling Best Practices
+    tags:
+    - wind_speed
+    - validation
+    - numerical_offset
+    dimension: velocity
+    requires_grad: false
+    provenance:
+      source: numerical_implementation
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-08-25T00:00:00Z'
+  hydrosphere.numerical.canopy_storage_bounds:
+    value:
+    - 0.01
+    - 10.0
+    default: null
+    units: mm
+    dtype: list
+    bounds:
+    - - 0.001
+      - 0.1
+    - - 5.0
+      - 20.0
+    category: physical_bounds
+    description: Physical bounds for canopy water storage capacity [min, max]
+    references:
+    - Rutter et al. (1971) J. Appl. Ecol. 8:667-689
+    - Gash (1979) Q. J. R. Meteorol. Soc. 105:43-55
+    tags:
+    - canopy_interception
+    - water_storage
+    - physical_bounds
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: canopy_hydrology_literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-08-25T00:00:00Z'
+  hydrosphere.numerical.critical_mass_balance_error_threshold:
+    value: 0.1
+    default: 0.1
+    units: mm
+    dtype: float32
+    bounds:
+    - 0.01
+    - 1.0
+    category: error_threshold
+    description: Critical error threshold for mass balance violations in canopy processes
+    references:
+    - Numerical Methods for Conservation Laws
+    tags:
+    - mass_balance
+    - error_threshold
+    - conservation_check
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: conservation_law_theory
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-08-25T00:00:00Z'
+  hydrosphere.numerical.net_radiation_validation_offset:
+    value: 1000.0
+    default: 1000.0
+    units: W m-2
+    dtype: float32
+    bounds:
+    - 500.0
+    - 2000.0
+    category: validation_parameter
+    description: Offset added to net radiation for validation to allow negative values
+    references:
+    - Energy Balance Modeling Literature
+    tags:
+    - net_radiation
+    - validation
+    - energy_balance
+    dimension: energy_flux
+    requires_grad: false
+    provenance:
+      source: energy_balance_modeling
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-08-25T00:00:00Z'
+  hydrosphere.numerical.net_radiation_bounds:
+    value:
+    - -500.0
+    - 1500.0
+    default: null
+    units: W m-2
+    dtype: list
+    bounds:
+    - - -2000.0
+      - 0.0
+    - - 1000.0
+      - 2500.0
+    category: physical_bounds
+    description: Reasonable net radiation bounds for ET calculations [min, max]
+    references:
+    - Allen et al. (1998) FAO Irrigation and Drainage Paper 56
+    - Monteith (1965) Symp. Soc. Exp. Biol. 19:205-224
+    tags:
+    - net_radiation
+    - validation
+    - energy_balance
+    dimension: energy_flux
+    requires_grad: false
+    provenance:
+      source: energy_balance_validation
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-21T00:00:00Z'
+  hydrosphere.numerical.characteristic_pressure_head:
+    value: 1.0
+    default: 1.0
+    units: m
+    dtype: float32
+    bounds:
+    - 0.1
+    - 10.0
+    category: numerical_scaling
+    description: Characteristic pressure head scale for Richards equation normalization
+    references:
+    - Celia et al. (1990) Water Resour. Res. 26:1483-1496
+    tags:
+    - richards_equation
+    - pressure_head
+    - scaling_parameter
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: numerical_methods_optimization
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-08-25T00:00:00Z'
+  hydrosphere.numerical.harmonic_mean_factor:
+    value: 2.0
+    default: 2.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.5
+    - 3.0
+    category: numerical_method
+    description: Factor for harmonic mean calculation of interface hydraulic conductivity
+    references:
+    - Celia et al. (1990) Water Resour. Res. 26:1483-1496
+    - Haverkamp & Vauclin (1979) Water Resour. Res. 15:271-284
+    tags:
+    - harmonic_mean
+    - hydraulic_conductivity
+    - interface_calculation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: finite_difference_methods
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-08-25T00:00:00Z'
+  hydrosphere.numerical.line_search_initial_alpha:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 2.0
+    category: computational
+    description: Initial step size alpha for line search algorithm in Newton methods
+    references:
+    - Nocedal & Wright (2006) Numerical Optimization
+    - Kelley (2003) Solving Nonlinear Equations with Newton's Method
+    tags:
+    - line_search
+    - initial_step_size
+    - newton_raphson
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: optimization_theory
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-08-25T00:00:00Z'
+  hydrosphere.numerical.line_search_alpha_reduction_factor:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 0.9
+    category: computational
+    description: Reduction factor for alpha in backtracking line search
+    references:
+    - Nocedal & Wright (2006) Numerical Optimization
+    - Armijo (1966) Pacific J. Math. 16:1-3
+    tags:
+    - line_search
+    - backtracking
+    - step_reduction
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: optimization_theory
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-08-25T00:00:00Z'
+  hydrosphere.numerical.effective_saturation_bounds:
+    value:
+    - 1.0e-06
+    - 1.0
+    default: null
+    units: dimensionless
+    dtype: list
+    bounds:
+    - - 1.0e-12
+      - 0.001
+    - - 0.99
+      - 1.0
+    category: physical_bounds
+    description: Bounds for effective saturation in van Genuchten and other soil models [min, max]
+    references:
+    - van Genuchten (1980) Soil Sci. Soc. Am. J. 44:892-898
+    - Brooks & Corey (1964) Hydrol. Paper 3, Colorado State Univ.
+    tags:
+    - effective_saturation
+    - physical_bounds
+    - soil_hydraulics
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: soil_physics_modeling
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-08-25T00:00:00Z'
+  hydrosphere.numerical.evapotranspiration_flux_clamp_min:
+    value: 0.0
+    default: 0.0
+    units: kg m-2 s-1
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.0
+    category: numerical_constraint
+    description: Minimum evapotranspiration flux (non-negative constraint for physical validity)
+    references:
+    - Physical constraint - evapotranspiration cannot be negative
+    tags:
+    - evapotranspiration
+    - flux_constraint
+    - non_negativity
+    dimension: mass_flux
+    requires_grad: false
+    provenance:
+      source: physical_constraint
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-09T00:00:00Z'

@@ -1,0 +1,301 @@
+certificate_version: '1.0'
+process_id: relic.scientific.hydrosphere.soil_moisture.richards.RichardsSoilMoisture
+module_name: richards_soil_moisture
+canonical_role: transport
+iphs_level: 3
+iphs_level_evidence:
+  classification: IPHS-structured transport process certificate
+  compatible_basis: Process declares composition-safe IPHS or DEC structure
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: DEC/IPHS transport operator with conservative flux routing
+  structural_contribution: Cochain, Hodge, flux, and port structures are declared for assembly audit
+  assembly_participation: Certificate participates in Phase 8 inventory and GraphIR structural audit
+  level_3_limit: Typed form, Hodge, port, or related structure is declared, but no runtime-linked IPHSStructureSpec contribution and executable level 4 or 5 certificate binding is present.
+theory_document: docs\source\theory\hydrosphere_richards.md
+theory_document_status: updated
+legacy_formula: Richards soil moisture is computed from mixed-form Richards flow with van Genuchten-Mualem hydraulic functions.
+literature_formula: Unsaturated vertical water flow follows continuity and Darcy flux q = -K(theta)(dh/dz - 1), with retention and conductivity from van Genuchten-Mualem laws.
+iphs_formula: theta_dot = -D_z q_z + s_z; q_z = star_K (d h - g_z); star_K = diag(rho_w * K_s) >= 0.
+legacy_expression: dtheta/dt = d/dz[K(theta)(dh/dz - 1)] - S(theta), discretized by the canonical mixed-form solver.
+iphs_expression: theta_dot = -D_z q_z + s_z; q_z = star_K (d h - g_z); sigma = X_h.T star_K X_h >= 0.
+input_variables:
+- soil_moisture
+- infiltration_flux
+- evapotranspiration_flux
+- capillary_rise_flux
+output_variables:
+- soil_moisture
+- diagnostics.soil_moisture_richards.soil_moisture_change_rate
+- diagnostics.soil_moisture_richards.water_flux_profile
+- soil_matric_potential
+- diagnostics.soil_moisture_richards.relative_moisture
+- drainage_flux
+- diagnostics.soil_moisture_richards
+parameter_keys:
+- hydrosphere.soil_moisture.layer_count
+- hydrosphere.soil_moisture.soil_depth
+- hydrosphere.soil_moisture.residual_water_content
+- hydrosphere.soil_moisture.porosity
+- hydrosphere.soil_moisture.alpha_vg
+- hydrosphere.soil_moisture.n_vg
+- hydrosphere.soil_moisture.saturated_hydraulic_conductivity
+- hydrosphere.soil_moisture.tortuosity_parameter
+- hydrosphere.physical.field_capacity_fraction
+- hydrosphere.physical.wilting_point_fraction
+- hydrosphere.numerical.richards_max_picard_iterations
+- hydrosphere.numerical.richards_max_newton_iterations
+- hydrosphere.numerical.richards_convergence_tolerance
+- hydrosphere.numerical.richards_newton_absolute_tolerance
+- hydrosphere.numerical.richards_newton_relative_tolerance
+- hydrosphere.soil_moisture.richards_enable_newton_raphson
+- hydrosphere.soil_moisture.richards_enable_mass_conservation_check
+- hydrosphere.numerical.mass_conservation_tolerance
+- hydrosphere.numerical.richards_cfl_coefficient
+- hydrosphere.numerical.saturation_epsilon
+- hydrosphere.numerical.minimum_pressure_term
+- hydrosphere.numerical.minimum_se_term
+- hydrosphere.numerical.minimum_term1
+- hydrosphere.numerical.minimum_timestep
+- hydrosphere.numerical.harmonic_mean_factor
+- hydrosphere.numerical.tridiagonal_tolerance
+- hydrosphere.numerical.line_search_initial_alpha
+- hydrosphere.numerical.line_search_max_backtracks
+- hydrosphere.numerical.line_search_armijo_constant
+- hydrosphere.numerical.line_search_alpha_reduction_factor
+- hydrosphere.numerical.line_search_min_alpha
+- hydrosphere.numerical.characteristic_pressure_head
+composition_ports:
+- soil_infiltration_boundary
+- soil_evapotranspiration_boundary
+- soil_capillary_boundary
+- richards_drainage_flux
+references:
+- Richards, L.A. (1931). Capillary conduction of liquids through porous mediums. Physics, 1, 318-333.
+- van Genuchten, M.T. (1980). A closed-form equation for predicting hydraulic conductivity. Soil Science Society of America Journal, 44, 892-898.
+- Mualem, Y. (1976). A new model for predicting hydraulic conductivity of unsaturated porous media. Water Resources Research, 12, 513-522.
+- Celia, M.A., Bouloutas, E.T., and Zarba, R.L. (1990). A general mass-conservative numerical solution for the unsaturated flow equation. Water Resources Research, 26, 1483-1496.
+- Feddes, R.A., Kowalik, P.J., and Zaradny, H. (1978). Simulation of Field Water Use and Crop Yield. Pudoc, Wageningen.
+baseline_tests:
+- test\scientific\hydrosphere\soil_moisture\richards_solver.test.py
+- test\scientific\hydrosphere\soil_moisture\richards_mode_validation.test.py
+- test\unit\richards_soil_moisture_test.py
+validation_tests:
+- test\scientific\hydrosphere\soil_moisture\richards_solver.test.py
+- test\scientific\hydrosphere\transport\hydrosphere_transport_mechanisms.test.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  soil_moisture: volumetric water content theta profile [m3 m-3]
+  infiltration_flux: non-negative surface water input [kg m-2 s-1]
+  evapotranspiration_flux: non-negative surface water export [kg m-2 s-1]
+  capillary_rise_flux: optional non-negative groundwater-to-soil input selected by the capillary lower-boundary mode [kg m-2 s-1]
+  pressure_head: soil water pressure head h [m]
+  diagnostics.soil_moisture_richards.soil_moisture_change_rate: full-profile water-content rate [m3 m-3 s-1]
+  diagnostics.soil_moisture_richards.water_flux_profile: adaptive-substep time-mean vertical flux profile [kg m-2 s-1]
+  soil_matric_potential: full-profile matric pressure rho_w g h [Pa]
+  drainage_flux: bottom boundary drainage flux [kg m-2 s-1]
+  diagnostics.soil_moisture_richards.relative_moisture: field-capacity-normalized relative moisture observation [dimensionless]
+  diagnostics.soil_moisture_richards: read-only solver and residual diagnostics
+parameter_map:
+  hydrosphere.soil_moisture.layer_count: number of vertical layers [dimensionless]
+  hydrosphere.soil_moisture.soil_depth: total soil depth [m]
+  hydrosphere.soil_moisture.residual_water_content: residual water content theta_r [m3 m-3]
+  hydrosphere.soil_moisture.porosity: saturated water content theta_s [m3 m-3]
+  hydrosphere.soil_moisture.alpha_vg: van Genuchten alpha [m-1]
+  hydrosphere.soil_moisture.n_vg: van Genuchten n [dimensionless]
+  hydrosphere.soil_moisture.saturated_hydraulic_conductivity: saturated hydraulic conductivity K_s [m s-1]
+  hydrosphere.soil_moisture.tortuosity_parameter: Mualem tortuosity parameter l [dimensionless]
+  hydrosphere.physical.field_capacity_fraction: diagnostic field-capacity fraction [dimensionless]
+  hydrosphere.physical.wilting_point_fraction: diagnostic wilting-point fraction [dimensionless]
+  hydrosphere.numerical.richards_max_picard_iterations: Picard iteration limit
+  hydrosphere.numerical.richards_max_newton_iterations: Newton iteration limit
+  hydrosphere.numerical.richards_convergence_tolerance: modified-Picard mixed-residual tolerance
+  hydrosphere.numerical.richards_newton_absolute_tolerance: Newton mixed-residual absolute tolerance and unified linear-solver absolute tolerance
+  hydrosphere.numerical.richards_newton_relative_tolerance: Newton mixed-residual relative tolerance and unified linear-solver relative tolerance
+  hydrosphere.soil_moisture.richards_enable_newton_raphson: Newton solver toggle
+  hydrosphere.soil_moisture.richards_enable_mass_conservation_check: mass-check toggle
+  hydrosphere.numerical.mass_conservation_tolerance: mass conservation tolerance
+  hydrosphere.numerical.richards_cfl_coefficient: CFL coefficient
+  hydrosphere.numerical.saturation_epsilon: effective saturation lower bound
+  hydrosphere.numerical.minimum_pressure_term: minimum pressure term
+  hydrosphere.numerical.minimum_se_term: minimum effective saturation term
+  hydrosphere.numerical.minimum_term1: minimum retention curve term
+  hydrosphere.numerical.minimum_timestep: minimum timestep [s]
+  hydrosphere.numerical.harmonic_mean_factor: harmonic mean stability factor
+  hydrosphere.numerical.tridiagonal_tolerance: tridiagonal solver tolerance
+  hydrosphere.numerical.line_search_initial_alpha: initial line-search step
+  hydrosphere.numerical.line_search_max_backtracks: line-search backtrack limit
+  hydrosphere.numerical.line_search_armijo_constant: Armijo constant
+  hydrosphere.numerical.line_search_alpha_reduction_factor: line-search reduction factor
+  hydrosphere.numerical.line_search_min_alpha: minimum line-search alpha
+  hydrosphere.numerical.characteristic_pressure_head: characteristic pressure head [m]
+operator_map:
+  D_z: vertical discrete divergence from diagnostics.soil_moisture_richards.water_flux_profile to soil_moisture
+  star_K: build_hodge_contract and build_hodge_terms HodgeStarSpec
+  retention_curve: _compute_pressure_head van Genuchten relation
+  matric_pressure_conversion: soil_matric_potential = rho_w * g * pressure_head
+  conductivity_law: _compute_hydraulic_conductivity Mualem relation
+  solver: ParameterManager selects modified Picard or exact-Jacobian Newton, both evaluating the same canonical mixed-form residual
+unit_map:
+  soil_moisture: m3 m-3
+  infiltration_flux: kg m-2 s-1
+  evapotranspiration_flux: kg m-2 s-1
+  capillary_rise_flux: kg m-2 s-1
+  diagnostics.soil_moisture_richards.soil_moisture_change_rate: m3 m-3 s-1
+  pressure_head: m
+  diagnostics.soil_moisture_richards.hydraulic_conductivity: m s-1
+  diagnostics.soil_moisture_richards.water_flux_profile: kg m-2 s-1
+  soil_matric_potential: Pa
+  drainage_flux: kg m-2 s-1
+  diagnostics.soil_moisture_richards.relative_moisture: dimensionless
+  diagnostics.soil_moisture_richards.mass_conservation_error: dimensionless
+  diagnostics.soil_moisture_richards.moisture_clipping_residual: m3 m-3
+input_output_map:
+  soil_moisture: same theta profile drives retention, conductivity, and state replacement
+  infiltration_flux: non-negative surface mass input enters the vertical balance
+  evapotranspiration_flux: non-negative surface mass export leaves the vertical balance
+  capillary_rise_flux: selected non-negative upward mass input is mapped to the downward-positive lower flux q_bottom = -F_capillary / rho_w
+  drainage_flux: adaptive-substep time-mean lower boundary matter flux is emitted through explicit UpdateItem(REPLACE, per_timestep=False)
+  diagnostics.soil_moisture_richards.water_flux_profile: adaptive-substep time-mean interface flux profile is emitted through explicit UpdateItem(REPLACE, per_timestep=False)
+  soil_matric_potential: full-profile matric pressure is emitted through explicit UpdateItem(REPLACE, per_timestep=False) in Pa
+  diagnostics.soil_moisture_richards.relative_moisture: instantaneous normalized wetness observation, not a plant water-stress response
+interface_map:
+  forward_signature: forward(self, state, time, dt)
+  bridge_class: TransportMechanismFunctor
+  abstraction_contract: TransportMechanism
+  state_write_mode: all retained state, tendency, flux, matric-pressure, and relative-moisture outputs use explicit UpdateItem(REPLACE, per_timestep=False) with unit and source_functor through the existing StateManager path
+  legacy_inputs:
+  - soil_moisture
+  - infiltration_flux
+  - evapotranspiration_flux
+  - capillary_rise_flux
+  iphs_inputs:
+  - soil_moisture
+  - infiltration_flux
+  - evapotranspiration_flux
+  - capillary_rise_flux
+  legacy_outputs:
+  - soil_moisture
+  - diagnostics.soil_moisture_richards.soil_moisture_change_rate
+  - diagnostics.soil_moisture_richards.water_flux_profile
+  - soil_matric_potential
+  - diagnostics.soil_moisture_richards.relative_moisture
+  - drainage_flux
+  - diagnostics.soil_moisture_richards
+  iphs_outputs:
+  - soil_moisture
+  - diagnostics.soil_moisture_richards.soil_moisture_change_rate
+  - diagnostics.soil_moisture_richards.water_flux_profile
+  - soil_matric_potential
+  - diagnostics.soil_moisture_richards.relative_moisture
+  - drainage_flux
+  - diagnostics.soil_moisture_richards
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: The production runtime uses one canonical mixed-form residual with either mass-conservative modified Picard or exact-Jacobian Newton linearization.
+  no_legacy_mode: The ParameterManager solver strategy does not select a second process law; Newton linear and Armijo failures are fail-fast and never fall back to Picard.
+state_advancement_map:
+  potential_basis: vertical soil moisture cochain theta_h
+  effort_variable: hydraulic head gradient d h - g_z with conductivity mobility star_K
+  state_advancer: theta_dot = -D_z q_z + s_z; q_z = star_K (d h - g_z)
+  runtime_usage: forward applies the canonical mixed-form Richards residual, bounds the inner residual tolerance by the water ledger, and routes mass-balance and solver diagnostics.
+parameter_management_map:
+  hydrosphere.soil_moisture.layer_count:
+    source: ParameterManager YAML
+  hydrosphere.soil_moisture.soil_depth:
+    source: ParameterManager YAML
+  hydrosphere.soil_moisture.residual_water_content:
+    source: ParameterManager YAML
+  hydrosphere.soil_moisture.porosity:
+    source: ParameterManager YAML
+  hydrosphere.soil_moisture.alpha_vg:
+    source: ParameterManager YAML
+  hydrosphere.soil_moisture.n_vg:
+    source: ParameterManager YAML
+  hydrosphere.soil_moisture.saturated_hydraulic_conductivity:
+    source: ParameterManager YAML
+  hydrosphere.soil_moisture.tortuosity_parameter:
+    source: ParameterManager YAML
+  hydrosphere.physical.field_capacity_fraction:
+    source: ParameterManager YAML
+  hydrosphere.physical.wilting_point_fraction:
+    source: ParameterManager YAML
+  hydrosphere.numerical.richards_max_picard_iterations:
+    source: ParameterManager YAML
+  hydrosphere.numerical.richards_max_newton_iterations:
+    source: ParameterManager YAML
+  hydrosphere.numerical.richards_convergence_tolerance:
+    source: ParameterManager YAML
+  hydrosphere.numerical.richards_newton_absolute_tolerance:
+    source: ParameterManager YAML
+  hydrosphere.numerical.richards_newton_relative_tolerance:
+    source: ParameterManager YAML
+  hydrosphere.soil_moisture.richards_enable_newton_raphson:
+    source: ParameterManager YAML
+  hydrosphere.soil_moisture.richards_enable_mass_conservation_check:
+    source: ParameterManager YAML
+  hydrosphere.numerical.mass_conservation_tolerance:
+    source: ParameterManager YAML
+  hydrosphere.numerical.richards_cfl_coefficient:
+    source: ParameterManager YAML
+  hydrosphere.numerical.saturation_epsilon:
+    source: ParameterManager YAML
+  hydrosphere.numerical.minimum_pressure_term:
+    source: ParameterManager YAML
+  hydrosphere.numerical.minimum_se_term:
+    source: ParameterManager YAML
+  hydrosphere.numerical.minimum_term1:
+    source: ParameterManager YAML
+  hydrosphere.numerical.minimum_timestep:
+    source: ParameterManager YAML
+  hydrosphere.numerical.harmonic_mean_factor:
+    source: ParameterManager YAML
+  hydrosphere.numerical.tridiagonal_tolerance:
+    source: ParameterManager YAML
+  hydrosphere.numerical.line_search_initial_alpha:
+    source: ParameterManager YAML
+  hydrosphere.numerical.line_search_max_backtracks:
+    source: ParameterManager YAML
+  hydrosphere.numerical.line_search_armijo_constant:
+    source: ParameterManager YAML
+  hydrosphere.numerical.line_search_alpha_reduction_factor:
+    source: ParameterManager YAML
+  hydrosphere.numerical.line_search_min_alpha:
+    source: ParameterManager YAML
+  hydrosphere.numerical.characteristic_pressure_head:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares hydrosphere transport role and ET/runoff/groundwater coupling interfaces
+  structural_protocol: declared_forms, required_parameters, build_hodge_terms, dissipative_structure, ports
+  state_contract: existing TransportMechanismFunctor and StateManager UpdateItem path
+  physical_constant_ssot: water density and gravity are resolved only through get_physical_constant
+  ports:
+  - soil_infiltration_boundary
+  - soil_evapotranspiration_boundary
+  - soil_capillary_boundary
+  - richards_drainage_flux
+dependency_interconnection_map:
+  dependencies: surface runoff, mutually exclusive ET producers, and capillary rise transport are same-step optional dependencies; external StateManager surface inputs remain valid, while capillary input requires explicit lower-boundary selection
+  direct_functor_calls: none_no_direct_functor_calls
+  chain_maps:
+  - infiltration_flux enters the surface boundary through the existing state graph
+  - evapotranspiration_flux leaves the surface boundary through the existing state graph
+  - capillary_rise_flux enters the selected lower boundary through the existing state graph
+  - drainage_flux leaves lower boundary through the existing state graph
+overflow_routing_map:
+  moisture_bounds: canonical moisture projection residual is emitted as moisture_clipping_residual
+  mass_error: relative open-boundary water-ledger residual is emitted as mass_conservation_error
+  invalid_flux_step: source-sink flux failures fail fast instead of substituting zero flux
+  discarded_residuals: none for the canonical state-driven runtime
+conservation_map:
+  conserved_quantity: water mass
+  balance_expression: dM/dt = infiltration_flux - evapotranspiration_flux + capillary_rise_flux - drainage_flux, with capillary_rise_flux active only for the selected lower-boundary mode
+  local_check: metadata declares mass and check_conservation_laws returns the maximum absolute process-specific dimensionless residual integrating storage tendency and adaptive-substep time-mean boundary ports; the nonlinear residual is additionally bounded by epsilon_mass times stored water depth divided by profile depth, while the override bypasses generic mixed-unit aggregation
+  port_balance: Richards infiltration, evapotranspiration, capillary-rise, and drainage ports carry all declared boundary matter fluxes
+  sign_convention: z and internal water flux are positive downward; free drainage has dh/dz = 0 and q_bottom = K_bottom, while upward capillary supply maps to q_bottom = -F_capillary / rho_w
+entropy_audit:
+  dissipative_operator: star_K and M_h are symmetric positive semidefinite for positive rho_w and K_s
+  sigma_expression: sigma = X_h.T star_K X_h >= 0
+  validation_hook: build_hodge_contract(strict=True) and dissipative_structure eigenvalue checks
+equivalence_type: port_equivalent

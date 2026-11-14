@@ -1,0 +1,57 @@
+variable: diagnostics.conservation_error
+title: "Diagnostics.Conservation Error"
+kind: diagnostic
+dimension:
+  udunits: "dimensionless"
+  cf_standard_name: null
+support:
+  spatial_kind: null
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: []
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+numerics:
+  lower_bound: null
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "linear_advection"
+      module: "relic.scientific.transport.advection"
+      provides: ["diagnostics.conservation_error"]
+      unit: "dimensionless"
+    - name: "fickian_diffusion"
+      module: "relic.scientific.transport.diffusion"
+      provides: ["diagnostics.conservation_error"]
+      unit: "dimensionless"
+    - name: "advection_diffusion"
+      module: "relic.scientific.transport.advection_diffusion"
+      provides: ["diagnostics.conservation_error"]
+      unit: "dimensionless"
+    - name: "atmospheric_advection_diffusion"
+      module: "relic.scientific.atmosphere.transport.AtmosphericAdvectionDiffusionFunctor"
+      provides: ["diagnostics.conservation_error"]
+      unit: "dimensionless"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/atmosphere/transport/AtmosphericAdvectionDiffusionFunctor.py"
+  runtime_role: "mutually_exclusive_transport_conservation_observation"
+  runtime_writers:
+    - "linear_advection"
+    - "fickian_diffusion"
+    - "advection_diffusion"
+    - "atmospheric_advection_diffusion"

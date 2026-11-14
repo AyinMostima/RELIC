@@ -1,0 +1,46 @@
+variable: net_photosynthesis_daylight_samples
+title: "Net Photosynthesis at the Daylight Gauss Samples"
+description: "Canopy net CO2 assimilation A [umol CO2 m-2 ground s-1] of farquhar_photosynthesis with temporal_support daylight_gauss at each daylight Gauss instant and at the night sample (A = -R_d(T_night) there). Its weighted mean is the 24-hour mean written to net_photosynthesis. Read by medlyn_stomatal_conductance with temporal_support daylight_gauss, so that the conductance of each instant uses the assimilation of the same instant (no pairing of a daily mean assimilation with instantaneous drivers). Trailing axis daylight_sample of length n + 1 (n = config daylight_gauss_nodes, 3 or 5): samples 0..n-1 are the Gauss-Legendre instants of the daylight period in time order (FAO-56 day length, Eq. 34), sample n is the night; the daily mean is sum_k W_k x_k with W_i = (N/24) w_i and W_night = 1 - N/24 (relic/scientific/atmosphere/daylight_quadrature.py; Goudriaan 1986)."
+kind: diagnostic
+dimension:
+  udunits: "umol CO2 m-2 s-1"
+  cf_standard_name: null
+support:
+  spatial_kind: canopy
+  area_basis: ground_area
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell, daylight_sample]
+owner: "farquhar_photosynthesis"
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Farquhar, G.D., von Caemmerer, S. and Berry, J.A. (1980). Planta 149, 78-90"
+  - "Goudriaan, J. (1986). Agricultural and Forest Meteorology 38, 249-254"
+numerics:
+  lower_bound: null
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "farquhar_photosynthesis"
+      module: "relic.scientific.biosphere.photosynthesis.farquhar"
+      provides: ["net_photosynthesis_daylight_samples"]
+      unit: "umol CO2 m-2 s-1"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/biosphere/photosynthesis/farquhar.py"
+  runtime_role: "daylight_gauss_net_assimilation_samples"
+  runtime_writer: "farquhar_photosynthesis"
+  note: "Declared output of farquhar_photosynthesis only with config temporal_support daylight_gauss; UpdateItem(REPLACE, per_timestep=False) in umol CO2 m-2 s-1. Reader: medlyn_stomatal_conductance (daylight_gauss)."

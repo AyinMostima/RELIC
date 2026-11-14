@@ -1,0 +1,323 @@
+certificate_version: '1.0'
+process_id: relic.scientific.biosphere.bvoc.megan_model.MEGANModel
+module_name: MEGANModel
+canonical_role: reaction
+iphs_level: 2
+iphs_level_evidence:
+  classification: IPHS-wrapped reaction process certificate
+  compatible_basis: The RELIC reduced instantaneous dry-leaf-mass closure is expressed through open stoichiometric ledgers; equivalence to the complete MEGAN2.1 canopy algorithm is not claimed.
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: N_h r_h reaction-network state advance
+  level_2_limit: The canonical runtime wrapper is declared, but no executable typed-cochain or IPHS structural contribution is bound; strict level 4 or 5 evidence is not claimed.
+theory_document: docs\source\theory\bvoc_emissions.md
+theory_document_status: updated
+legacy_formula: E_i = epsilon_i gamma_T,i gamma_P,i rho_f / seconds_per_hour
+literature_formula: gamma_T,i = (1 - LDF_i) exp(beta_i (T - T_s)) + LDF_i E_opt,i C_T2 exp(C_T1,i x) / (C_T2 - C_T1,i (1 - exp(C_T2 x))), x = (1/T_opt - 1/T)/R (Guenther et al. 2012 Eq. 7 with Eqs. 8 and 11; beta_i, LDF_i, C_T1,i and C_eo,i from one Table 4 row per class; LDF = 1 for isoprene; the lumped OVOC class takes sum_j w_j gamma_T,j over its methanol, acetone and acetaldehyde rows with the Table 6 emission shares w_j); gamma_P,i = (1 - LDF_i) + LDF_i gamma_P_LDF with gamma_P_LDF = alpha CL PPFD / sqrt(1 + alpha^2 PPFD^2), LDF = 1 for isoprene, the Table 4 LDF for monoterpenes (representative Other Monoterpenes value) and sesquiterpenes, and the Table 6 emission-weighted mixture sum_j w_j gamma_P,j of the methanol, acetone and bidirectional VOC (acetaldehyde) rows for the lumped OVOC class; gamma_CO2 = ISmax - ISmax Ci^h / ((Cstar)^h + Ci^h)
+iphs_formula: x_dot = N_h r_h with separate molar species and carbon-mass open-port maps
+legacy_expression: E_i = epsilon_i gamma_T,i gamma_P,i rho_f / seconds_per_hour
+iphs_expression: x_dot = N_h r_h; A_available = max(A_n, A_min); R_floor = A_available - A_n; F_i = E_i k_ug_to_g / MW_i; F_C = convert(sum_i(F_i MW_i f_C,i), g C m-2 s-1, kg C m-2 s-1)
+input_variables:
+- air_temperature
+- ppfd
+- leaf_area_index
+- atmospheric_co2_ppm
+- net_photosynthesis
+output_variables:
+- isoprene_emission
+- monoterpenes_emission
+- sesquiterpenes_emission
+- ovocs_emission
+- total_bvoc_emission
+- bvoc_carbon_allocation_flux
+- diagnostics.bvoc.megan.environmental_stress_factor
+- diagnostics.bvoc.megan.photosynthesis_carbon_floor_residual
+- diagnostics.bvoc.megan.co2_inhibition_factor
+- diagnostics.bvoc.megan.isoprene.gamma_temperature
+- diagnostics.bvoc.megan.isoprene.gamma_light
+- diagnostics.bvoc.megan.monoterpenes.gamma_temperature
+- diagnostics.bvoc.megan.monoterpenes.gamma_light
+- diagnostics.bvoc.megan.sesquiterpenes.gamma_temperature
+- diagnostics.bvoc.megan.sesquiterpenes.gamma_light
+- diagnostics.bvoc.megan.ovocs.gamma_temperature
+- diagnostics.bvoc.megan.ovocs.gamma_light
+parameter_keys:
+- biosphere.bvoc.megan.hybrid_weight
+- biosphere.bvoc.carbon_fraction.isoprene
+- biosphere.bvoc.carbon_fraction.monoterpenes
+- biosphere.bvoc.carbon_fraction.sesquiterpenes
+- biosphere.bvoc.carbon_fraction.ovocs
+- biosphere.bvoc.validation.temperature.min_operational
+- biosphere.bvoc.validation.temperature.max_operational
+- biosphere.bvoc.emission_factors.isoprene
+- biosphere.bvoc.emission_factors.monoterpenes
+- biosphere.bvoc.emission_factors.sesquiterpenes
+- biosphere.bvoc.emission_factors.ovocs
+- biosphere.bvoc.megan.alpha_light
+- biosphere.bvoc.megan.cl_light
+- biosphere.bvoc.megan.ldf_monoterpenes
+- biosphere.bvoc.megan.ldf_sesquiterpenes
+- biosphere.bvoc.megan.topt
+- biosphere.bvoc.t_standard
+- biosphere.bvoc.megan.eopt_isoprene
+- biosphere.bvoc.megan.ct1_isoprene
+- biosphere.bvoc.megan.ct2
+- biosphere.bvoc.megan.ct1_monoterpenes
+- biosphere.bvoc.megan.eopt_monoterpenes
+- biosphere.bvoc.megan.ct1_sesquiterpenes
+- biosphere.bvoc.megan.eopt_sesquiterpenes
+- biosphere.bvoc.megan.ovoc.methanol.global_emission
+- biosphere.bvoc.megan.ovoc.methanol.beta
+- biosphere.bvoc.megan.ovoc.methanol.ldf
+- biosphere.bvoc.megan.ovoc.methanol.ct1
+- biosphere.bvoc.megan.ovoc.methanol.eopt
+- biosphere.bvoc.megan.ovoc.acetone.global_emission
+- biosphere.bvoc.megan.ovoc.acetone.beta
+- biosphere.bvoc.megan.ovoc.acetone.ldf
+- biosphere.bvoc.megan.ovoc.acetone.ct1
+- biosphere.bvoc.megan.ovoc.acetone.eopt
+- biosphere.bvoc.megan.ovoc.acetaldehyde.global_emission
+- biosphere.bvoc.megan.ovoc.acetaldehyde.beta
+- biosphere.bvoc.megan.ovoc.acetaldehyde.ldf
+- biosphere.bvoc.megan.ovoc.acetaldehyde.ct1
+- biosphere.bvoc.megan.ovoc.acetaldehyde.eopt
+- biosphere.bvoc.photosynthetic_coupling.f_carbon_isoprene
+- biosphere.bvoc.photosynthetic_coupling.f_carbon_monoterpenes
+- biosphere.bvoc.photosynthetic_coupling.f_carbon_sesquiterpenes
+- biosphere.bvoc.photosynthetic_coupling.f_carbon_ovocs
+- relic.physical.constants.molecular_weights.isoprene
+- biosphere.bvoc.molecular_weights.monoterpenes
+- biosphere.bvoc.molecular_weights.sesquiterpenes
+- biosphere.bvoc.molecular_weights.ovocs
+- biosphere.bvoc.carbon_atoms.isoprene
+- biosphere.bvoc.carbon_atoms.monoterpenes
+- biosphere.bvoc.carbon_atoms.sesquiterpenes
+- biosphere.bvoc.carbon_atoms.ovocs
+- biosphere.bvoc.foliar_density_factor
+- biosphere.bvoc.megan.beta_monoterpenes
+- biosphere.bvoc.megan.beta_sesquiterpenes
+- biosphere.bvoc.co2_inhibition.ismax
+- biosphere.bvoc.co2_inhibition.c_star
+- biosphere.bvoc.co2_inhibition.hill_exponent
+- biosphere.bvoc.co2_inhibition.intercellular_to_ambient_ratio
+- validation.numerical.carbon_flux_min
+- validation.numerical.epsilon
+- relic.physical.constants.conversions.micrograms_to_grams
+- relic.physical.constants.universal.gas_constant
+- relic.physical.constants.time.seconds_per_hour
+- validation.conservation.conservation_tolerance
+- validation.conservation.strict_conservation
+composition_ports:
+- isoprene_emission
+- monoterpenes_emission
+- sesquiterpenes_emission
+- ovocs_emission
+- bvoc_carbon_allocation_flux
+references:
+- 'Guenther et al. (2012). The Model of Emissions of Gases and Aerosols from Nature version 2.1 (MEGAN2.1): an extended and updated framework for modeling biogenic emissions. Geosci. Model Dev., 5, 1471-1492.'
+- 'Heald et al. (2009). Global Change Biology. doi:10.1111/j.1365-2486.2008.01802.x.'
+- 'Wilkinson et al. (2009). Global Change Biology 15, 1189-1200. doi:10.1111/j.1365-2486.2008.01803.x.'
+baseline_tests:
+- test\unit\biosphere\bvoc\test_megan_model_l1.py
+- test\audit\phase8_scientific_inventory.test.py
+validation_tests:
+- test\unit\biosphere\bvoc\test_megan_model_l1.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  air_temperature: canonical canopy driver in K
+  ppfd: canonical atmospheric-radiation photon port in umol photons m-2 s-1
+  leaf_area_index: canonical one-sided canopy leaf-area state in m2 leaf m-2 ground
+  atmospheric_co2_ppm: canonical ambient CO2 forcing in ppm
+  net_photosynthesis: required photosynthesis or hybrid pathway carbon driver in umol C m-2 s-1
+  diagnostics.bvoc.megan.photosynthesis_carbon_floor_residual: explicit A_available minus A_n lower-bound projection residual in umol C m-2 s-1
+parameter_map:
+  emission_potential: biosphere.bvoc.emission_factors.* on the RELIC dry-leaf-mass basis; Guenther et al. supplies response heritage, not provenance for each fitted value
+  activity_response: biosphere.bvoc.megan.*
+  molecular_composition: isoprene molar mass from physical constants SSOT; remaining representative BVOC molecular weights and carbon atoms from biosphere.bvoc.*
+  co2_response: biosphere.bvoc.co2_inhibition.*
+  physical_constants: relic.physical.constants.* accessed by get_physical_constant
+  direct_forward_conservation: validation.conservation.conservation_tolerance and validation.conservation.strict_conservation, read by FunctorBase._enforce_forward_conservation at the end of forward
+operator_map:
+  N_h: declared stoichiometric or output incidence map for this reaction process
+  r_h: ParameterManager-backed process-rate vector evaluated by the production forward path
+unit_map:
+  isoprene_emission: mol m-2 s-1
+  monoterpenes_emission: mol m-2 s-1
+  sesquiterpenes_emission: mol m-2 s-1
+  ovocs_emission: mol m-2 s-1
+  total_bvoc_emission: mol m-2 s-1
+  bvoc_carbon_allocation_flux: kg C m-2 s-1
+  diagnostics.bvoc.megan.environmental_stress_factor: dimensionless
+  diagnostics.bvoc.megan.photosynthesis_carbon_floor_residual: umol C m-2 s-1
+  diagnostics.bvoc.megan.co2_inhibition_factor: dimensionless
+  diagnostics.bvoc.megan.isoprene.gamma_temperature: dimensionless
+  diagnostics.bvoc.megan.isoprene.gamma_light: dimensionless
+  diagnostics.bvoc.megan.monoterpenes.gamma_temperature: dimensionless
+  diagnostics.bvoc.megan.monoterpenes.gamma_light: dimensionless
+  diagnostics.bvoc.megan.sesquiterpenes.gamma_temperature: dimensionless
+  diagnostics.bvoc.megan.sesquiterpenes.gamma_light: dimensionless
+  diagnostics.bvoc.megan.ovocs.gamma_temperature: dimensionless
+  diagnostics.bvoc.megan.ovocs.gamma_light: dimensionless
+input_output_map:
+  air_temperature: drives compound temperature activity factors
+  ppfd: drives the isoprene photon activity factor
+  leaf_area_index: maps to effective dry-leaf mass rho_f = LAI * foliar_density_factor on the canonical one-sided LAI basis
+  atmospheric_co2_ppm: maps to the isoprene CO2 inhibition diagnostic
+  net_photosynthesis: drives the selected photosynthesis or hybrid carbon-allocation route
+  photosynthesis_carbon_floor: A_available is computed once per forward call and A_available minus A_n is emitted without per-compound recomputation
+  species_emissions: internal ug mass rates convert to canonical molar atmospheric ports
+  total_bvoc_emission: exact sum of enabled compound molar fluxes
+  bvoc_carbon_allocation_flux: equivalent instantaneous carbon-allocation proxy obtained from molecular weights and carbon fractions
+interface_map:
+  forward_signature: forward(self, state, time, dt)
+  bridge_class: BiologicalProcessFunctor
+  abstraction_contract: BiologicalProcess
+  state_write_mode: UpdateItem(REPLACE, per_timestep=false) for instantaneous fluxes and diagnostics
+  legacy_inputs:
+  - air_temperature
+  - ppfd
+  - leaf_area_index
+  - atmospheric_co2_ppm
+  - net_photosynthesis
+  iphs_inputs:
+  - air_temperature
+  - ppfd
+  - leaf_area_index
+  - atmospheric_co2_ppm
+  - net_photosynthesis
+  legacy_outputs:
+  - isoprene_emission
+  - monoterpenes_emission
+  - sesquiterpenes_emission
+  - ovocs_emission
+  - total_bvoc_emission
+  - bvoc_carbon_allocation_flux
+  - diagnostics.bvoc.megan.environmental_stress_factor
+  - diagnostics.bvoc.megan.photosynthesis_carbon_floor_residual
+  - diagnostics.bvoc.megan.co2_inhibition_factor
+  - diagnostics.bvoc.megan.isoprene.gamma_temperature
+  - diagnostics.bvoc.megan.isoprene.gamma_light
+  - diagnostics.bvoc.megan.monoterpenes.gamma_temperature
+  - diagnostics.bvoc.megan.monoterpenes.gamma_light
+  - diagnostics.bvoc.megan.sesquiterpenes.gamma_temperature
+  - diagnostics.bvoc.megan.sesquiterpenes.gamma_light
+  - diagnostics.bvoc.megan.ovocs.gamma_temperature
+  - diagnostics.bvoc.megan.ovocs.gamma_light
+  iphs_outputs:
+  - isoprene_emission
+  - monoterpenes_emission
+  - sesquiterpenes_emission
+  - ovocs_emission
+  - total_bvoc_emission
+  - bvoc_carbon_allocation_flux
+  - diagnostics.bvoc.megan.environmental_stress_factor
+  - diagnostics.bvoc.megan.photosynthesis_carbon_floor_residual
+  - diagnostics.bvoc.megan.co2_inhibition_factor
+  - diagnostics.bvoc.megan.isoprene.gamma_temperature
+  - diagnostics.bvoc.megan.isoprene.gamma_light
+  - diagnostics.bvoc.megan.monoterpenes.gamma_temperature
+  - diagnostics.bvoc.megan.monoterpenes.gamma_light
+  - diagnostics.bvoc.megan.sesquiterpenes.gamma_temperature
+  - diagnostics.bvoc.megan.sesquiterpenes.gamma_light
+  - diagnostics.bvoc.megan.ovocs.gamma_temperature
+  - diagnostics.bvoc.megan.ovocs.gamma_light
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: RELIC's reduced instantaneous MEGAN-family response numerics are preserved while public mass rates are converted to canonical molar species ports; this is not numerical equivalence to the complete MEGAN2.1 canopy model.
+  scientific_scope: Operational evidence covers only the reduced dry-leaf-mass closure rho_f = LAI * k_f. Full PFT-specific LMA/SLW transforms, ground-area emission-factor construction, 24/240-hour histories, canopy integration, complete leaf-age and soil-moisture factors, and a canopy/history-consistent CO2 response remain [N]. RELIC carries no 24 h or 240 h leaf-temperature history, so T_opt = 313 + 0.6 (T240 - T_s) and E_opt = C_eo exp(0.05 (T24 - T_s)) exp(0.05 (T240 - T_s)) (Guenther et al. 2012 Eqs. 9-10) are fixed at the standard history T24 = T240 = T_s = 297 K, so E_opt = C_eo of the Table 4 row and T_opt = 313 K.
+  lumped_ovoc_mixture: The lumped OVOC class is methanol, acetone and acetaldehyde (Guenther et al. 2012 Table 1 places acetaldehyde in the bidirectional VOC class). Each activity factor is the emission-weighted mixture gamma_X = sum_j w_j gamma_X,j of the component factors, with w_j the Table 6 global emission shares (99.6, 43.7 and 20.7 Tg yr-1) and every coefficient of component j from its own Table 4 row (Methanol, Acetone, Bidirectional VOC); no lumped beta, LDF, C_T1 or C_eo exists. E_OVOC multiplies the mixed light and temperature factors instead of mixing the component products sum_j w_j gamma_P,j gamma_T,j; the neglected covariance term changes E_OVOC in darkness by +12.7% at 0 degC, +5.0% at 20 degC and -10.3% at 40 degC, and over 0 to 40 degC by at most 0.65% for PPFD >= 500 and at most 0.2% for PPFD 750-2000 umol m-2 s-1 (0.22% at 2500).
+  identifiability_limit: Flux-only observations constrain emission_potential * foliar_density_factor; these parameters are not separately identifiable without independent leaf-mass evidence.
+  no_legacy_mode: No selectable compatibility runtime branch is exposed; this fact does not constitute strict Phase 8 completion.
+state_advancement_map:
+  potential_basis: reduced dry-leaf-mass emission potentials mapped by rho_f = LAI * k_f to open atmospheric molar species ports plus a separate carbon-mass boundary port
+  effort_variable: no independently validated thermodynamic effort is claimed at level 2
+  state_advancer: x_dot = N_h r_h with explicit molar species and carbon-mass maps
+  runtime_usage: MEGANModel.forward calls advance_reaction_network twice with dimension-consistent stoichiometric_N and rates before emitting canonical outputs.
+  explicit_stoichiometric_usage: One N_h maps enabled molar species to their molar total; a separate N_h maps the g C boundary export.
+parameter_management_map:
+  biosphere.bvoc.megan.hybrid_weight: ParameterManager YAML
+  biosphere.bvoc.carbon_fraction.isoprene: ParameterManager YAML
+  biosphere.bvoc.carbon_fraction.monoterpenes: ParameterManager YAML
+  biosphere.bvoc.carbon_fraction.sesquiterpenes: ParameterManager YAML
+  biosphere.bvoc.carbon_fraction.ovocs: ParameterManager YAML
+  biosphere.bvoc.validation.temperature.min_operational: ParameterManager YAML
+  biosphere.bvoc.validation.temperature.max_operational: ParameterManager YAML
+  biosphere.bvoc.emission_factors.isoprene: ParameterManager YAML
+  biosphere.bvoc.emission_factors.monoterpenes: ParameterManager YAML
+  biosphere.bvoc.emission_factors.sesquiterpenes: ParameterManager YAML
+  biosphere.bvoc.emission_factors.ovocs: ParameterManager YAML
+  biosphere.bvoc.megan.alpha_light: ParameterManager YAML
+  biosphere.bvoc.megan.cl_light: ParameterManager YAML
+  biosphere.bvoc.megan.ldf_monoterpenes: ParameterManager YAML
+  biosphere.bvoc.megan.ldf_sesquiterpenes: ParameterManager YAML
+  biosphere.bvoc.megan.topt: ParameterManager YAML
+  biosphere.bvoc.t_standard: ParameterManager YAML
+  biosphere.bvoc.megan.eopt_isoprene: ParameterManager YAML
+  biosphere.bvoc.megan.ct1_isoprene: ParameterManager YAML
+  biosphere.bvoc.megan.ct2: ParameterManager YAML
+  biosphere.bvoc.megan.ct1_monoterpenes: ParameterManager YAML
+  biosphere.bvoc.megan.eopt_monoterpenes: ParameterManager YAML
+  biosphere.bvoc.megan.ct1_sesquiterpenes: ParameterManager YAML
+  biosphere.bvoc.megan.eopt_sesquiterpenes: ParameterManager YAML
+  biosphere.bvoc.megan.ovoc.methanol.global_emission: ParameterManager YAML
+  biosphere.bvoc.megan.ovoc.methanol.beta: ParameterManager YAML
+  biosphere.bvoc.megan.ovoc.methanol.ldf: ParameterManager YAML
+  biosphere.bvoc.megan.ovoc.methanol.ct1: ParameterManager YAML
+  biosphere.bvoc.megan.ovoc.methanol.eopt: ParameterManager YAML
+  biosphere.bvoc.megan.ovoc.acetone.global_emission: ParameterManager YAML
+  biosphere.bvoc.megan.ovoc.acetone.beta: ParameterManager YAML
+  biosphere.bvoc.megan.ovoc.acetone.ldf: ParameterManager YAML
+  biosphere.bvoc.megan.ovoc.acetone.ct1: ParameterManager YAML
+  biosphere.bvoc.megan.ovoc.acetone.eopt: ParameterManager YAML
+  biosphere.bvoc.megan.ovoc.acetaldehyde.global_emission: ParameterManager YAML
+  biosphere.bvoc.megan.ovoc.acetaldehyde.beta: ParameterManager YAML
+  biosphere.bvoc.megan.ovoc.acetaldehyde.ldf: ParameterManager YAML
+  biosphere.bvoc.megan.ovoc.acetaldehyde.ct1: ParameterManager YAML
+  biosphere.bvoc.megan.ovoc.acetaldehyde.eopt: ParameterManager YAML
+  biosphere.bvoc.photosynthetic_coupling.f_carbon_isoprene: ParameterManager YAML
+  biosphere.bvoc.photosynthetic_coupling.f_carbon_monoterpenes: ParameterManager YAML
+  biosphere.bvoc.photosynthetic_coupling.f_carbon_sesquiterpenes: ParameterManager YAML
+  biosphere.bvoc.photosynthetic_coupling.f_carbon_ovocs: ParameterManager YAML
+  relic.physical.constants.molecular_weights.isoprene: ParameterManager physical constants SSOT via get_physical_constant
+  biosphere.bvoc.molecular_weights.monoterpenes: ParameterManager YAML
+  biosphere.bvoc.molecular_weights.sesquiterpenes: ParameterManager YAML
+  biosphere.bvoc.molecular_weights.ovocs: ParameterManager YAML
+  biosphere.bvoc.carbon_atoms.isoprene: ParameterManager YAML
+  biosphere.bvoc.carbon_atoms.monoterpenes: ParameterManager YAML
+  biosphere.bvoc.carbon_atoms.sesquiterpenes: ParameterManager YAML
+  biosphere.bvoc.carbon_atoms.ovocs: ParameterManager YAML
+  biosphere.bvoc.foliar_density_factor: ParameterManager YAML
+  biosphere.bvoc.megan.beta_monoterpenes: ParameterManager YAML
+  biosphere.bvoc.megan.beta_sesquiterpenes: ParameterManager YAML
+  biosphere.bvoc.co2_inhibition.ismax: ParameterManager YAML
+  biosphere.bvoc.co2_inhibition.c_star: ParameterManager YAML
+  biosphere.bvoc.co2_inhibition.hill_exponent: ParameterManager YAML
+  biosphere.bvoc.co2_inhibition.intercellular_to_ambient_ratio: ParameterManager YAML
+  validation.numerical.carbon_flux_min: ParameterManager YAML
+  validation.numerical.epsilon: ParameterManager YAML
+  relic.physical.constants.conversions.micrograms_to_grams: ParameterManager physical constants SSOT
+  relic.physical.constants.universal.gas_constant: ParameterManager physical constants SSOT
+  relic.physical.constants.time.seconds_per_hour: ParameterManager physical constants SSOT
+  validation.conservation.conservation_tolerance: ParameterManager YAML
+  validation.conservation.strict_conservation: ParameterManager YAML
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares interfaces, execution phase, and conservation semantics
+  state_contract: all retained outputs use explicit UpdateItem(REPLACE, per_timestep=false)
+  validation_rule: phase8 scientific inventory and equivalence certificate checks
+dependency_interconnection_map:
+  dependencies: atmospheric_radiation is required for PPFD; farquhar_photosynthesis is additionally required for photosynthesis or hybrid pathways; stress dependencies are conditional and explicit
+  direct_functor_calls: none; radiation, photosynthesis, and optional stress dependencies are scheduler and StateManager ports and no upstream Functor instance is invoked
+overflow_routing_map:
+  diagnostic_residuals: diagnostics.bvoc.megan.photosynthesis_carbon_floor_residual retains A_available minus A_n for photosynthesis and hybrid pathways
+  discarded_residuals: none; the carbon floor is evaluated once per forward call, its complete residual is emitted, and standard-pathway execution does not claim the diagnostic
+conservation_map:
+  conserved_quantities:
+  - carbon_boundary
+  open_system_route: port
+  balance_expression: R_C = F_C,alloc - convert(sum over enabled i of F_i MW_i f_C,i, g C m-2 s-1 to kg C m-2 s-1); carbon_boundary = ||R_C||_inf. The reduced closure remains open and does not resolve stored versus current photosynthate sources.
+  local_check: check_conservation_laws iterates only the instance enabled_compounds, requires finite matching molar species and allocation tensors, reuses the existing UnitConverter plus ParameterManager-backed molecular weights and carbon fractions, and reports the infinity norm of the mapping residual.
+entropy_audit:
+  operator_sign: empirical nonnegative open-port rates are domain checked; no dissipative operator is claimed
+  sigma_expression: no independently validated entropy-production functional is claimed at level 2
+equivalence_type: thermodynamic_embedding

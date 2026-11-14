@@ -1,0 +1,42 @@
+variable: delta_residue_cover
+title: "Additive residue cover tendency"
+kind: flux
+dimension:
+  udunits: "s-1"
+  cf_standard_name: null
+owner: null
+aliases: []
+incrementable: true
+accumulates: null
+numerics:
+  lower_bound: null
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments:
+    - name: "harvest_management"
+      module: "relic.scientific.anthroposphere.management.harvest"
+      provides:
+        - "delta_residue_cover"
+      unit: "s-1"
+    - name: "tillage_management"
+      module: "relic.scientific.anthroposphere.management.tillage"
+      provides:
+        - "delta_residue_cover"
+      unit: "s-1"
+  tendencies: []
+flux_contract:
+  allowed_in: []
+  allowed_out:
+    - "harvest_management"
+    - "tillage_management"
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/anthroposphere/management/harvest.py"
+  runtime_role: "additive_residue_cover_tendency_ledger"
+  runtime_writer: null

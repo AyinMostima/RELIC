@@ -1,0 +1,283 @@
+certificate_version: '1.0'
+process_id: relic.scientific.anthroposphere.management.fire_management.FireManagement
+module_name: fire_management
+canonical_role: reaction
+iphs_level: 3
+iphs_level_evidence:
+  classification: IPHS-structured reaction process certificate
+  compatible_basis: Reaction process is expressed through conserved or open stoichiometric ledgers
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: N_h r_h reaction-network state advance
+  structural_contribution: Cochain, operator, port, conservation, or ledger structure is declared for Gate 0 assembly audit
+  assembly_participation: Certificate participates in Phase 8 inventory and GraphIR structural audit
+  level_3_limit: Typed form, Hodge, port, or related structure is declared, but no runtime-linked IPHSStructureSpec contribution and executable level 4 or 5 certificate binding is present.
+theory_document: docs\source\theory\anthroposphere_management_fire.md
+theory_document_status: updated
+legacy_formula: Fire effects were computed from biomass fuel, combustion completeness, combustion efficiency, moisture controls, and emission factors.
+literature_formula: Biomass burning emissions are represented by fuel burned times species emission factors with moisture, combustion completeness, and suppression controls.
+iphs_formula: x_dot = N_h r_h(x_h, theta) + G_h u_fire, with r_h := r_fire; H_fire = diag(w_i / sum_j w_j), w_i >= 0.
+legacy_expression: C_combusted = B_fuel * CC * CE * (1 - M_factor); E_species = C_combusted / f_C * EF_species.
+iphs_expression: The biomass burning equation defines entries of the standard reaction vector r_h inside the single fire IPHS combustion-port map.
+input_variables:
+- aboveground_biomass
+- litter_mass
+- fuel_moisture
+- day_of_year
+- days_since_fire
+- temperature
+- fuel_load
+- burn_fraction
+output_variables:
+- burned_fraction
+- co2_emission
+- co_emission
+- fire_ch4_emission
+- n2o_emission
+- ash_deposition
+- days_since_fire
+- fire_fuel_carbon_input
+- carbon_loss
+- combustion_flux
+- diagnostics.fire.events_today
+- diagnostics.fire.event_support_seconds
+- diagnostics.fire.carbon_availability_residual
+- diagnostics.fire_management.canonical_iphs_runtime
+parameter_keys:
+- anthroposphere.management.temperature
+- anthroposphere.management.clamp_min
+- anthroposphere.management.clamp_max
+- anthroposphere.management.fire.base_efficiency
+- anthroposphere.management.fire.combustion_completeness
+- anthroposphere.management.fire.combustion_efficiency
+- anthroposphere.management.fire.emission_factor_co2
+- anthroposphere.management.fire.emission_factor_co
+- anthroposphere.management.fire.emission_factor_ch4
+- anthroposphere.management.fire.ash_fraction
+- anthroposphere.management.fire.biomass_carbon_fraction
+- anthroposphere.management.fire.fire_frequency
+- anthroposphere.management.fire.fire_probability_scale
+- anthroposphere.management.fire.moisture_reduction_coefficient
+- anthroposphere.management.fire.moisture_temp_base_weight
+- anthroposphere.management.fire.moisture_temp_scale_weight
+- anthroposphere.management.fire.temperature_scale_range
+- anthroposphere.management.fire.wind_speed_threshold
+- anthroposphere.management.fire.schedule_window_days
+- anthroposphere.management.fire.default_schedule.*
+- anthroposphere.management.fire.intensity_factor.*
+- anthroposphere.management.fire.vegetation_properties.*
+composition_ports:
+- fire_combustion_management_port
+references:
+- Seiler, W. and Crutzen, P.J. (1980). Estimates of gross and net fluxes of carbon between the biosphere and atmosphere.
+- Andreae, M.O. and Merlet, P. (2001). Trace gas emissions from biomass burning.
+- Akagi, S.K. et al. (2011). Compilation of emission factors for open biomass burning.
+- van der Werf, G.R. et al. (2017). Global fire emissions 1997-2016.
+- Ramirez, H. and Le Gorrec, Y. (2022). Irreversible port-Hamiltonian systems.
+baseline_tests:
+- test\anthroposphere\management\test_fire_management_l1.py
+- test\anthroposphere\management\fire_management_phase8.test.py
+validation_tests:
+- test\anthroposphere\management\test_fire_management_l1.py
+- test\anthroposphere\management\fire_management_phase8.test.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  fire_fuel_pool: available combustible biomass or fuel-load cochain [kg m^-2]
+  fire_combustion_flux: combustion and atmospheric emission reaction flux [kg m^-2 s^-1]
+  fire_ch4_emission: fire-specific atmospheric methane mass flux [kg CH4 m^-2 s^-1]
+  fire_management_port: ignition, prescribed burning, wildfire, and suppression control port [1]
+  diagnostics.fire_management.canonical_iphs_runtime: canonical IPHS runtime flag [1]
+parameter_map:
+  anthroposphere.management.temperature: Reference air temperature of the moisture-factor temperature effect and air temperature of the default fire schedule events [K]; not a default of the temperature input
+  anthroposphere.management.clamp_min: Lower bound of the management response factors [dimensionless]
+  anthroposphere.management.clamp_max: Upper bound of the management response factors [dimensionless]
+  anthroposphere.management.fire.base_efficiency: Baseline efficiency scalar of fire management [dimensionless]
+  anthroposphere.management.fire.combustion_completeness: Fraction of the fuel consumed by a fire [dimensionless]
+  anthroposphere.management.fire.combustion_efficiency: Combustion efficiency of the fire [dimensionless]
+  anthroposphere.management.fire.emission_factor_co2: CO2 emission factor per burned dry matter [g kg-1 DM]
+  anthroposphere.management.fire.emission_factor_co: CO emission factor per burned dry matter [g kg-1 DM]
+  anthroposphere.management.fire.emission_factor_ch4: CH4 emission factor per burned dry matter [g kg-1 DM]
+  anthroposphere.management.fire.ash_fraction: Fraction of combusted biomass deposited as ash [dimensionless]
+  anthroposphere.management.fire.biomass_carbon_fraction: Carbon fraction of dry biomass [dimensionless]
+  anthroposphere.management.fire.fire_frequency: Mean annual fire frequency of the scheduler [year-1]
+  anthroposphere.management.fire.fire_probability_scale: Scale factor for wildfire ignition probability [dimensionless]
+  anthroposphere.management.fire.moisture_reduction_coefficient: Moisture reduction coefficient for fire spread calculations [dimensionless]
+  anthroposphere.management.fire.moisture_temp_base_weight: Base weight for moisture temperature coupling [dimensionless]
+  anthroposphere.management.fire.moisture_temp_scale_weight: Temperature scaling weight for moisture coupling [dimensionless]
+  anthroposphere.management.fire.temperature_scale_range: Temperature normalization range for moisture scaling [K]
+  anthroposphere.management.fire.wind_speed_threshold: Wind speed threshold affecting fire spread [m s-1]
+  anthroposphere.management.fire.schedule_window_days: Window size in days for matching scheduled fire events [day]
+  anthroposphere.management.fire.default_schedule.*: Default prescribed-fire and wildfire events (date, burned fraction, fuel moisture, wind speed, suppression effectiveness) [units per key]
+  anthroposphere.management.fire.intensity_factor.*: Fire intensity multiplier per intensity class (low, moderate, high, extreme) [dimensionless]
+  anthroposphere.management.fire.vegetation_properties.*: Fuel load factor, combustion completeness, aboveground and litter fractions and CO2, CO, CH4, N2O emission factors per vegetation type [units per key]
+operator_map:
+  N_h: stoichiometric map from fuel combustion to atmospheric species and ash outputs
+  r_h: ParameterManager-backed combustion, emission-factor, ash, and carbon-loss rate tensor passed to advance_reaction_network
+  H_fire: PSD combustion mobility built by build_hodge_contract
+  G_h: fire_combustion_management_port ignition and suppression input map
+  O_h: canonical runtime diagnostic output
+state_advancement_map:
+  potential_basis: G_fire(x_h)=0.5*x_h.T*H_fire*x_h for combustible fuel storage and open emission ports
+  effort_variable: mu_fire=dG_fire/dx_h; combustion completeness, fuel moisture, and emission factors define r_h entries
+  state_advancer: forward evaluates explicit x_dot=N_h r_h through advance_reaction_network in fire combustion output assembly
+  runtime_usage: _assemble_fire_reaction_outputs calls advance_reaction_network with declared N_h and r_h for combustion, emissions, ash, and carbon loss
+  explicit_stoichiometric_usage: _assemble_fire_reaction_outputs materializes stoichiometric_N and rates, then lowers x_dot=N_h r_h through advance_reaction_network.
+  event_support: each calendar occurrence executes once; r_h rates are the event-integrated masses divided by the executing step dt (Delta_t_event = dt, reported as diagnostics.fire.event_support_seconds), so rate * dt returns the event mass for hourly, daily and multi-day steps
+unit_map:
+  fire_fuel_pool: kg m^-2
+  fire_combustion_flux: kg m^-2 s^-1
+  burned_fraction: '1'
+  co2_emission: kg m^-2 s^-1
+  co_emission: kg m^-2 s^-1
+  fire_ch4_emission: kg CH4 m^-2 s^-1
+  n2o_emission: kg m^-2 s^-1
+  ash_deposition: kg m^-2 s^-1
+  days_since_fire: day
+  fire_fuel_carbon_input: kg C m^-2 s^-1
+  carbon_loss: kg C m^-2 s^-1
+  combustion_flux: kg m^-2 s^-1
+  diagnostics.fire.events_today: '1'
+  diagnostics.fire.event_support_seconds: s
+  diagnostics.fire.carbon_availability_residual: kg C m^-2 s^-1
+  diagnostics.fire_management.canonical_iphs_runtime: '1'
+input_output_map:
+  fuel_to_combustion: fuel load, biomass, litter, moisture, and management controls define r_h entries
+  combustion_to_emissions: fuel combustion partitions into CO2, CO, fire-specific CH4, N2O, ash, and carbon-loss outputs
+  wildfire_ignition: 'u ~ U(0, 1) from the FunctorSubstreamMixin substream (config seed, a non-negative integer below 2**63) ignites a wildfire occurrence when u < p = s (1 - M) (w / w_ref); the stream position is module extra state'
+  diagnostics: event count, executing-step event support [s], one-sided atmospheric-carbon availability residual, and canonical runtime flag return through the existing Functor output path
+interface_map:
+  forward_signature: forward(self, state, time, dt, calendar_type=None, **kwargs)
+  bridge_class: BiologicalProcessFunctor
+  abstraction_contract: BiologicalProcess
+  state_write_mode: outputs are returned through existing FunctorBase/StateManager path
+  legacy_inputs:
+  - aboveground_biomass
+  - litter_mass
+  - fuel_moisture
+  - day_of_year
+  - days_since_fire
+  - temperature
+  - fuel_load
+  - burn_fraction
+  iphs_inputs:
+  - aboveground_biomass
+  - litter_mass
+  - fuel_moisture
+  - day_of_year
+  - days_since_fire
+  - temperature
+  - fuel_load
+  - burn_fraction
+  legacy_outputs:
+  - burned_fraction
+  - co2_emission
+  - co_emission
+  - fire_ch4_emission
+  - n2o_emission
+  - ash_deposition
+  - days_since_fire
+  - fire_fuel_carbon_input
+  - carbon_loss
+  - combustion_flux
+  - diagnostics.fire.events_today
+  - diagnostics.fire.event_support_seconds
+  - diagnostics.fire.carbon_availability_residual
+  - diagnostics.fire_management.canonical_iphs_runtime
+  iphs_outputs:
+  - burned_fraction
+  - co2_emission
+  - co_emission
+  - fire_ch4_emission
+  - n2o_emission
+  - ash_deposition
+  - days_since_fire
+  - fire_fuel_carbon_input
+  - carbon_loss
+  - combustion_flux
+  - diagnostics.fire.events_today
+  - diagnostics.fire.event_support_seconds
+  - diagnostics.fire.carbon_availability_residual
+  - diagnostics.fire_management.canonical_iphs_runtime
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: Biomass burning equations define the canonical reaction vector r_h in the IPHS combustion-port map.
+  no_legacy_mode: No selectable legacy branch, alternate fire law, or independent compute-rate law remains callable.
+parameter_management_map:
+  anthroposphere.management.temperature:
+    source: ParameterManager YAML
+  anthroposphere.management.clamp_min:
+    source: ParameterManager YAML
+  anthroposphere.management.clamp_max:
+    source: ParameterManager YAML
+  anthroposphere.management.fire.base_efficiency:
+    source: ParameterManager YAML
+  anthroposphere.management.fire.combustion_completeness:
+    source: ParameterManager YAML
+  anthroposphere.management.fire.combustion_efficiency:
+    source: ParameterManager YAML
+  anthroposphere.management.fire.emission_factor_co2:
+    source: ParameterManager YAML
+  anthroposphere.management.fire.emission_factor_co:
+    source: ParameterManager YAML
+  anthroposphere.management.fire.emission_factor_ch4:
+    source: ParameterManager YAML
+  anthroposphere.management.fire.ash_fraction:
+    source: ParameterManager YAML
+  anthroposphere.management.fire.biomass_carbon_fraction:
+    source: ParameterManager YAML
+  anthroposphere.management.fire.fire_frequency:
+    source: ParameterManager YAML
+  anthroposphere.management.fire.fire_probability_scale:
+    source: ParameterManager YAML
+  anthroposphere.management.fire.moisture_reduction_coefficient:
+    source: ParameterManager YAML
+  anthroposphere.management.fire.moisture_temp_base_weight:
+    source: ParameterManager YAML
+  anthroposphere.management.fire.moisture_temp_scale_weight:
+    source: ParameterManager YAML
+  anthroposphere.management.fire.temperature_scale_range:
+    source: ParameterManager YAML
+  anthroposphere.management.fire.wind_speed_threshold:
+    source: ParameterManager YAML
+  anthroposphere.management.fire.schedule_window_days:
+    source: ParameterManager YAML
+  anthroposphere.management.fire.default_schedule.*:
+    source: ParameterManager YAML
+  anthroposphere.management.fire.intensity_factor.*:
+    source: ParameterManager YAML
+  anthroposphere.management.fire.vegetation_properties.*:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares biological process category and biosphere/atmosphere/pedosphere coupling
+  structural_protocol: declared_forms, build_hodge_contract, build_hodge_terms, reversible_structure, dissipative_structure, ports
+  physical_constant_ssot: seconds per day is resolved only through get_physical_constant
+  ports:
+  - fire_combustion_management_port
+dependency_interconnection_map:
+  dependencies: fuel, biomass, litter, moisture, temperature, schedule, and suppression controls are declared through metadata and state keys
+  direct_functor_calls: none; forward reads declared fuel, biomass, litter, moisture, temperature, schedule, and suppression state and calls only local fire helpers
+  chain_maps:
+  - fuel pools enter N_h r_h
+  - fire management controls enter G_h u_fire
+  - atmospheric emission outputs leave through declared open matter fluxes
+overflow_routing_map:
+  atmospheric_losses: CO2, CO, fire_ch4_emission, and N2O are declared open atmospheric fluxes
+  ash_partition: ash deposition is returned as a declared pedosphere output
+  fuel_load_input: fuel_load is a canonical input-port adapter to the same fire combustion map
+  discarded_residuals: burn-fraction bounds apply to dimensionless controls and leave unburned fuel unconsumed; combustion products are routed to gas, ash, combustion, and carbon_loss ports, and diagnostics.fire.carbon_availability_residual is explicit
+conservation_map:
+  ledger_type: open
+  open_system_route: port
+  closed_system_conservation_check: not_performed
+  conserved_quantity: The identity stoichiometric map has no non-trivial closed C_h N_h = 0 certificate; fuel carbon leaves through the declared combustion port.
+  balance_expression: epsilon_C = max(0, C_atmospheric - C_fuel_burned)
+  local_check: diagnostics.fire.carbon_availability_residual reports only the one-sided atmospheric-carbon availability bound.
+  port_balance: fire_combustion_management_port declares open combustion matter transfer
+entropy_audit:
+  dissipative_operator: H_fire is diagonal positive semidefinite for non-negative ParameterManager weights
+  sigma_expression: sigma = z.T H_fire z >= 0
+  validation_hook: build_hodge_contract(strict=True)
+equivalence_type: exact
+physical_constant_ssot:
+  seconds_per_day: get_physical_constant("relic.physical.constants.time.seconds_per_day")

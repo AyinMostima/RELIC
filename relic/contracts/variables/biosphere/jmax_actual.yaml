@@ -1,0 +1,48 @@
+variable: diagnostics.photosynthesis.jmax_actual
+title: "Farquhar Actual Jmax Diagnostic"
+description: "Leaf-level maximum electron transport rate after the temperature response and control scaling, Jmax = Jmax(T) * jmax_scaling, where Jmax(T) is the normalized peaked Arrhenius response of jmax25 (Medlyn et al. 2002). It is the Jmax passed to the non-rectangular light-response hyperbola for J on both the C3 and C4 paths and, unlike electron_transport_rate, is not multiplied by the canopy LAI scale. Positive magnitude per unit leaf area. Namespaced REPLACE diagnostic of farquhar_photosynthesis; no Functor reads it and it is never committed as state."
+kind: diagnostic
+dimension:
+  udunits: "umol e- m-2 s-1"
+  cf_standard_name: null
+support:
+  spatial_kind: leaf
+  area_basis: leaf_area
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: "farquhar_photosynthesis"
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Farquhar, G.D., von Caemmerer, S. and Berry, J.A. (1980). A biochemical model of photosynthetic CO2 assimilation in leaves of C3 species. Planta 149, 78-90"
+  - "Medlyn, B.E. et al. (2002). Temperature response of parameters of a biochemically based model of photosynthesis. Plant, Cell and Environment 25, 1167-1179"
+numerics:
+  # Jmax(T) > 0 for a positive jmax25 and jmax_scaling >= 0 (SCM bounds of
+  # jmax_scaling), so the product is a non-negative magnitude.
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "farquhar_photosynthesis"
+      module: "relic.scientific.biosphere.photosynthesis.farquhar"
+      provides: ["diagnostics.photosynthesis.jmax_actual"]
+      unit: "umol e- m-2 s-1"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/biosphere/photosynthesis/farquhar.py"
+  runtime_role: "leaf_level_actual_jmax_diagnostic"
+  runtime_writer: "farquhar_photosynthesis"
+  note: "Declared output farquhar.py:251; Jmax = jmax_temp * jmax_scaling at :1160 (C3) and :1322 (C4); jmax_scaling defaults to vcmax_scaling (:1100, :1280); only J is LAI-scaled (:1204-1209, :1372-1377); emitted at :931 with unit 'umol e- m-2 s-1' (:942) as UpdateItem REPLACE (:957); J and Jmax units at :1514. The former placeholder named the bare key jmax_actual, which no relic Functor reads or writes."

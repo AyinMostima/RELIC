@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} - RELIC{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>{{ title }}</h1>
+    <p class="page-description">
+        View and validate system configuration settings and parameters.
+    </p>
+</div>
+
+<div class="config-overview">
+    <div class="config-actions">
+        <button class="btn btn-primary" onclick="loadCurrentConfig()">Load Current Config</button>
+        <button class="btn btn-secondary" onclick="validateConfig()">Validate Configuration</button>
+        <button class="btn btn-secondary" onclick="exportConfig()">Export Configuration</button>
+    </div>
+</div>
+
+<div class="config-content">
+    <div id="config-display" class="config-placeholder">
+        Click "Load Current Config" to view the active configuration.
+    </div>
+</div>
+
+<div class="placeholder-content">
+    <h3>Configuration Management</h3>
+    <p><strong>Experimental Feature:</strong> Advanced configuration interface with validation and editing capabilities.</p>
+    
+    <div class="feature-preview">
+        <h4>Planned Features:</h4>
+        <ul>
+            <li>Interactive configuration editor with validation</li>
+            <li>Parameter documentation and help</li>
+            <li>Configuration templates and presets</li>
+            <li>Real-time validation feedback</li>
+            <li>Configuration comparison and diff tools</li>
+        </ul>
+    </div>
+    
+    <p>For now, use the <a href="/api/docs#/Configuration" target="_blank">Configuration API endpoints</a> directly.</p>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+async function loadCurrentConfig() {
+    const displayEl = document.getElementById('config-display');
+    const button = event.target;
+    
+    button.textContent = 'Loading...';
+    button.disabled = true;
+    displayEl.textContent = 'Loading configuration...';
+    
+    try {
+        const response = await fetch('/api/config/effective');
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            displayEl.innerHTML = `<pre class="config-json">${JSON.stringify(data.data, null, 2)}</pre>`;
+        } else {
+            displayEl.innerHTML = '<span class="status-error">Failed to load configuration</span>';
+        }
+    } catch (error) {
+        displayEl.innerHTML = '<span class="status-error">Error: ' + error.message + '</span>';
+    } finally {
+        button.textContent = 'Load Current Config';
+        button.disabled = false;
+    }
+}
+
+function validateConfig() {
+    alert('Configuration validation interface not yet implemented.\nUse the API endpoint: POST /api/config/validate');
+}
+
+function exportConfig() {
+    alert('Configuration export not yet implemented.\nUse the API endpoint: GET /api/config/effective');
+}
+</script>
+{% endblock %}

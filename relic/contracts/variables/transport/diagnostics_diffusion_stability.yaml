@@ -1,0 +1,47 @@
+variable: diagnostics.diffusion_stability
+title: "Diagnostics.Diffusion Stability"
+kind: diagnostic
+dimension:
+  udunits: "dimensionless"
+  cf_standard_name: null
+support:
+  spatial_kind: null
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: []
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+numerics:
+  lower_bound: null
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "fickian_diffusion"
+      module: "relic.scientific.transport.diffusion"
+      provides: ["diagnostics.diffusion_stability"]
+      unit: "dimensionless"
+    - name: "advection_diffusion"
+      module: "relic.scientific.transport.advection_diffusion"
+      provides: ["diagnostics.diffusion_stability"]
+      unit: "dimensionless"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/transport/advection_diffusion.py"
+  runtime_role: "mutually_exclusive_transport_stability_observation"
+  runtime_writers:
+    - "fickian_diffusion"
+    - "advection_diffusion"

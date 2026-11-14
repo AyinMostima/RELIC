@@ -1,0 +1,181 @@
+certificate_version: '1.0'
+process_id: relic.scientific.pedosphere.methane.budget_coupler.MethaneBudgetCoupler
+module_name: MethaneBudgetCoupler
+canonical_role: scale_coupling
+iphs_level: 2
+iphs_level_evidence:
+  classification: IPHS-wrapped scale coupling process certificate
+  compatible_basis: Methane production, oxidation, transport, storage, and atmospheric boundary ports share one explicit CH4-C budget
+  runtime_replacement: Production forward uses the canonical port aggregation and StateManager UpdateItem path; strict IPHS runtime replacement is not claimed at this level.
+  canonical_operator: Discrete process-port aggregation with one bounded storage update and an explicit atmospheric boundary route
+  level_2_limit: No independent Hamiltonian, effort covector, J, M, port-power identity, or GENERIC degeneracy evidence is available; strict level 4 or 5 is not claimed.
+theory_document: docs\source\theory\wetland_methane.md
+theory_document_status: updated
+legacy_formula: Prior RELIC runtime exposed duplicated emission, mass, residual, net-tendency, and storage-delta aliases and did not distinguish requested from realizable transport.
+literature_formula: Yue et al. (2024) Eq. 33 gives dM/dt = P - O - E - D - T, with atmospheric emission equal to the sum of top-layer transport mechanisms.
+iphs_formula: dM_raw = dt*(T_prod + T_oxid + T_trans); dM = max(dM_raw, -M); R_limit = (dM - dM_raw)/dt; F_atm = F_transport - R_limit
+legacy_expression: Residual = P - O - F_transport - dM_raw/dt without a single shared availability limit
+iphs_expression: Residual = P - O - F_atm - dM/dt, with the denied transport rate routed to diagnostics.methane_budget.transport_limiter_residual
+input_variables:
+- ch4_production_rate
+- ch4_oxidation_rate
+- ch4_transport_loss_rate
+- ch4_storage_tendency_prod
+- ch4_storage_tendency_oxid
+- ch4_storage_tendency_trans
+- ch4_soil_storage
+output_variables:
+- ch4_atmospheric_flux
+- ch4_soil_storage
+- diagnostics.methane_budget.atmospheric_ch4_mass_flux
+- diagnostics.methane_budget.mass_balance_residual
+- diagnostics.methane_budget.storage_tendency_net
+- diagnostics.methane_budget.transport_limiter_residual
+parameter_keys:
+- pedosphere.methane.conservation.relative_tolerance
+- pedosphere.methane.conservation.absolute_tolerance
+- pedosphere.numerical.minimum_timestep
+composition_ports:
+- methane_atmospheric_boundary_port
+- methane_soil_storage_port
+references:
+- Yue et al. (2024) doi:10.5194/gmd-17-4621-2024
+- Walter et al. (2001) doi:10.1029/2001JD900165
+baseline_tests:
+- test\pedosphere\methane\mass_balance_no_posthoc_correction.test.py
+- test\integration\pedosphere\methane\test_methane_budget.py
+- test\pedosphere\methane\strict_overlap_registration.test.py
+- test\audit\phase8_scientific_inventory.test.py
+validation_tests:
+- test\pedosphere\methane\mass_balance_no_posthoc_correction.test.py
+- test\integration\pedosphere\methane\test_methane_budget.py
+- test\unit\pedosphere\methane\test_units_conservation.py
+- test\scientific\methane_physical_consistency\test_methane_physical_consistency.py
+- test\scientific\wetland_ch4_fluxnet\test_wetland_ch4_fluxnet.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  ch4_production_rate: non-negative methane-carbon production rate P [g C m-2 s-1]
+  ch4_oxidation_rate: non-negative methane-carbon oxidation export O [g C m-2 s-1]
+  ch4_transport_loss_rate: signed requested atmospheric transport loss F_transport [g C m-2 s-1]
+  ch4_storage_tendency_prod: production contribution to soil methane storage [g C m-2 s-1]
+  ch4_storage_tendency_oxid: oxidation contribution to soil methane storage [g C m-2 s-1]
+  ch4_storage_tendency_trans: requested transport contribution to soil methane storage [g C m-2 s-1]
+  ch4_soil_storage: non-negative soil methane-carbon storage M [g C m-2]
+  ch4_atmospheric_flux: realized signed atmospheric methane-carbon boundary flux [g C m-2 s-1]
+  diagnostics.methane_budget.atmospheric_ch4_mass_flux: realized atmospheric methane mass flux [g CH4 m-2 s-1]
+  diagnostics.methane_budget.mass_balance_residual: signed local methane-carbon budget residual [g C m-2 s-1]
+  diagnostics.methane_budget.storage_tendency_net: realized storage tendency dM/dt [g C m-2 s-1]
+  diagnostics.methane_budget.transport_limiter_residual: requested transport denied by shared storage availability [g C m-2 s-1]
+parameter_map:
+  pedosphere.methane.conservation.relative_tolerance: relative residual tolerance
+  pedosphere.methane.conservation.absolute_tolerance: absolute residual tolerance [g C m-2 s-1]
+  pedosphere.numerical.minimum_timestep: positive timestep lower bound [s]
+physical_constant_ssot:
+  methane_molar_mass:
+    key: relic.physical.constants.molecular_weights.ch4
+    access: get_physical_constant
+    role: Methane molar mass used for CH4-C to CH4 mass reporting
+  carbon_molar_mass:
+    key: relic.physical.constants.molecular_weights.carbon
+    access: get_physical_constant
+    role: Carbon molar mass used for CH4-C to CH4 mass reporting
+operator_map:
+  port_aggregation: one discrete aggregation of the three declared storage tendencies
+  storage_limiter: dM = max(dt*(T_prod + T_oxid + T_trans), -M)
+  boundary_route: F_atm = F_transport - R_limit
+  strict_structure_boundary: No H, effort, J, M, port-power, or GENERIC operator is claimed.
+unit_map:
+  ch4_atmospheric_flux: g C m-2 s-1
+  ch4_soil_storage: g C m-2
+  diagnostics.methane_budget.atmospheric_ch4_mass_flux: g CH4 m-2 s-1
+  diagnostics.methane_budget.mass_balance_residual: g C m-2 s-1
+  diagnostics.methane_budget.storage_tendency_net: g C m-2 s-1
+  diagnostics.methane_budget.transport_limiter_residual: g C m-2 s-1
+input_output_map:
+  ch4_emission: removed duplicate alias; canonical port is ch4_atmospheric_flux
+  ch4_emission_mass: migrated to diagnostics.methane_budget.atmospheric_ch4_mass_flux
+  ch4_mass_balance_residual: migrated to diagnostics.methane_budget.mass_balance_residual
+  ch4_storage_tendency_net: migrated to diagnostics.methane_budget.storage_tendency_net
+  ch4_soil_storage_delta: removed duplicate public increment alias; ch4_soil_storage carries the explicit ACCUMULATE update
+  ch4_atmospheric_flux: canonical realized atmospheric methane-carbon boundary port
+  ch4_soil_storage: canonical methane-carbon storage state update
+  diagnostics.methane_budget.transport_limiter_residual: explicit denied transport route
+interface_map:
+  forward_signature: forward(self, state, time, dt)
+  bridge_class: ScaleCouplingFunctor
+  abstraction_contract: ScaleCoupling
+  state_write_mode: explicit REPLACE boundary and diagnostic rates plus one ACCUMULATE per_timestep true storage increment
+  legacy_inputs:
+  - ch4_production_rate
+  - ch4_oxidation_rate
+  - ch4_transport_loss_rate
+  - ch4_storage_tendency_prod
+  - ch4_storage_tendency_oxid
+  - ch4_storage_tendency_trans
+  - ch4_soil_storage
+  iphs_inputs:
+  - ch4_production_rate
+  - ch4_oxidation_rate
+  - ch4_transport_loss_rate
+  - ch4_storage_tendency_prod
+  - ch4_storage_tendency_oxid
+  - ch4_storage_tendency_trans
+  - ch4_soil_storage
+  legacy_outputs:
+  - ch4_atmospheric_flux
+  - ch4_soil_storage
+  - diagnostics.methane_budget.atmospheric_ch4_mass_flux
+  - diagnostics.methane_budget.mass_balance_residual
+  - diagnostics.methane_budget.storage_tendency_net
+  - diagnostics.methane_budget.transport_limiter_residual
+  iphs_outputs:
+  - ch4_atmospheric_flux
+  - ch4_soil_storage
+  - diagnostics.methane_budget.atmospheric_ch4_mass_flux
+  - diagnostics.methane_budget.mass_balance_residual
+  - diagnostics.methane_budget.storage_tendency_net
+  - diagnostics.methane_budget.transport_limiter_residual
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: Literature-backed methane port accounting is combined with an explicit RELIC operator-splitting availability policy; no second runtime formula remains.
+  no_legacy_mode: No selectable legacy runtime branch or output alias is exposed.
+state_advancement_map:
+  potential_basis: extensive soil methane-carbon storage and signed atmospheric boundary flux
+  effort_variable: No thermodynamic effort is asserted; the module consumes process rates and tendencies from declared scheduler dependencies.
+  state_advancer: one bounded explicit storage increment dM and one realized atmospheric boundary flux F_atm
+  runtime_usage: MethaneBudgetCoupler.forward aggregates the declared tendencies once and returns the storage delta through UpdateItem ACCUMULATE with per_timestep true.
+parameter_management_map:
+  pedosphere.methane.conservation.relative_tolerance:
+    source: ParameterManager YAML
+  pedosphere.methane.conservation.absolute_tolerance:
+    source: ParameterManager YAML
+  pedosphere.numerical.minimum_timestep:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: FunctorMetadata declares the exact seven-input and six-output interface, execution phase, and local mass semantics.
+  state_contract: StateManager receives explicit UpdateItems with canonical units, element, source_functor, and per_timestep semantics.
+  validation_rule: Phase 8 inventory, output-contract scan, SCM owner audit, and real simulator provenance tests
+  ports:
+  - methane_atmospheric_boundary_port
+  - methane_soil_storage_port
+dependency_interconnection_map:
+  dependencies:
+  - pedosphere_methane_production
+  - pedosphere_methane_oxidation
+  - pedosphere_methane_transport
+  direct_functor_calls: none; production, oxidation, and transport are declared dependencies whose outputs arrive through state ports
+overflow_routing_map:
+  diagnostic_residuals:
+  - diagnostics.methane_budget.transport_limiter_residual
+  - diagnostics.methane_budget.mass_balance_residual
+  discarded_residuals: denied transport is diagnostics.methane_budget.transport_limiter_residual and complete storage or open-flux closure is diagnostics.methane_budget.mass_balance_residual; no post-hoc correction occurs
+conservation_map:
+  conserved_quantities: local open methane-carbon ledger
+  balance_expression: ch4_production_rate - ch4_oxidation_rate - ch4_atmospheric_flux - diagnostics.methane_budget.storage_tendency_net = 0 within configured tolerance
+  open_system_route: boundary_export
+entropy_audit:
+  limiter_sign: Runtime validation requires the denied transport rate to be non-negative and no greater than the positive requested atmospheric transport rate within tolerance.
+  strict_entropy_claim: No entropy-production, port-power, or GENERIC degeneracy identity is asserted at level 2.
+equivalence_type: port_equivalent

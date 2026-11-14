@@ -1,0 +1,169 @@
+F.F.........                                                             [100%]
+================================== FAILURES ===================================
+_____________ TestParameterIntegration.test_namespace_resolution ______________
+
+self = <test_parameter_integration.TestParameterIntegration object at 0x0000018DD608FE50>
+megan_model = MEGANModel(name='test_megan', category=biological_process, dependencies=[], executions=0, state=initialized)
+param_manager = <bvoc_parameter_manager_helper.build_realistic_parameter_manager.<locals>.OverrideManager object at 0x0000018DD66216D0>
+
+    def test_namespace_resolution(self, megan_model, param_manager):
+        """Test that parameter namespaces resolve correctly to YAML structure."""
+    
+        # Test cases: (parameter_key, expected_section, expected_value_range)
+        test_cases = [
+            # Default emission factors
+            ("default.isoprene", "default", (10, 50)),
+            ("default.monoterpenes", "default", (0.5, 5.0)),
+            ("default.sesquiterpenes", "default", (0.1, 1.0)),
+            ("default.ovocs", "default", (0.5, 3.0)),
+    
+            # MEGAN parameters
+            ("megan.alpha_light", "megan", (0.001, 0.01)),
+            ("megan.cl_light", "megan", (0.8, 1.5)),
+            ("megan.eopt_isoprene", "megan", (1.0, 3.0)),
+            ("megan.topt_isoprene", "megan", (303.15, 323.15)),
+            ("megan.ct1_isoprene", "megan", (80000, 110000)),
+            ("megan.ct2_isoprene", "megan", (200000, 260000)),
+    
+            # Molecular properties
+            ("molecular_weights.isoprene", "molecular_weights", (68, 69)),
+            ("carbon_atoms.isoprene", "carbon_atoms", (5, 5)),
+    
+            # CO2 inhibition
+            ("co2_inhibition.k_co2", "co2_inhibition", (200, 400)),
+            ("co2_inhibition.baseline_co2", "co2_inhibition", (250, 300)),
+    
+            # Water stress
+            ("water_stress.wilting_point", "water_stress", (-2.0, -1.0)),
+            ("water_stress.field_capacity", "water_stress", (-0.2, -0.05)),
+        ]
+    
+        for param_key, section, expected_range in test_cases:
+            # Get parameter value
+            value = param_manager.get(param_key)
+    
+            # Check that value is within expected range
+>           assert expected_range[0] <= float(value) <= expected_range[1], \
+                                        ^^^^^^^^^^^^
+                f"Parameter {param_key} value {value} not in expected range {expected_range}"
+E           TypeError: float() argument must be a string or a real number, not 'NoneType'
+
+test\bvoc\test_parameter_integration.py:88: TypeError
+______________ TestParameterIntegration.test_bounds_enforcement _______________
+
+self = <test_parameter_integration.TestParameterIntegration object at 0x0000018DD660F610>
+param_manager = <bvoc_parameter_manager_helper.build_realistic_parameter_manager.<locals>.OverrideManager object at 0x0000018DD6DD5510>
+
+    def test_bounds_enforcement(self, param_manager):
+        """Test that parameter bounds are enforced when setting values."""
+    
+        # Test setting values outside bounds
+        test_cases = [
+            ("megan.alpha_light", 0.0001, (0.001, 0.01)),  # Below min
+            ("megan.alpha_light", 0.1, (0.001, 0.01)),      # Above max
+            ("default.isoprene", 5.0, (10, 50)),            # Below min
+            ("default.isoprene", 100.0, (10, 50)),          # Above max
+        ]
+    
+        for param_key, test_value, bounds in test_cases:
+            # Try to set value outside bounds
+>           param_manager.set(param_key, test_value)
+
+test\bvoc\test_parameter_integration.py:128: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = UnifiedParameterManager(name=UnifiedParameterManager, state=initializing)
+key = 'megan.alpha_light', value = 0.0001, units = None, validate = True
+notify = True
+
+    def set(self, key: str, value: ParameterValue,
+            units: Optional[str] = None,
+            validate: bool = True,
+            notify: bool = True) -> None:
+        """
+        Set parameter value with optional validation and notification.
+    
+        Parameters:
+            key : str
+                Parameter key (dot notation)
+            value : ParameterValue
+                New parameter value
+            units : Optional[str]
+                Expected units for validation
+            validate : bool
+                Whether to validate the new value
+            notify : bool
+                Whether to notify change callbacks
+    
+        Raises:
+            ValueError: If validation fails
+            KeyError: If parameter not found and validation enabled
+    
+        Mathematical Expression:
+            Parameter update: theta' = value where theta in Theta
+            Validation: V(theta')  U(theta', expected_units) = True
+            Notification:  in Observers: o.notify(key, theta, theta')
+        """
+        canonical_key = normalize_parameter_key(key)
+        old_value = self.storage.get(canonical_key)
+        normalized_units = _normalize_unit_string(units)
+    
+        # Get existing specification or create new one
+        if canonical_key in self.parameters:
+            spec = self.parameters[canonical_key]
+    
+            # Unit consistency checking
+            if normalized_units is not None and spec.units != normalized_units:
+                if spec.units in (None, "", "dimensionless"):
+                    spec.units = normalized_units
+                else:
+                    try:
+                        context = ConversionContext()
+                        converted_value = unit_converter.convert(value, key, normalized_units, spec.units, context)
+                        value = converted_value
+                        logger.debug(f"Converted {key} from {normalized_units} to {spec.units}")
+                    except Exception as e:
+                        raise ValueError(f"Unit conversion failed for {key}: {e}")
+    
+            # Update value
+            spec.value = value
+    
+        else:
+            # Create new parameter specification
+            spec = ParameterSpec(
+                key=canonical_key,
+                value=value,
+                units=normalized_units or "dimensionless",
+                provenance={'source': 'runtime_set', 'schema_version': '1.0.0'}
+            )
+            self.parameters[canonical_key] = spec
+    
+        # Validation using the validator component
+        if validate:
+            context = ValidationContext(
+                all_parameters=self.storage.get_all(),
+                strict_mode=(self.validation_level == ValidationLevel.STRICT)
+            )
+            result = self.validator.validate_value(
+                key, value, spec, self.validation_level, context
+            )
+            if not result.is_valid:
+>               raise ValueError(f"Parameter validation failed for {key}: {result.errors}")
+E               ValueError: Parameter validation failed for megan.alpha_light: ['megan.alpha_light: Value 0.0001 outside bounds (below minimum 0.001)', 'Parameter biosphere.bvoc.megan.alpha_light below minimum: 0.0001 < 0.001']
+
+ppavem\parameters\manager.py:1985: ValueError
+============================== warnings summary ===============================
+ppavem\coupling\external\common\io.py:72
+  F:\Homework\GEOBIOCHE\PPA-VEM-REBUILD\ppavem\coupling\external\common\io.py:72: UserWarning: zarr not available - cloud storage support limited
+    warnings.warn("zarr not available - cloud storage support limited")
+
+ppavem\data\streaming\__init__.py:166
+  F:\Homework\GEOBIOCHE\PPA-VEM-REBUILD\ppavem\data\streaming\__init__.py:166: UserWarning: Streaming functionality is experimental and disabled by default. Set PPAVEM_EXPERIMENTAL_STREAMING=1 to enable streaming capabilities. Requires optional dependencies: pip install watchdog aiofiles zarr
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED test\bvoc\test_parameter_integration.py::TestParameterIntegration::test_namespace_resolution
+FAILED test\bvoc\test_parameter_integration.py::TestParameterIntegration::test_bounds_enforcement
+2 failed, 10 passed, 2 warnings in 23.36s
+ERROR conda.cli.main_run:execute(125): `conda run pytest test\bvoc\test_parameter_integration.py -q` failed. (See above for error)

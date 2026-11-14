@@ -1,0 +1,36 @@
+variable: ch4_production_rate
+title: "Methane Production Rate"
+kind: flux
+dimension:
+  udunits: "g C m-2 s-1"
+  cf_standard_name: null
+owner: "pedosphere_methane_production"
+aliases: []
+incrementable: false
+accumulates: carbon.total
+numerics:
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "pedosphere_methane_production"
+      module: "relic.scientific.pedosphere.methane.production"
+      provides:
+        - "ch4_production_rate"
+      unit: "g C m-2 s-1"
+flux_contract:
+  allowed_in:
+    - "pedosphere_methane_production"
+  allowed_out: []
+  budget_check:
+    guardian: "pedosphere_methane_budget"
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/pedosphere/methane/production.py"
+  runtime_role: "methane_production_rate"
+  runtime_writer: "pedosphere_methane_production"

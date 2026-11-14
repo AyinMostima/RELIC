@@ -1,0 +1,263 @@
+certificate_version: '1.0'
+process_id: relic.scientific.hydrosphere.runoff.subsurface.SubsurfaceRunoff
+module_name: subsurface_runoff
+canonical_role: transport
+iphs_level: 3
+iphs_level_evidence:
+  classification: IPHS-structured transport process certificate
+  compatible_basis: Process declares composition-safe IPHS or DEC structure
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: DEC/IPHS transport operator with conservative flux routing
+  structural_contribution: Cochain, Hodge, flux, and port structures are declared for assembly audit
+  assembly_participation: Certificate participates in Phase 8 inventory and GraphIR structural audit
+  level_3_limit: Typed form, Hodge, port, or related structure is declared, but no runtime-linked IPHSStructureSpec contribution and executable level 4 or 5 certificate binding is present.
+theory_document: docs\source\theory\hydrosphere_subsurface_runoff.md
+theory_document_status: updated
+legacy_formula: Literature and baseline material retain the exponential-recession, linear-reservoir, point-scale TOPMODEL-style, and threshold-interflow equations for equivalence review.
+literature_formula: Lateral subsurface discharge follows a storage-discharge recession law with an optional catchment-mean TOPMODEL closure Q_b = 1000*T0*exp(-lambda)*exp(-S_def/m)*f_theta (Beven and Kirkby, 1979) and a moisture-gated interflow drainage Q_i = k_i*c_i*max(0,theta-theta_t)^n*S of the same store.
+iphs_formula: S_dot = I_drain - D_h q_total; q_total = star_T g_h + q_interflow + q_capacity; star_T >= 0.
+legacy_expression: Q_candidate = Q_base(S, theta; T0 exp(-lambda)) + Q_interflow(theta, S), retained only as certificate evidence for the single production closure.
+iphs_expression: S1 = S0 + R*dt - Q_total*dt; Q_total = Q_actual + O_capacity/dt; Q_actual*dt = min(Q_candidate*dt, S_available).
+input_variables:
+- soil_moisture
+- drainage_flux
+- groundwater_storage
+output_variables:
+- subsurface_runoff_flux
+- groundwater_storage
+- diagnostics.subsurface_runoff.baseflow_flux
+- diagnostics.subsurface_runoff.interflow_flux
+- diagnostics.subsurface_runoff.storage_fraction
+- diagnostics.subsurface_runoff.water_table_depth
+- diagnostics.subsurface_runoff.recession_time_constant_days
+- diagnostics.subsurface_runoff.drainage_rate_mm_s
+- diagnostics.subsurface_runoff.total_runoff_rate_mm_s
+- diagnostics.subsurface_runoff.storage_capacity_overflow
+- diagnostics.subsurface_runoff.outflow_limiter_residual
+- diagnostics.subsurface_runoff.water_table_depth_clipping_residual
+- diagnostics.subsurface_runoff.water_balance_residual
+parameter_keys:
+- hydrosphere.runoff.baseflow_recession_constant
+- hydrosphere.runoff.topographic_index_mean
+- hydrosphere.runoff.transmissivity
+- hydrosphere.runoff.threshold_moisture
+- hydrosphere.runoff.return_flow_fraction
+- hydrosphere.runoff.interflow_scaling_factor
+- hydrosphere.runoff.storage_capacity
+- hydrosphere.runoff.baseflow_method
+- hydrosphere.runoff.topmodel_max_deficit
+- hydrosphere.runoff.topmodel_m_scaling_factor
+- hydrosphere.runoff.interflow_exponent
+- hydrosphere.runoff.interflow_rate_scaling_factor
+- hydrosphere.runoff.topmodel_moisture_reference
+- hydrosphere.runoff.topmodel_moisture_factor_min
+- hydrosphere.runoff.topmodel_moisture_factor_max
+- hydrosphere.runoff.water_table_depth_scale
+- hydrosphere.runoff.water_table_depth_max
+- hydrosphere.numerical.minimum_storage_outflow
+- hydrosphere.numerical.recession_coefficient_minimum
+composition_ports:
+- subsurface_runoff_boundary_flux
+references:
+- Beven, K.J. and Kirkby, M.J. (1979). A physically based, variable contributing area model of basin hydrology. Hydrological Sciences Bulletin, 24, 43-69.
+- Brutsaert, W. and Nieber, J.L. (1977). Regionalized drought flow hydrographs from a mature glaciated plateau. Water Resources Research, 13, 637-643.
+- Tallaksen, L.M. (1995). A review of baseflow recession analysis. Journal of Hydrology, 165, 349-370.
+- Nathan, R.J. and McMahon, T.A. (1990). Evaluation of automated techniques for base flow and recession analyses. Water Resources Research, 26, 1465-1473.
+- Darcy, H. (1856). Les Fontaines publiques de la ville de Dijon. Dalmont, Paris.
+baseline_tests:
+- test\scientific\hydrosphere\runoff\subsurface_runoff.test.py
+- test\scientific\hydrosphere\runoff\subsurface_runoff_flux_sign.test.py
+- test\scientific\hydrosphere\runoff\subsurface_runoff_input_contract.test.py
+- test\scientific\hydrosphere\simulator_optional_inputs.test.py
+validation_tests:
+- test\scientific\hydrosphere\runoff\subsurface_runoff.test.py
+- test\scientific\hydrosphere\runoff\subsurface_runoff_flux_sign.test.py
+- test\scientific\hydrosphere\runoff\subsurface_runoff_input_contract.test.py
+- test\scientific\hydrosphere\transport\hydrosphere_transport_mechanisms.test.py
+- test\core\simulator_registration_and_step_guards.test.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  soil_moisture: volumetric water content theta controlling interflow and TOPMODEL moisture scaling [m3 m-3]
+  drainage_flux: required incoming drainage boundary flux from soil-water modules [kg m-2 s-1]
+  groundwater_storage: groundwater storage S [mm]
+  subsurface_runoff_flux: lateral subsurface matter port flow q_h [kg m-2 s-1]
+  diagnostics.subsurface_runoff.baseflow_flux: read-only baseflow component [kg m-2 s-1]
+  diagnostics.subsurface_runoff.interflow_flux: read-only interflow component [kg m-2 s-1]
+  diagnostics.subsurface_runoff.storage_fraction: read-only normalized storage [dimensionless]
+  diagnostics.subsurface_runoff.water_table_depth: clipped water-table observation [m]
+  diagnostics.subsurface_runoff.recession_time_constant_days: recession-time observation [d]
+  diagnostics.subsurface_runoff.drainage_rate_mm_s: converted inlet depth rate [mm s-1]
+  diagnostics.subsurface_runoff.total_runoff_rate_mm_s: actual outlet depth rate [mm s-1]
+  diagnostics.subsurface_runoff.storage_capacity_overflow: observed portion of subsurface_runoff_flux caused by the capacity projection [mm per time step]
+  diagnostics.subsurface_runoff.outflow_limiter_residual: rejected candidate outflow observation [mm per time step]
+  diagnostics.subsurface_runoff.water_table_depth_clipping_residual: diagnostic depth clipping residual [m]
+  diagnostics.subsurface_runoff.water_balance_residual: open control-volume balance residual [mm per time step]
+parameter_map:
+  hydrosphere.runoff.baseflow_recession_constant: baseflow recession coefficient k [s-1]
+  hydrosphere.runoff.topographic_index_mean: mean topographic index lambda = ln(a/tan(beta)) with a in metres [dimensionless value; exp(-lambda) carries m-1]
+  hydrosphere.runoff.transmissivity: subsurface transmissivity T [m2 s-1]
+  hydrosphere.runoff.threshold_moisture: interflow threshold theta_t [m3 m-3]
+  hydrosphere.runoff.return_flow_fraction: return flow fraction used in interflow coefficient [dimensionless]
+  hydrosphere.runoff.interflow_scaling_factor: interflow coefficient scale [dimensionless]
+  hydrosphere.runoff.storage_capacity: maximum groundwater storage [mm]
+  hydrosphere.runoff.baseflow_method: configured baseflow closure
+  hydrosphere.runoff.topmodel_max_deficit: maximum TOPMODEL storage deficit [mm]
+  hydrosphere.runoff.topmodel_m_scaling_factor: TOPMODEL m scaling factor [dimensionless]
+  hydrosphere.runoff.interflow_exponent: threshold interflow exponent n [dimensionless]
+  hydrosphere.runoff.interflow_rate_scaling_factor: interflow rate scaling factor [dimensionless]
+  hydrosphere.runoff.topmodel_moisture_reference: reference theta for TOPMODEL moisture factor [m3 m-3]
+  hydrosphere.runoff.topmodel_moisture_factor_min: minimum TOPMODEL moisture factor [dimensionless]
+  hydrosphere.runoff.topmodel_moisture_factor_max: maximum TOPMODEL moisture factor [dimensionless]
+  hydrosphere.runoff.water_table_depth_scale: diagnostic water-table depth scale [m]
+  hydrosphere.runoff.water_table_depth_max: maximum diagnostic water-table depth [m]
+  hydrosphere.numerical.minimum_storage_outflow: minimum storage outflow divisor [mm]
+  hydrosphere.numerical.recession_coefficient_minimum: minimum recession coefficient for diagnostic time constant [s-1]
+operator_map:
+  D_h: storage-to-port incidence represented by the existing StateManager update path
+  star_T: build_hodge_contract and build_hodge_terms HodgeStarSpec
+  baseflow_closure: _compute_exponential_baseflow, _compute_topmodel_baseflow, or _compute_linear_reservoir_baseflow
+  interflow_closure: _compute_interflow threshold function
+  unit_conversion: UnitConverter mass flux and depth-rate conversions
+unit_map:
+  soil_moisture: m3 m-3
+  drainage_flux: kg m-2 s-1
+  groundwater_storage: mm
+  subsurface_runoff_flux: kg m-2 s-1
+  diagnostics.subsurface_runoff.baseflow_flux: kg m-2 s-1
+  diagnostics.subsurface_runoff.interflow_flux: kg m-2 s-1
+  diagnostics.subsurface_runoff.storage_fraction: dimensionless
+  diagnostics.subsurface_runoff.water_table_depth: m
+  diagnostics.subsurface_runoff.recession_time_constant_days: d
+  diagnostics.subsurface_runoff.drainage_rate_mm_s: mm s-1
+  diagnostics.subsurface_runoff.total_runoff_rate_mm_s: mm s-1
+  diagnostics.subsurface_runoff.storage_capacity_overflow: mm
+  diagnostics.subsurface_runoff.outflow_limiter_residual: mm
+  diagnostics.subsurface_runoff.water_table_depth_clipping_residual: m
+  diagnostics.subsurface_runoff.water_balance_residual: mm
+input_output_map:
+  soil_moisture: theta controls interflow and the empirical TOPMODEL-style moisture factor
+  drainage_flux: required inlet updates groundwater storage before outlet evaluation
+  groundwater_storage: complete state is emitted as UpdateItem(REPLACE, per_timestep=True)
+  subsurface_runoff_flux: actual limited lateral mass flux is emitted as UpdateItem(REPLACE, per_timestep=False)
+interface_map:
+  forward_signature: forward(self, state, time, dt, **kwargs)
+  bridge_class: TransportMechanismFunctor
+  abstraction_contract: TransportMechanism
+  state_write_mode: every output is an explicit UpdateItem(REPLACE) with unit and source_functor
+  legacy_inputs:
+  - soil_moisture
+  - drainage_flux
+  - groundwater_storage
+  iphs_inputs:
+  - soil_moisture
+  - drainage_flux
+  - groundwater_storage
+  legacy_outputs:
+  - subsurface_runoff_flux
+  - groundwater_storage
+  - diagnostics.subsurface_runoff.baseflow_flux
+  - diagnostics.subsurface_runoff.interflow_flux
+  - diagnostics.subsurface_runoff.storage_fraction
+  - diagnostics.subsurface_runoff.water_table_depth
+  - diagnostics.subsurface_runoff.recession_time_constant_days
+  - diagnostics.subsurface_runoff.drainage_rate_mm_s
+  - diagnostics.subsurface_runoff.total_runoff_rate_mm_s
+  - diagnostics.subsurface_runoff.storage_capacity_overflow
+  - diagnostics.subsurface_runoff.outflow_limiter_residual
+  - diagnostics.subsurface_runoff.water_table_depth_clipping_residual
+  - diagnostics.subsurface_runoff.water_balance_residual
+  iphs_outputs:
+  - subsurface_runoff_flux
+  - groundwater_storage
+  - diagnostics.subsurface_runoff.baseflow_flux
+  - diagnostics.subsurface_runoff.interflow_flux
+  - diagnostics.subsurface_runoff.storage_fraction
+  - diagnostics.subsurface_runoff.water_table_depth
+  - diagnostics.subsurface_runoff.recession_time_constant_days
+  - diagnostics.subsurface_runoff.drainage_rate_mm_s
+  - diagnostics.subsurface_runoff.total_runoff_rate_mm_s
+  - diagnostics.subsurface_runoff.storage_capacity_overflow
+  - diagnostics.subsurface_runoff.outflow_limiter_residual
+  - diagnostics.subsurface_runoff.water_table_depth_clipping_residual
+  - diagnostics.subsurface_runoff.water_balance_residual
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: One production path evaluates the configured baseflow closure, threshold interflow, finite-volume outflow limiter, and open-boundary storage ledger.
+  no_legacy_mode: No runtime flag, input alias, default state, or fallback formula exposes a second subsurface-runoff path.
+state_advancement_map:
+  potential_basis: subsurface storage cochain S_h
+  effort_variable: hydraulic gradient g_h with transmissivity mobility star_T
+  state_advancer: S1 = S0 + R*dt - Q_total*dt; Q_total includes the capacity-overflow component
+  runtime_usage: forward limits regular integrated outlet water by available storage, routes capacity overflow into the canonical outlet, and emits every clipping or limiter residual explicitly.
+parameter_management_map:
+  hydrosphere.runoff.baseflow_recession_constant:
+    source: ParameterManager YAML
+  hydrosphere.runoff.topographic_index_mean:
+    source: ParameterManager YAML
+  hydrosphere.runoff.transmissivity:
+    source: ParameterManager YAML
+  hydrosphere.runoff.threshold_moisture:
+    source: ParameterManager YAML
+  hydrosphere.runoff.return_flow_fraction:
+    source: ParameterManager YAML
+  hydrosphere.runoff.interflow_scaling_factor:
+    source: ParameterManager YAML
+  hydrosphere.runoff.storage_capacity:
+    source: ParameterManager YAML
+  hydrosphere.runoff.baseflow_method:
+    source: ParameterManager YAML
+  hydrosphere.runoff.topmodel_max_deficit:
+    source: ParameterManager YAML
+  hydrosphere.runoff.topmodel_m_scaling_factor:
+    source: ParameterManager YAML
+  hydrosphere.runoff.interflow_exponent:
+    source: ParameterManager YAML
+  hydrosphere.runoff.interflow_rate_scaling_factor:
+    source: ParameterManager YAML
+  hydrosphere.runoff.topmodel_moisture_reference:
+    source: ParameterManager YAML
+  hydrosphere.runoff.topmodel_moisture_factor_min:
+    source: ParameterManager YAML
+  hydrosphere.runoff.topmodel_moisture_factor_max:
+    source: ParameterManager YAML
+  hydrosphere.runoff.water_table_depth_scale:
+    source: ParameterManager YAML
+  hydrosphere.runoff.water_table_depth_max:
+    source: ParameterManager YAML
+  hydrosphere.numerical.minimum_storage_outflow:
+    source: ParameterManager YAML
+  hydrosphere.numerical.recession_coefficient_minimum:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares hydrosphere transport role and runoff coupling interfaces
+  structural_protocol: declared_forms, required_parameters, build_hodge_terms, dissipative_structure, ports
+  state_contract: existing TransportMechanismFunctor and StateManager UpdateItem path
+  physical_constant_ssot:
+  - get_physical_constant(water_density)
+  - get_physical_constant(seconds_per_day)
+  ports:
+  - subsurface_runoff_boundary_flux
+dependency_interconnection_map:
+  dependencies: get_dependencies declares BucketSoilMoisture, RichardsSoilMoisture, and VerticalPercolationTransport as optional compile-time alternative drainage providers; an external adapter may instead provide the complete canonical state
+  direct_functor_calls: none; optional soil-water or percolation providers supply state and the module calls no provider instance
+  chain_maps:
+  - drainage_flux from the selected soil-water or percolation closure to groundwater_storage
+  - subsurface_runoff_flux to routing, channel, or pedosphere coupling through existing state graph
+overflow_routing_map:
+  storage_capacity_projection: max(S_unbounded - S_max, 0) is included in subsurface_runoff_flux and observed as diagnostics.subsurface_runoff.storage_capacity_overflow
+  storage_depletion: max(Q_candidate * dt - S_available, 0) is emitted as diagnostics.subsurface_runoff.outflow_limiter_residual; only Q_actual crosses the matter port
+  water_table_bounds: diagnostic depth lower and upper clipping residuals are summed into water_table_depth_clipping_residual
+  balance_observation: diagnostics.subsurface_runoff.water_balance_residual records the complete open-ledger residual
+  discarded_residuals: storage overflow enters subsurface_runoff_flux and is also observed, outflow limiting and water-table clipping have explicit residual outputs, and water_balance_residual records closure
+conservation_map:
+  conserved_quantity: water mass
+  balance_expression: S1 = S0 + R*dt - Q_total*dt, where Q_total includes O_capacity/dt
+  local_check: metadata declares mass and check_conservation_laws returns the maximum absolute diagnostics.subsurface_runoff.water_balance_residual for the explicit open control volume
+  port_balance: drainage_flux is the inlet and subsurface_runoff_boundary_flux is the unique export; its capacity-overflow component is explicitly observed
+entropy_audit:
+  dissipative_operator: star_T = M_h = diag(rho_w*T0*exp(-lambda)) [kg m-2 s-1] is symmetric positive semidefinite for positive rho_w, transmissivity and exp(-lambda)
+  sigma_expression: sigma = X_h.T star_T X_h >= 0
+  validation_hook: build_hodge_contract(strict=True) and dissipative_structure eigenvalue checks
+equivalence_type: port_equivalent

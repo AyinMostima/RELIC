@@ -1,0 +1,904 @@
+schema_version: 2.0.0
+tier: relic
+namespace: coupling.scales
+description: Default variable metadata for scale coupling (used when scale-specific mappings are not provided).
+metadata:
+  version: 1.0.0
+  created: '2025-11-30T00:00:00Z'
+  created_by: Yuchong Long
+  last_modified: '2025-11-30T00:00:00Z'
+  notes: 'Provides default variable metadata (units and variable_type) for all scales.
+
+    Scale-specific overrides can be added under coupling.scales.<scale>.variables.
+
+    '
+parameters:
+  coupling.scales.defaults.variables:
+    value:
+      air_temperature: &id001
+        variable_type: intensive
+        semantics: state
+        update_mode: replace
+        units: K
+        description: Near-surface air temperature
+        references:
+        - CF Conventions 1.8
+        bounds:
+        - 180.0
+        - 330.0
+        provenance:
+          source: cf_standard
+          schema_version: 1.0.0
+          created_by: Yuchong Long
+          last_modified: '2025-12-05T00:00:00Z'
+          notes: CF-compliant temperature metadata for scale coupling
+      relative_humidity: &id002
+        variable_type: intensive
+        semantics: state
+        update_mode: replace
+        units: '1'
+        description: Relative humidity
+        references:
+        - CF Conventions 1.8
+        bounds:
+        - 0.0
+        - 1.0
+        provenance:
+          source: cf_standard
+          schema_version: 1.0.0
+          created_by: Yuchong Long
+          last_modified: '2025-12-05T00:00:00Z'
+          notes: CF humidity metadata for scale coupling
+      co2_concentration: &id003
+        variable_type: intensive
+        semantics: state
+        update_mode: replace
+        units: ppm
+        description: Atmospheric CO2 concentration
+        references:
+        - Global Carbon Project 2024
+        bounds:
+        - 180.0
+        - 800.0
+        provenance:
+          source: literature
+          schema_version: 1.0.0
+          created_by: Yuchong Long
+          last_modified: '2025-12-05T00:00:00Z'
+          notes: CO2 mixing ratio bounds for coupling defaults
+      aerodynamic_resistance: &id004
+        variable_type: intensive
+        semantics: state
+        update_mode: replace
+        units: s m-1
+        description: Aerodynamic resistance
+        references:
+        - RELIC coupling audit 2025-12-02
+        bounds:
+        - 10.0
+        - 200.0
+        provenance:
+          source: relic_internal
+          schema_version: 1.0.0
+          created_by: Yuchong Long
+          last_modified: '2025-12-05T00:00:00Z'
+          notes: Coupling default for canopy-atmosphere exchange
+      precipitation_flux: &id005
+        variable_type: extensive
+        spatial_basis: area_density
+        semantics: flux
+        update_mode: derived
+        units: kg m-2 s-1
+        description: Precipitation mass flux
+        references:
+        - CF standard name precipitation_flux (non-negative)
+        - Valid range of coupling.external.variables.variable_definitions.precipitation_flux (cited there)
+        bounds:
+        - 0.0
+        - 0.52
+        provenance:
+          source: cf_standard
+          schema_version: 1.0.0
+          created_by: Yuchong Long
+          last_modified: '2026-09-26T00:00:00Z'
+          notes: CF precipitation flux guidance
+      soil_moisture: &id006
+        variable_type: intensive
+        semantics: state
+        update_mode: replace
+        units: m3 m-3
+        description: Volumetric soil water content
+        references:
+        - 'Valid range (the one declaration; the SCM contract declares no clipping bounds): [0, 1] m3 m-3, the range of a volume fraction by definition (the physical upper limit is the porosity of the layer, below 1)'
+        bounds:
+        - 0.0
+        - 1.0
+        provenance:
+          source: cf_standard
+          schema_version: 1.0.0
+          created_by: Yuchong Long
+          last_modified: '2026-09-26T00:00:00Z'
+          notes: Volumetric soil moisture metadata for coupling
+      soil_temperature: &id007
+        variable_type: intensive
+        semantics: state
+        update_mode: replace
+        units: K
+        description: Soil temperature
+        references:
+        - CF Conventions 1.8
+        bounds:
+        - 180.0
+        - 340.0
+        provenance:
+          source: cf_standard
+          schema_version: 1.0.0
+          created_by: Yuchong Long
+          last_modified: '2025-12-05T00:00:00Z'
+          notes: CF soil temperature metadata
+      soil_moisture_profile: &id008
+        variable_type: intensive
+        semantics: state
+        update_mode: replace
+        units: m3 m-3
+        description: Soil moisture profile by layer
+        references:
+        - RELIC coupling audit 2025-12-01
+        bounds:
+        - 0.0
+        - 1.0
+        provenance:
+          source: relic_internal
+          schema_version: 1.0.0
+          created_by: Yuchong Long
+          last_modified: '2025-12-05T00:00:00Z'
+          notes: Layered soil moisture for root uptake coupling
+      soil_matric_potential: &id009
+        variable_type: intensive
+        semantics: state
+        update_mode: replace
+        units: Pa
+        description: Soil matric potential
+        references:
+        - RELIC coupling audit 2025-12-01
+        bounds: null
+        provenance:
+          source: relic_internal
+          schema_version: 1.0.0
+          created_by: Yuchong Long
+          last_modified: '2025-12-05T00:00:00Z'
+          notes: Matric potential driver for soil-vegetation coupling
+      soil_depth_layers: &id010
+        variable_type: intensive
+        semantics: parameter
+        update_mode: immutable
+        units: m
+        description: Soil layer-bottom depths z_1 < ... < z_n below the surface (top at 0), one per soil layer; the layer thickness is Delta z_i = z_i - z_(i-1) with z_0 = 0, as read by SoilVegetationCoupling and the soil_vegetation water check
+        references:
+        - RELIC coupling audit 2025-12-01
+        bounds: null
+        provenance:
+          source: relic_internal
+          schema_version: 1.0.0
+          created_by: Yuchong Long
+          last_modified: '2025-12-05T00:00:00Z'
+          notes: Layer geometry for root uptake calculations; n positive, strictly increasing bottom depths (not thicknesses, not n + 1 boundaries)
+      root_density_profile: &id011
+        variable_type: intensive
+        semantics: parameter
+        update_mode: immutable
+        units: kg m-3
+        description: Root density profile by layer
+        references:
+        - RELIC coupling audit 2025-12-01
+        bounds: null
+        provenance:
+          source: relic_internal
+          schema_version: 1.0.0
+          created_by: Yuchong Long
+          last_modified: '2025-12-05T00:00:00Z'
+          notes: Optional root distribution driver
+      root_uptake_profile: &id012
+        variable_type: extensive
+        spatial_basis: area_density
+        semantics: flux
+        update_mode: derived
+        units: kg m-3 s-1
+        description: Root water uptake rate by layer
+        references:
+        - RELIC coupling audit 2025-12-01
+        bounds:
+        - 0.0
+        - 0.01
+        provenance:
+          source: coupling_variable_bounds
+          schema_version: 1.0.0
+          created_by: Yuchong Long
+          last_modified: '2025-12-05T00:00:00Z'
+          notes: Bounds aligned with coupling.variable_bounds
+      effective_transpiration: &id013
+        variable_type: extensive
+        spatial_basis: area_density
+        semantics: flux
+        update_mode: derived
+        units: kg m-2 s-1
+        description: Actual transpiration after stress
+        references:
+        - RELIC coupling audit 2025-12-01
+        bounds:
+        - 0.0
+        - 0.001
+        provenance:
+          source: coupling_variable_bounds
+          schema_version: 1.0.0
+          created_by: Yuchong Long
+          last_modified: '2025-12-05T00:00:00Z'
+          notes: Bounds aligned with coupling.variable_bounds
+      potential_transpiration: &id014
+        variable_type: extensive
+        spatial_basis: area_density
+        semantics: flux
+        update_mode: derived
+        units: kg m-2 s-1
+        description: Potential transpiration demand
+        references:
+        - RELIC coupling audit 2025-12-01
+        bounds: null
+        provenance:
+          source: relic_internal
+          schema_version: 1.0.0
+          created_by: Yuchong Long
+          last_modified: '2025-12-05T00:00:00Z'
+          notes: Atmospheric demand driver for root uptake
+      root_zone_moisture: &id016
+        variable_type: intensive
+        semantics: state
+        update_mode: replace
+        units: m3 m-3
+        description: Root-zone average soil moisture
+        references:
+        - RELIC coupling audit 2025-12-01
+        bounds:
+        - 0.0
+        - 1.0
+        provenance:
+          source: coupling_variable_bounds
+          schema_version: 1.0.0
+          created_by: Yuchong Long
+          last_modified: '2025-12-05T00:00:00Z'
+          notes: Bounds aligned with coupling.variable_bounds
+      runoff_flux: &id017
+        variable_type: extensive
+        spatial_basis: area_density
+        semantics: flux
+        update_mode: derived
+        units: kg m-2 s-1
+        description: Runoff mass flux (surface plus subsurface; the surface part is surface_runoff_flux)
+        references:
+        - CF standard name runoff_flux (non-negative)
+        - Valid range of coupling.external.variables.variable_definitions.runoff_flux (cited there)
+        bounds:
+        - 0.0
+        - 0.52
+        provenance:
+          source: cf_standard
+          schema_version: 1.0.0
+          created_by: Yuchong Long
+          last_modified: '2026-09-26T00:00:00Z'
+          notes: CF runoff flux metadata
+      evapotranspiration_flux: &id018
+        variable_type: extensive
+        spatial_basis: area_density
+        semantics: flux
+        update_mode: derived
+        units: kg m-2 s-1
+        description: Total evapotranspiration mass flux
+        references:
+        - CF standard name water_evapotranspiration_flux (signed, condensation negative)
+        - Valid range of coupling.external.variables.variable_definitions.evapotranspiration_flux (cited there)
+        bounds:
+        - -1.0e-4
+        - 6.0e-4
+        provenance:
+          source: cf_standard
+          schema_version: 1.0.0
+          created_by: Yuchong Long
+          last_modified: '2025-12-05T00:00:00Z'
+          notes: CF evapotranspiration metadata
+      transpiration_rate: &id019
+        variable_type: extensive
+        spatial_basis: area_density
+        semantics: flux
+        update_mode: derived
+        units: kg m-2 s-1
+        description: Plant transpiration rate
+        references:
+        - RELIC coupling audit 2025-12-01
+        bounds:
+        - 0.0
+        - 0.001
+        provenance:
+          source: coupling_variable_bounds
+          schema_version: 1.0.0
+          created_by: Yuchong Long
+          last_modified: '2025-12-05T00:00:00Z'
+          notes: Bounds aligned with coupling.variable_bounds
+      latent_heat_flux: &id020
+        variable_type: extensive
+        spatial_basis: area_density
+        semantics: flux
+        update_mode: derived
+        units: W m-2
+        description: Latent heat energy flux
+        references:
+        - CF standard name surface_upward_latent_heat_flux (signed, condensation negative)
+        - Valid range of coupling.external.variables.variable_definitions.latent_heat_flux (cited there)
+        bounds:
+        - -245.0
+        - 1470.0
+        provenance:
+          source: cf_standard
+          schema_version: 1.0.0
+          created_by: Yuchong Long
+          last_modified: '2025-12-05T00:00:00Z'
+          notes: CF latent heat flux metadata
+      sensible_heat_flux: &id021
+        variable_type: extensive
+        spatial_basis: area_density
+        semantics: flux
+        update_mode: derived
+        units: W m-2
+        description: Sensible heat energy flux
+        references:
+        - CF standard name surface_upward_sensible_heat_flux (signed, positive upward)
+        - Valid range of coupling.external.variables.variable_definitions.sensible_heat_flux (cited there)
+        bounds:
+        - -200.0
+        - 1000.0
+        provenance:
+          source: cf_standard
+          schema_version: 1.0.0
+          created_by: Yuchong Long
+          last_modified: '2026-09-26T00:00:00Z'
+          notes: CF sensible heat flux metadata
+      net_radiation: &id022
+        variable_type: extensive
+        spatial_basis: area_density
+        semantics: flux
+        update_mode: derived
+        units: W m-2
+        description: Net surface radiation
+        references:
+        - CF standard name surface_net_downward_radiative_flux (signed, positive downward)
+        - Valid range of coupling.external.variables.variable_definitions.net_radiation (cited there)
+        bounds:
+        - -400.0
+        - 2200.0
+        provenance:
+          source: cf_standard
+          schema_version: 1.0.0
+          created_by: Yuchong Long
+          last_modified: '2026-09-26T00:00:00Z'
+          notes: CF net radiation metadata
+      water_stress_factor: &id023
+        standard_name: water_stress
+        variable_type: intensive
+        semantics: diagnostic
+        update_mode: replace
+        units: '1'
+        description: Plant water stress factor (0-1)
+        references:
+        - RELIC internal convention
+        provenance:
+          source: relic_internal
+          schema_version: 1.0.0
+          created_by: Yuchong Long
+          last_modified: '2025-12-05T00:00:00Z'
+          notes: 'Alias mapping: water_stress_factor -> water_stress'
+      overall_water_stress: &id024
+        variable_type: intensive
+        semantics: diagnostic
+        update_mode: replace
+        units: '1'
+        description: Overall ecosystem water stress factor
+        references:
+        - RELIC coupling audit 2025-12-01
+        bounds:
+        - 0.0
+        - 1.0
+        provenance:
+          source: coupling_variable_bounds
+          schema_version: 1.0.0
+          created_by: Yuchong Long
+          last_modified: '2025-12-05T00:00:00Z'
+          notes: Bounds aligned with coupling.variable_bounds
+      gpp_water_stress_factor: &id025
+        variable_type: intensive
+        semantics: diagnostic
+        update_mode: replace
+        units: '1'
+        description: Water stress reduction factor for GPP
+        references:
+        - RELIC coupling audit 2025-12-01
+        bounds:
+        - 0.0
+        - 1.0
+        provenance:
+          source: coupling_variable_bounds
+          schema_version: 1.0.0
+          created_by: Yuchong Long
+          last_modified: '2025-12-05T00:00:00Z'
+          notes: Bounds aligned with coupling.variable_bounds
+      temperature_stress_factor: &id026
+        standard_name: temperature_stress
+        variable_type: intensive
+        semantics: diagnostic
+        update_mode: replace
+        units: '1'
+        description: Plant temperature stress factor (0-1)
+        references:
+        - RELIC internal convention
+        provenance:
+          source: relic_internal
+          schema_version: 1.0.0
+          created_by: Yuchong Long
+          last_modified: '2025-12-05T00:00:00Z'
+          notes: 'Alias mapping: temperature_stress_factor -> temperature_stress'
+      nutrient_stress_factor: &id027
+        standard_name: nutrient_stress
+        variable_type: intensive
+        semantics: diagnostic
+        update_mode: replace
+        units: '1'
+        description: Plant nutrient stress factor (0-1)
+        references:
+        - RELIC internal convention
+        provenance:
+          source: relic_internal
+          schema_version: 1.0.0
+          created_by: Yuchong Long
+          last_modified: '2025-12-05T00:00:00Z'
+          notes: 'Alias mapping: nutrient_stress_factor -> nutrient_stress'
+      leaf_temperature: &id028
+        standard_name: leaf_temperature
+        cf_standard_name: null
+        variable_type: intensive
+        semantics: state
+        update_mode: replace
+        units: K
+        description: Leaf temperature used by biosphere modules
+        references:
+        - RELIC internal convention
+        provenance:
+          source: relic_internal
+          schema_version: 1.0.0
+          created_by: Yuchong Long
+          last_modified: '2025-12-05T00:00:00Z'
+          notes: 'RELIC-specific leaf (tissue) temperature; no CF standard name (CF canopy_temperature
+            is the bulk canopy temperature, not declared equal here)'
+      leaf_area_index: &id029
+        variable_type: intensive
+        semantics: state
+        update_mode: replace
+        units: m2 m-2
+        description: One-sided leaf area per ground area
+        references:
+        - CF Conventions 1.8
+        - Myneni et al. 2002
+        bounds:
+        - 0.0
+        - 15.0
+        provenance:
+          source: cf_standard
+          schema_version: 1.0.0
+          created_by: Yuchong Long
+          last_modified: '2025-12-05T00:00:00Z'
+          notes: CF LAI metadata with observational bounds
+      gross_primary_productivity: &id030
+        variable_type: extensive
+        spatial_basis: area_density
+        semantics: flux
+        update_mode: derived
+        units: kg C m-2 s-1
+        description: Gross primary productivity of carbon
+        references:
+        - CF Conventions 1.8
+        - Farquhar et al. 1980
+        bounds:
+        - 0.0
+        - 0.05
+        provenance:
+          source: literature
+          schema_version: 1.0.0
+          created_by: Yuchong Long
+          last_modified: '2025-12-05T00:00:00Z'
+          notes: Based on ecosystem GPP ranges in flux tower studies
+      net_primary_productivity: &id031
+        variable_type: extensive
+        spatial_basis: area_density
+        semantics: flux
+        update_mode: derived
+        units: kg C m-2 s-1
+        description: Net primary productivity of carbon
+        references:
+        - 'CF standard name net_primary_productivity_of_biomass_expressed_as_carbon: the excess of gross primary production over autotrophic respiration, signed (negative when respiration exceeds uptake, for example at night)'
+        - 'Valid range (the one declaration; the SCM contract declares no clipping bounds): [-1.0e-6, 1.0e-6] kg C m-2 s-1, a convention: NPP <= GPP, and the peak hourly GPP of irrigated maize, 3.2 mg CO2 m-2 s-1 = 8.7e-7 kg C m-2 s-1 (Suyker, Verma, Burba and Arkebauer (2005) Agric. For. Meteorol. 131(3-4):180-190), lies below the upper bound; the lower bound mirrors it for the nocturnal NPP = -R_a'
+        bounds:
+        - -1.0e-6
+        - 1.0e-6
+        provenance:
+          source: literature
+          schema_version: 1.0.0
+          created_by: Yuchong Long
+          last_modified: '2026-09-26T00:00:00Z'
+          notes: Signed NPP = GPP - R_a (relic.scientific.biosphere.respiration.autotrophic_respiration)
+      net_assimilation_rate: &id033
+        variable_type: extensive
+        spatial_basis: area_density
+        semantics: flux
+        update_mode: derived
+        units: kg C m-2 s-1
+        description: Leaf-to-canopy net CO2 assimilation mass flux used in coupling
+        references:
+        - Ball et al. 1987
+        - Medlyn et al. 2011
+        bounds:
+        - 0.0
+        - 0.05
+        provenance:
+          source: literature
+          schema_version: 1.0.0
+          created_by: Yuchong Long
+          last_modified: '2025-12-09T00:00:00Z'
+          notes: Mass-based assimilation for coupling; requires explicit unit conversion to umol when needed
+      gross_photosynthesis: &id034
+        variable_type: extensive
+        spatial_basis: area_density
+        semantics: flux
+        update_mode: derived
+        units: umol CO2 m-2 s-1
+        description: Canopy-integrated gross photosynthesis per ground area before respiration
+        references:
+        - Farquhar et al. 1980
+        - Ball et al. 1987
+        bounds:
+        - 0.0
+        - 500.0
+        provenance:
+          source: literature
+          schema_version: 1.0.0
+          created_by: Yuchong Long
+          last_modified: '2025-12-09T00:00:00Z'
+          notes: Photosynthetic flux in molar units for stomatal coupling
+      net_photosynthesis: &id035
+        variable_type: extensive
+        spatial_basis: area_density
+        semantics: flux
+        update_mode: derived
+        units: umol CO2 m-2 s-1
+        description: Canopy-integrated net photosynthesis per ground area
+        references:
+        - Farquhar et al. 1980
+        - Leuning 1995
+        bounds:
+        - -50.0
+        - 500.0
+        provenance:
+          source: literature
+          schema_version: 1.0.0
+          created_by: Yuchong Long
+          last_modified: '2025-12-09T00:00:00Z'
+          notes: Molar assimilation used directly by stomatal conductance models
+      gpp: &id037
+        variable_type: extensive
+        spatial_basis: area_density
+        semantics: flux
+        update_mode: derived
+        units: umol m-2 s-1
+        description: Leaf-level gross primary productivity alias (molar units)
+        references:
+        - Farquhar et al. 1980
+        - Ball et al. 1987
+        bounds:
+        - 0.0
+        - 800.0
+        provenance:
+          source: literature
+          schema_version: 1.0.0
+          created_by: Yuchong Long
+          last_modified: '2025-12-09T00:00:00Z'
+          notes: Alias used by photosynthesis functors; convert to kg C for ecosystem budgets when required
+      carbon: &id038
+        variable_type: extensive
+        spatial_basis: area_density
+        semantics: state
+        update_mode: replace
+        units: kg C m-2
+        description: Generic carbon stock per unit area
+        references:
+        - CF Conventions 1.8
+        bounds:
+        - 0.0
+        - 500000.0
+        provenance:
+          source: cf_standard
+          schema_version: 1.0.0
+          created_by: Yuchong Long
+          last_modified: '2025-12-05T00:00:00Z'
+          notes: Generic carbon stock placeholder for multi-scale coupling
+      nitrogen_flux: &id039
+        variable_type: extensive
+        spatial_basis: area_density
+        semantics: flux
+        update_mode: derived
+        units: kg N m-2 s-1
+        description: Generic nitrogen mass flux
+        references:
+        - CF Conventions 1.8
+        bounds:
+        - -0.02
+        - 0.02
+        provenance:
+          source: cf_standard
+          schema_version: 1.0.0
+          created_by: Yuchong Long
+          last_modified: '2025-12-05T00:00:00Z'
+          notes: Generic nitrogen flux envelope
+      ecosystem_respiration: &id040
+        variable_type: extensive
+        spatial_basis: area_density
+        semantics: flux
+        update_mode: derived
+        units: kg C m-2 s-1
+        description: Total ecosystem respiration flux
+        references:
+        - CF Conventions 1.8
+        - Lloyd and Taylor 1994
+        bounds:
+        - 0.0
+        - 0.05
+        provenance:
+          source: literature
+          schema_version: 1.0.0
+          created_by: Yuchong Long
+          last_modified: '2025-12-05T00:00:00Z'
+          notes: Respiration ranges from flux tower syntheses
+      stomatal_conductance: &id041
+        variable_type: intensive
+        semantics: diagnostic
+        update_mode: replace
+        units: mol m-2 s-1
+        description: Leaf-level stomatal conductance to water vapour, supplied as forcing or by the exclusive tutorial proxy or conditional Medlyn provider; readers ozone_stress and oxygen_18 use the same leaf-area unit
+        references:
+        - Ball, J.T., Woodrow, I.E. and Berry, J.A. (1987) stomatal conductance model (leaf conductance in mol m-2 s-1)
+        - 'Medlyn et al. (2011), doi:10.1111/j.1365-2486.2010.02375.x; CTSM technical note Eq. 2.9.1: the implemented conditional law has no upper conductance cap. Its VPD floor and residual branches are declared in docs/source/theory/photosynthesis.md.'
+        - 'Murray et al. (2019), Front. Plant Sci. 10:558: observed species maxima are not a universal bound. The former 2.0 empirical guard must not silently truncate a selected process law.'
+        bounds:
+        - 0.0
+        - .inf
+        provenance:
+          source: literature
+          schema_version: 1.0.0
+          created_by: Yuchong Long
+          last_modified: '2026-10-15T00:00:00Z'
+          notes: Nonnegative conductance; former empirical upper guard removed to match the state contract. Values above 2 are numerically admissible, not observationally validated. The tutorial proxy retains its own declared maximum.
+      canopy_conductance: &id042
+        variable_type: intensive
+        semantics: diagnostic
+        update_mode: replace
+        units: m s-1
+        description: Bulk canopy conductance
+        references:
+        - Jarvis, P.G. (1976) Phil. Trans. R. Soc. Lond. B 273:593-610 (canopy conductance)
+        - 'Valid range (the one declaration; the SCM contract clips only at the lower bound 0): [0, 0.05] m s-1, a convention: the maximum surface (canopy) conductance for evaporation averages 20 mm s-1 for natural vegetation and 33 mm s-1 for crops (Kelliher, Leuning, Raupach and Schulze (1995) Agric. For. Meteorol. 73(1-2):1-16); the upper bound is 1.5 times the crop mean'
+        bounds:
+        - 0.0
+        - 0.05
+        provenance:
+          source: literature
+          schema_version: 1.0.0
+          created_by: Yuchong Long
+          last_modified: '2026-09-26T00:00:00Z'
+          notes: Canopy conductance observational envelope
+      vapor_pressure_deficit: &id043
+        variable_type: intensive
+        semantics: state
+        update_mode: replace
+        units: Pa
+        description: Vapor pressure deficit
+        references:
+        - CF Conventions 1.8
+        bounds:
+        - 0.0
+        - 7000.0
+        provenance:
+          source: cf_standard
+          schema_version: 1.0.0
+          created_by: Yuchong Long
+          last_modified: '2025-12-05T00:00:00Z'
+          notes: Humidity deficit bounds for ecosystem models
+      soil_carbon: &id044
+        variable_type: extensive
+        spatial_basis: area_density
+        semantics: state
+        update_mode: replace
+        units: kg C m-2
+        description: Soil carbon stock
+        references:
+        - CF Conventions 1.8
+        - IPCC 2019 Refinement
+        bounds:
+        - 0.0
+        - 50000.0
+        provenance:
+          source: literature
+          schema_version: 1.0.0
+          created_by: Yuchong Long
+          last_modified: '2025-12-05T00:00:00Z'
+          notes: Wide envelope covering peatland to mineral soils
+      soil_nitrogen: &id045
+        variable_type: extensive
+        spatial_basis: area_density
+        semantics: state
+        update_mode: replace
+        units: kg N m-2
+        description: Soil nitrogen stock
+        references:
+        - CF Conventions 1.8
+        - Chapin et al. 2011
+        bounds:
+        - 0.0
+        - 5000.0
+        provenance:
+          source: literature
+          schema_version: 1.0.0
+          created_by: Yuchong Long
+          last_modified: '2025-12-05T00:00:00Z'
+          notes: Broad soil nitrogen storage envelope
+      water_table_depth: &id046
+        variable_type: intensive
+        semantics: state
+        update_mode: replace
+        units: m
+        description: Water table depth below surface
+        references:
+        - CF Conventions 1.8
+        bounds:
+        - 0.0
+        - 200.0
+        provenance:
+          source: cf_standard
+          schema_version: 1.0.0
+          created_by: Yuchong Long
+          last_modified: '2025-12-05T00:00:00Z'
+          notes: Hydrological depth envelope for coupling
+      isoprene_emission_interval_mean:
+        variable_type: extensive
+        spatial_basis: area_density
+        units: mol m-2 s-1
+        description: Interval-mean isoprene emission flux density per unit ground area (source port of the tower-flux support aggregation)
+        references:
+        - Guenther, A.B. et al. (2012), Geosci. Model Dev. 5, 1471-1492 (MEGAN2.1)
+        provenance:
+          source: relic/contracts/variables/biosphere/isoprene_emission_interval_mean.yaml
+          schema_version: 1.0.0
+          created_by: MA-21 spatial repair
+          last_modified: '2026-09-24T00:00:00Z'
+          notes: spatial_basis read by SupportAggregationAdapter through the SSOT catalog
+      diagnostics.observation.tower_flux.footprint_weighted_isoprene_flux:
+        variable_type: extensive
+        spatial_basis: area_density
+        units: mol m-2 s-1
+        description: Footprint-weighted isoprene flux density per unit ground area (target port of the tower-flux support aggregation)
+        references:
+        - Kljun, N. et al. (2015), Geosci. Model Dev. 8, 3695-3713
+        provenance:
+          source: relic/contracts/variables/atmosphere/footprint_weighted_isoprene_flux.yaml
+          schema_version: 1.0.0
+          created_by: MA-21 spatial repair
+          last_modified: '2026-09-24T00:00:00Z'
+          notes: spatial_basis read by SupportAggregationAdapter through the SSOT catalog
+      __meta__:
+        description: Default variable catalog for coupling scales
+        references:
+        - CF Conventions 1.8
+        provenance:
+          source: cf_standard
+          schema_version: 1.0.0
+          created_by: Yuchong Long
+          last_modified: '2025-12-05T00:00:00Z'
+    default: null
+    units: dimensionless
+    dtype: dict
+    bounds: null
+    category: model_configuration
+    description: Default variable metadata for scale coupling (units, variable types and, for extensive entries, the explicit spatial_basis cell_total or area_density read by the spatial operators).
+    references:
+    - CF Conventions 1.8
+    - RELIC scale coupling registry
+    tags:
+    - scale_coupling
+    - variable_metadata
+    - cf_compliance
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC coupling metadata registry
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-05T00:00:00Z'
+  coupling.scales.daily.variables:
+    value:
+      air_temperature: *id001
+      relative_humidity: *id002
+      co2_concentration: *id003
+      aerodynamic_resistance: *id004
+      precipitation_flux: *id005
+      soil_moisture: *id006
+      soil_temperature: *id007
+      soil_moisture_profile: *id008
+      soil_matric_potential: *id009
+      soil_depth_layers: *id010
+      root_density_profile: *id011
+      root_uptake_profile: *id012
+      effective_transpiration: *id013
+      potential_transpiration: *id014
+      root_zone_moisture: *id016
+      runoff_flux: *id017
+      evapotranspiration_flux: *id018
+      transpiration_rate: *id019
+      latent_heat_flux: *id020
+      sensible_heat_flux: *id021
+      net_radiation: *id022
+      water_stress_factor: *id023
+      overall_water_stress: *id024
+      gpp_water_stress_factor: *id025
+      temperature_stress_factor: *id026
+      nutrient_stress_factor: *id027
+      leaf_temperature: *id028
+      leaf_area_index: *id029
+      gross_primary_productivity: *id030
+      net_primary_productivity: *id031
+      net_assimilation_rate: *id033
+      gross_photosynthesis: *id034
+      net_photosynthesis: *id035
+      gpp: *id037
+      carbon: *id038
+      nitrogen_flux: *id039
+      ecosystem_respiration: *id040
+      stomatal_conductance: *id041
+      canopy_conductance: *id042
+      vapor_pressure_deficit: *id043
+      soil_carbon: *id044
+      soil_nitrogen: *id045
+      water_table_depth: *id046
+      __meta__:
+        description: Daily scale variable catalog aligned with defaults
+        references:
+        - CF Conventions 1.8
+        provenance:
+          source: cf_standard
+          schema_version: 1.0.0
+          created_by: Yuchong Long
+          last_modified: '2025-12-05T00:00:00Z'
+          notes: Mirrors default catalog to avoid unknown variable defaults
+    default: null
+    units: dimensionless
+    dtype: dict
+    bounds: null
+    category: model_configuration
+    description: Daily-scale variable metadata for temporal aggregation and validation.
+    references:
+    - CF Conventions 1.8
+    - RELIC scale coupling registry
+    tags:
+    - scale_coupling
+    - variable_metadata
+    - daily_scale
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC coupling metadata registry
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-05T00:00:00Z'

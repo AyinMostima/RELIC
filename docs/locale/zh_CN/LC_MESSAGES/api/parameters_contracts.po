@@ -1,0 +1,1318 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C)
+# This file is distributed under the same license as the RELIC package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: RELIC 1.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-31 06:10-0700\n"
+"PO-Revision-Date: 2026-07-28 11:56+0800\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_Hans_CN\n"
+"Language-Team: zh_Hans_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:2
+msgid "Parameters and Parameter Contracts"
+msgstr "参数与参数契约"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:4
+msgid "This page documents the canonical parameter-management API used by RELIC. `UnifiedParameterManager` is the only concrete parameter manager. It owns parameter lookup, validation, persistence, unit conversion, trainable parameters, caching, and snapshots. `ParameterSpec` is the canonical metadata contract for one parameter."
+msgstr "本页记录 RELIC 使用的 canonical parameter-management API。`UnifiedParameterManager` 是唯一的具体 parameter manager，负责参数查找、验证、持久化、单位转换、可训练参数、缓存和 snapshot。`ParameterSpec` 是单个参数的 canonical metadata contract。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:11
+msgid "There is no importable class named `ParameterManager`. In architecture prose, that name denotes the parameter-management role. Python code obtains the process-wide `UnifiedParameterManager` with `get_global_manager()`. Constructing `UnifiedParameterManager(...)` directly creates an independent manager, which must be injected explicitly where it is used."
+msgstr "不存在名为 `ParameterManager` 的可导入类。架构说明中的这一名称表示参数管理职责。Python 代码通过 `get_global_manager()` 获取进程级的 `UnifiedParameterManager`。直接构造 `UnifiedParameterManager(...)` 会创建独立管理器，使用时必须显式注入。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:17
+msgid "Scientific `FunctorBase` subclasses must not call the global manager directly. They retrieve values only through `self.get_parameter_value(\"key\", required=...)`. Non-Functor infrastructure uses `get_global_manager().get(...)`."
+msgstr "科学 `FunctorBase` 子类不得直接调用 global manager。它们只能通过 `self.get_parameter_value(\"key\", required=...)` 获取值。非 Functor 基础设施使用 `get_global_manager().get(...)`。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:23
+msgid "Stable imports"
+msgstr "稳定导入"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:50
+msgid "The following direct module paths are canonical runtime integration paths but are not re-exported by their package roots:"
+msgstr "以下直接模块路径是 canonical runtime integration path，但其 package root 不会重新导出这些路径："
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:66
+msgid "`ValidationLevel` and `ValidationContext` in `relic.parameters`, and `ValidationResult` in `relic.parameters.types`, are compatibility aliases for the domain-prefixed parameter types. New documentation and code should use the domain-prefixed names above to avoid confusion with `relic.validation.framework`."
+msgstr "`relic.parameters` 中的 `ValidationLevel`、`ValidationContext`，以及 `relic.parameters.types` 中的 `ValidationResult`，都是带领域前缀的参数类型的兼容别名。新文档和代码应使用上方带领域前缀的名称，避免与 `relic.validation.framework` 混淆。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:72
+msgid "Ownership model"
+msgstr "所有权模型"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Component"
+msgstr "组件"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Canonical owner"
+msgstr "Canonical owner"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Public responsibility"
+msgstr "公开职责"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Manager"
+msgstr "Manager（管理器）"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:90
+msgid "`UnifiedParameterManager`"
+msgstr "`UnifiedParameterManager`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Resolve, validate, mutate, cache, persist, and expose parameters"
+msgstr "解析、验证、修改、缓存、持久化并公开参数"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Specification"
+msgstr "规范"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:429
+msgid "`ParameterSpec`"
+msgstr "`ParameterSpec`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Store one value together with units, bounds, provenance, and optimization metadata"
+msgstr "将一个值与单位、bounds、provenance 和优化 metadata 一并存储"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Database"
+msgstr "数据库"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:677
+msgid "`ParameterDatabase`"
+msgstr "`ParameterDatabase`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Read and write the native and calibrated parameter tiers"
+msgstr "读写 native 和 calibrated parameter tier"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Runtime storage"
+msgstr "Runtime storage（运行时存储）"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:751
+msgid "`ParameterStorage`"
+msgstr "`ParameterStorage`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Provide thread-safe value storage, namespace indexing, and snapshots"
+msgstr "提供线程安全的值存储、namespace 索引和 snapshot"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Validation"
+msgstr "验证"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:811
+msgid "`ParameterValidator`"
+msgstr "`ParameterValidator`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Apply type, bounds, units, relationship, and scientific validation rules"
+msgstr "应用类型、bounds、单位、关系和科学验证规则"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Snapshot value"
+msgstr "Snapshot 值"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:796
+msgid "`ParameterSnapshot`"
+msgstr "`ParameterSnapshot`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Hold an immutable copy of parameter values"
+msgstr "保存参数值的不可变副本"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Serialization envelope"
+msgstr "序列化 envelope"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:553
+msgid "`ParameterSchema`"
+msgstr "`ParameterSchema`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Validate and version the parameter interchange mapping"
+msgstr "验证 parameter interchange mapping 并进行版本管理"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Decorator metadata"
+msgstr "Decorator metadata（装饰器元数据）"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:621
+msgid "`ParameterDefinition`"
+msgstr "`ParameterDefinition`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Carry metadata for the compatibility decorator API"
+msgstr "承载兼容 decorator API 的 metadata"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Physical constraints"
+msgstr "物理约束"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:950
+msgid "`PhysicalConstraintManager`"
+msgstr "`PhysicalConstraintManager`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Apply manager-owned constraints during state and scale integration"
+msgstr "在 state 和 scale 集成过程中应用 manager-owned 约束"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Domain budgets"
+msgstr "Domain budgets（领域预算）"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:1103
+msgid "`ConservationGuardian`"
+msgstr "`ConservationGuardian`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Produce non-blocking domain conservation diagnostics"
+msgstr "生成非阻塞的 domain conservation diagnostics"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:87
+msgid "These components form one parameter system. Applications must not create a second parameter registry, cache, schema, or lookup facade."
+msgstr "这些组件共同构成一个参数系统。应用不得创建第二套参数 registry、cache、schema 或 lookup facade。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:92
+msgid "Implementation: `relic.parameters.manager.UnifiedParameterManager`"
+msgstr "实现：`relic.parameters.manager.UnifiedParameterManager`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:95
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:434
+msgid "Stable import:"
+msgstr "稳定导入："
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:101
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:440
+msgid "Constructor"
+msgstr "构造函数"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Parameter"
+msgstr "参数"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Type and default"
+msgstr "类型与默认值"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Purpose"
+msgstr "用途"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`database_path`"
+msgstr "`database_path`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`Optional[Path] = None`"
+msgstr "`Optional[Path] = None`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Parameter database root. `None` selects `relic\\parameters\\database`."
+msgstr "参数数据库根目录。`None` 选择 `relic\\parameters\\database`。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`metadata`"
+msgstr "`metadata`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`Optional[ManagerMetadata] = None`"
+msgstr "`Optional[ManagerMetadata] = None`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Base-manager identity and lifecycle metadata. The manager creates canonical metadata when omitted."
+msgstr "BaseManager identity 和 lifecycle metadata。省略时，manager 会创建 canonical metadata。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`preload_all`"
+msgstr "`preload_all`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`bool = False`"
+msgstr "`bool = False`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Load the complete parameter database during construction without relying on lazy namespace loading. A later `initialize()` loads nothing."
+msgstr "在构造阶段加载完整参数数据库，不依赖命名空间延迟加载；后续调用 `initialize()` 不再执行加载。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`warmup_cache`"
+msgstr "`warmup_cache`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Warm value caches after preloading. It has no independent effect when `preload_all` is false."
+msgstr "预加载后预热值缓存。当 `preload_all` 为 false 时，该项不会单独生效。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`cache_enabled`"
+msgstr "`cache_enabled`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "keyword-only through `kwargs`, default `True`"
+msgstr "通过 `kwargs` 提供的 keyword-only 参数，默认值为 `True`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Enable parameter-value and unit-conversion caches."
+msgstr "启用参数值缓存和单位转换缓存。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`cache_max_size`"
+msgstr "`cache_max_size`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "keyword-only through `kwargs`, default `1000`"
+msgstr "通过 `kwargs` 提供的 keyword-only 参数，默认值为 `1000`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Maximum number of parameter-value cache entries."
+msgstr "参数值缓存条目的最大数量。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`cache_ttl`"
+msgstr "`cache_ttl`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "keyword-only through `kwargs`, default `None`"
+msgstr "通过 `kwargs` 提供的 keyword-only 参数，默认值为 `None`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Optional cache time-to-live."
+msgstr "可选的 cache time-to-live。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:123
+msgid "Each construction builds a new, independent manager; the class has no singleton hook. The process-wide manager is obtained only through `get_global_manager()`, and normal application code should use it. Code that needs a separate owner constructs one and injects it explicitly, for example through the `parameter_manager` argument of a Functor. An injected manager must expose `database`, its `ParameterDatabase`: dotted-name resolution in `FunctorBase.get_parameter_value()` and in the external coupling adapters calls `relic.parameters.namespaces.is_declared_namespace(namespace, manager)`, which asks `manager.database.declares_namespace(...)`. An independent manager never rewrites the process-wide variable name mapper."
+msgstr "每次构造都会创建新的独立管理器；该类没有单例钩子。进程级管理器只能通过 `get_global_manager()` 获取，普通应用代码应使用它。需要独立所有者的代码应自行构造并显式注入，例如通过 Functor 的 `parameter_manager` 参数。注入的管理器必须公开 `database`，即其 `ParameterDatabase`：`FunctorBase.get_parameter_value()` 和外部耦合适配器中的点分名称解析会调用 `relic.parameters.namespaces.is_declared_namespace(namespace, manager)`，后者查询 `manager.database.declares_namespace(...)`。独立管理器绝不重写进程级变量名映射器。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:134
+msgid "Under the default packaged database (`relic\\parameters\\database`), `138` YAML files define `4,751` leaf entries (`134` native `relic` tier files with `4,642` entries and `4` `calibrated` tier files with `109` entries), resolving after tier precedence to `4,643` active runtime parameters (`810` learnable parameters with `requires_grad=True`). Two distinct precedence rules govern resolution: inside `ParameterDatabase`, later tiers override earlier tiers in the order `relic`, enabled `calibrated` scopes (`global`, `regional`, `site_specific`), and `add_source(...)` paths; inside a Functor, `FunctorBase.get_parameter_value(..., source_order=(\"manager\", \"config\"))` queries `\"manager\"` (`UnifiedParameterManager`) before `\"config\"` (Functor-local overrides) by default."
+msgstr "在默认随包数据库（`relic\\parameters\\database`）下，`138` 个 YAML 文件共定义 `4,751` 个叶条目（`134` 个原生 `relic` 层文件含 `4,642` 个条目，`4` 个 `calibrated` 层文件含 `109` 个条目），按层级优先级解析后得到 `4,643` 个有效运行时参数（其中 `810` 个设置 `requires_grad=True` 的可学习参数）。参数解析受两套独立的优先级规则治理：在 `ParameterDatabase` 内部，后加载层按 `relic`、已启用的 `calibrated` 作用域（`global`、`regional`、`site_specific`）以及 `add_source(...)` 路径的顺序覆盖先前层；在 Functor 内部，`FunctorBase.get_parameter_value(..., source_order=(\"manager\", \"config\"))` 默认先查询 `\"manager\"`（`UnifiedParameterManager`），再查询 `\"config\"`（Functor 局部覆盖项）。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:146
+msgid "`get()`"
+msgstr "`get()`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`key`"
+msgstr "`key`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Canonical or normalizable dot-notation parameter key."
+msgstr "Canonical 或可规范化的 dot-notation parameter key。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`default`"
+msgstr "`default`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Value returned when no parameter can be resolved and `required` is false."
+msgstr "无法解析参数且 `required` 为 false 时返回的值。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`namespace`"
+msgstr "`namespace`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Optional namespace prefix applied before key normalization."
+msgstr "在 key normalization 前应用的可选 namespace prefix。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`units`"
+msgstr "`units`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Requested output units. The stored value is converted when the units are compatible."
+msgstr "请求的输出单位。单位兼容时会转换已存储的值。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`expected_type`"
+msgstr "`expected_type`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Require the resolved value to match a Python type."
+msgstr "要求解析出的值匹配指定 Python 类型。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`required`"
+msgstr "`required`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Raise `KeyError` when the parameter is missing; when `False`, return `default`."
+msgstr "参数缺失时抛出 `KeyError`；设为 `False` 时返回 `default`。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`bounds`"
+msgstr "`bounds`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Optional read-time lower and upper bounds for a scalar value."
+msgstr "读取标量值时使用的可选 lower 和 upper bounds。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:170
+msgid "Returns the resolved value, not its metadata. A request for a namespace prefix (not a leaf key, without `default`, and with `required=False`) returns a nested mapping of the stored values of every key below `<namespace>.` that the manager holds or the database defines, the membership of `get_namespace_parameters`. The mapping is built at each read and belongs to the caller. Reading has no validation switch: a requested unit conversion is always checked, and any other keyword raises `TypeError`. Every successful read, including the direct storage path, is recorded in the access history that restart contracts read."
+msgstr "返回解析后的参数值（不含元数据）。请求命名空间前缀（非叶键、未传入 `default` 且 `required=False`）时，返回管理器当前持有或数据库在 `<namespace>.` 下定义的全部键存储值所组成的嵌套映射，其成员集合与 `get_namespace_parameters` 一致。该映射在每次读取时新建并归调用方所有。读取操作不设校验开关：所请求的单位换算始终接受检查，传入其他任何关键字参数均抛出 `TypeError`。每次成功读取（包括直接存储路径）均会记入供重启契约读取的访问历史。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:179
+msgid "Raises:"
+msgstr "可能抛出："
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:181
+msgid "`KeyError` when `required=True` and the key cannot be resolved."
+msgstr "当 `required=True` 且无法解析 key 时抛出 `KeyError`。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:182
+msgid "`TypeError` when `expected_type` is incompatible with the resolved value."
+msgstr "当 `expected_type` 与解析出的值不兼容时抛出 `TypeError`。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:183
+msgid "Unit-conversion or validation exceptions when the requested conversion or validation cannot be completed."
+msgstr "无法完成请求的转换或验证时抛出单位转换或验证异常。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:186
+msgid "For a Python scalar or one-element Tensor, `bounds` clamps the returned value and emits `UserWarning` when clamping occurs. It does not clamp multi-element Tensors."
+msgstr "对于 Python 标量或单元素 Tensor，`bounds` 会 clamp 返回值，并在发生 clamp 时发出 `UserWarning`。它不会 clamp 多元素 Tensor。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:190
+msgid "`get_parameter()`"
+msgstr "`get_parameter()`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:199
+msgid "Returns the full `ParameterSpec` or `None`. This method is for metadata inspection, including units, bounds, references, provenance, and `requires_grad`. A key that the manager does not hold yet is read from the database, which lazily loads the parameter files whose declared namespace owns the key (see `ParameterDatabase`); a learnable value is then registered with the manager's PyTorch parameter collection."
+msgstr "返回完整 `ParameterSpec` 或 `None`。该方法用于查看元数据，包括单位、边界、参考文献、来源和 `requires_grad`。管理器尚未持有的键从数据库读取；数据库延迟加载已声明命名空间拥有该键的参数文件（见 `ParameterDatabase`），随后将可学习值注册到管理器的 PyTorch 参数集合。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:206
+msgid "Mutation and persistence"
+msgstr "修改与持久化"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:218
+msgid "Updates a value, optionally validates it, invalidates affected caches, and notifies registered observers. `key` must name a registered parameter (loaded or in the database): an unknown key raises `KeyError` and changes nothing, so a misspelled key never becomes a new parameter. A new parameter is registered first with `register_parameter(...)`. Validation failures raise `ValueError`. Out-of-bounds behavior is controlled by `BoundsPolicy` and the manager's validation configuration; an invalid `RELIC_BOUNDS_POLICY` or `RELIC_UNIT_VALIDATION_MODE` environment value raises `ValueError` when the manager is created. `units` names the unit of `value`: the value is converted into the declared unit of the specification, which is never replaced; the dimensionless aliases `\"1\"` and `\"dimensionless\"` need no conversion, and a pair the unit owner cannot convert raises `ValueError` without writing. `set_batch(updates, validate=True, notify=True)` commits the whole batch (or restores every owner on a failure), then notifies every changed key; callback failures of all keys are raised together as one `ExceptionGroup` afterwards, and the changes stay committed."
+msgstr "更新数值，可选地执行验证，使相关缓存失效，并通知已注册观察者。`key` 必须指定已注册参数（已加载或存在于数据库）：未知键会抛出 `KeyError` 且不改变任何内容，因此拼错的键不会成为新参数。新参数须先通过 `register_parameter(...)` 注册。验证失败抛出 `ValueError`。越界行为由 `BoundsPolicy` 和管理器的验证配置控制；`RELIC_BOUNDS_POLICY` 或 `RELIC_UNIT_VALIDATION_MODE` 环境变量值无效时，创建管理器会抛出 `ValueError`。`units` 指定 `value` 的单位：数值转换为规范声明的单位，不会替换该单位；无量纲别名 `\"1\"` 和 `\"dimensionless\"` 无须转换，单位所有者无法转换的单位对会抛出 `ValueError`，不执行写入。`set_batch(updates, validate=True, notify=True)` 提交整个批次（失败时恢复所有所有者），再通知每个发生变化的键；所有键的回调失败随后合并为一个 `ExceptionGroup` 抛出，已提交的修改保留。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:242
+msgid "Persists one complete specification to the database tier and sets that parameter's specification, stored value and live binding together; no other specification is loaded into the manager. An existing binding of the same shape and dtype keeps its `nn.Parameter` object, gradient flag, and device and takes the new value in place; a specification that is no longer learnable loses its binding. A learnable specification without a tensor form raises `TypeError` before anything is written. `spec` must be a `ParameterSpec`; otherwise `TypeError` is raised. Loading the whole database (`preload_all`, a new `database_path`) gives every specification its stored value and every learnable specification its binding in the same way."
+msgstr "将单份完整规范持久化至数据库层，并同步设置该参数的规范、存储值与实时绑定；不向管理器加载任何其他规范。形状与 dtype 相同的既有绑定保留其 `nn.Parameter` 对象、梯度标志与所在设备，并原地写入新值；不再可学习的规范则移除其绑定。无张量表示的可学习规范会在执行任何写入前抛出 `TypeError`。`spec` 必须是 `ParameterSpec` 实例，否则抛出 `TypeError`。加载整个数据库（如 `preload_all` 或切换至新 `database_path`）时，按同一规则为每份规范赋予存储值并为每份可学习规范建立绑定。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:257
+msgid "Registers a specification in the existing manager and storage layer. This is a lower-level registration operation used by database and extension loading. It does not create another parameter owner. `register_parameter` and `set_parameter(spec, tier)` use the same `bind_learnable_value` rule, including database re-registration: matching shape and dtype preserve the live binding object, gradient flag, and device and copy the value in place. Changed shape or dtype creates a new binding; a non-learnable specification has none. `set_parameter` requires the destination `tier` explicitly."
+msgstr "在现有管理器和存储层注册规范。这是数据库和扩展加载使用的底层注册操作，不创建第二个参数所有者。`register_parameter` 和 `set_parameter(spec, tier)` 使用同一 `bind_learnable_value` 规则，数据库重新注册也不例外：形状与 dtype 相同时保留实时绑定对象、梯度标志和设备，并原地复制数值；形状或 dtype 改变则创建新绑定，不可学习规范不具有绑定。`set_parameter` 要求显式指定目标 `tier`。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:266
+msgid "Discovery and namespace access"
+msgstr "发现与 namespace 访问"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:276
+msgid "Returns matching canonical keys."
+msgstr "返回匹配的 canonical key。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:286
+msgid "Returns values by default or complete specifications when `return_specs=True`."
+msgstr "默认返回值；当 `return_specs=True` 时返回完整 specification。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:289
+msgid "Validation, optimization, and snapshots"
+msgstr "验证、优化与 snapshot"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:297
+msgid "Returns zero or more records with `parameter` and `error` keys. Ordinary validation failures are represented in the returned list."
+msgstr "返回零条或多条含有 `parameter` 和 `error` key 的记录。常规验证失败会表示在返回列表中。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:310
+msgid "These methods expose and migrate the manager-owned PyTorch parameters. Device assignment of scientific Functors remains owned by the simulator device policy; this API does not authorize a scientific module to select its own device."
+msgstr "这些方法公开并迁移 manager-owned PyTorch parameters。科学 Functor 的 device assignment 仍由 simulator device policy 所有；此 API 不授权科学模块自行选择 device。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:324
+msgid "The manager snapshot keeps each owner of parameter state apart and exactly as it is: `parameters` holds the serialized specifications with their declared values (type and dtype kept), `storage_snapshot` the storage's own snapshot of the stored values (a specification whose value is not stored yet stays without one), `nn_values` a copy of every live learnable `nn.Parameter` value (an optimizer may have moved it away from the declared value) and `nn_requires_grad` its gradient flag, next to the device, the validation settings and the unit issues. `restore()` validates the whole snapshot before it changes anything: it requires a `parameters` mapping, stored values that agree with their specifications, gradient flags only for learnable specifications, and one live value per flag with the shape and dtype of its specification; otherwise it raises `ValueError`. It then restores the stored values, the specifications, the live values (copied into the existing bindings, across devices, without replacing them; bindings created after the snapshot are removed) and the settings, so every value with its type and dtype, and every specification, equals its state at snapshot time."
+msgstr "管理器快照分别原样保存各参数状态所有者的内容：`parameters` 保存序列化规范及声明值（保留类型和 dtype），`storage_snapshot` 保存存储层自身的存储值快照（尚未存储值的规范仍不具有存储值），`nn_values` 保存每个实时可学习 `nn.Parameter` 值的副本（优化器可能已使其偏离声明值），`nn_requires_grad` 保存其梯度标志，并同时记录设备、验证设置和单位问题。`restore()` 在改变任何内容之前验证整个快照：要求有 `parameters` 映射，存储值与规范一致，梯度标志仅对应可学习规范，且每个标志都有一个形状和 dtype 与规范一致的实时值；否则抛出 `ValueError`。随后恢复存储值、规范、实时值和设置；实时值可跨设备复制到原有绑定而不替换对象，快照之后创建的绑定会移除。恢复后，每个值及其类型和 dtype、每份规范均与快照时一致。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:341
+msgid "`create_snapshot()` captures every parameter's value exactly (its stored value, or its declared value while none is stored) and the live learnable values in `metadata[\"nn_values\"]`; `restore_snapshot()` writes those values back, without validation, clamping or conversion, to the parameters that still exist and copies the live values into their bindings. Parameters registered after the snapshot are kept. `get_diff()`, `diff()` and the experiment diff compare resolved values: the live learnable value over the stored or declared value, which is the value `manager.get(...)` returns."
+msgstr "`create_snapshot()` 精确捕获每个参数的值（已存储的值；未存储时为声明值），并将实时可学习值保存于 `metadata[\"nn_values\"]`；`restore_snapshot()` 将这些值原样写回仍存在的参数，不验证、裁剪或转换，同时将实时值复制到相应绑定。快照之后注册的参数保留。`get_diff()`、`diff()` 和实验差异比较都使用解析后的值：实时可学习值优先于存储值或声明值，也就是 `manager.get(...)` 返回的值。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:350
+msgid "Global manager functions"
+msgstr "Global manager 函数"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:352
+msgid "`get_global_manager()`"
+msgstr "`get_global_manager()`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:361
+msgid "Returns the process-wide canonical manager. The first call creates it under a reentrant lock, calls `initialize()`, and refreshes the process-wide variable name mapper from it; if either step fails, the global manager is reset and the error is raised. Later calls return the same object; a later call with `preload_all=True` preloads it when it was not preloaded. Such a late preload adopts the database specifications of the keys the manager does not hold yet; a key it already holds (loaded on demand, registered, or written with `set_value`) keeps its specification, stored value and live binding. `initialize()` loads nothing: a manager constructed with `preload_all=True` holds the whole database when its constructor returns, and a value written or a learnable binding moved before `initialize()` is kept. A database switch (`configure` with a new `database_path`) unit-checks every specification of the new database under the manager's unit validation mode (check-only records an issue, strict raises before anything is adopted), replaces the held specifications, stored values and binding values with those of the new database, then clears the query cache and the unit-conversion cache as a whole (also when the load fails part way), so no lookup cached from the previous database survives the switch. A switch that fails keeps the previous `database_path` and database, the ones that define the held specifications."
+msgstr "返回进程级规范参数管理器。首次调用在可重入锁下创建该实例，调用 `initialize()`，并据此刷新进程级变量名映射器；任一步失败时都会重置全局管理器并抛出异常。后续调用返回同一对象；若此前未预加载，后续带 `preload_all=True` 的调用会补执行预加载。此类延迟预加载仅采纳管理器尚未持有的键所对应的数据库规范；已持有的键（无论按需加载、显式注册或经由 `set_value` 写入）保留其既有规范、存储值与实时绑定。`initialize()` 本身不加载数据：以 `preload_all=True` 构造的管理器在构造函数返回时即持有完整数据库，且在 `initialize()` 之前写入的值或迁移的可学习绑定均予以保留。切换数据库（通过传入新 `database_path` 调用 `configure`）时，会按管理器的单位校验模式对新数据库的全部规范执行单位检查（仅检查模式记录问题，严格模式在采纳任何内容前直接抛出异常），随后用新数据库内容替换已持有的规范、存储值与绑定值，并整体清空查询缓存与单位换算缓存（中途加载失败时同样清空），确保旧数据库的任何缓存查询均不跨切换残留。切换失败时保留原有的 `database_path` 与数据库实例，使其继续与当前持有的规范一致。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:381
+msgid "`reset_global_manager()`"
+msgstr "`reset_global_manager()`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:387
+msgid "Clears the process-wide manager instance. This is a lifecycle and isolation operation, not a routine scientific workflow operation."
+msgstr "清除进程范围的 manager instance。这是 lifecycle 和 isolation 操作，不是常规科学 workflow 操作。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:390
+msgid "Convenience accessors"
+msgstr "便捷 accessor"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:423
+msgid "These functions delegate to the process-wide manager from `get_global_manager()`. They are convenience entry points, not alternate managers. `get`, `set_value`, and `list_parameters` are exported by `relic.parameters`; `get_namespace_parameters` is imported from `relic.parameters.manager`."
+msgstr "这些函数委派给 `get_global_manager()` 返回的进程级管理器，是便捷入口，不是替代管理器。`relic.parameters` 导出 `get`、`set_value` 和 `list_parameters`；`get_namespace_parameters` 从 `relic.parameters.manager` 导入。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:431
+msgid "Implementation: `relic.parameters.spec.ParameterSpec`"
+msgstr "实现：`relic.parameters.spec.ParameterSpec`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:461
+msgid "The displayed empty collections are produced by dataclass factories; instances do not share mutable defaults. `units`, `dtype`, `bounds`, and `category` have no default: a numeric `dtype` declares a `(lower, upper)` interval and writes an unbounded side as `-inf` or `inf` (`bounds=(-inf, inf)` is explicitly unbounded); `bounds=None` states that no interval applies and is accepted only for a non-numeric `dtype` (text, boolean switch, enumeration, list or mapping). `relic.parameters.spec.parameter_bounds_error(bounds, dtype)` is the one rule: `ParameterSpec` raises `ValueError` on a violation, and `has_complete_parameter_metadata`, the structural parameter audit and the parameter YAML schema read the same rule."
+msgstr "所示空集合由 dataclass 工厂创建，实例之间不共享可变默认值。`units`、`dtype`、`bounds` 和 `category` 没有默认值：数值型 `dtype` 声明 `(lower, upper)` 区间，无界一侧写为 `-inf` 或 `inf`（`bounds=(-inf, inf)` 表示显式无界）；`bounds=None` 表示不适用区间，仅非数值型 `dtype`（文本、布尔开关、枚举、列表或映射）可以使用。`relic.parameters.spec.parameter_bounds_error(bounds, dtype)` 是唯一规则：违反时 `ParameterSpec` 抛出 `ValueError`，`has_complete_parameter_metadata`、结构参数审计和参数 YAML 模式也读取同一规则。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:473
+msgid "A `list` or `tuple` dtype may declare one `[minimum, maximum]` pair of numbers per component in place of a single scalar interval, for example `[[223.15, 273.15], [323.15, 373.15]]` for a two-component value. `relic.parameters.spec.componentwise_bounds_errors(value, pairs)` is the one rule for such a declaration: the value is a list or tuple with one finite real component per pair, each inside its closed pair. `validate_value()` returns the violations, a validated `set_value(...)` and a validated `FunctorBase.get_parameter_value(...)` raise `ValueError`, and no component is clamped. A flat `(lower, upper)` interval on a list value is not applied to its components."
+msgstr "`list` 或 `tuple` 类型的 dtype 可按分量逐一声明 `[minimum, maximum]` 数值区间对以替代单一标量区间，例如二分量参数可声明 `[[223.15, 273.15], [323.15, 373.15]]`。`relic.parameters.spec.componentwise_bounds_errors(value, pairs)` 是此类声明的唯一校验规则：参数值必须是与区间对等长的列表或元组，每个分量均为有限实数且落在对应闭区间内。越界时 `validate_value()` 返回违规列表，启用校验的 `set_value(...)` 与 `FunctorBase.get_parameter_value(...)` 均抛出 `ValueError`，不对任何分量执行截断。列表类型参数上的扁平 `(lower, upper)` 区间不逐分量套用。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:484
+msgid "A numeric parameter declares its bounds endpoints, value, and default as numbers. `parameter_bounds_error` rejects textual numeric endpoints, and `ParameterSpec` rejects textual numeric values or defaults; neither is converted by `from_dict`. With PyYAML's YAML 1.1 rules, write `1.0e+7` or `1.0e-6`: `1.0e7` and `1e-6` are strings and are rejected."
+msgstr "数值参数的边界端点、值和默认值都必须以数值声明。`parameter_bounds_error` 拒绝文本形式的数值端点，`ParameterSpec` 拒绝文本形式的数值或默认值；`from_dict` 均不执行转换。按 PyYAML 的 YAML 1.1 规则，应写 `1.0e+7` 或 `1.0e-6`；`1.0e7` 和 `1e-6` 会被解析为字符串并被拒绝。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Field"
+msgstr "字段"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Validation and failure behavior"
+msgstr "验证与失败行为"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Unique dot-notation identifier."
+msgstr "唯一的 dot-notation identifier。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Empty or malformed keys raise `ValueError`."
+msgstr "空 key 或格式错误的 key 会抛出 `ValueError`。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`value`"
+msgstr "`value`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Current scalar, configuration value, or Tensor."
+msgstr "当前标量、配置值或 Tensor。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Checked by `validate_value()`."
+msgstr "由 `validate_value()` 检查。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Optional declared default."
+msgstr "可选的声明默认值。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Stored on the object and serialized by `to_dict()`."
+msgstr "存储在对象上，并由 `to_dict()` 序列化。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Physical units, normally CF/UDUNITS-compatible."
+msgstr "物理单位，通常兼容 CF/UDUNITS。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Unit validation is performed by the manager and validator."
+msgstr "单位验证由 manager 和 validator 执行。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`dtype`"
+msgstr "`dtype`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Declared numeric or configuration type."
+msgstr "声明的 numeric 或 configuration type。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Controls Tensor conversion and numeric normalization."
+msgstr "控制 Tensor 转换和 numeric normalization。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Lower and upper physical limits; a numeric `dtype` writes an open side as `-inf` or `inf`, and `None` (no interval applies) is valid only for a non-numeric `dtype`."
+msgstr "物理下限和上限；数值型 `dtype` 的开放端写为 `-inf` 或 `inf`，`None`（不适用区间）仅对非数值型 `dtype` 有效。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Required. `None` or a `None` endpoint with a numeric `dtype`, an invalid shape, or lower greater than upper raises `ValueError`."
+msgstr "必填。数值型 `dtype` 使用 `None` 或 `None` 端点、形状无效或下界大于上界时，抛出 `ValueError`。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`category`"
+msgstr "`category`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`ParameterCategory` classification."
+msgstr "`ParameterCategory` classification（分类）。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Required. Strings are normalized; unsupported types raise `TypeError`."
+msgstr "必填。字符串会规范化；不支持的类型抛出 `TypeError`。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`description`"
+msgstr "`description`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Scientific meaning and usage context."
+msgstr "科学含义和使用情境。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Free text."
+msgstr "自由文本。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`references`"
+msgstr "`references`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Literature, standard, or dataset citations."
+msgstr "文献、标准或数据集引用。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Stored as a list of strings."
+msgstr "以字符串列表形式存储。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`tags`"
+msgstr "`tags`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Search and workflow labels."
+msgstr "搜索和 workflow 标签。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "A list is normalized to a set."
+msgstr "列表会规范化为 set。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`dimension`"
+msgstr "`dimension`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Physical-dimension description."
+msgstr "Physical-dimension 描述。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Used by unit and scientific checks."
+msgstr "用于单位检查和科学检查。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`provenance`"
+msgstr "`provenance`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Source, schema, version, and calibration metadata."
+msgstr "来源、schema、版本和 calibration metadata。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "An empty mapping is replaced with basic user-defined provenance."
+msgstr "空 mapping 会替换为基础的 user-defined provenance。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`requires_grad`"
+msgstr "`requires_grad`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Enable trainable PyTorch representation."
+msgstr "启用 trainable PyTorch representation。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Non-floating gradient values are converted when possible or rejected."
+msgstr "非 floating gradient value 会在可行时转换，否则被拒绝。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`allowed_values`"
+msgstr "`allowed_values`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Enumerated values for categorical parameters."
+msgstr "Categorical parameter 的枚举值。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Values outside the declaration are reported by `validate_value()`."
+msgstr "声明范围以外的值由 `validate_value()` 报告。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:507
+msgid "`validate_value()`"
+msgstr "`validate_value()`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:513
+msgid "Returns validation messages without raising for ordinary invalid values. Checks include categorical membership, finite numeric values, scalar bounds, non-negative biological rates and concentrations, and physically valid absolute temperatures."
+msgstr "对常规无效值返回校验消息而不抛出异常。检查项包括类别成员归属、有限数值、标量上下界、非负生物速率与浓度，以及物理有效的绝对温度。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:518
+msgid "Tensor conversion"
+msgstr "Tensor 转换"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:528
+msgid "`to_tensor()` maps declared boolean, integer, and floating dtypes to PyTorch. String and categorical values raise `TypeError`. A non-floating Tensor cannot retain gradients; conversion failure raises `TypeError`."
+msgstr "`to_tensor()` 将声明的 boolean、integer 和 floating dtype 映射到 PyTorch。String 和 categorical value 会抛出 `TypeError`。非 floating Tensor 无法保留 gradient；转换失败时抛出 `TypeError`。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:532
+msgid "`from_tensor()` accepts only a scalar Tensor. A non-Tensor raises `TypeError`; a non-scalar Tensor raises `ValueError`."
+msgstr "`from_tensor()` 只接受 scalar Tensor。非 Tensor 抛出 `TypeError`；非 scalar Tensor 抛出 `ValueError`。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:535
+msgid "Mapping and serialization interface"
+msgstr "Mapping 与序列化接口"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:537
+msgid "`ParameterSpec` implements `Mapping[str, Any]` and provides:"
+msgstr "`ParameterSpec` 实现 `Mapping[str, Any]`，并提供："
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:545
+msgid "`from_dict()` requires `value`, normalizes category, dtype, tags, bounds, and categorical values, and moves selected additional metadata into provenance."
+msgstr "`from_dict()` 要求提供 `value`，会规范化 category、dtype、tags、bounds 和 categorical value，并将选定的附加 metadata 移入 provenance。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:548
+msgid "`to_dict()` and `model_dump()` also emit `default`, in the same Tensor wire format as `value`, and `allowed_values`, as a list or `None`. `from_dict()` decodes a Tensor-encoded `default` and normalizes `allowed_values` to a list or `None`, so both fields round-trip."
+msgstr "`to_dict()` 和 `model_dump()` 还输出 `default`，使用与 `value` 相同的张量传输格式；`allowed_values` 则输出为列表或 `None`。`from_dict()` 解码张量编码的 `default`，并将 `allowed_values` 规范化为列表或 `None`，使两个字段都能往返恢复。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:555
+msgid "Implementation: `relic.parameters.serialization.ParameterSchema`"
+msgstr "实现：`relic.parameters.serialization.ParameterSchema`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:558
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:626
+msgid "Stable public import:"
+msgstr "稳定公开导入："
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:564
+msgid "Status: stable serialization helper. It owns the parameter interchange envelope, not parameter lookup, per-entry metadata, or database persistence. The class has no constructor parameters and is intended as a namespace for its version and static methods."
+msgstr "状态：稳定的 serialization helper。它拥有 parameter interchange envelope，但不拥有参数查找、per-entry metadata 或数据库持久化。该类没有构造参数，用作其版本和 static method 的 namespace。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:575
+msgid "The canonical envelope has a `parameters` mapping. Each member is a mapping that contains at least `value`. `version`, `timestamp`, and `metadata` may accompany it."
+msgstr "Canonical envelope 含有 `parameters` mapping。每个成员都是至少包含 `value` 的 mapping，还可带有 `version`、`timestamp` 和 `metadata`。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:579
+msgid "`validate_schema()`"
+msgstr "`validate_schema()`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:587
+msgid "Returns `True` only when:"
+msgstr "仅在以下条件满足时返回 `True`："
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:589
+msgid "`data` contains `parameters`;"
+msgstr "`data` 包含 `parameters`；"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:590
+msgid "`parameters` is a mapping;"
+msgstr "`parameters` 是 mapping；"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:591
+msgid "every parameter entry is a mapping containing `value`."
+msgstr "每个参数条目都是包含 `value` 的 mapping。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:593
+msgid "It returns `False` for an incomplete canonical mapping. The current method is a lightweight structural check; it does not validate all `ParameterSpec` fields, units, bounds, or provenance. Inputs outside the declared mapping contract may raise ordinary Python type errors."
+msgstr "对于不完整的 canonical mapping，返回 `False`。当前方法是轻量级结构检查；它不会验证所有 `ParameterSpec` field、单位、bounds 或 provenance。声明的 mapping contract 以外的输入可能抛出普通 Python type error。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:598
+msgid "`migrate_schema()`"
+msgstr "`migrate_schema()`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:607
+msgid "Returns a shallow copy of a canonical mapping and adds `ParameterSchema.VERSION` when `version` is absent."
+msgstr "返回 canonical mapping 的 shallow copy；缺少 `version` 时添加 `ParameterSchema.VERSION`。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:610
+msgid "Raises `ValueError` when `data` is not a mapping, when `parameters` is not a mapping, or when the canonical `parameters` field is missing."
+msgstr "当 `data` 不是 mapping、`parameters` 不是 mapping，或缺少 canonical `parameters` field 时抛出 `ValueError`。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:613
+msgid "Current implementation limits:"
+msgstr "当前实现限制："
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:615
+msgid "Flat legacy parameter maps are rejected without migration."
+msgstr "扁平旧版参数映射直接拒绝，不执行迁移。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:616
+msgid "`from_version` is accepted by the signature but does not currently select a version-specific migration path."
+msgstr "Signature 接受 `from_version`，但当前不会据此选择 version-specific migration path。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:618
+msgid "`ParameterSchema` must not be treated as a second `ParameterSpec` schema or validation registry."
+msgstr "不得将 `ParameterSchema` 视为第二套 `ParameterSpec` schema 或 validation registry。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:623
+msgid "Implementation: `relic.parameters.decorators.ParameterDefinition`"
+msgstr "实现：`relic.parameters.decorators.ParameterDefinition`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:632
+msgid "Status: exported compatibility and convenience metadata for the parameter decorator API. It is not the canonical runtime parameter object and must not replace `ParameterSpec`."
+msgstr "状态：parameter decorator API 导出的兼容和便捷 metadata。它不是 canonical runtime parameter object，也不得替代 `ParameterSpec`。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`name`"
+msgstr "`name`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Parameter name attached to a decorated property."
+msgstr "附加到 decorated property 的参数名称。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Local fallback used by the decorator."
+msgstr "Decorator 使用的本地 fallback。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Declared physical units (required; there is no universal unit)."
+msgstr "声明的物理单位（必填；不存在通用单位）。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Lower and upper limits passed to decorator-managed access (required; `(-inf, inf)` declares an unbounded parameter)."
+msgstr "传给装饰器管理访问的下限和上限（必填；`(-inf, inf)` 声明无界参数）。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Human-readable meaning."
+msgstr "便于阅读的含义。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Request a trainable value when decorator registration is used."
+msgstr "使用 decorator registration 时，请求 trainable value。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`validate`"
+msgstr "`validate`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Request decorator-time validation."
+msgstr "请求 decorator-time validation。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`register`"
+msgstr "`register`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Request registration of a missing decorated parameter."
+msgstr "请求注册缺失的 decorated parameter。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:660
+msgid "The dataclass has no validation methods or `__post_init__`. Invalid names, bounds, units, or defaults are not rejected at construction and can fail only when the owning decorator or manager uses them."
+msgstr "该 dataclass 没有 validation method 或 `__post_init__`。无效的名称、bounds、单位或 default 不会在构造时被拒绝，只会在 owning decorator 或 manager 使用它们时失败。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:664
+msgid "The decorators `managed_parameters`, `parameter`, `validated_parameter`, and `learnable_parameter` attach or consume this metadata. `managed_parameters` registers only an attribute `<name>` that declares a complete `<name>_spec` mapping (`units`, `bounds`, `dtype`, and `description`); an incomplete spec raises `ValueError`, and an attribute without a spec is not a managed parameter. They remain exported, but production scientific Functors must use YAML-backed `ParameterSpec` entries and `self.get_parameter_value(...)`. A decorated property is not an alternative parameter owner or an approved way to hardcode scientific defaults."
+msgstr "装饰器 `managed_parameters`、`parameter`、`validated_parameter` 和 `learnable_parameter` 附加或使用这些元数据。`managed_parameters` 仅注册声明了完整 `<name>_spec` 映射的属性 `<name>`（包含 `units`、`bounds`、`dtype` 和 `description`）；规范不完整时抛出 `ValueError`，没有规范的属性不是受管理参数。这些装饰器仍然导出，但生产科学 Functor 必须使用由 YAML 支持的 `ParameterSpec` 条目和 `self.get_parameter_value(...)`。装饰后的属性不是替代参数所有者，也不是获准硬编码科学默认值的方式。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:675
+msgid "Manager-owned support classes"
+msgstr "Manager-owned support classes（由 Manager 管理的支持类）"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:686
+msgid "The database owns two precedence tiers:"
+msgstr "数据库拥有两个 precedence tier："
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:688
+msgid "`relic`: native framework parameters."
+msgstr "`relic`：native framework parameter（框架原生参数）。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:689
+msgid "`calibrated`: calibration and optimized values."
+msgstr "`calibrated`：calibration 和 optimized value。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:691
+msgid "Construction creates the `relic` and `calibrated` tier directories under `base_path` and initializes an empty parameter cache and a per-file header cache; it builds no file index. Every read follows one load plan:"
+msgstr "构造时在 `base_path` 下创建 `relic` 和 `calibrated` 层级目录，并初始化空参数缓存和逐文件头部缓存；不建立文件索引。每次读取都遵循唯一加载计划："
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:695
+msgid "the native `relic` files (the base tier);"
+msgstr "原生 `relic` 文件（基础层）；"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:696
+msgid "the enabled calibrated scopes `global`, `regional`, and `site_specific`, in that order (`RELIC_CALIBRATED_SCALES` selects scopes, top-level calibrated snapshot files take part only with `RELIC_INCLUDE_CALIBRATED_SNAPSHOTS=1`, and `RELIC_SKIP_CALIBRATED=1` excludes the calibrated tier);"
+msgstr "依次加载已启用的校准范围 `global`、`regional` 和 `site_specific`（由 `RELIC_CALIBRATED_SCALES` 选择范围；仅设置 `RELIC_INCLUDE_CALIBRATED_SNAPSHOTS=1` 时顶层校准快照文件才参与，`RELIC_SKIP_CALIBRATED=1` 则排除校准层）；"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:700
+msgid "the sources added with `add_source()`."
+msgstr "通过 `add_source()` 添加的数据源。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:702
+msgid "Later entries take precedence, and a key defined in two base-tier files raises `ValueError` naming both files. The namespace of a YAML file is its top-level `namespace:` header line, read from the raw bytes and cached by modification time and size; file and directory names play no role. JSON files and YAML files without that header are read only by the full loads. Primary methods include:"
+msgstr "后加载的条目优先。同一键在两个基础层文件中定义时，会抛出 `ValueError` 并指出两个文件。YAML 文件的命名空间由顶层 `namespace:` 头部行声明，从原始字节读取，并按修改时间和大小缓存；文件名和目录名不参与判断。JSON 文件和缺少该头部的 YAML 文件仅在完整加载时读取。主要方法包括："
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:727
+msgid "`get_parameter(key)` returns a cached specification directly. Otherwise it loads the files whose declared namespace is a dot prefix of the key, together with every file of a related (ancestor or descendant) namespace, in full-load precedence. If that does not define the key, it runs `load_all()`; with `fail_on_validation_errors` set, it raises `KeyError` instead. That flag comes from `RELIC_FAIL_ON_PARAMETER_VALIDATION` (`1`, `true`, or `yes`) or, when that variable is unset, from a true `CI` variable or a `RELIC_ENV` of `ci`, `prod`, or `production`."
+msgstr "`get_parameter(key)` 直接返回已缓存规范。未缓存时，按完整加载的优先顺序读取已声明命名空间是该键点分前缀的文件，以及所有相关命名空间（祖先或后代）的文件。若仍未定义该键，则执行 `load_all()`；设置 `fail_on_validation_errors` 时改为抛出 `KeyError`。该标志取自 `RELIC_FAIL_ON_PARAMETER_VALIDATION`（`1`、`true` 或 `yes`）；该变量未设置时，则由为真的 `CI` 变量或取 `ci`、`prod`、`production` 的 `RELIC_ENV` 决定。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:737
+msgid "`load_namespace(namespace)` reads the files of related namespaces in the same way, `declares_namespace(namespace)` reports whether a participating file declares the namespace, an ancestor, or a descendant, and `declared_namespaces()` lists the declared namespaces in load order. `load_all_with_priority(source_priority)` accepts only `relic` and `calibrated`, highest precedence first, reads those tiers of the load plan without the additional sources, raises `ValueError` for any other name, and leaves the cache unchanged. `add_source()` raises `FileNotFoundError` for a path that does not exist."
+msgstr "`load_namespace(namespace)` 以相同方式读取相关命名空间的文件；`declares_namespace(namespace)` 报告参与加载的文件是否声明该命名空间、其祖先或后代；`declared_namespaces()` 按加载顺序列出已声明命名空间。`load_all_with_priority(source_priority)` 仅接受 `relic` 和 `calibrated`，最高优先级在前，只读取加载计划中的这些层而不读取附加数据源；其他名称会引发 `ValueError`，且缓存保持不变。`add_source()` 对不存在的路径抛出 `FileNotFoundError`。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:747
+msgid "Application code normally reaches this object through `UnifiedParameterManager.database`. Direct construction is appropriate only for controlled infrastructure that intentionally owns a database root."
+msgstr "应用代码通常通过 `UnifiedParameterManager.database` 访问此对象。只有明确拥有某个 database root 的受控基础设施才适合直接构造它。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:757
+msgid "Provides thread-safe in-memory CRUD, namespace indexing, access statistics, and immutable snapshots."
+msgstr "提供线程安全的 in-memory CRUD、namespace 索引、访问统计和 immutable snapshot。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:772
+msgid "`storage.list(namespace=...)` returns every key below `\"<namespace>.\"` (children and deeper descendants) with one rule for every namespace; a key of a sibling prefix (`a.bc.x` for namespace `a.b`) is never returned."
+msgstr "`storage.list(namespace=...)` 对每个命名空间都按同一规则返回 `\"<namespace>.\"` 下的全部键（直接子项和更深后代）；绝不返回同级前缀的键，例如命名空间 `a.b` 不会返回 `a.bc.x`。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:776
+msgid "`UnifiedParameterManager.delete(key)` removes the specification, the storage value and any registered `nn.Parameter`, then clears the query cache and the unit-conversion cache as a whole, so no cached lookup of the deleted key or of its namespace/unit variants survives the deletion. `storage.snapshot()` captures the stored values, or the explicit `parameters` values without changing live storage, each with its type and dtype; `metadata` is recorded with the snapshot. `storage.restore(snapshot)` replaces the stored values and then notifies the manager. The manager requires a specification for every restored value, the loaded one or the database one; a value without any specification raises `KeyError`, and no specification is invented. It brings specification values and live bindings in line with the restored values and drops the specifications and bindings of parameters absent from the snapshot. When a restore callback raises, its error propagates and the storage takes back the values it held before the restore. `manager.restore(snapshot)` writes the stored values directly and sets the snapshotted specifications exactly itself."
+msgstr "`UnifiedParameterManager.delete(key)` 移除规范、存储值和已注册的 `nn.Parameter`，随后整体清空查询缓存和单位转换缓存，因此已删除键及其命名空间或单位变体不会残留缓存查询结果。`storage.snapshot()` 捕获存储值，或在不改变实时存储的前提下捕获显式给出的 `parameters` 值，并保留每个值的类型和 dtype；`metadata` 与快照一起记录。`storage.restore(snapshot)` 替换存储值，然后通知管理器。管理器要求每个恢复值都有已加载或数据库提供的规范；没有任何规范的值会引发 `KeyError`，绝不虚构规范。管理器使规范值和实时绑定与恢复值一致，并移除快照中不存在参数的规范和绑定。恢复回调抛出异常时，错误会传播，存储层恢复到恢复操作前持有的值。`manager.restore(snapshot)` 则直接写入存储值，并自行精确设置快照中的规范。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:793
+msgid "This is the manager's value layer, not a public alternative to `UnifiedParameterManager`."
+msgstr "这是 manager 的 value layer，不是 `UnifiedParameterManager` 的公开替代品。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:807
+msgid "The frozen dataclass deep-copies its values and metadata. The `parameters` property returns a read-only `MappingProxyType`. A manager snapshot records the live learnable values under `metadata[\"nn_values\"]`."
+msgstr "该冻结 dataclass 对值和元数据进行深复制。`parameters` 属性返回只读 `MappingProxyType`。管理器快照在 `metadata[\"nn_values\"]` 下记录实时可学习值。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:835
+msgid "Validation levels:"
+msgstr "验证级别："
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:837
+msgid "`NONE`: no validation."
+msgstr "`NONE`：不验证。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:838
+msgid "`BASIC`: type and range checks."
+msgstr "`BASIC`：类型和范围检查。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:839
+msgid "`STANDARD`: standard scientific and relationship checks."
+msgstr "`STANDARD`：标准科学检查和关系检查。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:840
+msgid "`STRICT`: full checks with strict context."
+msgstr "`STRICT`：使用 strict context 的完整检查。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:841
+msgid "`CUSTOM`: caller-defined policy."
+msgstr "`CUSTOM`：caller-defined policy（调用方定义的策略）。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:843
+msgid "`ParameterValidationResult` contains `is_valid`, `errors`, `warnings`, `level`, and machine-readable `error_types`. `ParameterValidationContext` contains related parameter values, environmental context, `strict_mode`, and `warnings_as_errors`."
+msgstr "`ParameterValidationResult` 包含 `is_valid`、`errors`、`warnings`、`level` 和 machine-readable `error_types`。`ParameterValidationContext` 包含相关参数值、environmental context、`strict_mode` 和 `warnings_as_errors`。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:848
+msgid "`ParameterValidationResult`"
+msgstr "`ParameterValidationResult`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:859
+msgid "The result reports validation status without requiring an exception. `aggregate(results)` combines errors, warnings, error categories, and joint validity across multiple results."
+msgstr "该结果对象直接报告校验状态而无需抛出异常。`aggregate(results)` 汇总多个结果中的错误、警告、错误类别与联合有效性。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:863
+msgid "`ParameterValidationContext`"
+msgstr "`ParameterValidationContext`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:874
+msgid "The context supplies related values and environmental information to cross-parameter and scientific validators. Strict validation enables `strict_mode` and treats warnings as errors."
+msgstr "该 context 向 cross-parameter validator 和 scientific validator 提供相关值及环境信息。Strict validation 会启用 `strict_mode`，并将 warning 作为 error。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:878
+msgid "`BoundsPolicy` and `UnitValidationMode`"
+msgstr "`BoundsPolicy` 与 `UnitValidationMode`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:880
+msgid "`BoundsPolicy` selects `WARN_AND_CLAMP` or `ERROR`. `UnitValidationMode` selects `OFF`, `CHECK_ONLY`, or `STRICT`."
+msgstr "`BoundsPolicy` 选择 `WARN_AND_CLAMP` 或 `ERROR`。`UnitValidationMode` 选择 `OFF`、`CHECK_ONLY` 或 `STRICT`。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:883
+msgid "Physical constraint integration"
+msgstr "物理约束集成"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:885
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:1052
+msgid "Stability and ownership"
+msgstr "稳定性与所有权"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:887
+msgid "`PhysicalConstraintManager`, `ConstraintSpec`, and `ConstraintType` are defined in:"
+msgstr "`PhysicalConstraintManager`、`ConstraintSpec` 和 `ConstraintType` 定义在："
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:894
+msgid "They are not exported by `relic.coupling.scales` or `relic.coupling`. Their direct module path is the canonical infrastructure integration path, not a general package-root public API."
+msgstr "它们不会由 `relic.coupling.scales` 或 `relic.coupling` 导出。其直接模块路径是 canonical infrastructure integration path，而不是一般的 package-root public API。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:898
+msgid "Each `StateManager` owns its physical-constraint manager. It first uses an explicit `physical_constraint_manager=` constructor injection; otherwise its read-only `physical_constraint_manager` property lazily constructs, initializes, validates, and caches one instance for that StateManager:"
+msgstr "每个 `StateManager` 拥有自己的 physical-constraint manager。它优先使用显式的 `physical_constraint_manager=` 构造函数注入；否则，其只读 `physical_constraint_manager` property 会为该 StateManager 延迟构造、初始化、验证并缓存一个实例："
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:911
+msgid "There is no module-global physical-constraint getter or setter. Scientific Functors propose their state updates through the existing contract and do not create competing constraint owners. Infrastructure that needs explicit construction uses the same class and its normal lifecycle."
+msgstr "不存在 module 全局的 physical-constraint getter 或 setter。科学 Functor 通过现有 contract 提出其状态更新，不会创建相互竞争的 constraint owner。需要显式构造的基础设施使用同一个 class 及其正常生命周期。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:916
+msgid "`ConstraintSpec`"
+msgstr "`ConstraintSpec`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Constraint identity used for filtering and diagnostics."
+msgstr "用于过滤和 diagnostics 的 constraint identity。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`type`"
+msgstr "`type`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Constraint operation selected from `ConstraintType`."
+msgstr "从 `ConstraintType` 选择的 constraint operation。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`min_value`"
+msgstr "`min_value`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Optional lower bound for `BOUNDED`."
+msgstr "`BOUNDED` 的可选 lower bound。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`max_value`"
+msgstr "`max_value`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Optional upper bound for `BOUNDED`."
+msgstr "`BOUNDED` 的可选 upper bound。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`smoothness`"
+msgstr "`smoothness`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Optional smoothing scale used by `SMOOTH`."
+msgstr "`SMOOTH` 使用的可选 smoothing scale。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`strict`"
+msgstr "`strict`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Declared strictness flag carried by the specification."
+msgstr "Specification 携带的 declared strictness flag。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Optional provenance and variable context."
+msgstr "可选的 provenance 和 variable context。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:940
+msgid "`ConstraintType` defines `NON_NEGATIVE`, `BOUNDED`, `MONOTONIC`, `CONVEX`, `SMOOTH`, and `CONSERVE_SHAPE`."
+msgstr "`ConstraintType` 定义 `NON_NEGATIVE`、`BOUNDED`、`MONOTONIC`、`CONVEX`、`SMOOTH` 和 `CONSERVE_SHAPE`。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:943
+msgid "`ConstraintSpec` parses `type` at construction: a `ConstraintType` or its value string; another value raises `ValueError` naming the types. The manager's validation phase reports a bounded specification with no limits or with `min_value >= max_value`. `add_constraint` takes only a `ConstraintSpec` with a known type, and a type changed after the constraint was added raises `ValueError` when the constraints are applied; no constraint is skipped."
+msgstr "`ConstraintSpec` 在构造时解析 `type`，接受 `ConstraintType` 或对应的值字符串；其他值引发 `ValueError`，并列出类型。管理器在验证阶段报告未提供上下限或满足 `min_value >= max_value` 的有界规范。`add_constraint` 仅接受类型已知的 `ConstraintSpec`；添加约束后再改变类型，会在应用约束时引发 `ValueError`，不跳过任何约束。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`constraints`"
+msgstr "`constraints`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Initial constraint specifications (`ConstraintSpec` entries; another entry raises `ValueError`). `initialize()` copies them, so constraints added later do not survive `reset()` and the next `initialize()`."
+msgstr "初始约束规范（`ConstraintSpec` 条目；其他条目引发 `ValueError`）。`initialize()` 复制这些条目，因此之后添加的约束不会在 `reset()` 和下一次 `initialize()` 后保留。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`method`"
+msgstr "`method`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Application strategy, one of the `allowed_values` of `coupling.scales.defaults.physical_constraint_method` (`clip`, `scale`, `redistribute`, `project`); another value raises `ValueError` naming them, at construction and at `configure` (a rejected call changes nothing)."
+msgstr "应用策略，取 `coupling.scales.defaults.physical_constraint_method` 的 `allowed_values` 之一（`clip`、`scale`、`redistribute`、`project`）；构造或 `configure` 时传入其他值会引发 `ValueError` 并列出允许值（被拒绝的调用不改变任何内容）。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`preserve_gradients`"
+msgstr "`preserve_gradients`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Clone data while preserving autograd connectivity without detaching tensors. With the `clip` method, clipped elements still receive zero gradient through `torch.clamp`. `True` or `False` (another value raises `ValueError`); `None` takes the parameter."
+msgstr "克隆数据时保留自动微分计算图连接，不分离张量。采用 `clip` 方法时，被裁剪元素经由 `torch.clamp` 获得的梯度仍为零。取值为 `True` 或 `False`（传入其他值抛出 `ValueError`）；设为 `None` 时读取参数配置。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`device`"
+msgstr "`device`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Device for manager operations and adaptive parameters."
+msgstr "Manager operation 和 adaptive parameter 使用的 device。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`parameter_manager`"
+msgstr "`parameter_manager`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Explicit parameter owner used by initialization; the canonical global parameter owner is resolved only when this is absent."
+msgstr "初始化所使用的显式参数 owner；仅当其缺失时才解析 canonical 全局参数 owner。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:970
+msgid "Direct construction creates an uninitialized `BaseManager`/`nn.Module`. Infrastructure calls `initialize()` and `validate()`. Normal state updates obtain the initialized, cached owner through `state_manager.physical_constraint_manager`."
+msgstr "直接构造会创建未初始化的 `BaseManager`/`nn.Module`。基础设施调用 `initialize()` 和 `validate()`。正常的状态更新通过 `state_manager.physical_constraint_manager` 获取已初始化并缓存的 owner。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:975
+msgid "When explicit settings are omitted, initialization resolves `physical_constraint_method`, `preserve_gradients`, and `constraint_device` from `coupling.scales.defaults` through the canonical parameter manager. Missing required parameter values propagate lookup errors, and a `physical_constraint_method` parameter outside its `allowed_values` raises `ValueError` naming them; `initialize()` reports such a failure, like every initialization failure, as `ManagerInitializationError` with the error as its cause and leaves the manager in the `ERROR` state. The constraint operations never treat an unknown method as `clip`: they raise `ValueError`. If neither a manager nor all explicit settings are available, initialization raises `RuntimeError`, reported the same way."
+msgstr "省略显式设置时，初始化通过权威参数管理器，从 `coupling.scales.defaults` 解析 `physical_constraint_method`、`preserve_gradients` 和 `constraint_device`。缺少必需参数值时传播查询错误，`physical_constraint_method` 超出其 `allowed_values` 时抛出 `ValueError` 并列出允许值；`initialize()` 与处理其他初始化失败相同，将该失败报告为 `ManagerInitializationError`，保留原错误作为原因，并将管理器置于 `ERROR` 状态。约束操作绝不将未知方法当作 `clip`，而是抛出 `ValueError`。如果既没有管理器，也未提供全部显式设置，初始化会抛出 `RuntimeError`，并按同样方式报告。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:987
+msgid "An explicitly injected `parameter_manager` controls initialization and subsequent parameter lookups. Only when it is absent does `_do_initialize()` obtain the canonical `get_global_manager()`."
+msgstr "显式注入的 `parameter_manager` 控制初始化及后续参数查找。仅当其缺失时，`_do_initialize()` 才获取 canonical 的 `get_global_manager()`。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:991
+msgid "Constraint operations"
+msgstr "约束操作"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`data`"
+msgstr "`data`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Tensor to constrain."
+msgstr "要约束的 Tensor。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`constraint_names`"
+msgstr "`constraint_names`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Optional subset of registered constraint names."
+msgstr "已注册 constraint name 的可选子集。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`return_mask`"
+msgstr "`return_mask`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Return a boolean violation mask with the constrained Tensor."
+msgstr "随 constrained Tensor 返回 boolean violation mask。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Runtime lower and upper limits used to create a temporary bounded constraint."
+msgstr "用于创建临时 bounded constraint 的 runtime lower 和 upper limit。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`variable_name`"
+msgstr "`variable_name`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Variable identity for the catalog bounds lookup and diagnostics."
+msgstr "用于目录边界查询和诊断的变量标识。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`scale`"
+msgstr "`scale`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Optional scale namespace used during bounds lookup."
+msgstr "Bounds lookup 期间使用的可选 scale namespace。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:1020
+msgid "If `bounds` is absent and `variable_name` is present, the bounds are the `bounds` field of the variable's scale-catalog entry (`coupling.scales.<scale>.variables`, then `coupling.scales.defaults.variables`, matched like every catalog lookup); a variable that no catalog declares, or an entry without a `bounds` field, raises `KeyError`, and `bounds: null` means no bound. No other namespace, `<name>_bounds` key or clamp key is consulted. The `ScaleManager` facade passes the bounds of the variable's resolved metadata (call metadata, else its catalog entry) and asks for no lookup when that declaration has none. It records violations but does not create another state or conservation owner. Calling this method before manager initialization can fail because runtime attributes are not available. Tensor shape and operator errors propagate from PyTorch."
+msgstr "未提供 `bounds` 但提供 `variable_name` 时，边界取自该变量尺度目录条目的 `bounds` 字段（先 `coupling.scales.<scale>.variables`，再 `coupling.scales.defaults.variables`，匹配规则与其他目录查询相同）；没有目录声明该变量，或条目缺少 `bounds` 字段时，抛出 `KeyError`；`bounds: null` 表示无边界。不查询其他命名空间、`<name>_bounds` 键或裁剪键。`ScaleManager` 外观传入解析后变量元数据中的边界（优先调用元数据，其次目录条目）；声明无边界时不请求查询。它记录违反项，但不创建第二个状态或守恒所有者。管理器初始化前调用该方法可能因运行时属性尚不可用而失败。张量形状和算子错误由 PyTorch 传播。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:1038
+msgid "The report contains total violations, check count, violation rate, and up to the ten most recent history entries."
+msgstr "报告包含 violation 总数、检查次数、violation rate，以及最近最多十条历史记录。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:1041
+msgid "`configure` accepts only `method`, `preserve_gradients`, `device` and `constraints`: an unknown key, an invalid method, a `preserve_gradients` that is not `True` or `False`, a `device` that is not a torch device, and `constraints` that are not a list of mappings of `ConstraintSpec` fields (with `name` and `type`, a known type and no other field) raise `ValueError` before the call changes anything. Manager `validate()` reports invalid methods, unavailable CUDA devices, and malformed bounded constraints through the BaseManager validation result."
+msgstr "`configure` 仅接受 `method`、`preserve_gradients`、`device` 和 `constraints`：未知键、无效方法、既非 `True` 也非 `False` 的 `preserve_gradients`、不是 torch 设备的 `device`，或并非 `ConstraintSpec` 字段映射列表的 `constraints`（须包含 `name` 和 `type`、类型已知且无其他字段），都会在改变任何内容之前引发 `ValueError`。管理器的 `validate()` 通过 BaseManager 验证结果报告无效方法、不可用 CUDA 设备以及格式错误的有界约束。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:1050
+msgid "Conservation guardian"
+msgstr "Conservation guardian（守恒守护器）"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:1054
+msgid "`ConservationGuardian` is the canonical fourth-layer domain budget checker named by the architecture, but it is not re-exported from `relic.validation`. Use the direct module path only for validation infrastructure:"
+msgstr "`ConservationGuardian` 是架构中命名的 canonical 第四层 domain budget checker，但不会从 `relic.validation` 重新导出。仅 validation infrastructure 应使用直接模块路径："
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:1066
+msgid "`StateManager` owns commit-time state ledgers and invokes the guardian through its conservation integration. `ConservationGuardian` is a non-blocking diagnostic checker; it is not another StateManager, ledger, generic validation result, or scientific process."
+msgstr "`StateManager` 拥有 commit-time state ledger，并通过其 conservation integration 调用 guardian。`ConservationGuardian` 是非阻塞 diagnostic checker；它不是另一个 StateManager、ledger、generic validation result 或 scientific process。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:1071
+msgid "`BudgetCheckResult`"
+msgstr "`BudgetCheckResult`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`domain`"
+msgstr "`domain`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Conservation-domain name."
+msgstr "Conservation-domain 名称。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`members`"
+msgstr "`members`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "State variables obtained from the contract registry."
+msgstr "从 contract registry 获取的 state variable。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`sum_flux_in`"
+msgstr "`sum_flux_in`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Aggregated incoming flux."
+msgstr "聚合后的 incoming flux。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`sum_flux_out`"
+msgstr "`sum_flux_out`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Aggregated outgoing flux."
+msgstr "聚合后的 outgoing flux。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`delta_storage`"
+msgstr "`delta_storage`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Observed storage change."
+msgstr "观测到的 storage change。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`residual`"
+msgstr "`residual`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Absolute difference between observed and expected storage change."
+msgstr "观测 storage change 与预期 storage change 之间的 absolute difference。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`passed`"
+msgstr "`passed`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Whether the residual is within tolerance."
+msgstr "Residual 是否在 tolerance 内。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`tolerance_used`"
+msgstr "`tolerance_used`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Computed absolute-plus-relative threshold."
+msgstr "计算得到的 absolute-plus-relative threshold。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`invariant_drift`"
+msgstr "`invariant_drift`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Optional separately computed Noether invariant drift."
+msgstr "可选的独立计算 Noether invariant drift。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:1099
+msgid "The dataclass performs no constructor-time validation. It is a domain result owned by the guardian and must not be confused with `relic.validation.framework.ValidationResultModel`."
+msgstr "该 dataclass 不执行 constructor-time validation。它是 guardian-owned domain result，不得与 `relic.validation.framework.ValidationResultModel` 混淆。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`contract_registry`"
+msgstr "`contract_registry`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Existing registry that supplies `get_domain_members(domain)`."
+msgstr "提供 `get_domain_members(domain)` 的现有 registry。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`default_atol`"
+msgstr "`default_atol`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Default absolute residual tolerance."
+msgstr "默认 absolute residual tolerance。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "`default_rtol`"
+msgstr "`default_rtol`"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:10
+msgid "Default relative residual tolerance."
+msgstr "默认 relative residual tolerance。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:1119
+msgid "The constructor converts tolerances to `float`; incompatible values raise `TypeError` or `ValueError`. It does not currently enforce non-negative or finite tolerances."
+msgstr "构造函数将 tolerance 转换为 `float`；不兼容的值会抛出 `TypeError` 或 `ValueError`。当前不强制 tolerance 为非负或有限值。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:1135
+msgid "The domain balance is:"
+msgstr "Domain balance 为："
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:1137
+msgid ""
+"\n"
+"\\Delta S_{\\mathrm{expected}}\n"
+"= \\left(\\sum F_{\\mathrm{in}} - \\sum F_{\\mathrm{out}}\\right) \\Delta t.\n"
+msgstr ""
+"\n"
+"\\Delta S_{\\mathrm{expected}}\n"
+"= \\left(\\sum F_{\\mathrm{in}} - \\sum F_{\\mathrm{out}}\\right) \\Delta t.\n"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:1142
+msgid "The threshold is:"
+msgstr "Threshold 为："
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:1144
+msgid ""
+"\n"
+"\\tau\n"
+"= \\mathrm{atol}\n"
+"+ \\mathrm{rtol}\n"
+"  \\lvert\\Delta S_{\\mathrm{expected}}\\rvert.\n"
+msgstr ""
+"\n"
+"\\tau\n"
+"= \\mathrm{atol}\n"
+"+ \\mathrm{rtol}\n"
+"  \\lvert\\Delta S_{\\mathrm{expected}}\\rvert.\n"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:1151
+msgid "A failed budget logs an error and returns `passed=False`; it does not raise merely because the budget failed. Registry, conversion, or Tensor failures can still propagate. `check_domain()` does not populate `invariant_drift`; that diagnostic is computed separately."
+msgstr "Budget 失败时会记录 error 并返回 `passed=False`；不会仅因 budget 失败而抛出异常。Registry、转换或 Tensor failure 仍可能传播。`check_domain()` 不填充 `invariant_drift`；该 diagnostic 会单独计算。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:1167
+msgid "Returns zero for an empty coefficient row or empty flux vector. Otherwise the coefficient count must equal the number of flux entries; a mismatch raises `ValueError`."
+msgstr "对于空 coefficient row 或空 flux vector，返回零。否则 coefficient 数量必须等于 flux entry 数量；不匹配时抛出 `ValueError`。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:1171
+msgid "Scientific modules must not reproduce these tolerance and budget loops in their `forward()` methods. Local checks remain owned by `FunctorBase`, commit-time ledgers by `StateManager`, and domain diagnostics by `ConservationGuardian`."
+msgstr "Scientific module 不得在其 `forward()` method 中重复实现这些 tolerance 和 budget loop。Local check 仍由 `FunctorBase` 所有，commit-time ledger 由 `StateManager` 所有，domain diagnostic 由 `ConservationGuardian` 所有。"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:1176
+msgid "Physical constants and anti-redundancy rules"
+msgstr "物理常数与 anti-redundancy 规则"
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:1178
+msgid "Physical constants have one database owner:"
+msgstr "物理常数只有一个 database owner："
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:1184
+msgid "Non-Functor infrastructure reads them through:"
+msgstr "Non-Functor infrastructure 通过以下入口读取它们："
+
+#: <RELIC_ROOT>/docs/source/public/api/parameters_contracts.md:1193
+msgid "Do not duplicate physical constants in Python or domain parameter files. Do not add another manager, parameter accessor, cache, database facade, or compatibility wrapper. In particular, removed access chains such as `get_parameter_by_path()`, `_require_parameter()`, `require_parameter_value()`, and `ParameterAccessorMixin` are not part of the public architecture."
+msgstr "不要在 Python 或 domain parameter file 中重复定义 physical constant。不要添加另一个 manager、parameter accessor、cache、database facade 或 compatibility wrapper。特别是，已移除的 access chain（例如 `get_parameter_by_path()`、`_require_parameter()`、`require_parameter_value()` 和 `ParameterAccessorMixin`）不属于 public architecture。"
+

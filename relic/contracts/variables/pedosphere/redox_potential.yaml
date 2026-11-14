@@ -1,0 +1,42 @@
+variable: redox_potential
+title: "Soil Redox Potential"
+description: "Soil redox potential Eh in mV gating methanogenesis in methane_production through the piecewise-linear factor f_Eh = clip((Eh_0 - Eh) / (Eh_0 - Eh_1), 0, 1) of Zhu et al. (2014), Sect. 2.2.1 (1 at Eh <= Eh_1, 0 at Eh >= Eh_0). Required; finite, no range. No relic Functor writes it (supplied as forcing)."
+kind: forcing
+dimension:
+  udunits: "mV"
+  cf_standard_name: null
+support:
+  spatial_kind: grid_cell
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Zhu, Q. et al. (2014). Geosci. Model Dev. 7, 981-999, doi:10.5194/gmd-7-981-2014"
+numerics:
+  # Signed potential (reducing conditions are negative); no bound is declared.
+  lower_bound: null
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies: []
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/pedosphere/methane/production.py"
+  runtime_role: "soil_redox_potential_forcing"
+  runtime_writer: null
+  note: "Only reader: MethaneProductionFunctor (raises when redox_potential is missing; requires finite values; Eh_1 and Eh_0 in mV are the ParameterManager entries pedosphere.methane.production.calibrated.eh_full_activity and eh_zero_activity). Methane oxidation does not read it. No RELIC Functor writes redox_potential."

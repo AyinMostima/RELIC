@@ -1,0 +1,34 @@
+variable: structural_litter_input
+title: "Structural Litter Carbon Input Flux"
+kind: flux
+dimension:
+  udunits: "g C m-2 s-1"
+  cf_standard_name: null
+owner: "litterfall_interface_mapper"
+aliases: []
+incrementable: false
+accumulates: carbon.total
+numerics:
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "litterfall_interface_mapper"
+      module: "relic.scientific.pedosphere.interface_mapping"
+      provides: ["structural_litter_input"]
+      unit: "g C m-2 s-1"
+flux_contract:
+  allowed_in: ["litterfall_interface_mapper"]
+  allowed_out:
+    - "first_order_decomposition"
+    - "pools_matrix"
+  budget_check:
+    guardian: null
+    tolerance: {atol: 1.0e-10, rtol: 1.0e-8}
+provenance:
+  source_file: "relic/scientific/pedosphere/interface_mapping.py"
+  runtime_role: "biosphere_management_to_pedosphere_structural_litter_carbon_input"
+  runtime_writer: "litterfall_interface_mapper"

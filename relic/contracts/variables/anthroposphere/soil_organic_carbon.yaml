@@ -1,0 +1,34 @@
+variable: soil_organic_carbon
+title: "Soil Organic Carbon Stock"
+kind: forcing
+dimension:
+  udunits: "kg C m-2"
+  cf_standard_name: null
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "relic/scientific/anthroposphere/management/coordinator.py: required input divided by reference.soil_carbon_reference [kg m-2]"
+  - "relic/scientific/anthroposphere/management/tillage.py: required input C_soil [kg C m-2] of the tillage CO2 pulse (no default)"
+numerics:
+  lower_bound: 0.0
+  upper_bound: .inf
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies: []
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/anthroposphere/management/coordinator.py"
+  runtime_role: "management_soil_carbon_input"
+  runtime_writer: null
+  note: "Carbon mass per ground area on the basis of reference.soil_carbon_reference; read by management_coordinator and tillage_management (no default; a missing or negative value raises); no RELIC Functor writes it."

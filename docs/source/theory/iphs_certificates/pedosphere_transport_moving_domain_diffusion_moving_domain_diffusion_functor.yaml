@@ -1,0 +1,165 @@
+certificate_version: '1.0'
+process_id: relic.scientific.pedosphere.transport.moving_domain_diffusion.MovingDomainDiffusionFunctor
+module_name: MovingDomainDiffusionFunctor
+canonical_role: transport
+iphs_level: 3
+iphs_level_evidence:
+  classification: IPHS-structured moving-domain (ALE) diffusion certificate with declared metric time derivative (hybrid semantic ale)
+  compatible_basis: One cell 0-cochain moving_domain_solute_concentration [kg m-3] on the uniformly stretched column x = xi L(t) plus the geometry state moving_domain_length [m]; the metric star = diag(L/N) moves with the boundary velocity
+  runtime_replacement: forward advances cell masses in ALE conservation form with the canonical finite-volume diffusive rate, the swept relative flux at every face, and volumes satisfying the discrete GCL exactly; no legacy branch, no separate ALE manager or remap service.
+  canonical_operator: dot(m_i) = -(F_{i+1} - F_i) + s_{i+1} - s_i with F = -D dc/dx and s_k = c_face,k w_k, w_k = (k/N) w_b; R_h = d_h^T diag(D) d_h / dx^2 >= 0, J = 0; dot(star) = diag(w_b/N); geometry power P_geo = -0.5 c^T dot(star) c
+  structural_contribution: J, R, storage H = 0.5 c^T star c, effort, the Hodge time derivative dot(star), the moving-face port ledger, and the discrete GCL residual are declared for assembly and rule audit
+  assembly_participation: Certificate participates in Phase 8 inventory, the stochastic_sdae_check ale execution binding, and GraphIR structural audit
+  level_3_limit: J, R, H, dot(star), and the GCL are declared and verified by tests, but no runtime-linked IPHSStructureSpec contribution or executable level 4 certificate binding is present; mesh refinement, non-uniform mapping, and state remap are [N].
+theory_document: docs\source\theory\pedosphere_moving_domain_diffusion.md
+theory_document_status: updated
+legacy_formula: d/dt int_cell c dx = -(F_{k+1} - F_k) + c_{k+1} w_{k+1} - c_k w_k, F = -D dc/dx, dL/dt = w_b
+literature_formula: ALE conservation form with relative flux F - c w (Donea et al. 2004) and the discrete geometric conservation law V_i(t+dt) = V_i(t) + dt (w_{i+1/2} - w_{i-1/2}) (Thomas and Lombard 1979); Fickian diffusion (Crank 1975)
+iphs_formula: x_dot = -R_h e + f_geo + s_boundary with e = c, R_h = d_h^T diag(D) d_h / dx^2, e^T f_geo = -0.5 c^T dot(star) c, dot(star) = diag(w_b/N)
+legacy_expression: m_i(t+dt) = m_i(t) + dt [rate_i dx + s_{i+1} - s_i]; c_i(t+dt) = m_i(t+dt) / V_i(t+dt); V_i(t+dt) = L(t+dt)/N; L(t+dt) = L + w_b dt
+iphs_expression: constant field preserved under pure mesh motion; column mass change equals the swept boundary mass dt s_N; GCL residual zero to rounding
+input_variables:
+- moving_domain_solute_concentration
+- moving_domain_length
+- moving_domain_boundary_velocity
+- moving_boundary_solute_concentration
+output_variables:
+- moving_domain_solute_concentration
+- moving_domain_length
+- diagnostics.moving_domain.boundary_mass_flux
+- diagnostics.moving_domain.mass_balance_residual
+- diagnostics.moving_domain.gcl_residual
+- diagnostics.moving_domain.geometry_power
+parameter_keys:
+- pedosphere.transport.moving_domain_diffusivity
+- pedosphere.transport.moving_domain_mesh_courant_max
+- transport.numerical.cfl_diffusion_max
+composition_ports: []
+references:
+- Thomas, P.D. & Lombard, C.K. (1979). Geometric conservation law and its application to flow computations on moving grids. AIAA J. 17, 1030-1037
+- Donea, J., Huerta, A., Ponthot, J.-Ph. & Rodriguez-Ferran, A. (2004). Arbitrary Lagrangian-Eulerian methods. Encyclopedia of Computational Mechanics, ch. 14
+- Crank, J. (1975). The Mathematics of Diffusion. Oxford University Press
+- Patankar, S.V. (1980). Numerical Heat Transfer and Fluid Flow. Hemisphere
+baseline_tests:
+- test\unit\pedosphere\test_moving_domain_diffusion.py
+- test\audit\phase8_scientific_inventory.test.py
+validation_tests:
+- test\unit\pedosphere\test_moving_domain_diffusion.py
+- test\integration\test_moving_domain_ale_integration.py
+- test\unit\validation\framework\rules\stochastic_sdae_structure.test.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  moving_domain_solute_concentration: cell concentration cochain c on the stretched column [kg m-3]; input state and accumulated increment
+  moving_domain_length: column length L, the geometry state of the mapping x = xi L [m]; input state and accumulated increment w_b dt
+  moving_domain_boundary_velocity: prescribed lower-boundary velocity w_b [m s-1] (forcing)
+  moving_boundary_solute_concentration: concentration of fluid entrained by a growing boundary c_b [kg m-3] (forcing)
+  diagnostics.moving_domain.boundary_mass_flux: swept mass flux s_N = c_face,N w_b through the moving face [kg m-2 s-1]
+  diagnostics.moving_domain.mass_balance_residual: sum_i m_i(t+dt) - sum_i m_i(t) - dt s_N [kg m-2]
+  diagnostics.moving_domain.gcl_residual: max_i |V_i(t+dt) - V_i(t) - dt (w_{i+1} - w_i)| [m]
+  diagnostics.moving_domain.geometry_power: -0.5 c^T dot(star) c [kg2 m-5 s-1]
+parameter_map:
+  pedosphere.transport.moving_domain_diffusivity: Effective solute diffusivity D [m2 s-1]
+  pedosphere.transport.moving_domain_mesh_courant_max: Maximum mesh Courant number |w_b| dt / dx [dimensionless]
+  transport.numerical.cfl_diffusion_max: Largest accepted diffusion number (von Neumann) [dimensionless]
+operator_map:
+  diffusive_rate: canonical _compute_diffusion_rate_and_boundary_flux_1d with zero-flux closed faces on the current metric dx = L/N
+  relative_flux: s_k = c_face,k w_k with the face concentration upwind of the face motion (c_b outside a growing boundary; bottom-cell value for a shrinking boundary)
+  geometric_conservation: V_i(t+dt) = L(t+dt)/N = V_i(t) + dt (w_{i+1} - w_i) exactly for the uniform stretching mapping
+  hodge_time_derivative: dot(star) = diag(w_b/N) on the concentration cochain; the geometry power is emitted as a diagnostic
+  mapping: uniform stretching x = xi L(t); refinement, non-uniform mapping, and remap are [N]
+unit_map:
+  moving_domain_solute_concentration: kg m-3
+  moving_domain_length: m
+  moving_domain_boundary_velocity: m s-1
+  moving_boundary_solute_concentration: kg m-3
+  diagnostics.moving_domain.boundary_mass_flux: kg m-2 s-1
+  diagnostics.moving_domain.mass_balance_residual: kg m-2
+  diagnostics.moving_domain.gcl_residual: m
+  diagnostics.moving_domain.geometry_power: kg2 m-5 s-1
+input_output_map:
+  moving_domain_solute_concentration: canonical state input and UpdateItem ACCUMULATE increment, per_timestep true
+  moving_domain_length: canonical geometry state input and UpdateItem ACCUMULATE increment w_b dt, per_timestep true
+  moving_domain_boundary_velocity: forcing input read from the state; never written
+  moving_boundary_solute_concentration: forcing input read from the state; never written
+  diagnostics.moving_domain.boundary_mass_flux: canonical REPLACE observation of the moving-face port flux
+  diagnostics.moving_domain.mass_balance_residual: canonical REPLACE observation of the column ledger residual
+  diagnostics.moving_domain.gcl_residual: canonical REPLACE observation of the discrete GCL residual
+  diagnostics.moving_domain.geometry_power: canonical REPLACE observation of the Hodge-energy correction
+interface_map:
+  forward_signature: forward(self, state, time, dt, **kwargs)
+  bridge_class: TransportMechanismFunctor
+  abstraction_contract: TransportMechanism
+  transport_type: diffusion
+  constructor_selection: MovingDomainDiffusionFunctor(); the cell count is the concentration state length
+  state_write_mode: UpdateItem ACCUMULATE with per_timestep true for concentration and length and REPLACE observations for diagnostics
+  legacy_inputs:
+  - moving_domain_solute_concentration
+  - moving_domain_length
+  - moving_domain_boundary_velocity
+  - moving_boundary_solute_concentration
+  iphs_inputs:
+  - moving_domain_solute_concentration
+  - moving_domain_length
+  - moving_domain_boundary_velocity
+  - moving_boundary_solute_concentration
+  legacy_outputs:
+  - moving_domain_solute_concentration
+  - moving_domain_length
+  - diagnostics.moving_domain.boundary_mass_flux
+  - diagnostics.moving_domain.mass_balance_residual
+  - diagnostics.moving_domain.gcl_residual
+  - diagnostics.moving_domain.geometry_power
+  iphs_outputs:
+  - moving_domain_solute_concentration
+  - moving_domain_length
+  - diagnostics.moving_domain.boundary_mass_flux
+  - diagnostics.moving_domain.mass_balance_residual
+  - diagnostics.moving_domain.gcl_residual
+  - diagnostics.moving_domain.geometry_power
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward -> _compute_diffusion_rate_and_boundary_flux_1d + ALE relative-flux update
+  preserved_numerics: The single forward path evaluates the canonical finite-volume diffusive rate on the current metric, adds the swept relative fluxes, divides by the GCL-consistent new volumes, and emits the exact increments; no alternative branch exists.
+  no_legacy_mode: No selectable legacy runtime branch is exposed; the Functor was introduced directly on the canonical diffusion owner.
+  non_strict_reason: Level 3 declares J, R, H, dot(star), and the GCL; the runtime-point IPHSStructureSpec witness (level 4) is not bound.
+state_advancement_map:
+  potential_basis: concentration cochain c with metric star = diag(L/N); storage H = 0.5 c^T star c
+  effort_variable: e = c
+  state_advancer: m_i(t+dt) = m_i(t) + dt [rate_i dx + s_{i+1} - s_i], c_i(t+dt) = m_i(t+dt) / V_i(t+dt), L(t+dt) = L + w_b dt
+  runtime_usage: MovingDomainDiffusionFunctor.forward validates states, forcings, and the step, enforces the diffusion and mesh Courant limits, evaluates the diffusive rate with the canonical owner, adds the relative fluxes, emits two ACCUMULATE increments and four REPLACE diagnostics, and reports the column ledger residual through check_conservation_laws.
+parameter_management_map:
+  pedosphere.transport.moving_domain_diffusivity:
+    source: ParameterManager YAML
+  pedosphere.transport.moving_domain_mesh_courant_max:
+    source: ParameterManager YAML
+  transport.numerical.cfl_diffusion_max:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares two state inputs, two forcing inputs, two state outputs, four diagnostics, no dependencies, and the mass conservation law
+  state_contract: SCM contracts moving_domain_solute_concentration (kg m-3), moving_domain_length (m), the two forcings, and the four diagnostics.moving_domain.* contracts type the GraphIR ports
+  validation_rule: stochastic_sdae_check with the ale execution binding (ale_geometry_corrections with dot(star), ale_restart with geometry_state_keys moving_domain_length), phase8 scientific inventory, and equivalence certificate checks
+  geometry_binding: execution_bindings.ale names this class, its forward, the state pair, geometry_state_scope state_manager, and the unit test as executed evidence
+dependency_interconnection_map:
+  dependencies: no Functor dependencies; get_dependencies() returns an empty list
+  direct_functor_calls: none; only the canonical finite-volume diffusion helper is invoked
+overflow_routing_map:
+  invalid_state_route: missing, non-tensor, non-floating, non-finite, negative, or non-column states fail before any UpdateItem
+  stability_route: diffusion number above cfl_diffusion_max or mesh Courant above moving_domain_mesh_courant_max fails before any UpdateItem; no clipping
+  collapse_route: a boundary motion that would make the column length non-positive within the step fails before any UpdateItem
+  boundary_exchange_route: swept mass through the moving face is emitted as diagnostics.moving_domain.boundary_mass_flux (positive inward)
+  discarded_residuals: no residual is discarded; the mass-balance and GCL residuals are emitted every step
+conservation_map:
+  conserved_quantity: mass
+  balance_expression: sum_i m_i(t+dt) - sum_i m_i(t) = dt s_N (closed diffusive faces, swept boundary mass only)
+  local_check: check_conservation_laws reports |mass_balance_residual| in kg m-2
+  functor_law: FunctorMetadata.conservation_laws includes mass
+entropy_audit:
+  dissipative_operator: R_h = d_h^T diag(D) d_h / dx^2 is symmetric positive semidefinite for D > 0 on the current metric
+  storage_functional: H = 0.5 c^T star c with star = diag(L/N)
+  effort_definition: e = c
+  sigma_expression: sigma = sum_faces D (dc/dx)^2 dx >= 0
+  dH_balance: dH/dt = -sigma + P_geo + boundary exchange with P_geo = -0.5 c^T dot(star) c the moving-metric correction
+  units_and_scope: H is a metric-weighted concentration norm [kg2 m-5]; sigma and P_geo are norm rates [kg2 m-5 s-1], not thermodynamic entropy production
+  validation_hook: unit tests verify constant-field preservation under pure stretching, exact column ledger with boundary entrainment and release, reduction to the canonical diffusion on a fixed domain, the geometry power against dot(star), stability rejections, and governed checkpoint restart; no strict runtime Hamiltonian or GENERIC evidence is claimed
+equivalence_type: exact

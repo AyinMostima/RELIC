@@ -1,0 +1,49 @@
+variable: diagnostics.stability_number
+title: "Maximum Explicit Diffusion Stability Number"
+description: "Grid maximum of the explicit diffusion stability number sigma = K_tot * dt * sum_k dx_k^-2 of the atmospheric tracer step, with K_tot the molecular plus stability-dependent eddy diffusivity (Strikwerda 2004; Morton and Mayers 2005). Dimensionless and non-negative; values above transport.numerical.cfl_diffusion_max are rejected before any state advance. Unsigned (no direction). Written only by atmospheric_advection_diffusion; the generic transport Functors publish the same quantity as diagnostics.diffusion_stability."
+kind: diagnostic
+dimension:
+  udunits: "1"
+  cf_standard_name: null
+support:
+  spatial_kind: null
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: []
+owner: "atmospheric_advection_diffusion"
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Strikwerda, J.C. (2004). Finite Difference Schemes and Partial Differential Equations, 2nd ed., SIAM"
+  - "Morton, K.W. & Mayers, D.F. (2005). Numerical Solution of Partial Differential Equations, 2nd ed., Cambridge University Press"
+numerics:
+  # sigma >= 0 because compute_diffusion_stability rejects negative
+  # diffusivity; the admissible limit is the ParameterManager value
+  # transport.numerical.cfl_diffusion_max, not a declared bound.
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "atmospheric_advection_diffusion"
+      module: "relic.scientific.atmosphere.transport.AtmosphericAdvectionDiffusionFunctor"
+      provides: ["diagnostics.stability_number"]
+      unit: "1"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/atmosphere/transport/AtmosphericAdvectionDiffusionFunctor.py"
+  runtime_role: "atmospheric_transport_diffusion_stability_observation"
+  runtime_writer: "atmospheric_advection_diffusion"
+  note: "Scalar torch.max of the diagnostics.stability_checker field written as a raw diagnostics.* output: AtmosphericAdvectionDiffusionFunctor.py:839-849,874,971; formula in relic/computation/operators/functional.py:943,987."

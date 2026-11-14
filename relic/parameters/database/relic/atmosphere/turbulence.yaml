@@ -1,0 +1,266 @@
+schema_version: 2.0.0
+tier: relic
+namespace: atmosphere.turbulence
+description: Turbulence parameters for atmospheric boundary layer processes including MOST, mixing length theory, and eddy
+  diffusivity
+metadata:
+  created_by: RELIC Parameter System
+  last_modified: '2026-01-07T14:20:26Z'
+  schema_url: https://github.com/relic/parameter-schema/v2.0.0
+  version: 1.0.0
+parameters:
+  default_reference_height:
+    value: 10.0
+    default: 10.0
+    units: m
+    dtype: float32
+    bounds:
+    - 1.0
+    - 100.0
+    category: operational_parameter
+    description: Default measurement height above surface for meteorological observations
+    references:
+    - Chave et al. (2014) Glob. Change Biol. 20, 3177-3190
+    tags:
+    - default
+    - measurement
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: standard_practice
+      schema_version: 2.0.0
+      created_by: parameter_consolidation
+      last_modified: '2025-10-09T00:00:00Z'
+  roughness_heat_ratio:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.01
+    - 1.0
+    category: surface_parameter
+    description: Ratio of heat to momentum roughness length (z0h/z0m)
+    references:
+    - Brutsaert (1982) Evaporation into the Atmosphere, Springer
+    tags:
+    - surface
+    - heat_transfer
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: parameter_consolidation
+      last_modified: '2025-10-09T00:00:00Z'
+  minimum_wind_speed:
+    value: 0.1
+    default: 0.1
+    units: m s-1
+    dtype: float32
+    bounds:
+    - 0.01
+    - 1.0
+    category: numerical_parameter
+    description: Minimum wind speed threshold for turbulence calculations to avoid division by zero
+    references:
+    - Monin & Obukhov (1954) Trudy Akad. Nauk SSSR Geofiz. Inst. 24, 163-187
+    tags:
+    - numerical
+    - stability
+    dimension: velocity
+    requires_grad: false
+    provenance:
+      source: numerical_stability
+      schema_version: 2.0.0
+      created_by: parameter_consolidation
+      last_modified: '2025-10-09T00:00:00Z'
+  neutral_obukhov_length:
+    value: 1000.0
+    default: 1000.0
+    units: m
+    dtype: float32
+    bounds:
+    - 100.0
+    - 10000.0
+    category: numerical_parameter
+    description: Finite magnitude used to represent the neutral Monin-Obukhov limit
+    references:
+    - Stull (1988) An Introduction to Boundary Layer Meteorology
+    - Garratt (1992) The Atmospheric Boundary Layer
+    tags:
+    - numerical
+    - stability
+    - neutral
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: numerical_method
+      schema_version: 2.0.0
+      created_by: iphs_transport_closure
+      last_modified: '2026-07-13T00:00:00Z'
+  minimum_friction_velocity:
+    value: 0.01
+    default: 0.01
+    units: m s-1
+    dtype: float32
+    bounds:
+    - 0.001
+    - 0.1
+    category: structural_parameter
+    description: Positive reduced friction-velocity scale used by atmospheric scalar transport's MOST diagnostic and structural Hodge audits; not a measured wind input.
+    references:
+    - Stull (1988) An Introduction to Boundary Layer Meteorology, Kluwer
+    - Bonan (2019) Climate Change and Terrestrial Ecosystem Modeling, Cambridge Univ. Press
+    tags:
+    - structural
+    - hodge
+    dimension: velocity
+    requires_grad: false
+    provenance:
+      source: iphs_structural_audit
+      schema_version: 2.0.0
+      created_by: parameter_consolidation
+      last_modified: '2026-07-16T00:00:00Z'
+  convergence_tolerance:
+    value: 0.01
+    default: 0.01
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0001
+    - 0.1
+    category: numerical_parameter
+    description: Convergence tolerance for iterative solutions in MOST calculations
+    references:
+    - Press et al. (2007) Numerical Recipes 3rd Ed., Cambridge Univ. Press
+    tags:
+    - numerical
+    - convergence
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_method
+      schema_version: 2.0.0
+      created_by: parameter_consolidation
+      last_modified: '2025-10-09T00:00:00Z'
+  max_iterations:
+    value: 10
+    default: 10
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 3
+    - 50
+    category: numerical_parameter
+    description: Maximum iterations for convergence in iterative turbulence algorithms
+    references:
+    - Press et al. (2007) Numerical Recipes 3rd Ed., Cambridge Univ. Press
+    tags:
+    - numerical
+    - convergence
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_method
+      schema_version: 2.0.0
+      created_by: parameter_consolidation
+      last_modified: '2025-10-09T00:00:00Z'
+  transport_neutral_diffusivity_fraction:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    dtype: float64
+    bounds: [0.1, 0.1]
+    category: turbulence_parameter
+    tags:
+    - transport
+    - k_closure
+    - existing_implementation
+    description: Fixed neutral fraction in the existing atmospheric transport K closure; not a universal MOST coefficient.
+    references:
+    - Stull (1988), K-theory background; numerical value preserves the RELIC empirical closure.
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: existing_implementation
+      schema_version: 2.0.0
+  transport_unstable_enhancement_coefficient:
+    value: 2.0
+    default: 2.0
+    units: dimensionless
+    dtype: float64
+    bounds: [2.0, 2.0]
+    category: turbulence_parameter
+    tags:
+    - transport
+    - k_closure
+    - existing_implementation
+    description: Fixed coefficient a in K=K0*(1+a*s/(1+s)) for s=-stability>0.
+    references:
+    - Stull (1988), K-theory background; numerical value preserves the RELIC empirical closure.
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: existing_implementation
+      schema_version: 2.0.0
+  transport_stable_suppression_coefficient:
+    value: 10.0
+    default: 10.0
+    units: dimensionless
+    dtype: float64
+    bounds: [10.0, 10.0]
+    category: turbulence_parameter
+    tags:
+    - transport
+    - k_closure
+    - existing_implementation
+    description: Fixed coefficient b in K=K0/(1+b*stability) for stability>=0.
+    references:
+    - Stull (1988), K-theory background; numerical value preserves the RELIC empirical closure.
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: existing_implementation
+      schema_version: 2.0.0
+  transport_stability_limit:
+    value: 10.0
+    default: 10.0
+    units: dimensionless
+    dtype: float64
+    bounds: [10.0, 10.0]
+    category: turbulence_parameter
+    tags:
+    - transport
+    - k_closure
+    - existing_implementation
+    description: Symmetric diagnostic stability limit retained by the existing atmospheric transport closure.
+    references:
+    - RELIC atmospheric advection-diffusion reduced stability closure.
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: existing_implementation
+      schema_version: 2.0.0
+  eddy_diffusivity_max:
+    value: 50.0
+    default: 50.0
+    units: m2 s-1
+    dtype: float32
+    bounds:
+    - 0.1
+    - 100.0
+    category: turbulence_parameter
+    description: Upper bound on eddy diffusivity used by atmospheric advection-diffusion functors
+    references:
+    - Garratt (1992) The Atmospheric Boundary Layer
+    tags:
+    - turbulence
+    - eddy_diffusion
+    dimension: diffusivity
+    requires_grad: false
+    provenance:
+      source: boundary_layer_theory
+      schema_version: 2.0.0
+      created_by: parameter_consolidation
+      last_modified: '2025-11-02T00:00:00Z'

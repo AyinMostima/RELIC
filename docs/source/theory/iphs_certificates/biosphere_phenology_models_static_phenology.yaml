@@ -1,0 +1,163 @@
+certificate_version: '1.0'
+process_id: relic.scientific.biosphere.phenology.models.StaticPhenology
+module_name: StaticPhenology
+canonical_role: reaction
+iphs_level: 2
+iphs_level_evidence:
+  classification: IPHS-wrapped reaction process certificate
+  compatible_basis: Reaction process is expressed through conserved or open stoichiometric ledgers
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: N_h r_h reaction-network state advance
+  level_2_limit: The canonical runtime wrapper is declared, but no executable typed-cochain or IPHS structural contribution is bound; strict level 4 or 5 evidence is not claimed.
+theory_document: docs\source\theory\phenology.md
+theory_document_status: updated
+legacy_formula: "\n            Static phenology equations:\n            \n            Growth factor: f_{growth}(t) = \n            \\begin{cases}\n                0 & \\text{if } t < t_{onset} \\\\\n                0.5(1 + \\tanh(k(t - t_{onset}))) & \\text{if } t_{onset} \\leq t < t_{full} \\\\\n                1 & \\text{if } t_{full} \\leq t < t_{senes} \\\\\n                0.5(1 + \\tanh(k(t_{offset} - t))) & \\text{if } t_{senes} \\leq t < t_{offset} \\\\\n                0 & \\text{if } t \\geq t_{offset}\n            \\end{cases}\n            \n            LAI(t) = LAI_{max} \\times f_{growth}(t)\n            \n            Where:\n            - t: day of year [days]\n            - t_{onset}: leaf onset date [DOY]\n            - t_{offset}: leaf offset date [DOY]  \n            - t_{full} = t_{onset} + expansion_{days}\n            - t_{senes} = t_{offset} - senescence_{days}\n            - k = transition_steepness: transition steepness [day-1]\n            "
+literature_formula: "\n            Static phenology equations:\n            \n            Growth factor: f_{growth}(t) = \n            \\begin{cases}\n                0 & \\text{if } t < t_{onset} \\\\\n                0.5(1 + \\tanh(k(t - t_{onset}))) & \\text{if } t_{onset} \\leq t < t_{full} \\\\\n                1 & \\text{if } t_{full} \\leq t < t_{senes} \\\\\n                0.5(1 + \\tanh(k(t_{offset} - t))) & \\text{if } t_{senes} \\leq t < t_{offset} \\\\\n                0 & \\text{if } t \\geq t_{offset}\n            \\end{cases}\n            \n            LAI(t) = LAI_{max} \\times f_{growth}(t)\n            \n            Where:\n            - t: day of year [days]\n            - t_{onset}: leaf onset date [DOY]\n            - t_{offset}: leaf offset date [DOY]  \n            - t_{full} = t_{onset} + expansion_{days}\n            - t_{senes} = t_{offset} - senescence_{days}\n            - k = transition_steepness: transition steepness [day-1]\n            "
+iphs_formula: x_dot = N_h r_h with ParameterManager-backed process rates r_h and declared stoichiometric/output map N_h
+legacy_expression: "\n            Static phenology equations:\n            \n            Growth factor: f_{growth}(t) = \n            \\begin{cases}\n                0 & \\text{if } t < t_{onset} \\\\\n                0.5(1 + \\tanh(k(t - t_{onset}))) & \\text{if } t_{onset} \\leq t < t_{full} \\\\\n                1 & \\text{if } t_{full} \\leq t < t_{senes} \\\\\n                0.5(1 + \\tanh(k(t_{offset} - t))) & \\text{if } t_{senes} \\leq t < t_{offset} \\\\\n                0 & \\text{if } t \\geq t_{offset}\n            \\end{cases}\n            \n            LAI(t) = LAI_{max} \\times f_{growth}(t)\n            \n            Where:\n            - t: day of year [days]\n            - t_{onset}: leaf onset date [DOY]\n            - t_{offset}: leaf offset date [DOY]  \n            - t_{full} = t_{onset} + expansion_{days}\n            - t_{senes} = t_{offset} - senescence_{days}\n            - k = transition_steepness: transition steepness [day-1]\n            "
+iphs_expression: x_dot = N_h r_h with ParameterManager-backed process rates r_h and declared stoichiometric/output map N_h
+input_variables: &canonical_inputs
+- day_of_year
+- air_temperature
+- leaf_carbon
+- froot_carbon
+- leaf_nitrogen
+- froot_nitrogen
+output_variables: &canonical_outputs
+- leaf_area_index
+- phenological_factor
+- phenology_senescence_factor
+- phenology_phase
+- leaf_carbon
+- froot_carbon
+- leaf_nitrogen
+- froot_nitrogen
+- plant_nitrogen_pool
+- leaf_litterfall_carbon
+- froot_litterfall_carbon
+- leaf_litterfall_nitrogen
+- froot_litterfall_nitrogen
+- nitrogen_retranslocation
+- diagnostics.phenology.carbon_turnover_balance_residual
+- diagnostics.phenology.nitrogen_turnover_balance_residual
+parameter_keys:
+- biosphere.phenology.turnover.n_retrans_efficiency
+- biosphere.phenology.constants.max_lai_threshold
+- biosphere.phenology.static.leaf_onset_doy
+- biosphere.phenology.static.leaf_offset_doy
+- biosphere.phenology.static.leaf_expansion_days
+- biosphere.phenology.static.leaf_senescence_days
+- biosphere.phenology.turnover.leaf_turnover_rate
+- biosphere.phenology.turnover.froot_turnover_rate
+- biosphere.phenology.morphology.max_lai
+- biosphere.phenology.morphology.min_lai
+- biosphere.validation.tolerance.phenology
+- biosphere.phenology.static.transition_steepness
+- biosphere.phenology.static.sigmoid_midpoint
+- biosphere.phenology.static.sigmoid_steepness
+- biosphere.phenology.computational.sigmoid_scale
+- biosphere.phenology.computational.clamp_min
+- biosphere.phenology.computational.clamp_max
+- biosphere.phenology.turnover.background_senescence_rate
+composition_ports:
+- phase8_runtime_port
+references:
+- White, M.A., et al. (1997). A continental phenology model for monitoring vegetation responses to interannual climatic variability. Global Biogeochemical Cycles, 11(2), 217-234.
+- Running, S.W. & Coughlan, J.C. (1988). A general model of forest ecosystem processes for regional applications. Ecological Modelling, 42(2), 125-154.
+baseline_tests:
+- test\unit\biosphere\phenology\test_phenology_models_l1.py
+- test\audit\phase8_scientific_inventory.test.py
+validation_tests:
+- test\integration\biosphere\phenology\test_phenology_integration_l2.py
+- test\system\biosphere\phenology\test_phenology_system_l3.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  day_of_year: required calendar forcing port [day]
+  air_temperature: required temperature forcing port [K]
+  leaf_carbon: prognostic vegetation carbon pool [kg C m-2]
+  froot_carbon: prognostic vegetation carbon pool [kg C m-2]
+  leaf_nitrogen: prognostic vegetation nitrogen pool [kg N m-2]
+  froot_nitrogen: prognostic vegetation nitrogen pool [kg N m-2]
+parameter_map: &canonical_parameter_sources
+  biosphere.phenology.turnover.n_retrans_efficiency: ParameterManager YAML
+  biosphere.phenology.constants.max_lai_threshold: ParameterManager YAML
+  biosphere.phenology.static.leaf_onset_doy: ParameterManager YAML
+  biosphere.phenology.static.leaf_offset_doy: ParameterManager YAML
+  biosphere.phenology.static.leaf_expansion_days: ParameterManager YAML
+  biosphere.phenology.static.leaf_senescence_days: ParameterManager YAML
+  biosphere.phenology.turnover.leaf_turnover_rate: ParameterManager YAML
+  biosphere.phenology.turnover.froot_turnover_rate: ParameterManager YAML
+  biosphere.phenology.morphology.max_lai: ParameterManager YAML
+  biosphere.phenology.morphology.min_lai: ParameterManager YAML
+  biosphere.validation.tolerance.phenology: ParameterManager YAML
+  biosphere.phenology.static.transition_steepness: ParameterManager YAML
+  biosphere.phenology.static.sigmoid_midpoint: ParameterManager YAML
+  biosphere.phenology.static.sigmoid_steepness: ParameterManager YAML
+  biosphere.phenology.computational.sigmoid_scale: ParameterManager YAML
+  biosphere.phenology.computational.clamp_min: ParameterManager YAML
+  biosphere.phenology.computational.clamp_max: ParameterManager YAML
+  biosphere.phenology.turnover.background_senescence_rate: ParameterManager YAML
+operator_map:
+  N_h: declared stoichiometric or output incidence map for this reaction process
+  r_h: ParameterManager-backed process-rate vector evaluated by the production forward path
+unit_map:
+  leaf_area_index: m2 m-2
+  phenological_factor: dimensionless
+  phenology_senescence_factor: dimensionless
+  phenology_phase: dimensionless
+  leaf_carbon: kg C m-2
+  froot_carbon: kg C m-2
+  leaf_nitrogen: kg N m-2
+  froot_nitrogen: kg N m-2
+  plant_nitrogen_pool: kg N m-2
+  leaf_litterfall_carbon: kg C m-2 s-1
+  froot_litterfall_carbon: kg C m-2 s-1
+  leaf_litterfall_nitrogen: kg N m-2 s-1
+  froot_litterfall_nitrogen: kg N m-2 s-1
+  nitrogen_retranslocation: kg N m-2 s-1
+  diagnostics.phenology.carbon_turnover_balance_residual: kg C m-2
+  diagnostics.phenology.nitrogen_turnover_balance_residual: kg N m-2
+input_output_map:
+  phenology_observations: static calendar forcing maps to canonical LAI, phase, growth, and senescence-factor observations
+  carbon_turnover: vegetation carbon pools map to integrated pool increments and litter carbon boundary exports
+  nitrogen_turnover: vegetation nitrogen pools map to integrated pool increments, retranslocation, and litter nitrogen boundary exports
+interface_map:
+  forward_signature: forward(self, state, time, dt, **kwargs)
+  bridge_class: BiologicalProcessFunctor
+  abstraction_contract: BiologicalProcess
+  state_write_mode: integrated C and N pool increments use ACCUMULATE with per_timestep true; rates and observations use REPLACE with declared units
+  legacy_inputs: *canonical_inputs
+  iphs_inputs: *canonical_inputs
+  legacy_outputs: *canonical_outputs
+  iphs_outputs: *canonical_outputs
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: Existing ParameterManager-backed calculations define canonical IPHS operator coefficients, rates, ports, or observations.
+  no_legacy_mode: No selectable legacy runtime branch is exposed for Phase 8 completion.
+state_advancement_map:
+  potential_basis: declared RELIC state, port, or observation cochain basis
+  effort_variable: ParameterManager-backed thermodynamic effort, driver, or diagnostic input used by the module
+  state_advancer: x_dot = N_h r_h with explicit stoichiometric_N and rates evaluated by advance_reaction_network
+  runtime_usage: StaticPhenology inherits PhenologyBase.forward, which calls advance_reaction_network with declared stoichiometric_N and rates before emitting canonical phenology outputs.
+  explicit_stoichiometric_usage: PhenologyBase.forward materializes stoichiometric_N and rates for StaticPhenology outputs, then lowers x_dot=N_h r_h through advance_reaction_network.
+parameter_management_map: *canonical_parameter_sources
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares interfaces, execution phase, and conservation semantics
+  state_contract: existing simulator state update path is preserved
+  validation_rule: phase8 scientific inventory and equivalence certificate checks
+dependency_interconnection_map:
+  dependencies: calendar and air-temperature forcing plus vegetation C/N pools are canonical StateManager ports; PFT coefficients are ParameterManager-bound; direct Functor dependencies are empty and downstream consumers connect through graph/SCM ports
+  direct_functor_calls: none; forcing, vegetation pools, and calendar are StateManager ports and downstream consumers connect through the graph
+overflow_routing_map:
+  diagnostic_residuals: existing diagnostics and conservation checks route clipping or residual terms
+  discarded_residuals: LAI and senescence bounds are canonical non-material constitutive projections, not carbon or nitrogen disposal; leaf and root carbon-nitrogen turnover emits diagnostics.phenology.carbon_turnover_balance_residual and nitrogen_turnover_balance_residual
+conservation_map:
+  conserved_quantities: carbon|nitrogen on the extended vegetation plus litter-boundary ledger
+  balance_expression: delta C_veg + dt F_C_litter = 0; delta N_veg + delta N_plant + dt F_N_litter = 0
+  open_system_route: litter carbon and nitrogen are explicit boundary_export ports
+entropy_audit:
+  operator_sign: rates, mobilities, or diagnostic maps are non-negative or checked by existing validation hooks where physically required
+  sigma_expression: canonical entropy production is non-negative for dissipative subexpressions
+equivalence_type: thermodynamic_embedding

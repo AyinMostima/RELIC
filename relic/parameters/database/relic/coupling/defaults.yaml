@@ -1,0 +1,669 @@
+schema_version: 2.0.0
+tier: relic
+namespace: coupling.scales.defaults
+description: Default parameter values used across coupling modules
+metadata:
+  version: 1.0.0
+parameters:
+  coupling.scales.defaults.stomatal_conductance_min:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: mol m-2 s-1
+    dtype: float32
+    bounds:
+    - 1.0e-08
+    - 1.0e-05
+    category: numerical_threshold
+    description: Minimum stomatal conductance (cuticular conductance)
+    references:
+    - Lambers et al. (2008)
+    tags:
+    - stomatal_conductance
+    dimension: amount_flux
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.defaults.stomatal_resistance_max:
+    value: 1000000.0
+    default: 1000000.0
+    units: s m-1
+    dtype: float32
+    bounds:
+    - 1.0e+5
+    - 1.0e+7
+    category: numerical_threshold
+    description: Maximum stomatal resistance
+    references:
+    - Jones (1992)
+    tags:
+    - stomatal_conductance
+    dimension: resistance
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.defaults.evapotranspiration_min:
+    value: 0.0
+    default: 0.0
+    units: kg m-2 s-1
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0e-08
+    category: numerical_threshold
+    description: Minimum evapotranspiration flux
+    references:
+    - Monteith & Unsworth (2013)
+    tags:
+    - evapotranspiration
+    dimension: mass_flux
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.defaults.transpiration_rate_min:
+    value: 0.0
+    default: 0.0
+    units: kg m-2 s-1
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0e-08
+    category: numerical_threshold
+    description: Minimum transpiration flux used as default when model output is unavailable
+    references:
+    - Monteith & Unsworth (2013)
+    tags:
+    - transpiration
+    - default
+    dimension: mass_flux
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.defaults.latent_heat_flux_min:
+    value: 0.0
+    default: 0.0
+    units: W m-2
+    dtype: float32
+    bounds:
+    - 0.0
+    - 10.0
+    category: numerical_threshold
+    description: Minimum latent heat flux used when coupling outputs are missing
+    references:
+    - FAO-56 Penman-Monteith baseline conditions
+    tags:
+    - latent_heat
+    - default
+    dimension: energy_flux
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.defaults.sensible_heat_flux_min:
+    value: 0.0
+    default: 0.0
+    units: W m-2
+    dtype: float32
+    bounds:
+    - 0.0
+    - 10.0
+    category: numerical_threshold
+    description: Minimum sensible heat flux used when coupling outputs are missing
+    references:
+    - Surface energy balance literature
+    tags:
+    - sensible_heat
+    - default
+    dimension: energy_flux
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.defaults.net_radiation_diagnostic_default:
+    value: 200.0
+    default: 200.0
+    units: W m-2
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1000.0
+    category: diagnostic_parameter
+    description: Default net radiation used when driver/state data are unavailable for coupling diagnostics.
+    references:
+    - Typical daytime radiation values from meteorological observations
+    - Allen, R.G. et al. (1998) FAO-56 Penman-Monteith
+    tags:
+    - diagnostic_mode
+    - default_value
+    - quality_control
+    dimension: energy_flux
+    requires_grad: false
+    provenance:
+      source: meteorological_climatology
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-08T00:00:00Z'
+  coupling.scales.defaults.soil_heat_flux_default:
+    value: 20.0
+    default: 20.0
+    units: W m-2
+    dtype: float32
+    bounds:
+    - 0.0
+    - 400.0
+    category: diagnostic_parameter
+    description: Default soil heat flux (approx. 10% of typical net radiation) for diagnostic or missing-driver scenarios.
+    references:
+    - Allen, R.G. et al. (1998). FAO-56 Penman-Monteith
+    tags:
+    - diagnostic_mode
+    - default_value
+    - quality_control
+    dimension: energy_flux
+    requires_grad: false
+    provenance:
+      source: meteorological_climatology
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-08T00:00:00Z'
+  coupling.scales.defaults.conservation_tolerance:
+    value: 1.0e-08
+    default: 1.0e-08
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 1.0e-14
+    - 0.0001
+    category: validation_parameter
+    description: Relative ledger tolerance of the scale-coupling Functors outside the ScaleManager facade (SpatialAggregation, ConservativeRemap, the support_aggregation graph-edge adapter, ScaleCouplingFunctor.check_conservation) and the one default tolerance of every spatial regridder built without an explicit tolerance, read by SpatialRegridderBase whether the regridder is built directly or by SpatialRegridderFactory, AutoRegridder, SpatialScaling or RegridOperator; the ScaleManager facade passes coupling.scales.defaults.precision.<mode>.tolerance of the call's mode instead
+    references:
+    - Jones, P.W. (1999)
+    - O'Neill, R.V. et al. (1986)
+    tags:
+    - conservation
+    - scale_coupling
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-24T00:00:00Z'
+  coupling.scales.defaults.coverage_epsilon:
+    value: 1.0e-12
+    default: 1.0e-12
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 1.0e-14
+    - 1.0e-08
+    category: numerical_parameter
+    description: Minimum coverage clamp used to avoid division by zero during temporal aggregation normalization
+    references:
+    - Jones, P.W. (1999). Conservative remapping schemes
+    tags:
+    - coverage
+    - stability
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: temporal_aggregation_default
+      schema_version: 2.0.0
+      created_by: relic-parameter-cleanup
+      last_modified: '2025-11-12T00:00:00Z'
+  coupling.scales.defaults.soil_moisture_default:
+    value: 0.5
+    default: 0.5
+    units: m3 m-3
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: state_default
+    description: Default volumetric soil moisture fraction
+    references:
+    - Brady & Weil (2016)
+    tags:
+    - soil_moisture
+    dimension: volume_fraction
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.defaults.hierarchy_numerical_tolerance:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 1.0e-08
+    - 0.0001
+    category: numerical_parameter
+    description: Absolute tolerance for hierarchical index normalization checks
+    references:
+    - Jones, P.W. (1999). Conservative remapping schemes
+    tags:
+    - hierarchy
+    - numerical_tolerance
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: coupling.scales.quality_control
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-12T00:00:00Z'
+  coupling.scales.defaults.water_carbon_coupling_default:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 2.0
+    category: scaling_parameter
+    description: Default water-carbon coupling coefficient
+    references:
+    - Katul et al. (2012)
+    tags:
+    - water_carbon
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.defaults.water_stress_factor_default:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: state_default
+    description: Default water stress factor applied when vegetation diagnostics are missing
+    references:
+    - Feddes et al. (1978)
+    tags:
+    - water_stress
+    - default
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.defaults.ozone_stress_factor_default:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: state_default
+    description: Default ozone stress reduction factor when ozone inputs are unavailable
+    references:
+    - Plant physiological ozone stress assessments
+    tags:
+    - ozone_stress
+    - default
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_default
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.defaults.relative_tolerance:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-09
+    - 0.001
+    category: tolerance_parameter
+    description: Relative tolerance for numerical comparisons
+    references:
+    - RELIC coupling audit 2025-12-02
+    tags:
+    - scale_tolerance
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_requirement
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.defaults.absolute_tolerance:
+    value: 1.0e-12
+    default: 1.0e-12
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-15
+    - 1.0e-09
+    category: tolerance_parameter
+    description: Absolute tolerance for numerical comparisons
+    references:
+    - RELIC coupling audit 2025-12-02
+    tags:
+    - scale_tolerance
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_requirement
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.defaults.epsilon:
+    value: 1.0e-15
+    default: 1.0e-15
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-16
+    - 1.0e-12
+    category: numerical_threshold
+    description: Relative numerical threshold of the scale operators; a bilinear bracket of
+      HierarchicalAggregator counts as one node when |x1 - x0| <= epsilon * max(|x0|, |x1|), and a
+      BilinearRegridder target coincides with a node when d <= epsilon * max(|p_t|, |p_i|).
+    references:
+    - Numerical Recipes (stability guidelines)
+    tags:
+    - numerical_stability
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_requirement
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  coupling.scales.defaults.auto_scale_mode:
+    value: conservative
+    default: conservative
+    units: dimensionless
+    dtype: string
+    allowed_values:
+    - strict_conservative
+    - conservative
+    - balanced
+    - fast_approx
+    category: scaling_parameter
+    description: Default scaling mode used by RELICSimulator when enable_auto_scale is true.
+    references:
+    - RELIC scale coupling policy
+    tags:
+    - auto_scale
+    - scaling_mode
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: auto_scale_defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-09T00:00:00Z'
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+  coupling.scales.defaults.auto_scale_enforce_conservation:
+    value: true
+    default: true
+    units: dimensionless
+    dtype: bool
+    bounds:
+    - 0
+    - 1
+    category: scaling_parameter
+    description: Whether ScaleManager should enforce conservation when auto-scaling is enabled.
+    references:
+    - RELIC scale coupling policy
+    tags:
+    - auto_scale
+    - conservation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: auto_scale_defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-09T00:00:00Z'
+  coupling.scales.defaults.auto_scale_cf_strict_mode:
+    value: false
+    default: false
+    units: dimensionless
+    dtype: bool
+    bounds:
+    - 0
+    - 1
+    category: scaling_parameter
+    description: Enable CF strictness for auto-scale regridding adapters when true.
+    references:
+    - CF-1.8 grid mapping guidance
+    tags:
+    - auto_scale
+    - cf_strict
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: auto_scale_defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-09T00:00:00Z'
+  coupling.scales.defaults.device:
+    value: cpu
+    default: cpu
+    units: dimensionless
+    dtype: string
+    bounds: null
+    category: runtime_configuration
+    description: Default device for scale coupling managers when not explicitly configured.
+    references:
+    - PyTorch device management guidance
+    tags:
+    - device
+    - coupling
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: coupling_defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-01-29T00:00:00Z'
+  coupling.scales.defaults.contracts_strict:
+    value: false
+    default: false
+    units: dimensionless
+    dtype: bool
+    bounds:
+    - 0
+    - 1
+    category: validation_parameter
+    description: Enforce strict validation when loading scale coupling contracts.
+    references:
+    - RELIC coupling contract validation
+    tags:
+    - contracts
+    - validation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: coupling_defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-01-29T00:00:00Z'
+  coupling.scales.defaults.execution_plan_path:
+    value: ''
+    default: ''
+    units: dimensionless
+    dtype: string
+    bounds: null
+    category: configuration_path
+    description: Optional path to a scale execution plan file. Empty means use the parameterized hierarchy.
+    references:
+    - RELIC scale execution plan loader
+    tags:
+    - execution_plan
+    - coupling
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: coupling_defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-01-29T00:00:00Z'
+  coupling.scales.defaults.scaling_manifest_enabled:
+    value: false
+    default: false
+    units: dimensionless
+    dtype: bool
+    bounds:
+    - 0
+    - 1
+    category: configuration_flag
+    description: Toggle for writing a scaling manifest during initialization.
+    references:
+    - RELIC scale execution plan manifest
+    tags:
+    - scaling_manifest
+    - coupling
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: coupling_defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-01-29T00:00:00Z'
+  coupling.scales.defaults.scaling_manifest_path:
+    value: ''
+    default: ''
+    units: dimensionless
+    dtype: string
+    bounds: null
+    category: configuration_path
+    description: Output path for the scaling manifest when enabled. Empty requires explicit configuration.
+    references:
+    - RELIC scale execution plan manifest
+    tags:
+    - scaling_manifest
+    - coupling
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: coupling_defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-01-29T00:00:00Z'
+  coupling.scales.defaults.physical_constraint_method:
+    value: clip
+    default: clip
+    units: dimensionless
+    dtype: string
+    allowed_values:
+    - clip
+    - scale
+    - redistribute
+    - project
+    bounds: null
+    category: physical_constraint
+    description: Default method for applying physical constraints in scale coupling.
+    references:
+    - Jones, P.W. (1999). Conservative remapping schemes
+    tags:
+    - physical_constraints
+    - coupling
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: coupling_defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-01-29T00:00:00Z'
+  coupling.scales.defaults.preserve_gradients:
+    value: true
+    default: true
+    units: dimensionless
+    dtype: bool
+    bounds:
+    - 0
+    - 1
+    category: physical_constraint
+    description: Preserve gradients when applying physical constraints.
+    references:
+    - PyTorch autograd best practices
+    tags:
+    - physical_constraints
+    - gradients
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: coupling_defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-01-29T00:00:00Z'
+  coupling.scales.defaults.constraint_device:
+    value: cpu
+    default: cpu
+    units: dimensionless
+    dtype: string
+    bounds: null
+    category: runtime_configuration
+    description: Default device for physical constraint application.
+    references:
+    - PyTorch device management guidance
+    tags:
+    - physical_constraints
+    - device
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: coupling_defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-01-29T00:00:00Z'
+  coupling.scales.defaults.roughness_blending_height:
+    value: 10.0
+    default: 10.0
+    units: m
+    dtype: float64
+    bounds:
+    - 1.0
+    - 10.0
+    category: physical_parameter
+    description: Reference (blending) height z_r at which sub-grid drag coefficients are summed
+      linearly to form the effective roughness length z0_eff = z_r exp(-(sum_j f_j / ln(z_r/z0_j)^2)^(-1/2));
+      must lie in the surface layer above every aggregated roughness length.
+    references:
+    - Byun, D.W., Pleim, J.E., Tang, R.T. and Bourgeois, A. (1999). Chapter 12, Meteorology-Chemistry
+      Interface Processor (MCIP) for Models-3 Community Multiscale Air Quality (CMAQ) Modeling System.
+      EPA/600/R-99/030, Eqs. 12-37' and 12-48 (z_r = 10 m in MCIP; z0_eff insensitive to z_r in 1-10 m).
+    tags:
+    - roughness
+    - hierarchical_aggregation
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: CMAQ Science Documentation EPA/600/R-99/030 chapter 12 (MCIP z_r = 10 m)
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-23T00:00:00Z'

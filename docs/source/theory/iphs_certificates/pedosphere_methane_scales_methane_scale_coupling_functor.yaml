@@ -1,0 +1,152 @@
+{
+  "certificate_version": "1.0",
+  "process_id": "relic.scientific.pedosphere.methane.scales.MethaneScaleCouplingFunctor",
+  "module_name": "MethaneScaleCouplingFunctor",
+  "canonical_role": "observation",
+  "iphs_level": 1,
+  "iphs_level_evidence": {
+    "classification": "IPHS-compatible diagnostic or observation certificate",
+    "compatible_basis": "Read-only observation contract with declared inputs, explicit diagnostic outputs, and no state ownership",
+    "level_1_limit": "The calibrated gating map has no independently verified H, e, J, M, chain-map, or port-power evidence and is not strict IPHS."
+  },
+  "theory_document": "docs\\source\\theory\\wetland_methane.md",
+  "theory_document_status": "updated",
+  "legacy_formula": "w = clip(alpha_wetland * f_wet + alpha_wfps * WFPS + alpha_data * score_data - threshold, 0, 1)",
+  "literature_formula": "No cited source defines the implemented weighted threshold equation; Yue et al. (2024) supports only the iMAPLE endpoint, and the calibrated Rh-based endpoint is a RELIC convention, not the DNDC substrate model.",
+  "iphs_formula": "y_h = O_h x_h through the declared observation operator",
+  "legacy_expression": "w = clip(alpha_wetland * f_wet + alpha_wfps * WFPS + alpha_data * score_data - threshold, 0, 1)",
+  "iphs_expression": "y_h = O_h x_h through the declared observation operator",
+  "input_variables": [
+    "land_surface.wetland_fraction",
+    "water_filled_pore_space",
+    "methane_data_score"
+  ],
+  "output_variables": [
+    "methane_gating_weight",
+    "methane_gating_score"
+  ],
+  "parameter_keys": [
+    "pedosphere.methane.scales.gating.alpha_wetland",
+    "pedosphere.methane.scales.gating.alpha_wfps",
+    "pedosphere.methane.scales.gating.alpha_data_score",
+    "pedosphere.methane.scales.gating.threshold"
+  ],
+  "composition_ports": [
+    "phase8_runtime_port"
+  ],
+  "references": [
+    "Yue et al. (2024) doi:10.5194/gmd-17-4621-2024"
+  ],
+  "baseline_tests": [
+    "test\\unit\\pedosphere\\methane\\test_production_mode_switch.py",
+    "test\\pedosphere\\methane\\strict_overlap_registration.test.py",
+    "test\\unit\\pedosphere\\methane\\test_units_conservation.py",
+    "test\\audit\\phase8_scientific_inventory.test.py"
+  ],
+  "validation_tests": [
+    "test\\unit\\pedosphere\\methane\\test_production_mode_switch.py",
+    "test\\pedosphere\\methane\\strict_overlap_registration.test.py",
+    "test\\unit\\pedosphere\\methane\\test_units_conservation.py",
+    "test\\audit\\phase8_scientific_inventory.test.py"
+  ],
+  "state_map": {
+    "land_surface.wetland_fraction": "land_surface.wetland_fraction mapped to canonical Phase 8 cochain basis",
+    "water_filled_pore_space": "water_filled_pore_space mapped to canonical Phase 8 cochain basis",
+    "methane_data_score": "methane_data_score mapped to canonical Phase 8 cochain basis"
+  },
+  "parameter_map": {
+    "pedosphere.methane.scales.gating.alpha_wetland": "ParameterManager dimensionless routing weight",
+    "pedosphere.methane.scales.gating.alpha_wfps": "ParameterManager dimensionless routing weight",
+    "pedosphere.methane.scales.gating.alpha_data_score": "ParameterManager dimensionless routing weight",
+    "pedosphere.methane.scales.gating.threshold": "ParameterManager dimensionless routing threshold"
+  },
+  "operator_map": {
+    "O_h": "ParameterManager-backed phenomenological observation map; no strict structural operator is claimed",
+    "H_h": "not claimed for this level 1 diagnostic"
+  },
+  "unit_map": {
+    "methane_gating_weight": "1",
+    "methane_gating_score": "1"
+  },
+  "input_output_map": {
+    "land_surface.wetland_fraction": "same interface variable preserved between legacy and IPHS runtime contracts",
+    "methane_data_score": "same interface variable preserved between legacy and IPHS runtime contracts",
+    "methane_gating_score": "same interface variable preserved between legacy and IPHS runtime contracts",
+    "methane_gating_weight": "same interface variable preserved between legacy and IPHS runtime contracts",
+    "water_filled_pore_space": "same interface variable preserved between legacy and IPHS runtime contracts"
+  },
+  "interface_map": {
+    "forward_signature": "forward(self, state, time, dt)",
+    "bridge_class": "ScaleCouplingFunctor",
+    "abstraction_contract": "ScaleCoupling",
+    "state_write_mode": "existing RELIC simulator and StateManager update path",
+    "legacy_inputs": [
+      "land_surface.wetland_fraction",
+      "water_filled_pore_space",
+      "methane_data_score"
+    ],
+    "iphs_inputs": [
+      "land_surface.wetland_fraction",
+      "water_filled_pore_space",
+      "methane_data_score"
+    ],
+    "legacy_outputs": [
+      "methane_gating_weight",
+      "methane_gating_score"
+    ],
+    "iphs_outputs": [
+      "methane_gating_weight",
+      "methane_gating_score"
+    ]
+  },
+  "runtime_replacement_map": {
+    "runtime_uses_iphs": false,
+    "legacy_removed": false,
+    "replacement_entrypoint": "forward",
+    "preserved_numerics": "Existing ParameterManager-backed calculations define canonical IPHS operator coefficients, rates, ports, or observations.",
+    "no_legacy_mode": "No selectable legacy runtime branch is exposed for Phase 8 completion."
+  },
+  "state_advancement_map": {
+    "potential_basis": "declared RELIC state, port, or observation cochain basis",
+    "effort_variable": "ParameterManager-backed thermodynamic effort, driver, or diagnostic input used by the module",
+    "state_advancer": "y_h = O_h x_h through the declared observation operator",
+    "runtime_usage": "MethaneScaleCouplingFunctor.forward applies the canonical observation or diagnostic operator and emits validation diagnostics through the production output path."
+  },
+  "parameter_management_map": {
+    "pedosphere.methane.scales.gating.alpha_wetland": {
+      "source": "ParameterManager YAML"
+    },
+    "pedosphere.methane.scales.gating.alpha_wfps": {
+      "source": "ParameterManager YAML"
+    },
+    "pedosphere.methane.scales.gating.alpha_data_score": {
+      "source": "ParameterManager YAML"
+    },
+    "pedosphere.methane.scales.gating.threshold": {
+      "source": "ParameterManager YAML"
+    }
+  },
+  "composition_management_map": {
+    "functor_metadata": "existing FunctorMetadata declares interfaces, execution phase, and conservation semantics",
+    "state_contract": "existing simulator state update path is preserved",
+    "validation_rule": "phase8 scientific inventory and equivalence certificate checks"
+  },
+  "dependency_interconnection_map": {
+    "dependencies": "none_no_scheduler_dependencies",
+    "direct_functor_calls": "none_no_direct_functor_calls"
+  },
+  "overflow_routing_map": {
+    "diagnostic_residuals": "The weight clamp defines the bounded control range and does not discard matter, energy, or state.",
+    "discarded_residuals": "none_no_material_residual_is_generated; methane_gating_score preserves the unclipped score and methane_gating_weight is the complete bounded diagnostic"
+  },
+  "conservation_map": {
+    "conserved_quantities": "not_applicable_read_only_gating_diagnostic_advances_no_material_or_energy_reservoir",
+    "balance_expression": "not applicable to a read-only routing diagnostic"
+  },
+  "entropy_audit": {
+    "operator_sign": "not applicable to the empirical observation map",
+    "sigma_expression": "no entropy-production or strict IPHS claim"
+  },
+  "equivalence_type": "diagnostic"
+}
+

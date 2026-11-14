@@ -1,0 +1,555 @@
+schema_version: 2.0.0
+tier: relic
+namespace: atmosphere.radiation
+description: Radiation parameters for shortwave and longwave radiative transfer calculations
+metadata:
+  created_by: RELIC Parameter System
+  last_modified: '2026-01-07T14:20:26Z'
+  schema_url: https://github.com/relic/parameter-schema/v2.0.0
+  version: 1.0.0
+parameters:
+  atmosphere.radiation.atmospheric_transmittance:
+    value: 0.75
+    default: 0.75
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.6
+    - 0.85
+    category: atmospheric_parameter
+    description: Clear-sky atmospheric transmittance for shortwave radiation
+    references:
+    - Sellers (1985) Int. J. Remote Sensing 6, 1335-1372
+    tags:
+    - atmospheric
+    - shortwave
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: parameter_consolidation
+      last_modified: '2025-10-09T00:00:00Z'
+  atmosphere.radiation.cloud_attenuation_factor:
+    value: 0.8
+    default: 0.8
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.2
+    - 1.0
+    category: atmospheric_parameter
+    description: Cloud attenuation strength in SW_down = SW_clear * (1 - cloud_fraction * factor)
+    references:
+    - Sellers (1985) Int. J. Remote Sensing 6, 1335-1372
+    tags:
+    - cloud
+    - shortwave
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: parameter_consolidation
+      last_modified: '2025-10-09T00:00:00Z'
+  atmosphere.radiation.brutsaert_coefficient:
+    value: 1.24
+    default: 1.24
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 1.5
+    category: empirical_parameter
+    description: Brutsaert equation coefficient for longwave emissivity estimation
+    references:
+    - Brutsaert (1975) doi:10.1029/WR011i005p00742
+    - Peng et al. (2025) Atmos. Meas. Tech. 18, 2877-2905
+    tags:
+    - longwave
+    - empirical
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: parameter_consolidation
+      last_modified: '2025-10-09T00:00:00Z'
+  atmosphere.radiation.brutsaert_exponent:
+    value: 0.142857
+    default: 0.142857
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 0.2
+    category: empirical_parameter
+    description: Brutsaert equation exponent (1/7) for vapor pressure effect on emissivity; vapor pressure input uses hPa in the canonical form
+    references:
+    - Brutsaert (1975) doi:10.1029/WR011i005p00742
+    - Peng et al. (2025) Atmos. Meas. Tech. 18, 2877-2905
+    tags:
+    - longwave
+    - empirical
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: parameter_consolidation
+      last_modified: '2025-10-09T00:00:00Z'
+  atmosphere.radiation.emissivity_clear_min:
+    value: 0.4
+    default: 0.4
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: numerical_parameter
+    description: Minimum clear-sky atmospheric emissivity used in Brutsaert formula
+    references:
+    - Brutsaert (1975)
+    tags:
+    - longwave
+    - emissivity
+    - bounds
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: radiation_parameter_migration
+      last_modified: '2026-01-27T00:00:00Z'
+  atmosphere.radiation.emissivity_clear_max:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.9
+    - 1.0
+    category: numerical_parameter
+    description: Maximum clear-sky atmospheric emissivity used in Brutsaert formula
+    references:
+    - Brutsaert (1975)
+    tags:
+    - longwave
+    - emissivity
+    - bounds
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: radiation_parameter_migration
+      last_modified: '2026-01-27T00:00:00Z'
+  atmosphere.radiation.cloud_emissivity:
+    value: 0.98
+    default: 0.98
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.8
+    - 1.0
+    category: atmospheric_parameter
+    description: Effective cloud emissivity for longwave enhancement
+    references:
+    - Campbell & Norman (1998). Environmental Biophysics
+    tags:
+    - longwave
+    - cloud
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: radiation_parameter_migration
+      last_modified: '2026-01-27T00:00:00Z'
+  atmosphere.radiation.field_bounds.generic_min_radiation:
+    value: -100.0
+    default: -100.0
+    units: W m-2
+    dtype: float32
+    bounds:
+    - -300.0
+    - 0.0
+    category: numerical_parameter
+    description: Lower projection bound R_min of RadiationField; forward and get_value_at clamp the field to [R_min, R_max], route the clipped part to diagnostics.radiation_field.clipping_residual and use R_max - R_min as the Hodge metric
+    references:
+    - Campbell & Norman (1998). Environmental Biophysics
+    tags:
+    - field
+    - bounds
+    - generic
+    dimension: energy_flux
+    requires_grad: false
+    provenance:
+      source: model_configuration
+      schema_version: 2.0.0
+      created_by: radiation_parameter_migration
+      last_modified: '2026-01-27T00:00:00Z'
+  atmosphere.radiation.field_bounds.generic_max_radiation:
+    value: 1200.0
+    default: 1200.0
+    units: W m-2
+    dtype: float32
+    bounds:
+    - 800.0
+    - 1500.0
+    category: numerical_parameter
+    description: Upper projection bound R_max of RadiationField; forward and get_value_at clamp the field to [R_min, R_max], route the clipped part to diagnostics.radiation_field.clipping_residual and use R_max - R_min as the Hodge metric
+    references:
+    - Campbell & Norman (1998). Environmental Biophysics
+    tags:
+    - field
+    - bounds
+    - generic
+    dimension: energy_flux
+    requires_grad: false
+    provenance:
+      source: model_configuration
+      schema_version: 2.0.0
+      created_by: radiation_parameter_migration
+      last_modified: '2026-01-27T00:00:00Z'
+  atmosphere.radiation.field_interpolation.idw_power:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 4.0
+    category: numerical_parameter
+    description: Distance exponent for canonical inverse-distance interpolation
+    references:
+    - Shepard (1968). A two-dimensional interpolation function for irregularly-spaced data
+    tags:
+    - field
+    - interpolation
+    - inverse_distance
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: radiation_parameter_migration
+      last_modified: '2026-07-14T00:00:00Z'
+  atmosphere.radiation.field_interpolation.coincident_tolerance:
+    value: 1.0e-9
+    default: 1.0e-9
+    units: m
+    dtype: float32
+    bounds:
+    - 1.0e-12
+    - 1.0e-3
+    category: numerical_parameter
+    description: Distance tolerance for exact coincident radiation samples
+    references:
+    - Shepard (1968). A two-dimensional interpolation function for irregularly-spaced data
+    tags:
+    - field
+    - interpolation
+    - numerical_stability
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: numerical_method
+      schema_version: 2.0.0
+      created_by: radiation_parameter_migration
+      last_modified: '2026-07-14T00:00:00Z'
+  atmosphere.radiation.canopy.model_type:
+    value: beer_lambert
+    default: beer_lambert
+    units: dimensionless
+    dtype: string
+    category: model_parameter
+    description: Canonical canopy transfer selector; only beer_lambert is executable
+    references:
+    - Monsi and Saeki (1953). Japanese Journal of Botany 14, 22-52
+    tags:
+    - canopy
+    - model_choice
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_configuration
+      schema_version: 2.0.0
+      created_by: relic-radiation-refactor
+      last_modified: '2025-11-02T00:00:00Z'
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+  atmosphere.radiation.canopy.layers:
+    value: 20
+    default: 20
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 100
+    category: model_parameter
+    description: Number of canopy layers used for radiative transfer discretization
+    references:
+    - Bonan (2019). Climate Change and Terrestrial Ecosystem Modeling
+    tags:
+    - canopy
+    - resolution
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_configuration
+      schema_version: 2.0.0
+      created_by: relic-radiation-refactor
+      last_modified: '2025-11-02T00:00:00Z'
+  atmosphere.radiation.canopy.k_b:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.2
+    - 1.2
+    category: canopy_parameter
+    description: Direct-beam extinction coefficient for canopy radiation
+    references:
+    - Campbell & Norman (1998). Environmental Biophysics
+    tags:
+    - canopy
+    - extinction
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic-radiation-refactor
+      last_modified: '2025-11-02T00:00:00Z'
+  atmosphere.radiation.canopy.k_d:
+    value: 0.78
+    default: 0.78
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.3
+    - 1.5
+    category: canopy_parameter
+    description: Diffuse radiation extinction coefficient for canopy layers
+    references:
+    - Campbell & Norman (1998). Environmental Biophysics
+    tags:
+    - canopy
+    - extinction
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic-radiation-refactor
+      last_modified: '2025-11-02T00:00:00Z'
+  atmosphere.radiation.canopy.erbs_low_threshold:
+    value: 0.22
+    default: 0.22
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: canopy_parameter
+    description: Lower clearness-index threshold in the Erbs hourly diffuse-fraction correlation
+    references:
+    - Erbs et al. (1982). Solar Energy 28, 293-302. doi:10.1016/0038-092X(82)90302-4
+    tags:
+    - canopy
+    - diffuse_split
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic-iphs-refactor
+      last_modified: '2026-07-16T00:00:00Z'
+  atmosphere.radiation.canopy.erbs_high_threshold:
+    value: 0.8
+    default: 0.8
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: canopy_parameter
+    description: Upper clearness-index threshold in the Erbs hourly diffuse-fraction correlation
+    references:
+    - Erbs et al. (1982). Solar Energy 28, 293-302. doi:10.1016/0038-092X(82)90302-4
+    tags:
+    - canopy
+    - diffuse_split
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic-iphs-refactor
+      last_modified: '2026-07-16T00:00:00Z'
+  atmosphere.radiation.canopy.erbs_low_coefficients:
+    value:
+    - 1.0
+    - -0.09
+    default: null
+    units: dimensionless
+    dtype: list
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+    category: canopy_parameter
+    description: Constant and linear coefficients for the low-clearness Erbs branch
+    references:
+    - Erbs et al. (1982). Solar Energy 28, 293-302. doi:10.1016/0038-092X(82)90302-4
+    tags:
+    - canopy
+    - diffuse_split
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic-iphs-refactor
+      last_modified: '2026-07-16T00:00:00Z'
+  atmosphere.radiation.canopy.erbs_mid_coefficients:
+    value:
+    - 0.9511
+    - -0.1604
+    - 4.388
+    - -16.638
+    - 12.336
+    default: null
+    units: dimensionless
+    dtype: list
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+    category: canopy_parameter
+    description: Polynomial coefficients ordered by increasing power for the middle-clearness Erbs branch
+    references:
+    - Erbs et al. (1982). Solar Energy 28, 293-302. doi:10.1016/0038-092X(82)90302-4
+    tags:
+    - canopy
+    - diffuse_split
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic-iphs-refactor
+      last_modified: '2026-07-16T00:00:00Z'
+  atmosphere.radiation.canopy.erbs_high_fraction:
+    value: 0.165
+    default: 0.165
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: canopy_parameter
+    description: Diffuse fraction for the high-clearness Erbs branch
+    references:
+    - Erbs et al. (1982). Solar Energy 28, 293-302. doi:10.1016/0038-092X(82)90302-4
+    tags:
+    - canopy
+    - diffuse_split
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic-iphs-refactor
+      last_modified: '2026-07-16T00:00:00Z'
+  atmosphere.radiation.canopy.lai_profile:
+    value: uniform
+    default: uniform
+    units: dimensionless
+    dtype: string
+    category: canopy_parameter
+    description: Vertical distribution type for leaf area index
+    references:
+    - Bonan (2019). Climate Change and Terrestrial Ecosystem Modeling
+    tags:
+    - canopy
+    - structure
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_configuration
+      schema_version: 2.0.0
+      created_by: relic-radiation-refactor
+      last_modified: '2025-11-02T00:00:00Z'
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+  atmosphere.radiation.canopy.beta_params:
+    value:
+    - 2.0
+    - 2.0
+    default: null
+    units: dimensionless
+    dtype: list
+    category: canopy_parameter
+    description: Beta distribution parameters [a, b] for LAI vertical profile
+    references:
+    - Bonan (2019). Climate Change and Terrestrial Ecosystem Modeling
+    tags:
+    - canopy
+    - structure
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic-radiation-refactor
+      last_modified: '2025-12-23T00:00:00Z'
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+  atmosphere.radiation.canopy.ppfd_conversion:
+    value: 4.6
+    default: 4.6
+    units: umol J-1
+    dtype: float32
+    bounds:
+    - 4.0
+    - 5.0
+    category: canopy_parameter
+    description: Conversion factor between PAR energy and PPFD
+    references:
+    - McCree (1972). Agricultural Meteorology
+    tags:
+    - canopy
+    - radiation_conversion
+    dimension: amount_energy_inverse
+    requires_grad: true
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic-radiation-refactor
+      last_modified: '2025-11-02T00:00:00Z'
+  atmosphere.radiation.canopy.par_fraction_of_sw:
+    value: 0.45
+    default: 0.45
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.4
+    - 0.5
+    category: canopy_parameter
+    description: Fraction of shortwave radiation represented as PAR
+    references:
+    - Jacovides et al. (2003). Agricultural and Forest Meteorology
+    tags:
+    - canopy
+    - radiation_conversion
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: relic-radiation-refactor
+      last_modified: '2025-11-02T00:00:00Z'

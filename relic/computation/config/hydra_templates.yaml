@@ -1,0 +1,292 @@
+# Hydra Configuration Templates for RELIC Computation Layer
+#
+# This file provides templates for configuring operators and solvers
+# through Hydra's structured configuration system. All templates follow
+# CF-1.8 conventions for units and parameter naming.
+#
+# Usage:
+#   1. Copy desired template to your project's conf/ directory
+#   2. Customize parameter values as needed
+#   3. Load with Hydra: @hydra.main(config_path="conf", config_name="config")
+#   4. Access via OmegaConf: cfg.computation.operators.gradient
+#
+# References:
+#   - Hydra Documentation: https://hydra.cc/
+#   - OmegaConf: https://omegaconf.readthedocs.io/
+#   - CF-1.8 Conventions: http://cfconventions.org/
+
+# ==============================================================================
+# OPERATOR TEMPLATES
+# ==============================================================================
+
+operators:
+  # Gradient Operator Configuration (3-D central differences, second order)
+  gradient:
+    central_difference:
+      _target_: relic.computation.operators.factory.OperatorFactory.create
+      operator_name: "gradient.central_difference_3d"
+      name: "gradient_operator"
+      config:
+        dx: 100.0  # m, spatial grid spacing
+        dy: 100.0  # m, spatial grid spacing
+        dz: 10.0   # m, vertical grid spacing
+        boundary_method: "periodic"  # boundary condition type
+      device: "cpu"
+      dtype: "float32"
+      namespace: "computation.operators.gradient"
+      validate_parameters: true
+
+  # Divergence Operator Configuration (3-D finite volume)
+  divergence:
+    finite_volume:
+      _target_: relic.computation.operators.factory.OperatorFactory.create
+      operator_name: "divergence.finite_volume_3d"
+      name: "divergence_operator"
+      config:
+        dx: 100.0  # m
+        dy: 100.0  # m
+        dz: 10.0   # m
+        boundary_method: "periodic"
+      device: "cpu"
+      dtype: "float32"
+      namespace: "computation.operators.divergence"
+      validate_parameters: true
+
+  # Laplacian Operator Configuration (3-D finite differences, second order)
+  laplacian:
+    finite_difference:
+      _target_: relic.computation.operators.factory.OperatorFactory.create
+      operator_name: "laplacian.finite_difference_3d"
+      name: "laplacian_operator"
+      config:
+        dx: 100.0  # m
+        dy: 100.0  # m
+        dz: 10.0   # m
+        boundary_method: "periodic"
+      device: "cpu"
+      dtype: "float32"
+      namespace: "computation.operators.laplacian"
+      validate_parameters: true
+
+  # Diffusion Operator Configuration (explicit finite-difference diffusion; grid spacing and time step are apply() arguments)
+  diffusion:
+    finite_difference:
+      _target_: relic.computation.operators.factory.OperatorFactory.create
+      operator_name: "transport.diffusion"
+      name: "diffusion_operator"
+      config:
+        diffusivity: 1.0e-5  # m2 s-1, molecular diffusivity
+        spatial_dims: 2  # dimensionless
+      device: "cpu"
+      dtype: "float32"
+      namespace: "computation.operators.transport"
+      validate_parameters: true
+
+  # Advection Operator Configuration (upwind; velocity, grid spacing and time step are apply() arguments)
+  advection:
+    upwind:
+      _target_: relic.computation.operators.factory.OperatorFactory.create
+      operator_name: "transport.advection"
+      name: "advection_operator"
+      config:
+        scheme: "upwind"
+        spatial_dims: 2  # dimensionless
+        boundary_method: "periodic"
+      device: "cpu"
+      dtype: "float32"
+      namespace: "computation.operators.transport"
+      validate_parameters: true
+
+# ==============================================================================
+# SOLVER TEMPLATES
+# ==============================================================================
+
+solvers:
+  # Backward Euler ODE Solver Configuration
+  backward_euler:
+    _target_: relic.computation.solvers.factory.SolverFactory.create
+    solver_name: "backward_euler"
+    name: "backward_euler_solver"
+    config:
+      max_iterations: 100  # dimensionless, maximum fixed-point iterations
+      rtol: 1.0e-6  # dimensionless, relative convergence tolerance
+      atol: 1.0e-9  # dimensionless, absolute convergence tolerance
+      damping_factor: 1.0  # dimensionless, fixed-point damping factor in (0, 1]
+    device: "cpu"
+    dtype: "float32"
+    namespace: "computation.solvers.backward_euler"
+    validate_parameters: true
+
+  # Crank-Nicolson ODE Solver Configuration
+  crank_nicolson:
+    _target_: relic.computation.solvers.factory.SolverFactory.create
+    solver_name: "crank_nicolson"
+    name: "crank_nicolson_solver"
+    operator_name: "laplacian.finite_difference_1d"  # Optional: registered id, auto-created
+    config:
+      max_iterations: 100  # dimensionless
+      rtol: 1.0e-6  # dimensionless
+      atol: 1.0e-9  # dimensionless
+      theta: 0.5  # dimensionless, time discretization parameter (0.5 = CN, 1.0 = BE)
+    device: "cpu"
+    dtype: "float32"
+    namespace: "computation.solvers.crank_nicolson"
+    validate_parameters: true
+
+  # Thomas Algorithm (Tridiagonal Solver) Configuration
+  thomas_algorithm:
+    _target_: relic.computation.solvers.factory.SolverFactory.create
+    solver_name: "thomas_algorithm"
+    name: "thomas_solver"
+    config:
+      check_stability: true  # Keep the Varah condition estimate; singular pivots always raise
+    device: "cpu"
+    dtype: "float64"  # Higher precision for linear systems
+    namespace: "computation.solvers.thomas"
+    validate_parameters: true
+
+# ==============================================================================
+# COMBINED OPERATOR-SOLVER CONFIGURATIONS
+# ==============================================================================
+
+# Example: Diffusion-Advection System
+transport_system:
+  operator:
+    _target_: relic.computation.operators.factory.OperatorFactory.create
+    operator_name: "transport.advection_diffusion"
+    name: "transport_operator"
+    config:
+      diffusivity: 1.0e-5  # m2 s-1
+      spatial_dims: 2  # dimensionless
+      splitting_method: "symmetric"  # Strang operator splitting
+      boundary_method: "periodic"
+
+  solver:
+    _target_: relic.computation.solvers.factory.SolverFactory.create_with_operator
+    solver_name: "crank_nicolson"
+    name: "transport_solver"
+    operator: ${transport_system.operator}  # Reference to operator above
+    config:
+      max_iterations: 50
+      rtol: 1.0e-6
+      atol: 1.0e-9
+
+# ==============================================================================
+# DEVICE AND PRECISION PRESETS
+# ==============================================================================
+
+device_presets:
+  # CPU Configuration
+  cpu:
+    device: "cpu"
+    dtype: "float32"
+    num_threads: 4
+
+  # GPU Configuration
+  cuda:
+    device: "cuda:0"
+    dtype: "float32"
+    mixed_precision: false
+
+  # High Precision Configuration
+  high_precision:
+    device: "cpu"
+    dtype: "float64"
+    num_threads: 8
+
+# ==============================================================================
+# PARAMETER VALIDATION SETTINGS
+# ==============================================================================
+
+validation:
+  # Enable/disable parameter validation
+  enabled: true
+
+  # Validation strictness level
+  level: "strict"  # Options: strict, warning, disabled
+
+  # Unit checking via ParameterManager
+  check_units: true
+
+  # Bounds checking
+  check_bounds: true
+
+  # Inter-parameter constraint checking
+  check_constraints: true
+
+# ==============================================================================
+# DEBUGGING AND DIAGNOSTICS
+# ==============================================================================
+
+diagnostics:
+  # Enable diagnostic output
+  enabled: false
+
+  # Log operator applications
+  log_operator_calls: false
+
+  # Log solver iterations
+  log_solver_convergence: false
+
+  # Track parameter access
+  log_parameter_access: false
+
+# ==============================================================================
+# USAGE EXAMPLES
+# ==============================================================================
+
+# Example 1: Basic operator configuration
+# cfg = OmegaConf.load("hydra_templates.yaml")
+# op = hydra.utils.instantiate(cfg.operators.gradient.central_difference)
+
+# Example 2: Solver with operator injection
+# op = hydra.utils.instantiate(cfg.operators.laplacian.finite_difference)
+# solver_cfg = cfg.solvers.crank_nicolson
+# solver_cfg.operator = op
+# solver = hydra.utils.instantiate(solver_cfg)
+
+# Example 3: Override via command line
+# python main.py computation.operators.gradient.central_difference.config.dx=50.0
+
+# Example 4: Environment-specific configuration
+# python main.py +device_presets=cuda
+
+# ==============================================================================
+# NOTES
+# ==============================================================================
+
+# 1. All spatial parameters (dx, dy, dz) use SI units (meters)
+# 2. All temporal parameters (dt) use SI units (seconds)
+# 3. All coefficients follow CF-1.8 naming conventions
+# 4. Boundary conditions: periodic, dirichlet, neumann, zero
+# 5. Device strings: "cpu", "cuda", "cuda:0", "cuda:1", etc.
+# 6. Dtype strings: "float16", "float32", "float64", "int32", "int64"
+# 7. The _target_ field specifies the factory method to instantiate
+# 8. The ${...} syntax allows referencing other parts of the config
+# 9. validate_parameters: for solvers it acts only with an explicit
+#    namespace, where max_iterations, rtol and atol missing from config are
+#    read from <namespace> as required parameters (a missing key raises
+#    KeyError). For operators the flag is always passed to the operator,
+#    which uses it when validating its own parameter lookups; with an
+#    explicit namespace the <namespace> parameters are also merged under
+#    config (config keys win). Without a namespace, solvers and operators
+#    resolve parameters from their own YAML namespaces. Solver config keys
+#    must be declared by the solver (unknown keys raise ValueError), and
+#    factory lookup errors are never swallowed.
+# 10. Namespace follows dot-notation: sphere.module.parameter
+
+# ==============================================================================
+# VALIDATION CHECKLIST
+# ==============================================================================
+
+# Before deploying a configuration, verify:
+# [  ] All units are CF-1.8 compliant
+# [  ] All parameters have physical bounds
+# [  ] Device is available (e.g., CUDA device exists)
+# [  ] Dtype is appropriate for precision requirements
+# [  ] Boundary conditions match domain geometry
+# [  ] CFL/stability conditions are satisfied
+# [  ] Required parameters are present
+# [  ] References are cited for scientific parameters
+# [  ] Namespace matches registry structure
+# [  ] Validation is enabled for production use

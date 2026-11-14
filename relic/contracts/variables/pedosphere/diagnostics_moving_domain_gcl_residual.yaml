@@ -1,0 +1,42 @@
+variable: diagnostics.moving_domain.gcl_residual
+title: "Moving-Domain GCL Residual"
+kind: diagnostic
+dimension:
+  udunits: "m"
+  cf_standard_name: null
+support:
+  spatial_kind: grid_cell
+  area_basis: grid_area
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions:
+      - cell
+owner: "moving_domain_diffusion"
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Thomas, P.D. & Lombard, C.K. (1979). AIAA J. 17, 1030-1037 (geometric conservation law)"
+  - "Donea, J., Huerta, A., Ponthot, J.-Ph. & Rodriguez-Ferran, A. (2004). Arbitrary Lagrangian-Eulerian Methods, Encyclopedia of Computational Mechanics"
+numerics:
+  lower_bound: null
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies: []
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-12
+      rtol: 1.0e-9
+provenance:
+  source_file: "relic/scientific/pedosphere/transport/moving_domain_diffusion.py"
+  runtime_role: "moving_domain_ale_diagnostic"
+  runtime_writer: null
+  note: "Maximum |V_i(t+dt) - V_i(t) - dt (w_{i+1/2} - w_{i-1/2})| of the discrete geometric conservation law."

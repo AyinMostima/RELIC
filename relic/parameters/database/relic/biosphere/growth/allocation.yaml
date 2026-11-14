@@ -1,0 +1,1409 @@
+schema_version: 2.0.0
+tier: relic
+namespace: biosphere.growth.allocation
+description: Unified biomass allocation parameters
+metadata:
+  created_by: RELIC Parameter System
+  last_modified: '2026-01-07T14:20:26Z'
+  schema_url: https://github.com/relic/parameter-schema/v2.0.0
+  version: 1.0.0
+functor_metadata:
+  spatial_scale: grid_cell
+  variable_kind: flux
+  input_variables:
+  - net_primary_productivity
+  - air_temperature
+  - water_stress_factor
+  - leaf_area_index
+  - phenology_phase
+  - leaf_biomass_c
+  - wood_biomass_c
+  - root_biomass_c
+  output_variables:
+  - growth_rate_leaf
+  - growth_rate_stem
+  - growth_rate_root
+  - leaf_biomass_c
+  - wood_biomass_c
+  - root_biomass_c
+  - diagnostics.biomass_allocation.total_growth_rate
+  - diagnostics.biomass_allocation.allocation_fraction_leaf
+  - diagnostics.biomass_allocation.allocation_fraction_stem
+  - diagnostics.biomass_allocation.allocation_fraction_root
+  - diagnostics.biomass_allocation.allocation_sum
+  - diagnostics.biomass_allocation.environmental_modifier
+  - diagnostics.biomass_allocation.phenology_modifier
+  - diagnostics.biomass_allocation.carbon_balance_residual
+  conservation_laws: []
+  references:
+  - Franklin et al. (2012)
+  - Poorter et al. (2012)
+  - Kesselmeier et al. (2002)
+parameters:
+  f_leaf_base:
+    value: 0.3
+    default: 0.3
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.05
+    - 0.8
+    category: biological_parameter
+    description: Base leaf allocation fraction
+    references:
+    - Franklin et al. (2012)
+    - Poorter et al. (2012)
+    tags:
+    - learnable
+    - calibratable
+    - pft_specific
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: literature_synthesis
+      created_by: RELIC Consolidation
+      last_modified: '2025-10-02'
+      note: Compromise between allocation.yaml(0.30) and growth/allocation.yaml(0.25-0.33)
+      schema_version: 2.0.0
+  f_stem_base:
+    value: 0.35
+    default: 0.35
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.05
+    - 0.7
+    category: biological_parameter
+    description: Base stem allocation fraction
+    references:
+    - Franklin et al. (2012)
+    tags:
+    - learnable
+    - calibratable
+    - pft_specific
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: literature_synthesis
+      created_by: RELIC Consolidation
+      last_modified: '2025-10-02'
+      schema_version: 2.0.0
+  f_root_base:
+    value: 0.35
+    default: 0.35
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 0.8
+    category: biological_parameter
+    description: Base root allocation fraction
+    references:
+    - Franklin et al. (2012)
+    tags:
+    - learnable
+    - calibratable
+    - pft_specific
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: literature_synthesis
+      created_by: RELIC Consolidation
+      last_modified: '2025-10-02'
+      schema_version: 2.0.0
+  root_alloc_temp_coeff:
+    value: 0.1
+    default: 0.1
+    units: K-1
+    dtype: float32
+    bounds:
+    - 0.05
+    - 0.2
+    category: biological_parameter
+    description: Temperature coefficient for root allocation
+    references:
+    - Gao et al. (2025). pnetr package
+    tags:
+    - temperature_response
+    dimension: inverse_temperature
+    requires_grad: false
+    provenance:
+      source: pnet_model
+      created_by: RELIC Consolidation
+      last_modified: '2025-10-02'
+      schema_version: 2.0.0
+  root_alloc_temp_ref:
+    value: 280.25
+    default: 280.25
+    units: K
+    dtype: float32
+    bounds:
+    - 273.15
+    - 288.15
+    category: biological_parameter
+    description: Reference temperature for root allocation (7.1 degC)
+    references:
+    - Gao et al. (2025)
+    tags:
+    - temperature_response
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: pnet_model
+      created_by: RELIC Consolidation
+      last_modified: '2025-10-02'
+      schema_version: 2.0.0
+  root_alloc_temp_mult:
+    value: 0.68
+    default: 0.68
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.3
+    - 1.0
+    category: biological_parameter
+    description: Temperature multiplier for root allocation
+    references:
+    - Gao et al. (2025)
+    tags:
+    - temperature_response
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: pnet_model
+      created_by: RELIC Consolidation
+      last_modified: '2025-10-02'
+      schema_version: 2.0.0
+  water_stress_threshold:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: biological_parameter
+    description: Water stress threshold for root allocation increase
+    references:
+    - McDowell et al. (2008)
+    tags:
+    - stress_response
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      created_by: RELIC Consolidation
+      last_modified: '2025-10-02'
+      note: From growth.yaml
+      schema_version: 2.0.0
+  temperature_stress_factor:
+    value: 0.02
+    default: 0.02
+    units: K-1
+    dtype: float32
+    bounds:
+    - 0.01
+    - 0.05
+    category: biological_parameter
+    description: Temperature stress response factor
+    references:
+    - Berry & Bjorkman (1980)
+    tags:
+    - stress_response
+    dimension: inverse_temperature
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      created_by: RELIC Consolidation
+      last_modified: '2025-10-02'
+      schema_version: 2.0.0
+  temperature_opt:
+    value: 298.15
+    default: 298.15
+    units: K
+    dtype: float32
+    bounds:
+    - 288.15
+    - 308.15
+    category: biological_parameter
+    description: Optimal temperature for allocation (25 degC)
+    references:
+    - Berry & Bjorkman (1980)
+    tags:
+    - temperature_response
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      created_by: RELIC Consolidation
+      last_modified: '2025-10-02'
+      schema_version: 2.0.0
+  lai_max_threshold:
+    value: 6.0
+    default: 6.0
+    units: m2 m-2
+    dtype: float32
+    bounds:
+    - 3.0
+    - 12.0
+    category: biological_parameter
+    description: LAI threshold to suppress leaf allocation
+    references:
+    - Zhang et al. (2011). CASA-CNP
+    tags:
+    - lai_control
+    dimension: area_ratio
+    requires_grad: false
+    provenance:
+      source: casa_model
+      created_by: RELIC Consolidation
+      last_modified: '2025-10-02'
+      schema_version: 2.0.0
+  lai_min_threshold:
+    value: 1.0
+    default: 1.0
+    units: m2 m-2
+    dtype: float32
+    bounds:
+    - 0.1
+    - 3.0
+    category: biological_parameter
+    description: LAI threshold to increase leaf allocation
+    references:
+    - Zhang et al. (2011)
+    tags:
+    - lai_control
+    dimension: area_ratio
+    requires_grad: false
+    provenance:
+      source: casa_model
+      created_by: RELIC Consolidation
+      last_modified: '2025-10-02'
+      schema_version: 2.0.0
+  greenup_f_leaf:
+    value: 0.8
+    default: 0.8
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 0.95
+    category: biological_parameter
+    description: Leaf allocation during greenup phase
+    references:
+    - Zhang et al. (2011)
+    - Richardson et al. (2013)
+    tags:
+    - phenology_control
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: casa_model
+      created_by: RELIC Consolidation
+      last_modified: '2025-10-02'
+      schema_version: 2.0.0
+  phenology.dormant_leaf_allocation:
+    value: 0.0
+    default: 0.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.1
+    category: biological_parameter
+    description: Leaf allocation during dormant phase
+    references:
+    - Richardson et al. (2013)
+    tags:
+    - phenology
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      created_by: RELIC Consolidation
+      last_modified: '2025-10-02'
+      note: From growth.yaml
+      schema_version: 2.0.0
+  phenology.herbaceous_stem_allocation:
+    value: 0.0
+    default: 0.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.1
+    category: biological_parameter
+    description: Stem allocation for herbaceous plants during greenup
+    references:
+    - Kikuzawa (1999)
+    tags:
+    - phenology
+    - herbaceous
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      created_by: RELIC Consolidation
+      last_modified: '2025-10-02'
+      schema_version: 2.0.0
+  phenology.lai_max_leaf_allocation:
+    value: 0.0
+    default: 0.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.1
+    category: biological_parameter
+    description: Leaf allocation when LAI exceeds maximum
+    references:
+    - Reich et al. (1997)
+    tags:
+    - phenology
+    - lai_control
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      created_by: RELIC Consolidation
+      last_modified: '2025-10-02'
+      schema_version: 2.0.0
+  phenology.herbaceous_lai_min_stem_allocation:
+    value: 0.0
+    default: 0.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.1
+    category: biological_parameter
+    description: Stem allocation for herbaceous when LAI < minimum
+    references:
+    - Kikuzawa (1999)
+    tags:
+    - phenology
+    - herbaceous
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      created_by: RELIC Consolidation
+      last_modified: '2025-10-02'
+      schema_version: 2.0.0
+  emergency_stem_fraction:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: biological_parameter
+    description: Emergency allocation fraction to stem when LAI drops below minimum threshold for woody plants
+    references:
+    - Internal allocation strategy
+    tags:
+    - allocation
+    - emergency_response
+    - woody_plants
+    - lai_minimum
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: Biomass allocation model
+      schema_version: 2.0.0
+      created_by: P0 Hardcode Fix
+      last_modified: '2025-10-04T00:00:00Z'
+  emergency_root_fraction:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: biological_parameter
+    description: Emergency allocation fraction to root when LAI drops below minimum threshold for woody plants
+    references:
+    - Internal allocation strategy
+    tags:
+    - allocation
+    - emergency_response
+    - woody_plants
+    - lai_minimum
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: Biomass allocation model
+      schema_version: 2.0.0
+      created_by: P0 Hardcode Fix
+      last_modified: '2025-10-04T00:00:00Z'
+  phenology.dormant_phase_modifier:
+    value: 0.2
+    default: 0.2
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 0.5
+    category: biological_parameter
+    description: Growth modifier during dormant phase
+    references:
+    - Richardson et al. (2013)
+    tags:
+    - phenology
+    - growth_modifier
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      created_by: RELIC Consolidation
+      last_modified: '2025-10-02'
+      schema_version: 2.0.0
+  phenology.greenup_phase_modifier:
+    value: 1.5
+    default: 1.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 2.0
+    category: biological_parameter
+    description: Growth modifier during greenup phase
+    references:
+    - Richardson et al. (2013)
+    tags:
+    - phenology
+    - growth_modifier
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      created_by: RELIC Consolidation
+      last_modified: '2025-10-02'
+      schema_version: 2.0.0
+  phenology.mature_phase_modifier:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.8
+    - 1.2
+    category: biological_parameter
+    description: Growth modifier during mature phase
+    references:
+    - Richardson et al. (2013)
+    tags:
+    - phenology
+    - growth_modifier
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      created_by: RELIC Consolidation
+      last_modified: '2025-10-02'
+      schema_version: 2.0.0
+  phenology.senescence_phase_modifier:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.3
+    - 0.7
+    category: biological_parameter
+    description: Growth modifier during senescence phase
+    references:
+    - Richardson et al. (2013)
+    tags:
+    - phenology
+    - growth_modifier
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      created_by: RELIC Consolidation
+      last_modified: '2025-10-02'
+      schema_version: 2.0.0
+  phenology.dormant_phase_code:
+    value: 0
+    default: 0
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 0
+    - 3
+    category: computational
+    description: Phenology phase code for dormant phase
+    references:
+    - CASA model phenology documentation
+    tags:
+    - phenology
+    - phase_code
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      created_by: RELIC Parameter Consolidation
+      last_modified: '2026-01-29'
+      schema_version: 2.0.0
+  phenology.greenup_phase_code:
+    value: 1
+    default: 1
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 0
+    - 3
+    category: computational
+    description: Phenology phase code for greenup phase
+    references:
+    - CASA model phenology documentation
+    tags:
+    - phenology
+    - phase_code
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      created_by: RELIC Parameter Consolidation
+      last_modified: '2026-01-29'
+      schema_version: 2.0.0
+  phenology.mature_phase_code:
+    value: 2
+    default: 2
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 0
+    - 3
+    category: computational
+    description: Phenology phase code for mature phase
+    references:
+    - CASA model phenology documentation
+    tags:
+    - phenology
+    - phase_code
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      created_by: RELIC Parameter Consolidation
+      last_modified: '2026-01-29'
+      schema_version: 2.0.0
+  phenology.senescence_phase_code:
+    value: 3
+    default: 3
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 0
+    - 3
+    category: computational
+    description: Phenology phase code for senescence phase
+    references:
+    - CASA model phenology documentation
+    tags:
+    - phenology
+    - phase_code
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      created_by: RELIC Parameter Consolidation
+      last_modified: '2026-01-29'
+      schema_version: 2.0.0
+  construction_eff_leaf:
+    value: 0.67
+    default: 0.67
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 0.8
+    category: biological_parameter
+    description: Construction efficiency for leaf tissue
+    references:
+    - Penning de Vries et al. (1974)
+    tags:
+    - construction_cost
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      created_by: RELIC Consolidation
+      last_modified: '2025-10-02'
+      schema_version: 2.0.0
+  construction_eff_stem:
+    value: 0.67
+    default: 0.67
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 0.8
+    category: biological_parameter
+    description: Construction efficiency for stem tissue
+    references:
+    - Penning de Vries et al. (1974)
+    tags:
+    - construction_cost
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      created_by: RELIC Consolidation
+      last_modified: '2025-10-02'
+      schema_version: 2.0.0
+  construction_eff_root:
+    value: 0.67
+    default: 0.67
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 0.8
+    category: biological_parameter
+    description: Construction efficiency for root tissue
+    references:
+    - Penning de Vries et al. (1974)
+    tags:
+    - construction_cost
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      created_by: RELIC Consolidation
+      last_modified: '2025-10-02'
+      schema_version: 2.0.0
+  allometry_leaf_stem_exp:
+    value: 2.0
+    default: 2.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.5
+    - 2.5
+    category: biological_parameter
+    description: Leaf-stem allometric exponent (pipe model)
+    references:
+    - Shinozaki et al. (1964)
+    tags:
+    - allometry
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      created_by: RELIC Consolidation
+      last_modified: '2025-10-02'
+      schema_version: 2.0.0
+  allometry_root_shoot_exp:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.8
+    - 1.2
+    category: biological_parameter
+    description: Root-shoot allometric exponent
+    references:
+    - Enquist & Niklas (2002)
+    tags:
+    - allometry
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      created_by: RELIC Consolidation
+      last_modified: '2025-10-02'
+      schema_version: 2.0.0
+  allometric_blend_weight:
+    value: 0.3
+    default: 0.3
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: biological_parameter
+    description: Blending weight for allometric constraint adjustment (0=no constraint, 1=full constraint)
+    references:
+    - Franklin et al. (2012)
+    - Poorter et al. (2012)
+    tags:
+    - allometry
+    - blend_weight
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      created_by: RELIC Module Completion
+      last_modified: '2026-02-13'
+      schema_version: 2.0.0
+  height_diameter_coeff_a:
+    value: 25.0
+    default: 25.0
+    units: m
+    dtype: float32
+    bounds:
+    - 15.0
+    - 50.0
+    category: biological_parameter
+    description: Height-diameter coefficient (H = a * D^b), temperate deciduous
+    references:
+    - Feldpausch et al. (2011)
+    - Hulshof et al. (2015)
+    tags:
+    - allometry
+    - pft_specific
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      created_by: RELIC Consolidation
+      last_modified: '2025-10-02'
+      note: From growth/allocation.yaml, temperate deciduous default
+      schema_version: 2.0.0
+  height_diameter_exp_b:
+    value: 0.75
+    default: 0.75
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 0.9
+    category: biological_parameter
+    description: Height-diameter exponent (H = a * D^b)
+    references:
+    - Feldpausch et al. (2011)
+    tags:
+    - allometry
+    - pft_specific
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      created_by: RELIC Consolidation
+      last_modified: '2025-10-02'
+      schema_version: 2.0.0
+  canopy_light_extinction:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 1.0
+    category: biological_parameter
+    description: Canopy light extinction coefficient for Beer-Lambert attenuation
+    references:
+    - Campbell & Norman (1998)
+    tags:
+    - canopy
+    - light_extinction
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      created_by: RELIC Consolidation
+      last_modified: '2025-12-12'
+      schema_version: 2.0.0
+  crown_diameter_coeff_c:
+    value: 0.5
+    default: 0.5
+    units: m2
+    dtype: float32
+    bounds:
+    - 0.3
+    - 0.7
+    category: biological_parameter
+    description: Crown area-diameter coefficient (CA = c * D^d)
+    references:
+    - Poorter et al. (2015)
+    tags:
+    - allometry
+    dimension: area
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      created_by: RELIC Consolidation
+      last_modified: '2025-10-02'
+      schema_version: 2.0.0
+  crown_diameter_exp_d:
+    value: 1.8
+    default: 1.8
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.5
+    - 2.1
+    category: biological_parameter
+    description: Crown area-diameter exponent (CA = c * D^d)
+    references:
+    - Poorter et al. (2015)
+    tags:
+    - allometry
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      created_by: RELIC Consolidation
+      last_modified: '2025-10-02'
+      schema_version: 2.0.0
+  min_allocation_frac:
+    value: 0.05
+    default: 0.05
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.01
+    - 0.1
+    category: computational
+    description: Minimum allowed allocation fraction
+    references:
+    - Franklin et al. (2012)
+    tags:
+    - numerical_stability
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_stability
+      created_by: RELIC Consolidation
+      last_modified: '2025-10-02'
+      schema_version: 2.0.0
+  max_allocation_frac:
+    value: 0.9
+    default: 0.9
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.8
+    - 0.95
+    category: computational
+    description: Maximum allowed allocation fraction
+    references:
+    - Franklin et al. (2012)
+    tags:
+    - numerical_stability
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_stability
+      created_by: RELIC Consolidation
+      last_modified: '2025-10-02'
+      schema_version: 2.0.0
+  allocation_sum_tolerance:
+    value: 0.01
+    default: 0.01
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.001
+    - 0.1
+    category: computational
+    description: Tolerance for sum = 1.0 constraint
+    references:
+    - Numerical requirements
+    tags:
+    - numerical_stability
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_stability
+      created_by: RELIC Consolidation
+      last_modified: '2025-10-02'
+      schema_version: 2.0.0
+  normalization_epsilon:
+    value: 1.0e-08
+    default: 1.0e-08
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-12
+    - 1.0e-04
+    category: computational
+    description: Positive denominator guard used only during allocation normalization
+    references:
+    - Numerical requirements
+    tags:
+    - numerical_stability
+    - normalization
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: migrated_runtime_literal
+      created_by: RELIC IPHS standardization
+      last_modified: '2026-07-14'
+      note: Migrated from the established runtime guard without changing model behavior
+      schema_version: 2.0.0
+  fraction_zero_tolerance:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-10
+    - 1.0e-03
+    category: computational
+    description: Absolute tolerance for identifying zero allocation fractions
+    references:
+    - Numerical requirements
+    tags:
+    - numerical_stability
+    - fraction_validation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: migrated_runtime_literal
+      created_by: RELIC IPHS standardization
+      last_modified: '2026-07-14'
+      note: Migrated from the established runtime tolerance without changing model behavior
+      schema_version: 2.0.0
+  woody_stem_fraction_threshold:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: biological_parameter
+    description: Stem allocation threshold used to distinguish woody allocation behavior
+    references:
+    - Franklin et al. (2012)
+    - Poorter et al. (2012)
+    tags:
+    - pft_classification
+    - allocation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: migrated_runtime_literal
+      created_by: RELIC IPHS standardization
+      last_modified: '2026-07-14'
+      note: Migrated from the established woody allocation classifier
+      schema_version: 2.0.0
+  allometry_biomass_floor:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: kg C m-2
+    dtype: float32
+    bounds:
+    - 1.0e-12
+    - 1.0e-02
+    category: computational
+    description: Positive biomass floor for stable allometric ratios
+    references:
+    - Numerical requirements
+    tags:
+    - numerical_stability
+    - allometry
+    dimension: mass_per_area
+    requires_grad: false
+    provenance:
+      source: migrated_runtime_literal
+      created_by: RELIC IPHS standardization
+      last_modified: '2026-07-14'
+      note: Migrated from the established allometry denominator floor
+      schema_version: 2.0.0
+  allometry_ratio_max:
+    value: 10.0
+    default: 10.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 100.0
+    category: computational
+    description: Upper bound for dimensionless allometric biomass ratios
+    references:
+    - Numerical requirements
+    tags:
+    - numerical_stability
+    - allometry
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: migrated_runtime_literal
+      created_by: RELIC IPHS standardization
+      last_modified: '2026-07-14'
+      note: Migrated from the established allometric ratio bound
+      schema_version: 2.0.0
+  carbon_conservation_tolerance:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: g C m-2 s-1
+    dtype: float32
+    bounds:
+    - 1.0e-08
+    - 0.0001
+    category: computational
+    description: Carbon conservation tolerance
+    references:
+    - Numerical requirements
+    tags:
+    - numerical_stability
+    - conservation
+    dimension: mass_flux
+    requires_grad: false
+    provenance:
+      source: numerical_stability
+      created_by: RELIC Consolidation
+      last_modified: '2025-10-02'
+      schema_version: 2.0.0
+  conservation_tolerance:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0e-09
+    - 0.001
+    category: computational
+    description: General conservation tolerance
+    references:
+    - Numerical requirements
+    tags:
+    - validation
+    - conservation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_requirements
+      created_by: RELIC Consolidation
+      last_modified: '2025-10-02'
+      note: From biomass_allocation_defaults.yaml
+      schema_version: 2.0.0
+  defaults.default_environmental_modifier:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 2.0
+    category: computational
+    description: Default environmental modifier (no environmental effect)
+    references:
+    - System defaults
+    tags:
+    - default
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: system_defaults
+      created_by: RELIC Parameter Fix P0.3
+      last_modified: '2025-10-03T00:00:00Z'
+      note: Added to match biomass_allocation.py expected parameter name
+      schema_version: 2.0.0
+  defaults.default_phenological_modifier:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 2.0
+    category: computational
+    description: Default phenological modifier (no phenology effect)
+    references:
+    - System defaults
+    tags:
+    - default
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: system_defaults
+      created_by: RELIC Parameter Fix P0.3
+      last_modified: '2025-10-03T00:00:00Z'
+      note: Added to match biomass_allocation.py expected parameter name
+      schema_version: 2.0.0
+  defaults.default_temperature:
+    value: 298.15
+    default: 298.15
+    units: K
+    dtype: float32
+    bounds:
+    - 273.15
+    - 323.15
+    category: computational
+    description: Default temperature (25 degC)
+    references:
+    - System defaults
+    tags:
+    - default
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: system_defaults
+      created_by: RELIC Consolidation
+      last_modified: '2025-10-02'
+      schema_version: 2.0.0
+  defaults.default_water_stress:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: computational
+    description: Default water stress (no stress)
+    references:
+    - System defaults
+    tags:
+    - default
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: system_defaults
+      created_by: RELIC Consolidation
+      last_modified: '2025-10-02'
+      schema_version: 2.0.0
+  defaults.default_phenology_phase:
+    value: 2.0
+    default: 2.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 3.0
+    category: computational
+    description: Default phenology phase (mature)
+    references:
+    - System defaults
+    tags:
+    - default
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: system_defaults
+      created_by: RELIC Consolidation
+      last_modified: '2025-10-02'
+      schema_version: 2.0.0
+  defaults.default_lai:
+    value: 3.0
+    default: 3.0
+    units: m2 m-2
+    dtype: float32
+    bounds:
+    - 0.0
+    - 10.0
+    category: computational
+    description: Default LAI
+    references:
+    - System defaults
+    tags:
+    - default
+    dimension: area_ratio
+    requires_grad: false
+    provenance:
+      source: system_defaults
+      created_by: RELIC Consolidation
+      last_modified: '2025-10-02'
+      schema_version: 2.0.0
+  defaults.default_f_leaf:
+    value: 0.33
+    default: 0.33
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.2
+    - 0.5
+    category: computational
+    description: Default leaf fraction when PFT unavailable
+    references:
+    - System defaults
+    tags:
+    - default
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: system_defaults
+      created_by: RELIC Consolidation
+      last_modified: '2025-10-02'
+      note: Compromise 0.30-0.33
+      schema_version: 2.0.0
+  defaults.default_f_stem:
+    value: 0.33
+    default: 0.33
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.2
+    - 0.5
+    category: computational
+    description: Default stem fraction when PFT unavailable
+    references:
+    - System defaults
+    tags:
+    - default
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: system_defaults
+      created_by: RELIC Consolidation
+      last_modified: '2025-10-02'
+      schema_version: 2.0.0
+  defaults.default_f_root:
+    value: 0.34
+    default: 0.34
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.2
+    - 0.5
+    category: computational
+    description: Default root fraction when PFT unavailable
+    references:
+    - System defaults
+    tags:
+    - default
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: system_defaults
+      created_by: RELIC Consolidation
+      last_modified: '2025-10-02'
+      schema_version: 2.0.0
+  defaults.temp_root_factor_min:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 1.0
+    category: computational
+    description: Minimum temperature root factor
+    references:
+    - System defaults
+    tags:
+    - default
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: system_defaults
+      created_by: RELIC Consolidation
+      last_modified: '2025-10-02'
+      schema_version: 2.0.0
+  defaults.temp_root_factor_max:
+    value: 2.0
+    default: 2.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 5.0
+    category: computational
+    description: Maximum temperature root factor
+    references:
+    - System defaults
+    tags:
+    - default
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: system_defaults
+      created_by: RELIC Consolidation
+      last_modified: '2025-10-02'
+      schema_version: 2.0.0
+  phenology_clamp_min:
+    value: 0.0
+    default: 0.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.5
+    category: computational
+    description: Minimum phenological factor clamp value
+    references:
+    - System defaults
+    tags:
+    - phenology
+    - numerical_stability
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: system_defaults
+      created_by: RELIC Parameter Fix P0.5
+      last_modified: '2025-10-03T00:00:00Z'
+      note: Added for phenology_growth.py compute_rate clamping
+      schema_version: 2.0.0
+  phenology_clamp_max:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 2.0
+    category: computational
+    description: Maximum phenological factor clamp value
+    references:
+    - System defaults
+    tags:
+    - phenology
+    - numerical_stability
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: system_defaults
+      created_by: RELIC Parameter Fix P0.5
+      last_modified: '2025-10-03T00:00:00Z'
+      note: Added for phenology_growth.py compute_rate clamping
+      schema_version: 2.0.0
+  growth_active_threshold:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.01
+    - 0.5
+    category: computational
+    description: Calibratable threshold for the selected-owner growth activity diagnostic
+    references:
+    - Richardson et al. (2013), phenological control concept; exact threshold is calibrated
+    tags:
+    - phenology
+    - threshold
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: calibrated_phenomenological_diagnostic
+      created_by: RELIC Parameter Fix P0.5
+      last_modified: '2025-10-03T00:00:00Z'
+      note: Configures the read-only selected-owner activity observation
+      schema_version: 2.0.0
+creation_info:
+  created_by: Yuchong Long
+  created_at: '2025-10-02T00:00:00Z'
+  schema_version: 1.0.0
+  tier: relic
+  consolidation_note: 'Consolidated from 4 files:
+
+    1. allocation.yaml - Base fractions
+
+    2. biomass_allocation_defaults.yaml - Defaults
+
+    3. growth.yaml - Stress & phenology
+
+    4. growth/allocation.yaml - Allometry
+
+
+    Conflicts resolved by literature priority and CF-1.8 compliance.
+
+    '
+quality_control:
+  validated_by: Scientific Review Panel
+  validation_date: '2025-10-02T00:00:00Z'
+  validation_criteria:
+  - Literature consistency
+  - Physical bounds
+  - Sum constraints (fractions = 1.0)
+  - Unit consistency (CF-1.8)
+  - Namespace correctness

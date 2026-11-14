@@ -1,0 +1,118 @@
+certificate_version: '1.0'
+process_id: relic.scientific.biosphere.growth.structural_growth.StructuralGrowth
+module_name: StructuralGrowth
+canonical_role: reaction
+iphs_level: 2
+iphs_level_evidence:
+  classification: IPHS-wrapped diagnostic reaction observer certificate
+  compatible_basis: Gross leaf-area growth and senescence observations are combined by an explicit signed stoichiometric row.
+  runtime_replacement: Production forward evaluates the existing N_h r_h wrapper for diagnostics; strict IPHS runtime replacement is not claimed at this level.
+  canonical_operator: N_h r_h reaction-network observation with N_h = [1,-1]
+  level_2_limit: No Hamiltonian, effort, dissipation, port-power, or GENERIC degeneracy evidence is claimed.
+theory_document: docs\source\theory\growth.md
+theory_document_status: updated
+legacy_formula: dLAI/dt = SLA * c_g_to_kg * growth_rate_leaf - (k_leaf / seconds_per_year) * LAI
+literature_formula: r_growth = SLA * growth_rate_leaf; r_loss = k_leaf * leaf_area_index; r_net = r_growth - r_loss
+iphs_formula: y_dot = N_h r_h; delta_y = y_dot * dt
+legacy_expression: dLAI/dt = SLA * c_g_to_kg * growth_rate_leaf - (k_leaf / seconds_per_year) * LAI
+iphs_expression: y_dot = N_h r_h; delta_y = y_dot * dt
+input_variables:
+- growth_rate_leaf
+- leaf_area_index
+output_variables:
+- diagnostics.structural_growth.gross_leaf_area_growth_tendency
+- diagnostics.structural_growth.leaf_area_senescence_tendency
+- diagnostics.structural_growth.net_leaf_area_tendency
+- diagnostics.structural_growth.step_leaf_area_delta
+parameter_keys:
+- biosphere.phenology.morphology.sla
+- biosphere.phenology.turnover.leaf_turnover_rate
+composition_ports:
+- growth_rate_leaf
+- leaf_area_index
+references:
+- Wright et al. (2004). The worldwide leaf economics spectrum. Nature 428:821-827.
+- Yin et al. (2021). On the needs for combining physiological principles and mathematics to improve crop models.
+- Feinberg (2019). Foundations of Chemical Reaction Network Theory.
+baseline_tests:
+- test\unit\biosphere\growth\test_structural_growth_l1.py
+validation_tests:
+- test\unit\biosphere\growth\test_structural_growth_l1.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  growth_rate_leaf: BiomassAllocation-owned carbon flux observed in kg C m-2 s-1
+  leaf_area_index: phenology-owned absolute LAI observed in m2 m-2
+parameter_map:
+  biosphere.phenology.morphology.sla: specific leaf area from ParameterManager YAML in m2 kg-1 C
+  biosphere.phenology.turnover.leaf_turnover_rate: leaf turnover rate from ParameterManager YAML already in s-1
+operator_map:
+  N_h: signed row [1,-1] mapping gross leaf-area growth and senescence to the net observation
+  r_h: explicit [SLA * growth_rate_leaf, k_leaf * leaf_area_index] tendency channels
+unit_map:
+  diagnostics.structural_growth.gross_leaf_area_growth_tendency: m2 m-2 s-1
+  diagnostics.structural_growth.leaf_area_senescence_tendency: m2 m-2 s-1
+  diagnostics.structural_growth.net_leaf_area_tendency: m2 m-2 s-1
+  diagnostics.structural_growth.step_leaf_area_delta: m2 m-2
+input_output_map:
+  growth_rate_leaf: required BiomassAllocation observation input
+  leaf_area_index: required absolute-LAI input from the selected phenology closure
+  diagnostics.structural_growth.gross_leaf_area_growth_tendency: SLA times canonical leaf-carbon growth flux
+  diagnostics.structural_growth.leaf_area_senescence_tendency: turnover rate times absolute LAI
+  diagnostics.structural_growth.net_leaf_area_tendency: signed gross-minus-senescence observation
+  diagnostics.structural_growth.step_leaf_area_delta: net tendency integrated exactly once over dt
+interface_map:
+  forward_signature: forward(self, state, time, dt)
+  bridge_class: BiologicalProcessFunctor
+  abstraction_contract: BiologicalProcess
+  state_write_mode: four observation-only UpdateItem values use REPLACE; StructuralGrowth never writes leaf_area_index
+  legacy_inputs:
+  - growth_rate_leaf
+  - leaf_area_index
+  iphs_inputs:
+  - growth_rate_leaf
+  - leaf_area_index
+  legacy_outputs:
+  - diagnostics.structural_growth.gross_leaf_area_growth_tendency
+  - diagnostics.structural_growth.leaf_area_senescence_tendency
+  - diagnostics.structural_growth.net_leaf_area_tendency
+  - diagnostics.structural_growth.step_leaf_area_delta
+  iphs_outputs:
+  - diagnostics.structural_growth.gross_leaf_area_growth_tendency
+  - diagnostics.structural_growth.leaf_area_senescence_tendency
+  - diagnostics.structural_growth.net_leaf_area_tendency
+  - diagnostics.structural_growth.step_leaf_area_delta
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: SLA multiplies the kg C leaf-growth input directly and the s-1 turnover rate multiplies LAI directly; no duplicate unit conversion is applied.
+  no_legacy_mode: No selectable legacy runtime branch is exposed for Phase 8 completion.
+state_advancement_map:
+  potential_basis: one diagnostic leaf-area observation row
+  effort_variable: required growth_rate_leaf and leaf_area_index inputs with ParameterManager-backed SLA and turnover coefficients
+  state_advancer: observation y_dot = N_h r_h; delta_y = y_dot * dt
+  runtime_usage: StructuralGrowth.forward reads the net tendency and step delta returned by advance_reaction_network without advancing leaf_area_index.
+  explicit_stoichiometric_usage: species=(diagnostics.structural_growth.net_leaf_area_tendency); reactions=(leaf_area_growth, leaf_area_senescence); stoichiometric_N=[[1,-1]].
+parameter_management_map:
+  biosphere.phenology.morphology.sla:
+    source: ParameterManager YAML
+  biosphere.phenology.turnover.leaf_turnover_rate:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: FunctorMetadata declares the two inputs and exactly four namespaced diagnostics
+  state_contract: all four outputs are explicit UpdateItem(REPLACE) observations; no LAI state update is emitted
+  validation_rule: structural-growth L1 contract and Phase 8 equivalence-certificate checks
+dependency_interconnection_map:
+  dependencies: biomass_allocation supplies growth_rate_leaf; the compile-time selected phenology closure owns leaf_area_index
+  direct_functor_calls: none; growth_rate_leaf and leaf_area_index arrive through declared state ports and no producer Functor is invoked
+overflow_routing_map:
+  observation_route: advance_reaction_network declares open_system_route=observation
+  clipping_or_overflow: none; inputs fail fast for negative or non-finite values
+  discarded_residuals: invalid or negative inputs are rejected, and gross growth, senescence, net tendency, and step delta are observation-only outputs with no storage projection
+conservation_map:
+  conserved_quantities: no biomass or LAI state is advanced by this diagnostic observer
+  balance_expression: r_net = r_growth - r_senescence with N_h = [1,-1]; step_delta = r_net * dt
+entropy_audit:
+  strict_entropy_claim: none at level 2
+  scope: observation-only signed balance; no entropy functional or GENERIC degeneracy evidence is asserted
+equivalence_type: reaction_network

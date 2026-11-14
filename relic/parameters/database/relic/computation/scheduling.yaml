@@ -1,0 +1,288 @@
+schema_version: 2.0.0
+tier: relic
+namespace: computation.scheduling
+description: Multi-rate scheduler classification thresholds used by RELICSimulator when a Functor declares a characteristic time instead of an explicit execution group
+metadata:
+  version: 1.0.0
+  created_by: relic
+parameters:
+  computation.scheduling.fast_group_max_characteristic_days:
+    value: 1.0
+    default: 1.0
+    units: day
+    dtype: float64
+    bounds:
+    - 0.001
+    - 30.0
+    category: configuration
+    description: Upper bound of the characteristic time tau_c [day] for classification into the fast execution group; Functors classified by tau_c <= this value join the fast group, which runs every step. A classification bound, not an execution interval. Must be smaller than medium_group_max_characteristic_days.
+    references:
+    - RELIC architecture_overview.md section 4.4.1 (multi-rate execution groups)
+    - Lawrence et al. (2019). CLM5 Technical Note, Section 2.7 (multi-rate time stepping)
+    tags:
+    - scheduling
+    - execution_group
+    - multi_rate
+    dimension: time
+    requires_grad: false
+    provenance:
+      source: design
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-21T00:00:00Z'
+  computation.scheduling.medium_group_max_characteristic_days:
+    value: 10.0
+    default: 10.0
+    units: day
+    dtype: float64
+    bounds:
+    - 0.01
+    - 365.0
+    category: configuration
+    description: Upper bound of the characteristic time tau_c [day] for classification into the medium execution group; Functors classified by fast_group_max_characteristic_days < tau_c <= this value join the medium group, larger tau_c the slow group. A classification bound, not an execution interval; the medium and slow intervals come from medium_interval_seconds and slow_interval_seconds or the calendar month.
+    references:
+    - RELIC architecture_overview.md section 4.4.1 (multi-rate execution groups)
+    - Lawrence et al. (2019). CLM5 Technical Note, Section 2.7 (multi-rate time stepping)
+    tags:
+    - scheduling
+    - execution_group
+    - multi_rate
+    dimension: time
+    requires_grad: false
+    provenance:
+      source: design
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-21T00:00:00Z'
+  computation.scheduling.adaptive.atol:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 1.0e-30
+    - .inf
+    category: configuration
+    description: 'Absolute tolerance atol of the adaptive step controller of RELICSimulator (adaptive_dt_enabled): the committed-state-change RMS metric scales each change by atol + rtol |x|. Used when the simulator configuration gives no adaptive_atol; the number is read in the units of the monitored state. The value equals the scipy.integrate.solve_ivp default (adopted software convention).'
+    references:
+    - 'Virtanen, P. et al. (2020). SciPy 1.0. Nature Methods 17, 261-272; scipy.integrate.solve_ivp documentation: default rtol 1e-3 and atol 1e-6 (checked against SciPy 1.16.1)'
+    - Hairer, E., Norsett, S.P. & Wanner, G. (1993). Solving Ordinary Differential Equations I, 2nd ed., Springer, Sect. II.4 (mixed error scale sc = atol + |y| rtol)
+    tags:
+    - scheduling
+    - adaptive_time_step
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: software_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  computation.scheduling.adaptive.rtol:
+    value: 1.0e-03
+    default: 1.0e-03
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1.0
+    category: configuration
+    description: 'Relative tolerance rtol of the adaptive step controller of RELICSimulator; used when the simulator configuration gives no adaptive_rtol. The value equals the scipy.integrate.solve_ivp default (adopted software convention).'
+    references:
+    - 'Virtanen, P. et al. (2020). SciPy 1.0. Nature Methods 17, 261-272; scipy.integrate.solve_ivp documentation: default rtol 1e-3 and atol 1e-6 (checked against SciPy 1.16.1)'
+    - Hairer, E., Norsett, S.P. & Wanner, G. (1993). Solving Ordinary Differential Equations I, 2nd ed., Springer, Sect. II.4 (mixed error scale sc = atol + |y| rtol)
+    tags:
+    - scheduling
+    - adaptive_time_step
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: software_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  computation.scheduling.adaptive.dt_min_seconds:
+    value: 1.0
+    default: 1.0
+    units: s
+    dtype: float64
+    bounds:
+    - 1.0e-06
+    - 1.0e+09
+    category: configuration
+    description: 'Lower step bound dt_min [s] of the adaptive step controller; an attempt at or below it is accepted with a warning. Used when the simulator configuration gives no adaptive_dt_min. RELIC convention value (one second), not a literature value.'
+    references:
+    - Hairer, E., Norsett, S.P. & Wanner, G. (1993). Solving Ordinary Differential Equations I, 2nd ed., Springer, Sect. II.4 (mixed error scale sc = atol + |y| rtol)
+    - RELIC convention value (no literature value; documented as an operational choice)
+    tags:
+    - scheduling
+    - adaptive_time_step
+    dimension: time
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  computation.scheduling.adaptive.dt_max_factor:
+    value: 10.0
+    default: 10.0
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 1.0
+    - 1.0e+06
+    category: configuration
+    description: 'Upper step bound of the adaptive step controller as a multiple of the configured time_step: adaptive_dt_max = dt_max_factor * time_step when the simulator configuration gives no adaptive_dt_max. RELIC convention value, not a literature value.'
+    references:
+    - Hairer, E., Norsett, S.P. & Wanner, G. (1993). Solving Ordinary Differential Equations I, 2nd ed., Springer, Sect. II.4 (mixed error scale sc = atol + |y| rtol)
+    - RELIC convention value (no literature value; documented as an operational choice)
+    tags:
+    - scheduling
+    - adaptive_time_step
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  computation.scheduling.topology_transition_tolerance:
+    value: 1.0e-09
+    default: 1.0e-09
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1.0e-03
+    category: configuration
+    description: 'Relative ledger tolerance of a registration-time TopologyTransition commit: the declared ledger residual |C x+ - C x- - Pi| must not exceed tolerance * max(|C x-|, 1) before anything is committed. Used when the transition declares no tolerance. RELIC convention value (roundoff-level closure of an exact remap), not a literature value.'
+    references:
+    - 'Hairer, E., Norsett, S.P. & Wanner, G. (1993). Solving Ordinary Differential Equations I, 2nd ed., Springer, Sect. II.4 (mixed absolute/relative scale)'
+    - RELIC convention value (no literature value; documented as an operational choice)
+    tags:
+    - scheduling
+    - topology_transition
+    - tolerance
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  computation.scheduling.splitting_mode:
+    value: lie
+    default: lie
+    units: dimensionless
+    dtype: string
+    allowed_values:
+    - lie
+    - strang
+    bounds: null
+    category: configuration
+    description: 'Operator-splitting mode of the RELICSimulator fast-group composition, used when the simulator configuration gives no splitting_mode. A configured value is stripped and lower-cased and must be one of these allowed_values; any other value raises ValueError when the simulator is built (no silent fallback to lie). lie: Phi_h = Phi_n^h o ... o Phi_1^h over the published fast order (splitting order 1). strang: the palindromic composition Phi_1^(h/2) o ... o Phi_(n-1)^(h/2) o Phi_n^h o Phi_(n-1)^(h/2) o ... o Phi_1^(h/2) over the whole fast order (2n - 1 sub-executions, each its own group commit; second half-steps start at t + h/2), splitting order 2 with exact sub-flows and effective order min(2, p_i) over the declared FunctorMetadata.sub_flow_accuracy p_i. The medium and slow groups run after the fast composition in both modes. Whether a strang composition is admissible is resolved at every provider-view publication: an SCM flux contract that carries a transfer between two fast members holding persistent state (directly or through fast members without state) is refused, because the provider releases (q1 + q2) h / 2 over its two half-steps while the consumer integrates the rate it read. RELIC convention default lie.'
+    references:
+    - Strang, G. (1968). On the construction and comparison of difference schemes. SIAM Journal on Numerical Analysis 5(3), 506-517. doi:10.1137/0705041
+    - Hairer, E., Lubich, C. & Wanner, G. (2006). Geometric Numerical Integration, Structure-Preserving Algorithms for Ordinary Differential Equations, 2nd ed., Springer, Sect. II.4-II.5 (composition and splitting methods)
+    - McLachlan, R.I. & Quispel, G.R.W. (2002). Splitting methods. Acta Numerica 11, 341-434. doi:10.1017/S0962492902000053
+    tags:
+    - scheduling
+    - operator_splitting
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-10-19T00:00:00Z'
+  computation.scheduling.splitting_policy:
+    value: warn
+    default: warn
+    units: dimensionless
+    dtype: string
+    allowed_values:
+    - warn
+    - require_declared
+    bounds: null
+    category: configuration
+    description: 'Governance of the declared sub-flow accuracy of a strang fast-group composition, used when the simulator configuration gives no splitting_policy; a configured value is stripped, lower-cased and checked against these allowed_values (ValueError otherwise). warn: a provider-view publication that changes the effective order to a value below 2 or to unverified logs one warning. require_declared: a strang publication with at least two fast members is refused (RuntimeError; the registration, retirement or restore rolls back and the committed view is unchanged) while a fast member that holds persistent state, or is not shown to be without it, declares sub_flow_accuracy undeclared; members without persistent state may stay undeclared. A member holds persistent state when its FunctorMetadata.variable_kind is state, when it writes a variable whose SCM contract kind is state, or when it reads a variable it also writes; it is without state when none of these holds and its variable_kind is flux, diagnostic, forcing or parameter or every written variable has an SCM contract. lie compositions are not affected. RELIC convention default warn.'
+    references:
+    - Hairer, E., Lubich, C. & Wanner, G. (2006). Geometric Numerical Integration, Structure-Preserving Algorithms for Ordinary Differential Equations, 2nd ed., Springer, Sect. II.4-II.5 (the order of a composition is bounded by the order of its sub-integrators)
+    - McLachlan, R.I. & Quispel, G.R.W. (2002). Splitting methods. Acta Numerica 11, 341-434. doi:10.1017/S0962492902000053
+    tags:
+    - scheduling
+    - operator_splitting
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-10-19T00:00:00Z'
+  computation.scheduling.fast_order:
+    value: forward
+    default: forward
+    units: dimensionless
+    dtype: string
+    allowed_values:
+    - forward
+    - reverse
+    bounds: null
+    category: configuration
+    description: 'Order of the fast-group composition, used when the simulator configuration gives no fast_order; a configured value is stripped, lower-cased and checked against these allowed_values (ValueError otherwise). forward: the dependency (Kahn) order of the fast members with ties broken by registration index. reverse: that order reversed, admissible only when no fast member declares a required or optional (same-step) dependency on another fast member; lagged reads are allowed. A reverse publication with such an edge is refused (RuntimeError, rolled back). For lie splitting the reversed composition is the adjoint of the forward one: its leading local error term, (1/2) h^2 [A, B] x for two sub-flows, changes sign, so forward and reverse runs bracket the splitting error; strang composes its palindrome over the published order. RELIC convention default forward.'
+    references:
+    - Hairer, E., Lubich, C. & Wanner, G. (2006). Geometric Numerical Integration, Structure-Preserving Algorithms for Ordinary Differential Equations, 2nd ed., Springer, Sect. II.4-II.5 (adjoint methods and splitting methods)
+    - McLachlan, R.I. & Quispel, G.R.W. (2002). Splitting methods. Acta Numerica 11, 341-434. doi:10.1017/S0962492902000053
+    tags:
+    - scheduling
+    - operator_splitting
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-10-19T00:00:00Z'
+  computation.scheduling.substep_overrides:
+    value: {}
+    default: {}
+    units: dimensionless
+    dtype: dict
+    bounds: null
+    category: configuration
+    description: 'Per-run sub-step control by Functor name, used when the simulator configuration gives no substep_overrides: {functor_name: {count: n}} with an integer n >= 1 sub-steps per group call, or {functor_name: {max_seconds: s}} with a finite s > 0 [s], giving n = ceil(dt_call / s) sub-steps for a call over dt_call [s]; exactly one key per entry. An override replaces FunctorMetadata.substep_count of that Functor for each of its calls (a group call, or each Strang half-step over dt_call = h / 2); it is recorded in the provider binding (the binding digest of the committed view, part of the exact-restart topology) and saved in checkpoints, and get_splitting_order_report lists the overrides, the effective sub-steps of the fast members and every override that names no registered Functor. The simulator validates the structure when it is built and when a checkpoint restores it (ValueError). Empty by default (every Functor uses its declared substep_count).'
+    references:
+    - Gear, C.W. & Wells, D.R. (1984). Multirate linear multistep methods. BIT 24(4), 484-502. doi:10.1007/BF01934907
+    - RELIC architecture_overview.md section 4.4.1 (sub-stepping through FunctorMetadata.substep_count)
+    tags:
+    - scheduling
+    - substepping
+    - multi_rate
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-10-19T00:00:00Z'
+  computation.scheduling.multirate_exchanges:
+    value: []
+    default: []
+    units: dimensionless
+    dtype: list
+    bounds: null
+    category: configuration
+    description: 'Declared exchanges of a fast-group variable to a slower consumer group, used when the simulator configuration gives no multirate_exchanges: a list of mappings with exactly the keys id (unique non-empty name), variable (non-empty state variable name), consumer_group (medium or slow) and mode (hold or interval_mean), at most one exchange per (variable, consumer_group). hold is the zero-order hold of the value committed by the fast group (the behaviour without a declaration). interval_mean keeps the running mean m_e <- (m_e tau + vbar h) / (tau + h), tau = t_k - t_last of the consumer group [s], h the accepted fast step [s], vbar the fast-step value, and gives the consumer group the exact interval mean of the piecewise-constant fast trajectory. interpolate is refused (not implemented). The simulator validates the structure when it is built (ValueError); the existing scheduler executes admitted exchanges through StateManager, and an inadmissible exchange is refused at provider-view publication. Empty by default.'
+    references:
+    - Gear, C.W. & Wells, D.R. (1984). Multirate linear multistep methods. BIT 24(4), 484-502. doi:10.1007/BF01934907
+    - RELIC architecture_overview.md section 4.4.1 (cross-group sampling lag and hold lag)
+    tags:
+    - scheduling
+    - multi_rate
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-10-19T00:00:00Z'

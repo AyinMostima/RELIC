@@ -1,0 +1,63 @@
+variable: surface_runoff_flux
+title: "Surface Runoff Flux"
+description: "Non-negative liquid water leaving the land surface as surface runoff; CF v94 surface_runoff_flux (kg m-2 s-1, positive out of the land)."
+kind: flux
+dimension:
+  udunits: "kg m-2 s-1"
+  cf_standard_name: "surface_runoff_flux"
+support:
+  spatial_kind: grid_cell
+  area_basis: ground_area
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+numerics:
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "surface_runoff"
+      module: "relic.scientific.hydrosphere.runoff.surface"
+      provides: ["surface_runoff_flux"]
+      unit: "kg m-2 s-1"
+    - name: "bucket_soil_moisture"
+      module: "relic.scientific.hydrosphere.soil_moisture.bucket"
+      provides: ["surface_runoff_flux"]
+      unit: "kg m-2 s-1"
+    - name: "SWATAdapter"
+      module: "relic.coupling.external.hydrological_models.swat_adapter"
+      provides: ["surface_runoff_flux"]
+      unit: "kg m-2 s-1"
+    - name: "VICAdapter"
+      module: "relic.coupling.external.hydrological_models.vic_adapter"
+      provides: ["surface_runoff_flux"]
+      unit: "kg m-2 s-1"
+flux_contract:
+  allowed_in:
+    - "surface_runoff"
+    - "bucket_soil_moisture"
+    - "SWATAdapter"
+    - "VICAdapter"
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/hydrosphere/runoff/surface.py"
+  runtime_role: "mutually_exclusive_surface_runoff_boundary_flux"
+  runtime_writers:
+    - "surface_runoff"
+    - "bucket_soil_moisture"
+  adapter_writers:
+    - "SWATAdapter"
+    - "VICAdapter"

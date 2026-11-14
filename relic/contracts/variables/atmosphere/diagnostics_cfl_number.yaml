@@ -1,0 +1,55 @@
+variable: diagnostics.cfl_number
+title: "Maximum Finite-Volume Outflow Courant Number"
+description: "Grid maximum of the finite-volume outward-face Courant sum C_out = max(dt * sum_k (max(u_k,i+1/2, 0) - min(u_k,i-1/2, 0)) / dx_k) of the requested transport step (LeVeque 2002), the positivity condition of explicit first-order upwind finite-volume transport, published as a read-only step diagnostic by exactly one of the mutually exclusive generic tracer transport Functors linear_advection and advection_diffusion from the canonical operator result. Dimensionless and non-negative, unsigned (no direction). The writers reject a value above transport.numerical.cfl_advection_max only when transport.numerical.time_integration_method is euler (the default; combined splitting always steps with euler); with implicit_midpoint or crank_nicolson the value is published without a limit check. The cell-centred Courant sum of atmospheric transport is the separate diagnostic diagnostics.atmospheric_advection_diffusion.cfl_number."
+kind: diagnostic
+dimension:
+  udunits: "1"
+  cf_standard_name: null
+support:
+  spatial_kind: null
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: []
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "LeVeque, R.J. (2002). Finite Volume Methods for Hyperbolic Problems, Cambridge University Press"
+  - "Courant, R., Friedrichs, K. & Lewy, H. (1928). Math. Ann. 100, 32-74"
+numerics:
+  # A sum of non-negative terms; no upper bound is declared. The
+  # ParameterManager limit transport.numerical.cfl_advection_max is enforced
+  # by the writers only under the euler integrator.
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "advection_diffusion"
+      module: "relic.scientific.transport.advection_diffusion"
+      provides: ["diagnostics.cfl_number"]
+      unit: "1"
+    - name: "linear_advection"
+      module: "relic.scientific.transport.advection"
+      provides: ["diagnostics.cfl_number"]
+      unit: "1"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/transport/advection.py"
+  runtime_role: "mutually_exclusive_transport_outflow_courant_observation"
+  runtime_writers:
+    - "advection_diffusion"
+    - "linear_advection"
+  note: "Scalar torch.max of the canonical operator outflow Courant sum (relic/computation/operators/functional.py:2178 _compute_finite_volume_outflow_cfl) written as a raw diagnostics.* output (partitioned out of state, ingested per step): relic/scientific/transport/advection.py:772-777 and relic/scientific/transport/advection_diffusion.py:843-852. Limit check in the canonical operator only for the euler integrator (enforce_cfl_limit = method == euler, functional.py:3490), whose method is transport.numerical.time_integration_method (relic/computation/operators/transport.py:375-384,597-608)."

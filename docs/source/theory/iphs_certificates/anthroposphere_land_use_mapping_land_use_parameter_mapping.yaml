@@ -1,0 +1,180 @@
+certificate_version: '1.0'
+process_id: relic.scientific.anthroposphere.land_use.mapping.LandUseParameterMapping
+module_name: land_use_parameter_mapping
+canonical_role: observation
+iphs_level: 1
+iphs_level_evidence:
+  classification: IPHS-compatible diagnostic observation certificate
+  compatible_basis: Read-only PhysicalField observation with explicit interfaces and no prognostic ownership
+  runtime_replacement: Production forward uses one fail-fast diagnostic map; no strict IPHS runtime is claimed.
+theory_document: docs\source\theory\anthroposphere_land_use_transitions.md
+theory_document_status: updated
+legacy_formula: Area-weighted summaries are theta_bar = sum_i f_i theta_i.
+literature_formula: Land-surface models preserve sub-grid land units or tiles and aggregate supported grid-cell diagnostics or exchanges using land-cover fractions.
+iphs_formula: y = O_land(f, theta), where O_land is a read-only mixed-unit observation map.
+legacy_expression: theta_bar = sum_i f_i theta_i, with f_i >= 0 and sum_i f_i = 1.
+iphs_expression: The process is only IPHS-compatible as a read-only observation; no Hodge, Hamiltonian, dissipation operator, or power port is asserted.
+input_variables:
+- land_use_fraction
+output_variables: &canonical_outputs
+- diagnostics.land_use_parameter_mapping.vegetation.lai_max
+- diagnostics.land_use_parameter_mapping.vegetation.lai_min
+- diagnostics.land_use_parameter_mapping.vegetation.vcmax25
+- diagnostics.land_use_parameter_mapping.vegetation.jmax25
+- diagnostics.land_use_parameter_mapping.vegetation.root_depth
+- diagnostics.land_use_parameter_mapping.vegetation.canopy_height
+- diagnostics.land_use_parameter_mapping.vegetation.wood_density
+- diagnostics.land_use_parameter_mapping.vegetation.sla
+- diagnostics.land_use_parameter_mapping.vegetation.leaf_lifespan
+- diagnostics.land_use_parameter_mapping.vegetation.c3_fraction
+- diagnostics.land_use_parameter_mapping.vegetation.c4_fraction
+- diagnostics.land_use_parameter_mapping.soil.decomposition_rate
+- diagnostics.land_use_parameter_mapping.soil.nitrification_rate
+- diagnostics.land_use_parameter_mapping.soil.denitrification_rate
+- diagnostics.land_use_parameter_mapping.soil.soil_porosity
+- diagnostics.land_use_parameter_mapping.soil.infiltration_rate
+- diagnostics.land_use_parameter_mapping.soil.soil_carbon_input
+- diagnostics.land_use_parameter_mapping.soil.tillage_factor
+- diagnostics.land_use_parameter_mapping.soil.erosion_rate
+- diagnostics.land_use_parameter_mapping.hydrology.surface_roughness
+- diagnostics.land_use_parameter_mapping.hydrology.albedo
+- diagnostics.land_use_parameter_mapping.hydrology.emissivity
+- diagnostics.land_use_parameter_mapping.hydrology.interception_capacity
+- diagnostics.land_use_parameter_mapping.hydrology.runoff_coefficient
+- diagnostics.land_use_parameter_mapping.hydrology.evaporation_resistance
+- diagnostics.land_use_parameter_mapping.canonical_iphs_runtime
+parameter_keys:
+- anthroposphere.land_use.vegetation.*
+- anthroposphere.land_use.soil.*
+- anthroposphere.land_use.hydrological.*
+- validation.conservation.conservation_tolerance
+composition_ports: []
+references:
+- Lawrence, D.M. et al. (2016). The Land Use Model Intercomparison Project.
+- Pongratz, J. et al. (2018). Models meet data for land management.
+- Bonan, G.B. (2019). Climate Change and Terrestrial Ecosystem Modeling.
+- Le Moigne, P. (2018). SURFEX Scientific Documentation.
+baseline_tests:
+- test\anthroposphere\land_use\test_mapping_l1.py
+- test\scientific\anthroposphere\land_use\metadata_consistency.spec.py
+- test\anthroposphere\land_use\mapping_phase8.test.py
+validation_tests:
+- test\anthroposphere\land_use\test_mapping_l1.py
+- test\scientific\anthroposphere\land_use\metadata_consistency.spec.py
+- test\anthroposphere\land_use\mapping_phase8.test.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  land_use_fraction: canonical nine-class grid-cell land-use fractional-area observation [1]
+  land_use_fraction_observation: typed DEC-compatible support declaration [1]
+  mapped_parameter_diagnostics: mixed-unit area-weighted summaries that do not override executable process parameters
+  spatial_lai_field_support: derived LAI diagnostic cached only after explicit update_field input
+  spatial_coordinate_support: source coordinates required by PhysicalField query and gradient maps
+  diagnostics.land_use_parameter_mapping.canonical_iphs_runtime: compatibility runtime marker [1], not strict IPHS evidence
+parameter_map:
+  anthroposphere.land_use.vegetation.*: Vegetation parameters (LAI range, Vcmax25, Jmax25, rooting depth, canopy height, wood density, SLA, leaf lifespan, C3 and C4 fractions) per land-use type [units per key]
+  anthroposphere.land_use.soil.*: Soil parameters (decomposition, nitrification, denitrification, erosion and infiltration rates, carbon input, porosity, tillage factor) per land-use type [units per key]
+  anthroposphere.land_use.hydrological.*: Hydrological parameters (albedo, emissivity, evaporation resistance, interception capacity, runoff coefficient, surface roughness) per land-use type [units per key]
+  validation.conservation.conservation_tolerance: General relative tolerance of the conservation checks [dimensionless]
+operator_map:
+  O_land: calculate_weighted_parameters read-only area-weighted observation map
+  R_query: externally bound typed source-to-target field chain map
+  G_gradient: externally bound typed source-field gradient map
+  O_h: canonical runtime diagnostic output
+unit_map:
+  land_use_fraction: '1'
+  diagnostics.land_use_parameter_mapping.vegetation.lai_max: dimensionless
+  diagnostics.land_use_parameter_mapping.vegetation.lai_min: dimensionless
+  diagnostics.land_use_parameter_mapping.vegetation.vcmax25: umol CO2 m-2 s-1
+  diagnostics.land_use_parameter_mapping.vegetation.jmax25: umol e- m-2 s-1
+  diagnostics.land_use_parameter_mapping.vegetation.root_depth: m
+  diagnostics.land_use_parameter_mapping.vegetation.canopy_height: m
+  diagnostics.land_use_parameter_mapping.vegetation.wood_density: kg m-3
+  diagnostics.land_use_parameter_mapping.vegetation.sla: m2 kg-1
+  diagnostics.land_use_parameter_mapping.vegetation.leaf_lifespan: days
+  diagnostics.land_use_parameter_mapping.vegetation.c3_fraction: dimensionless
+  diagnostics.land_use_parameter_mapping.vegetation.c4_fraction: dimensionless
+  diagnostics.land_use_parameter_mapping.soil.decomposition_rate: dimensionless
+  diagnostics.land_use_parameter_mapping.soil.nitrification_rate: dimensionless
+  diagnostics.land_use_parameter_mapping.soil.denitrification_rate: dimensionless
+  diagnostics.land_use_parameter_mapping.soil.soil_porosity: dimensionless
+  diagnostics.land_use_parameter_mapping.soil.infiltration_rate: mm hr-1
+  diagnostics.land_use_parameter_mapping.soil.soil_carbon_input: kg C m-2 yr-1
+  diagnostics.land_use_parameter_mapping.soil.tillage_factor: dimensionless
+  diagnostics.land_use_parameter_mapping.soil.erosion_rate: kg m-2 yr-1
+  diagnostics.land_use_parameter_mapping.hydrology.surface_roughness: m
+  diagnostics.land_use_parameter_mapping.hydrology.albedo: dimensionless
+  diagnostics.land_use_parameter_mapping.hydrology.emissivity: dimensionless
+  diagnostics.land_use_parameter_mapping.hydrology.interception_capacity: mm
+  diagnostics.land_use_parameter_mapping.hydrology.runoff_coefficient: dimensionless
+  diagnostics.land_use_parameter_mapping.hydrology.evaporation_resistance: s m-1
+  diagnostics.land_use_parameter_mapping.canonical_iphs_runtime: dimensionless
+input_output_map:
+  fraction_to_diagnostic: valid land-use fractions enter O_land and produce namespaced mixed-unit observations
+  public_control_ports: none; no mapped summary has a current production consumer
+  diagnostics: the runtime marker is one only after canonical input validation succeeds
+interface_map:
+  forward_signature: forward(self, state, time, dt)
+  spatial_query_signature: get_value_at(target_coordinates)
+  spatial_gradient_signature: compute_gradient(target_coordinates)
+  spatial_bridge_binding: field_query_bridge and field_gradient_bridge are bound callables from the existing scale or regridding owner
+  bridge_class: PhysicalFieldFunctor
+  abstraction_contract: PhysicalField
+  state_write_mode: all outputs use explicit UpdateItem(REPLACE, per_timestep=false, unit, source_functor)
+  legacy_inputs:
+  - land_use_fraction
+  iphs_inputs:
+  - land_use_fraction
+  legacy_outputs: *canonical_outputs
+  iphs_outputs: *canonical_outputs
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: ParameterManager-backed area-weighted values remain available only as namespaced diagnostics.
+  no_legacy_mode: No public alias output, input alias, padding, normalization, hidden zero support, interpolation substitute, or second mapping law is exposed.
+state_advancement_map:
+  potential_basis: none; the process is a read-only observation
+  effort_variable: not_applicable_read_only_observation_has_no_thermodynamic_effort
+  state_advancer: y_h = O_land(f_h, theta) without prognostic state advancement
+  runtime_usage: forward evaluates O_land once and returns REPLACE diagnostics without prognostic ownership.
+parameter_management_map:
+  anthroposphere.land_use.vegetation.*:
+    source: ParameterManager YAML
+  anthroposphere.land_use.soil.*:
+    source: ParameterManager YAML
+  anthroposphere.land_use.hydrological.*:
+    source: ParameterManager YAML
+  validation.conservation.conservation_tolerance:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: FunctorMetadata declares only land_use_transitions coupling and diagnostic outputs
+  structural_protocol: declared_forms reports input observation support; Hodge terms, reversible or dissipative dynamics, and ports are empty
+  spatial_operator_owner: bound existing ScaleManager or spatial regridder callable; no local manager, registry, or regridder is created
+dependency_interconnection_map:
+  dependencies: land_use_transitions is the sole declared Functor dependency
+  direct_functor_calls: none_no_direct_functor_calls
+  chain_maps:
+  - canonical land-use fractions enter O_land
+  - area-weighted summaries leave only as namespaced diagnostics
+  - explicit R_query maps stored source field support to query coordinates
+  - explicit G_gradient maps stored source field support to target gradients
+overflow_routing_map:
+  missing_land_use_fraction: missing land_use_fraction raises KeyError
+  invalid_fraction_type: non-Tensor or non-floating input raises TypeError
+  invalid_fraction_shape: noncanonical layout or a class axis other than exactly nine classes raises ValueError
+  invalid_fraction_value: non-finite, negative, zero-support, or non-unit-sum input raises ValueError
+  missing_spatial_support: missing mapped field or source coordinates raises RuntimeError
+  missing_spatial_chain_map: missing field_query_bridge or field_gradient_bridge raises RuntimeError
+  incompatible_spatial_support: field and coordinate support mismatch raises RuntimeError
+  invalid_spatial_operator_output: wrong type, shape, device, or non-finite output raises a blocking error
+  discarded_residuals: none_no_physical_residual_is_created_or_discarded_by_the_read_only_observation
+conservation_map:
+  conserved_quantity: none; input fractional area is validated but never advanced
+  balance_expression: delta_storage = 0 for all prognostic mass, energy, water, and element states
+  local_check: _validate_land_use_fraction requires f_i >= 0 and sum_i f_i = 1 without modification
+  port_balance: no power or matter port is declared
+entropy_audit:
+  dissipative_operator: not_applicable_read_only_observation_has_no_dissipative_operator
+  sigma_expression: not applicable to a read-only diagnostic observation
+  validation_hook: certificate and interface consistency tests
+equivalence_type: diagnostic

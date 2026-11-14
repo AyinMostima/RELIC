@@ -1,0 +1,38 @@
+variable: monoterpenes_emission
+title: "Monoterpenes Emission"
+kind: flux
+dimension:
+  udunits: "mol m-2 s-1"
+  cf_standard_name: null
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+numerics:
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "megan_bvoc_model"
+      module: "relic.scientific.biosphere.bvoc.megan_model"
+      provides: ["monoterpenes_emission"]
+      unit: "mol m-2 s-1"
+    - name: "mechanistic_monoterpene_synthesis"
+      module: "relic.scientific.biosphere.bvoc.synthesis.monoterpene"
+      provides: ["monoterpenes_emission"]
+      unit: "mol m-2 s-1"
+flux_contract:
+  allowed_in: ["megan_bvoc_model", "mechanistic_monoterpene_synthesis"]
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/biosphere/bvoc/megan_model.py"
+  runtime_role: "mutually_exclusive_open_monoterpene_molar_emission_port"
+  runtime_writers: ["megan_bvoc_model", "mechanistic_monoterpene_synthesis"]

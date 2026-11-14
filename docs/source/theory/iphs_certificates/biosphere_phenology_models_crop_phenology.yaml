@@ -1,0 +1,226 @@
+certificate_version: '1.0'
+process_id: relic.scientific.biosphere.phenology.models.CropPhenology
+module_name: CropPhenology
+canonical_role: reaction
+iphs_level: 2
+iphs_level_evidence:
+  classification: IPHS-wrapped reaction process certificate
+  compatible_basis: Reaction process is expressed through conserved or open stoichiometric ledgers
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: N_h r_h reaction-network state advance
+  level_2_limit: The canonical runtime wrapper is declared, but no executable typed-cochain or IPHS structural contribution is bound; strict level 4 or 5 evidence is not claimed.
+theory_document: docs\source\theory\phenology.md
+theory_document_status: updated
+legacy_formula: "\n            Crop phenology equations:\n            \n            Daily thermal time: PHU_{daily} = \\max(0, T_{avg} - T_{base})\n            \n            Cumulative PHU: PHU_{cum} = \\sum_{i=sowing}^{t} PHU_{daily,i}\n            \n            Development index: DI = \\frac{PHU_{cum}}{PHU_{total}}\n            \n            Harvest index dynamics:\n            HI(t) = HI_{max} \\times \\frac{DI - DI_{HI-start}}{1 - DI_{HI-start}}\n            \\text{ for } DI \\geq DI_{HI-start}\n            \n            Biomass partitioning:\n            f_{grain} = HI(t) \\text{ during grain filling}\n            f_{leaf} = (1 - HI(t)) \\times allocation_{leaf}(DI)\n            f_{stem} = (1 - HI(t)) \\times allocation_{stem}(DI)  \n            f_{root} = (1 - HI(t)) \\times allocation_{root}(DI)\n            \n            Development stages:\n            - Germination: 0 < DI < 0.15\n            - Vegetative: 0.15 < DI < 0.4\n            - Reproductive: 0.4 < DI < 0.65\n         \
+  \   - Grain filling: 0.65 < DI < 1.0\n            - Maturity: DI \\geq 1.0\n            "
+literature_formula: "\n            Crop phenology equations:\n            \n            Daily thermal time: PHU_{daily} = \\max(0, T_{avg} - T_{base})\n            \n            Cumulative PHU: PHU_{cum} = \\sum_{i=sowing}^{t} PHU_{daily,i}\n            \n            Development index: DI = \\frac{PHU_{cum}}{PHU_{total}}\n            \n            Harvest index dynamics:\n            HI(t) = HI_{max} \\times \\frac{DI - DI_{HI-start}}{1 - DI_{HI-start}}\n            \\text{ for } DI \\geq DI_{HI-start}\n            \n            Biomass partitioning:\n            f_{grain} = HI(t) \\text{ during grain filling}\n            f_{leaf} = (1 - HI(t)) \\times allocation_{leaf}(DI)\n            f_{stem} = (1 - HI(t)) \\times allocation_{stem}(DI)  \n            f_{root} = (1 - HI(t)) \\times allocation_{root}(DI)\n            \n            Development stages:\n            - Germination: 0 < DI < 0.15\n            - Vegetative: 0.15 < DI < 0.4\n            - Reproductive: 0.4 < DI < 0.65\n     \
+  \       - Grain filling: 0.65 < DI < 1.0\n            - Maturity: DI \\geq 1.0\n            "
+iphs_formula: x_dot = N_h r_h with ParameterManager-backed process rates r_h and declared stoichiometric/output map N_h
+legacy_expression: "\n            Crop phenology equations:\n            \n            Daily thermal time: PHU_{daily} = \\max(0, T_{avg} - T_{base})\n            \n            Cumulative PHU: PHU_{cum} = \\sum_{i=sowing}^{t} PHU_{daily,i}\n            \n            Development index: DI = \\frac{PHU_{cum}}{PHU_{total}}\n            \n            Harvest index dynamics:\n            HI(t) = HI_{max} \\times \\frac{DI - DI_{HI-start}}{1 - DI_{HI-start}}\n            \\text{ for } DI \\geq DI_{HI-start}\n            \n            Biomass partitioning:\n            f_{grain} = HI(t) \\text{ during grain filling}\n            f_{leaf} = (1 - HI(t)) \\times allocation_{leaf}(DI)\n            f_{stem} = (1 - HI(t)) \\times allocation_{stem}(DI)  \n            f_{root} = (1 - HI(t)) \\times allocation_{root}(DI)\n            \n            Development stages:\n            - Germination: 0 < DI < 0.15\n            - Vegetative: 0.15 < DI < 0.4\n            - Reproductive: 0.4 < DI < 0.65\n      \
+  \      - Grain filling: 0.65 < DI < 1.0\n            - Maturity: DI \\geq 1.0\n            "
+iphs_expression: x_dot = N_h r_h with ParameterManager-backed process rates r_h and declared stoichiometric/output map N_h
+input_variables: &canonical_inputs
+- day_of_year
+- air_temperature
+- phenology_crop_accumulated_phu
+- phenology_crop_is_sown
+- phenology_crop_is_harvested
+- phenology_crop_vernalization_days
+- leaf_carbon
+- froot_carbon
+- leaf_nitrogen
+- froot_nitrogen
+output_variables: &canonical_outputs
+- leaf_area_index
+- phenology_phase
+- diagnostics.phenology.accumulated_phu
+- harvest_index
+- phenological_factor
+- phenology_crop_accumulated_phu
+- phenology_crop_is_sown
+- phenology_crop_is_harvested
+- phenology_crop_vernalization_days
+- phenology_senescence_factor
+- leaf_carbon
+- froot_carbon
+- leaf_nitrogen
+- froot_nitrogen
+- plant_nitrogen_pool
+- leaf_litterfall_carbon
+- froot_litterfall_carbon
+- leaf_litterfall_nitrogen
+- froot_litterfall_nitrogen
+- nitrogen_retranslocation
+- diagnostics.phenology.carbon_turnover_balance_residual
+- diagnostics.phenology.nitrogen_turnover_balance_residual
+parameter_keys:
+- biosphere.phenology.turnover.n_retrans_efficiency
+- biosphere.phenology.constants.max_lai_threshold
+- biosphere.phenology.gdd.base_temp
+- biosphere.phenology.crop.default_type
+- biosphere.phenology.crop.phu_total
+- biosphere.phenology.crop.hi_max
+- biosphere.phenology.crop.hi_start_fraction
+- biosphere.phenology.crop.sowing_doy
+- biosphere.phenology.crop.harvest_doy
+- biosphere.phenology.crop.vernalization_required
+- biosphere.phenology.crop.vernalization_temp_min
+- biosphere.phenology.crop.vernalization_temp_max
+- biosphere.phenology.crop.vernalization_days_required
+- biosphere.phenology.turnover.leaf_turnover_rate
+- biosphere.phenology.turnover.froot_turnover_rate
+- biosphere.phenology.morphology.max_lai
+- biosphere.phenology.morphology.min_lai
+- biosphere.validation.tolerance.phenology
+- biosphere.phenology.activity.germination_activity
+- biosphere.phenology.activity.vegetative_activity
+- biosphere.phenology.activity.maturity_senescence
+- biosphere.phenology.crop.di_germination_end
+- biosphere.phenology.crop.di_vegetative_peak
+- biosphere.phenology.crop.di_vegetative_end
+- biosphere.phenology.crop.di_lai_peak_end
+- biosphere.phenology.crop.di_reproductive_end
+- biosphere.phenology.crop.initial_lai
+- biosphere.phenology.crop.lai_growth_exponent
+- biosphere.phenology.crop.grain_filling_factor
+- biosphere.phenology.crop.senescence_growth_factor
+- biosphere.phenology.crop.senescence_min_factor
+- biosphere.phenology.crop.vernalization_increment
+- biosphere.phenology.crop.vernalization_min_factor
+- biosphere.phenology.crop.year_reset_threshold
+- biosphere.phenology.computational.clamp_min
+- biosphere.phenology.computational.clamp_max
+composition_ports:
+- phase8_runtime_port
+references:
+- Jones, J.W., et al. (2003). The DSSAT cropping system model. European Journal of Agronomy, 18(3-4), 235-265.
+- Keating, B.A., et al. (2003). An overview of APSIM, a model designed for farming systems simulation. European Journal of Agronomy, 18(3-4), 267-288.
+- Ritchie, J.T. (1991). Wheat phasic development. Agricultural Systems, 36(3), 305-320.
+baseline_tests:
+- test\unit\biosphere\phenology\test_phenology_models.py
+- test\unit\biosphere\phenology\test_phenology_models_l1.py
+- test\audit\phase8_scientific_inventory.test.py
+validation_tests:
+- test\integration\biosphere\phenology\test_phenology_integration_l2.py
+- test\integration\biosphere\phenology\test_phenology_system_validation.py
+- test\system\biosphere\phenology\test_phenology_system_l3.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  day_of_year: required calendar forcing port [day]
+  air_temperature: required temperature forcing port [K]
+  phenology_crop_accumulated_phu: StateManager-owned crop thermal-time state [degC day]
+  phenology_crop_is_sown: StateManager-owned crop sowing-cycle flag [dimensionless]
+  phenology_crop_is_harvested: StateManager-owned crop harvest-cycle flag [dimensionless]
+  phenology_crop_vernalization_days: StateManager-owned crop vernalization state [day]
+  leaf_carbon: prognostic vegetation carbon pool [kg C m-2]
+  froot_carbon: prognostic vegetation carbon pool [kg C m-2]
+  leaf_nitrogen: prognostic vegetation nitrogen pool [kg N m-2]
+  froot_nitrogen: prognostic vegetation nitrogen pool [kg N m-2]
+parameter_map: &canonical_parameter_sources
+  biosphere.phenology.turnover.n_retrans_efficiency: ParameterManager YAML
+  biosphere.phenology.constants.max_lai_threshold: ParameterManager YAML
+  biosphere.phenology.gdd.base_temp: ParameterManager YAML
+  biosphere.phenology.crop.default_type: ParameterManager YAML
+  biosphere.phenology.crop.phu_total: ParameterManager YAML
+  biosphere.phenology.crop.hi_max: ParameterManager YAML
+  biosphere.phenology.crop.hi_start_fraction: ParameterManager YAML
+  biosphere.phenology.crop.sowing_doy: ParameterManager YAML
+  biosphere.phenology.crop.harvest_doy: ParameterManager YAML
+  biosphere.phenology.crop.vernalization_required: ParameterManager YAML
+  biosphere.phenology.crop.vernalization_temp_min: ParameterManager YAML
+  biosphere.phenology.crop.vernalization_temp_max: ParameterManager YAML
+  biosphere.phenology.crop.vernalization_days_required: ParameterManager YAML
+  biosphere.phenology.turnover.leaf_turnover_rate: ParameterManager YAML
+  biosphere.phenology.turnover.froot_turnover_rate: ParameterManager YAML
+  biosphere.phenology.morphology.max_lai: ParameterManager YAML
+  biosphere.phenology.morphology.min_lai: ParameterManager YAML
+  biosphere.validation.tolerance.phenology: ParameterManager YAML
+  biosphere.phenology.activity.germination_activity: ParameterManager YAML
+  biosphere.phenology.activity.vegetative_activity: ParameterManager YAML
+  biosphere.phenology.activity.maturity_senescence: ParameterManager YAML
+  biosphere.phenology.crop.di_germination_end: ParameterManager YAML
+  biosphere.phenology.crop.di_vegetative_peak: ParameterManager YAML
+  biosphere.phenology.crop.di_vegetative_end: ParameterManager YAML
+  biosphere.phenology.crop.di_lai_peak_end: ParameterManager YAML
+  biosphere.phenology.crop.di_reproductive_end: ParameterManager YAML
+  biosphere.phenology.crop.initial_lai: ParameterManager YAML
+  biosphere.phenology.crop.lai_growth_exponent: ParameterManager YAML
+  biosphere.phenology.crop.grain_filling_factor: ParameterManager YAML
+  biosphere.phenology.crop.senescence_growth_factor: ParameterManager YAML
+  biosphere.phenology.crop.senescence_min_factor: ParameterManager YAML
+  biosphere.phenology.crop.vernalization_increment: ParameterManager YAML
+  biosphere.phenology.crop.vernalization_min_factor: ParameterManager YAML
+  biosphere.phenology.crop.year_reset_threshold: ParameterManager YAML
+  biosphere.phenology.computational.clamp_min: ParameterManager YAML
+  biosphere.phenology.computational.clamp_max: ParameterManager YAML
+operator_map:
+  N_h: declared stoichiometric or output incidence map for this reaction process
+  r_h: ParameterManager-backed process-rate vector evaluated by the production forward path
+unit_map:
+  leaf_area_index: m2 m-2
+  phenology_phase: dimensionless
+  diagnostics.phenology.accumulated_phu: degC day
+  harvest_index: dimensionless
+  phenological_factor: dimensionless
+  phenology_crop_accumulated_phu: degC day
+  phenology_crop_is_sown: dimensionless
+  phenology_crop_is_harvested: dimensionless
+  phenology_crop_vernalization_days: day
+  phenology_senescence_factor: dimensionless
+  leaf_carbon: kg C m-2
+  froot_carbon: kg C m-2
+  leaf_nitrogen: kg N m-2
+  froot_nitrogen: kg N m-2
+  plant_nitrogen_pool: kg N m-2
+  leaf_litterfall_carbon: kg C m-2 s-1
+  froot_litterfall_carbon: kg C m-2 s-1
+  leaf_litterfall_nitrogen: kg N m-2 s-1
+  froot_litterfall_nitrogen: kg N m-2 s-1
+  nitrogen_retranslocation: kg N m-2 s-1
+  diagnostics.phenology.carbon_turnover_balance_residual: kg C m-2
+  diagnostics.phenology.nitrogen_turnover_balance_residual: kg N m-2
+input_output_map:
+  phenology_observations: calendar and temperature forcing map to PHU, harvest index, LAI, phase, growth, and senescence-factor observations
+  crop_temporal_state: canonical crop PHU, sowing, harvest, and vernalization inputs map to complete StateManager-owned replacement states
+  carbon_turnover: vegetation carbon pools map to integrated pool increments and litter carbon boundary exports
+  nitrogen_turnover: vegetation nitrogen pools map to integrated pool increments, retranslocation, and litter nitrogen boundary exports
+interface_map:
+  forward_signature: forward(self, state, time, dt, **kwargs)
+  bridge_class: BiologicalProcessFunctor
+  abstraction_contract: BiologicalProcess
+  state_write_mode: integrated C and N pool increments use ACCUMULATE with per_timestep true; crop temporal full states and observations use REPLACE with declared units
+  legacy_inputs: *canonical_inputs
+  iphs_inputs: *canonical_inputs
+  legacy_outputs: *canonical_outputs
+  iphs_outputs: *canonical_outputs
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: Existing ParameterManager-backed calculations define canonical IPHS operator coefficients, rates, ports, or observations.
+  no_legacy_mode: No selectable legacy runtime branch is exposed for Phase 8 completion.
+state_advancement_map:
+  potential_basis: declared RELIC state, port, or observation cochain basis
+  effort_variable: ParameterManager-backed thermodynamic effort, driver, or diagnostic input used by the module
+  state_advancer: C and N turnover uses x_dot = N_h r_h with explicit stoichiometric_N and rates evaluated by advance_reaction_network; crop temporal full states use the canonical StateManager replacement path.
+  runtime_usage: CropPhenology inherits PhenologyBase.forward, which calls advance_reaction_network for the C and N turnover ledger and emits explicit REPLACE updates for the complete crop temporal state.
+  explicit_stoichiometric_usage: PhenologyBase.forward materializes stoichiometric_N and rates for the C and N turnover outputs and lowers x_dot=N_h r_h through advance_reaction_network; PHU and crop-cycle memory are not misrepresented as reaction states.
+parameter_management_map: *canonical_parameter_sources
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares interfaces, execution phase, and conservation semantics
+  state_contract: existing simulator state update path is preserved
+  validation_rule: phase8 scientific inventory and equivalence certificate checks
+dependency_interconnection_map:
+  dependencies: calendar and temperature forcing, four canonical crop temporal states, and vegetation C/N pools are StateManager ports; crop coefficients are ParameterManager-bound; direct Functor dependencies are empty and downstream management/harvest consumers connect through graph/SCM ports
+  direct_functor_calls: none; calendar, temperature, crop temporal states, and vegetation pools arrive through StateManager ports and management consumers are graph-connected
+overflow_routing_map:
+  diagnostic_residuals: existing diagnostics and conservation checks route clipping or residual terms
+  discarded_residuals: development-index, PHU, vernalization, harvest-index, LAI, and growth-factor bounds are non-material constitutive projections; carbon and nitrogen turnover emits explicit balance residuals and rejects nonclosure
+conservation_map:
+  conserved_quantities: carbon|nitrogen on the extended vegetation plus litter-boundary ledger
+  balance_expression: delta C_veg + dt F_C_litter = 0; delta N_veg + delta N_plant + dt F_N_litter = 0
+  open_system_route: litter carbon and nitrogen are explicit boundary_export ports
+entropy_audit:
+  operator_sign: rates, mobilities, or diagnostic maps are non-negative or checked by existing validation hooks where physically required
+  sigma_expression: canonical entropy production is non-negative for dissipative subexpressions
+equivalence_type: thermodynamic_embedding

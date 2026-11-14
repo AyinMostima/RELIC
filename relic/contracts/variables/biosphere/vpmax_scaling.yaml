@@ -1,0 +1,42 @@
+variable: vpmax_scaling
+title: "C4 Vpmax Scaling Factor"
+description: "Dimensionless multiplier on the temperature-adjusted C4 PEP carboxylation capacity: Vpmax_actual = Vpmax(T) * vpmax_scaling (farquhar_photosynthesis, C4 path only). Optional input: when absent the C4 path takes vcmax_scaling, whose own absence is the identity 1. No relic Functor writes it; it is supplied as forcing, like vcmax_scaling and jmax_scaling."
+kind: forcing
+dimension:
+  udunits: "1"
+  cf_standard_name: null
+support:
+  spatial_kind: leaf
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Collatz, G.J., Ribas-Carbo, M. and Berry, J.A. (1992). Coupled photosynthesis-stomatal conductance model for leaves of C4 plants. Aust. J. Plant Physiol. 19, 519-538"
+numerics:
+  # Non-negative multiplier; the reader checks only finiteness.
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies: []
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/biosphere/photosynthesis/farquhar.py"
+  runtime_role: "c4_pep_capacity_scaling_input"
+  runtime_writer: null
+  note: "Reader: FarquharPhotosynthesis C4 path (metadata input_variables and optional_input_variables; read with vcmax_scaling as the absent-value substitute; Vpmax_actual = Vpmax(T) * vpmax_scaling; non-finite values raise). No RELIC Functor writes vpmax_scaling."

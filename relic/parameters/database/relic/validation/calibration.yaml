@@ -1,0 +1,611 @@
+schema_version: 2.0.0
+tier: relic
+namespace: validation.calibration
+description: Thresholds of the calibration result validator (relic.parameters.calibration.validator) for convergence,
+  parameter bounds, goodness of fit and parameter uncertainty
+metadata:
+  version: 1.0.0
+  created_by: relic
+parameters:
+  validation.calibration.convergence.min_iterations:
+    value: 10
+    default: 10
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 10000000
+    category: validation_parameter
+    description: ConvergenceValidationRule warns when a calibration ran fewer iterations than this count. RELIC convention
+      value, not a literature value.
+    references:
+    - RELIC convention value (no literature value; documented as an operational choice)
+    tags:
+    - validation
+    - calibration
+    - convergence
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  validation.calibration.convergence.max_stagnation_ratio:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1.0
+    category: validation_parameter
+    description: ConvergenceValidationRule warns about stagnation when the constant tail of the convergence history exceeds
+      this fraction of all iterations. RELIC convention value, not a literature value.
+    references:
+    - RELIC convention value (no literature value; documented as an operational choice)
+    tags:
+    - validation
+    - calibration
+    - convergence
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  validation.calibration.convergence.min_total_improvement:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - .inf
+    category: validation_parameter
+    description: ConvergenceValidationRule warns when the objective improved by less than this amount between the first and
+      the last entry of the convergence history (L_0 - L_last < threshold). The threshold carries the units of the
+      calibration objective function; RELIC convention value, not a literature value.
+    references:
+    - RELIC convention value (no literature value; documented as an operational choice)
+    tags:
+    - validation
+    - calibration
+    - convergence
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  validation.calibration.bounds.tolerance:
+    value: 1.0e-10
+    default: 1.0e-10
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1.0
+    category: validation_parameter
+    description: Absolute numerical tolerance of ParameterBoundsValidationRule for bound violations and for reporting an
+      optimized value that sits on a bound, in the units of each calibrated parameter. RELIC convention value, not a
+      literature value.
+    references:
+    - RELIC convention value (no literature value; documented as an operational choice)
+    tags:
+    - validation
+    - calibration
+    - bounds
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  validation.calibration.statistical.min_r_squared:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1.0
+    category: validation_parameter
+    description: 'StatisticalValidationRule accepts the coefficient of determination only when R2 > 0.5. R2 is the square of
+      Pearson''s correlation coefficient r between simulated and observed values (range 0 to 1); Moriasi et al. (2007,
+      p. 887) state that typically values greater than 0.5 are considered acceptable (citing Santhi et al. 2001 and Van Liew
+      et al. 2003). Applicability: watershed model evaluation for continuous long-term simulation at a monthly time step;
+      the guidelines are to be adjusted for daily time steps, single events and project scope (p. 891).'
+    references:
+    - Moriasi, D.N., Arnold, J.G., Van Liew, M.W., Bingner, R.L., Harmel, R.D. & Veith, T.L. (2007). Model evaluation
+      guidelines for systematic quantification of accuracy in watershed simulations. Trans. ASABE 50(3), 885-900, p. 887
+    tags:
+    - validation
+    - calibration
+    - goodness_of_fit
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  validation.calibration.statistical.min_nash_sutcliffe:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - -.inf
+    - 1.0
+    category: validation_parameter
+    description: 'StatisticalValidationRule accepts the Nash-Sutcliffe efficiency only when NSE > 0.50, the lower bound of
+      the "satisfactory" rating of Moriasi et al. (2007, Table 4 and p. 885/891). Applicability: continuous long-term
+      watershed simulation at a monthly time step; Moriasi et al. recommend the stricter "good" and "very good" ratings for
+      manual calibration and ask for adjustment at daily time steps (p. 891).'
+    references:
+    - Moriasi, D.N., Arnold, J.G., Van Liew, M.W., Bingner, R.L., Harmel, R.D. & Veith, T.L. (2007). Model evaluation
+      guidelines for systematic quantification of accuracy in watershed simulations. Trans. ASABE 50(3), 885-900, Table 4
+    tags:
+    - validation
+    - calibration
+    - goodness_of_fit
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  validation.calibration.statistical.max_abs_percent_bias.streamflow:
+    value: 25.0
+    default: 25.0
+    units: '%'
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1000.0
+    category: validation_parameter
+    description: 'StatisticalValidationRule accepts the percent bias of a streamflow variable only when |PBIAS| < 25 %, the
+      bound of the "satisfactory" rating of Moriasi et al. (2007, Table 4) for streamflow at a monthly time step and
+      measured data of typical uncertainty.'
+    references:
+    - Moriasi, D.N., Arnold, J.G., Van Liew, M.W., Bingner, R.L., Harmel, R.D. & Veith, T.L. (2007). Model evaluation
+      guidelines for systematic quantification of accuracy in watershed simulations. Trans. ASABE 50(3), 885-900, Table 4
+    tags:
+    - validation
+    - calibration
+    - goodness_of_fit
+    - percent_bias
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  validation.calibration.statistical.max_abs_percent_bias.sediment:
+    value: 55.0
+    default: 55.0
+    units: '%'
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1000.0
+    category: validation_parameter
+    description: 'StatisticalValidationRule accepts the percent bias of a sediment variable only when |PBIAS| < 55 %, the
+      bound of the "satisfactory" rating of Moriasi et al. (2007, Table 4) for sediment at a monthly time step and measured
+      data of typical uncertainty.'
+    references:
+    - Moriasi, D.N., Arnold, J.G., Van Liew, M.W., Bingner, R.L., Harmel, R.D. & Veith, T.L. (2007). Model evaluation
+      guidelines for systematic quantification of accuracy in watershed simulations. Trans. ASABE 50(3), 885-900, Table 4
+    tags:
+    - validation
+    - calibration
+    - goodness_of_fit
+    - percent_bias
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  validation.calibration.statistical.max_abs_percent_bias.nitrogen:
+    value: 70.0
+    default: 70.0
+    units: '%'
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1000.0
+    category: validation_parameter
+    description: 'StatisticalValidationRule accepts the percent bias of a nitrogen variable only when |PBIAS| < 70 %, the
+      bound of the "satisfactory" rating of Moriasi et al. (2007, Table 4) for N and P at a monthly time step and measured
+      data of typical uncertainty.'
+    references:
+    - Moriasi, D.N., Arnold, J.G., Van Liew, M.W., Bingner, R.L., Harmel, R.D. & Veith, T.L. (2007). Model evaluation
+      guidelines for systematic quantification of accuracy in watershed simulations. Trans. ASABE 50(3), 885-900, Table 4
+    tags:
+    - validation
+    - calibration
+    - goodness_of_fit
+    - percent_bias
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  validation.calibration.statistical.max_abs_percent_bias.phosphorus:
+    value: 70.0
+    default: 70.0
+    units: '%'
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1000.0
+    category: validation_parameter
+    description: 'StatisticalValidationRule accepts the percent bias of a phosphorus variable only when |PBIAS| < 70 %, the
+      bound of the "satisfactory" rating of Moriasi et al. (2007, Table 4) for N and P at a monthly time step and measured
+      data of typical uncertainty.'
+    references:
+    - Moriasi, D.N., Arnold, J.G., Van Liew, M.W., Bingner, R.L., Harmel, R.D. & Veith, T.L. (2007). Model evaluation
+      guidelines for systematic quantification of accuracy in watershed simulations. Trans. ASABE 50(3), 885-900, Table 4
+    tags:
+    - validation
+    - calibration
+    - goodness_of_fit
+    - percent_bias
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  validation.calibration.uncertainty.max_relative_uncertainty:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - .inf
+    category: validation_parameter
+    description: UncertaintyValidationRule warns when the coefficient of variation std / |theta| of a calibrated parameter
+      exceeds this value. RELIC convention value, not a literature value.
+    references:
+    - RELIC convention value (no literature value; documented as an operational choice)
+    tags:
+    - validation
+    - calibration
+    - uncertainty
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  validation.calibration.performance_rating.nse_very_good_min:
+    value: 0.75
+    default: 0.75
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1.0
+    category: validation_parameter
+    description: 'Lower bound (exclusive) of the "very good" Nash-Sutcliffe rating of Moriasi et al. (2007, Table 4): very good if 0.75 < NSE <= 1.00, monthly time step. The "satisfactory" lower bound is validation.calibration.statistical.min_nash_sutcliffe.'
+    references:
+    - Moriasi, D.N., Arnold, J.G., Van Liew, M.W., Bingner, R.L., Harmel, R.D. & Veith, T.L. (2007). Model evaluation
+      guidelines for systematic quantification of accuracy in watershed simulations. Trans. ASABE 50(3), 885-900, Table 4
+    tags:
+    - validation
+    - calibration
+    - performance_rating
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  validation.calibration.performance_rating.nse_good_min:
+    value: 0.65
+    default: 0.65
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1.0
+    category: validation_parameter
+    description: 'Lower bound (exclusive) of the "good" Nash-Sutcliffe rating of Moriasi et al. (2007, Table 4): good if 0.65 < NSE <= 0.75, monthly time step.'
+    references:
+    - Moriasi, D.N., Arnold, J.G., Van Liew, M.W., Bingner, R.L., Harmel, R.D. & Veith, T.L. (2007). Model evaluation
+      guidelines for systematic quantification of accuracy in watershed simulations. Trans. ASABE 50(3), 885-900, Table 4
+    tags:
+    - validation
+    - calibration
+    - performance_rating
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  validation.calibration.performance_rating.percent_bias_very_good_max.streamflow:
+    value: 10.0
+    default: 10.0
+    units: '%'
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1000.0
+    category: validation_parameter
+    description: 'Upper bound (exclusive) of the "very good" percent-bias rating for streamflow in Moriasi et al. (2007, Table 4): very good if |PBIAS| < 10 %, monthly time step.'
+    references:
+    - Moriasi, D.N., Arnold, J.G., Van Liew, M.W., Bingner, R.L., Harmel, R.D. & Veith, T.L. (2007). Model evaluation
+      guidelines for systematic quantification of accuracy in watershed simulations. Trans. ASABE 50(3), 885-900, Table 4
+    tags:
+    - validation
+    - calibration
+    - performance_rating
+    - percent_bias
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  validation.calibration.performance_rating.percent_bias_good_max.streamflow:
+    value: 15.0
+    default: 15.0
+    units: '%'
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1000.0
+    category: validation_parameter
+    description: 'Upper bound (exclusive) of the "good" percent-bias rating for streamflow in Moriasi et al. (2007, Table 4): good if 10 <= |PBIAS| < 15 %, monthly time step. The "satisfactory" bound is validation.calibration.statistical.max_abs_percent_bias.streamflow.'
+    references:
+    - Moriasi, D.N., Arnold, J.G., Van Liew, M.W., Bingner, R.L., Harmel, R.D. & Veith, T.L. (2007). Model evaluation
+      guidelines for systematic quantification of accuracy in watershed simulations. Trans. ASABE 50(3), 885-900, Table 4
+    tags:
+    - validation
+    - calibration
+    - performance_rating
+    - percent_bias
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  validation.calibration.performance_rating.percent_bias_very_good_max.sediment:
+    value: 15.0
+    default: 15.0
+    units: '%'
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1000.0
+    category: validation_parameter
+    description: 'Upper bound (exclusive) of the "very good" percent-bias rating for sediment in Moriasi et al. (2007, Table 4): very good if |PBIAS| < 15 %, monthly time step.'
+    references:
+    - Moriasi, D.N., Arnold, J.G., Van Liew, M.W., Bingner, R.L., Harmel, R.D. & Veith, T.L. (2007). Model evaluation
+      guidelines for systematic quantification of accuracy in watershed simulations. Trans. ASABE 50(3), 885-900, Table 4
+    tags:
+    - validation
+    - calibration
+    - performance_rating
+    - percent_bias
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  validation.calibration.performance_rating.percent_bias_good_max.sediment:
+    value: 30.0
+    default: 30.0
+    units: '%'
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1000.0
+    category: validation_parameter
+    description: 'Upper bound (exclusive) of the "good" percent-bias rating for sediment in Moriasi et al. (2007, Table 4): good if 15 <= |PBIAS| < 30 %, monthly time step. The "satisfactory" bound is validation.calibration.statistical.max_abs_percent_bias.sediment.'
+    references:
+    - Moriasi, D.N., Arnold, J.G., Van Liew, M.W., Bingner, R.L., Harmel, R.D. & Veith, T.L. (2007). Model evaluation
+      guidelines for systematic quantification of accuracy in watershed simulations. Trans. ASABE 50(3), 885-900, Table 4
+    tags:
+    - validation
+    - calibration
+    - performance_rating
+    - percent_bias
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  validation.calibration.performance_rating.percent_bias_very_good_max.nitrogen:
+    value: 25.0
+    default: 25.0
+    units: '%'
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1000.0
+    category: validation_parameter
+    description: 'Upper bound (exclusive) of the "very good" percent-bias rating for N and P in Moriasi et al. (2007, Table 4): very good if |PBIAS| < 25 %, monthly time step.'
+    references:
+    - Moriasi, D.N., Arnold, J.G., Van Liew, M.W., Bingner, R.L., Harmel, R.D. & Veith, T.L. (2007). Model evaluation
+      guidelines for systematic quantification of accuracy in watershed simulations. Trans. ASABE 50(3), 885-900, Table 4
+    tags:
+    - validation
+    - calibration
+    - performance_rating
+    - percent_bias
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  validation.calibration.performance_rating.percent_bias_good_max.nitrogen:
+    value: 40.0
+    default: 40.0
+    units: '%'
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1000.0
+    category: validation_parameter
+    description: 'Upper bound (exclusive) of the "good" percent-bias rating for N and P in Moriasi et al. (2007, Table 4): good if 25 <= |PBIAS| < 40 %, monthly time step. The "satisfactory" bound is validation.calibration.statistical.max_abs_percent_bias.nitrogen.'
+    references:
+    - Moriasi, D.N., Arnold, J.G., Van Liew, M.W., Bingner, R.L., Harmel, R.D. & Veith, T.L. (2007). Model evaluation
+      guidelines for systematic quantification of accuracy in watershed simulations. Trans. ASABE 50(3), 885-900, Table 4
+    tags:
+    - validation
+    - calibration
+    - performance_rating
+    - percent_bias
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  validation.calibration.performance_rating.percent_bias_very_good_max.phosphorus:
+    value: 25.0
+    default: 25.0
+    units: '%'
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1000.0
+    category: validation_parameter
+    description: 'Upper bound (exclusive) of the "very good" percent-bias rating for N and P in Moriasi et al. (2007, Table 4): very good if |PBIAS| < 25 %, monthly time step.'
+    references:
+    - Moriasi, D.N., Arnold, J.G., Van Liew, M.W., Bingner, R.L., Harmel, R.D. & Veith, T.L. (2007). Model evaluation
+      guidelines for systematic quantification of accuracy in watershed simulations. Trans. ASABE 50(3), 885-900, Table 4
+    tags:
+    - validation
+    - calibration
+    - performance_rating
+    - percent_bias
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  validation.calibration.performance_rating.percent_bias_good_max.phosphorus:
+    value: 40.0
+    default: 40.0
+    units: '%'
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1000.0
+    category: validation_parameter
+    description: 'Upper bound (exclusive) of the "good" percent-bias rating for N and P in Moriasi et al. (2007, Table 4): good if 25 <= |PBIAS| < 40 %, monthly time step. The "satisfactory" bound is validation.calibration.statistical.max_abs_percent_bias.phosphorus.'
+    references:
+    - Moriasi, D.N., Arnold, J.G., Van Liew, M.W., Bingner, R.L., Harmel, R.D. & Veith, T.L. (2007). Model evaluation
+      guidelines for systematic quantification of accuracy in watershed simulations. Trans. ASABE 50(3), 885-900, Table 4
+    tags:
+    - validation
+    - calibration
+    - performance_rating
+    - percent_bias
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  validation.calibration.cross_validation.max_nse_drop:
+    value: 0.2
+    default: 0.2
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - .inf
+    category: validation_parameter
+    description: 'CalibrationValidator.validate_cross_validation reports possible overfitting when the training NSE exceeds the mean validation NSE by more than this amount. RELIC convention value, not a literature value.'
+    references:
+    - RELIC convention value (no literature value; documented as an operational choice)
+    tags:
+    - validation
+    - calibration
+    - cross_validation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  validation.calibration.cross_validation.max_nse_std:
+    value: 0.15
+    default: 0.15
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - .inf
+    category: validation_parameter
+    description: 'CalibrationValidator.validate_cross_validation reports inconsistent validation performance when the standard deviation of the validation NSE values exceeds this amount. RELIC convention value, not a literature value.'
+    references:
+    - RELIC convention value (no literature value; documented as an operational choice)
+    tags:
+    - validation
+    - calibration
+    - cross_validation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'
+  validation.calibration.cross_validation.max_parameter_cv:
+    value: 0.3
+    default: 0.3
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - .inf
+    category: validation_parameter
+    description: 'CalibrationValidator.validate_cross_validation reports a poorly constrained parameter when the coefficient of variation std / |mean| of its values across validation runs exceeds this value. RELIC convention value, not a literature value.'
+    references:
+    - RELIC convention value (no literature value; documented as an operational choice)
+    tags:
+    - validation
+    - calibration
+    - cross_validation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-26T00:00:00Z'

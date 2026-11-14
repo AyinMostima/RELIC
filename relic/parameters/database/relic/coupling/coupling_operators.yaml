@@ -1,0 +1,158 @@
+schema_version: 2.0.0
+tier: relic
+namespace: coupling.operators
+description: Parameters for composable coupling operators
+metadata:
+  version: 1.0.0
+  created_by: relic
+parameters:
+  coupling.operators.conservation_fixer.method:
+    value: multiplicative
+    default: multiplicative
+    units: dimensionless
+    dtype: string
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+    category: configuration
+    description: Correction strategy for conservation fixer
+    references:
+    - Jones, P.W. (1999). Conservative remapping schemes.
+    tags:
+    - coupling
+    - conservation
+    dimension: dimensionless
+    requires_grad: false
+    allowed_values:
+    - multiplicative
+    - additive
+    provenance:
+      source: design
+      schema_version: 2.0.0
+  coupling.operators.conservation_fixer.tolerance:
+    value: 1.0e-12
+    default: 1.0e-12
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: numerical_parameter
+    description: Absolute tolerance for triggering conservation correction
+    references:
+    - Lauritzen et al. (2010). Atmospheric transport schemes.
+    tags:
+    - coupling
+    - conservation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: design
+      schema_version: 2.0.0
+  coupling.operators.temporal_lag.method:
+    value: linear
+    default: linear
+    units: dimensionless
+    dtype: string
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+    category: configuration
+    description: Temporal lag interpolation strategy
+    references:
+    - Balaji et al. (2006). Coupling interval effects.
+    tags:
+    - coupling
+    - temporal
+    dimension: dimensionless
+    requires_grad: false
+    allowed_values:
+    - linear
+    - exponential
+    provenance:
+      source: design
+      schema_version: 2.0.0
+  coupling.operators.temporal_lag.alpha:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: numerical_parameter
+    description: Exponential smoothing weight for temporal lag operator
+    references:
+    - Balaji et al. (2006). Coupling interval effects.
+    tags:
+    - coupling
+    - temporal
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: design
+      schema_version: 2.0.0
+  coupling.operators.constraint_projector.default_type:
+    value: non_negative
+    default: non_negative
+    units: dimensionless
+    dtype: string
+    bounds:
+    - -10000000000.0
+    - 10000000000.0
+    category: configuration
+    description: Default projector type for coupling constraint projection
+    references:
+    - Lauritzen et al. (2011). Shape-preserving transport.
+    tags:
+    - coupling
+    - constraints
+    dimension: dimensionless
+    requires_grad: false
+    allowed_values:
+    - non_negative
+    - bounded
+    - simplex
+    provenance:
+      source: design
+      schema_version: 2.0.0
+  coupling.operators.flux_kernel.transfer_coefficient:
+    value: 1.0
+    default: 1.0
+    units: m s-1
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1000.0
+    category: numerical_parameter
+    description: Transfer coefficient for coupling flux kernel
+    references:
+    - Clark et al. (2015). Inter-compartment flux computation.
+    tags:
+    - coupling
+    - flux
+    dimension: transport_coefficient
+    requires_grad: false
+    provenance:
+      source: design
+      schema_version: 2.0.0
+  coupling.operators.flux_kernel.interface_area:
+    value: 1.0
+    default: 1.0
+    units: m2
+    dtype: float32
+    bounds:
+    - 0.0
+    - 10000000000.0
+    category: numerical_parameter
+    description: Interface area used by coupling flux kernel
+    references:
+    - Clark et al. (2015). Inter-compartment flux computation.
+    tags:
+    - coupling
+    - flux
+    dimension: area
+    requires_grad: false
+    provenance:
+      source: design
+      schema_version: 2.0.0

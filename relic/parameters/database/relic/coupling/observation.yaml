@@ -1,0 +1,695 @@
+schema_version: 2.0.0
+tier: relic
+namespace: coupling.observation
+description: Numerical validation parameters for read-only observation operators
+metadata:
+  version: 1.0.0
+  created: '2026-07-29T00:00:00Z'
+  created_by: RELIC Publication Readiness
+  last_modified: '2026-07-30T00:00:00Z'
+parameters:
+  coupling.observation.tower_flux.support_closure_tolerance:
+    value: 1.0e-6
+    default: 1.0e-6
+    units: dimensionless
+    dtype: float64
+    bounds:
+      - 0.0
+      - 0.001
+    category: numerical_tolerance
+    description: Tolerance for normalized weights, raw footprint-kernel mass, and valid-data coverage to close to one
+    references:
+      - Kljun et al. (2015), doi:10.5194/gmd-8-3695-2015
+    tags:
+      - observation
+      - flux_footprint
+      - closure
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_contract
+      schema_version: 2.0.0
+      created_by: RELIC Publication Readiness
+      last_modified: '2026-07-29T00:00:00Z'
+      notes: Fail-closed tolerance; it is not a scientific coverage threshold
+  coupling.observation.tower_concentration.synthetic_measurement_heights:
+    value:
+      - 10.0
+      - 30.0
+      - 50.0
+    default: null
+    units: m
+    dtype: list
+    bounds:
+      - 0.0
+      - 500.0
+    category: spatial_configuration
+    description: Three independent receptor heights for the bounded ACP synthetic concentration profile
+    references:
+      - Stull (1988), An Introduction to Boundary Layer Meteorology
+      - Seinfeld and Pandis (2016), Atmospheric Chemistry and Physics
+    tags:
+      - observation
+      - tower_concentration
+      - synthetic_fixture
+      - measurement_height
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: RELIC ACP synthetic observation design
+      schema_version: 2.0.0
+      created_by: RELIC Three Papers G5
+      last_modified: '2026-07-30T00:00:00Z'
+      notes: Synthetic fixture geometry; not a site measurement default
+  coupling.observation.tower_concentration.synthetic_support_half_widths:
+    value:
+      - 5.0
+      - 5.0
+      - 5.0
+    default: null
+    units: m
+    dtype: list
+    bounds:
+      - 0.0
+      - 100.0
+    category: spatial_configuration
+    description: Half widths for finite vertical-overlap sensitivity tests at the three synthetic receptor heights
+    references:
+      - Stull (1988), An Introduction to Boundary Layer Meteorology
+    tags:
+      - observation
+      - tower_concentration
+      - synthetic_fixture
+      - vertical_support
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: RELIC ACP synthetic observation design
+      schema_version: 2.0.0
+      created_by: RELIC Three Papers G5
+      last_modified: '2026-07-30T00:00:00Z'
+      notes: Synthetic support width; not an instrument response default
+  coupling.observation.tower_concentration.window_duration:
+    value: 1800.0
+    default: 1800.0
+    units: s
+    dtype: float64
+    bounds:
+      - 1.0
+      - 86400.0
+    category: temporal_resolution
+    description: Duration of each non-overlapping synthetic concentration observation window
+    references:
+      - CF Metadata Conventions 1.8, cell_methods
+    tags:
+      - observation
+      - tower_concentration
+      - temporal_support
+    dimension: time
+    requires_grad: false
+    provenance:
+      source: RELIC ACP synthetic observation design
+      schema_version: 2.0.0
+      created_by: RELIC Three Papers G5
+      last_modified: '2026-07-30T00:00:00Z'
+  coupling.observation.tower_concentration.support_closure_tolerance:
+    value: 1.0e-9
+    default: 1.0e-9
+    units: dimensionless
+    dtype: float64
+    bounds:
+      - 0.0
+      - 0.001
+    category: numerical_tolerance
+    description: Numerical closure tolerance for vertical support rows and temporal window coverage
+    references:
+      - Higham (2002), Accuracy and Stability of Numerical Algorithms
+    tags:
+      - observation
+      - tower_concentration
+      - numerical_closure
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_contract
+      schema_version: 2.0.0
+      created_by: RELIC Three Papers G5
+      last_modified: '2026-07-30T00:00:00Z'
+      notes: Numerical tolerance only; not a data-quality threshold
+  coupling.observation.tower_concentration.profile_004_synthetic_qc.detection_limit_ppbv:
+    value:
+      - 0.001
+      - 0.001
+      - 0.001
+    default: null
+    units: ppbv
+    dtype: list
+    bounds:
+      - 0.0
+      - 1000.0
+    category: data_quality
+    description: Test-only detection limits for the three PROFILE-004 synthetic receptors
+    references:
+      - WMO (2021), Guide to Instruments and Methods of Observation, WMO-No. 8
+      - CF Metadata Conventions 1.8, quality flag attributes
+    tags:
+      - observation
+      - tower_concentration
+      - synthetic_fixture
+      - quality_control
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC ACP synthetic observation design
+      schema_version: 2.0.0
+      created_by: RELIC Three Papers G5
+      last_modified: '2026-07-30T00:00:00Z'
+      notes: Synthetic execution threshold; never a real-site instrument default
+  coupling.observation.tower_concentration.profile_004_synthetic_qc.valid_min_ppbv:
+    value:
+      - 0.0
+      - 0.0
+      - 0.0
+    default: null
+    units: ppbv
+    dtype: list
+    bounds:
+      - 0.0
+      - 1000.0
+    category: data_quality
+    description: Test-only lower valid bounds for the three PROFILE-004 synthetic receptors
+    references:
+      - WMO (2021), Guide to Instruments and Methods of Observation, WMO-No. 8
+      - CF Metadata Conventions 1.8, quality flag attributes
+    tags:
+      - observation
+      - tower_concentration
+      - synthetic_fixture
+      - quality_control
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC ACP synthetic observation design
+      schema_version: 2.0.0
+      created_by: RELIC Three Papers G5
+      last_modified: '2026-07-30T00:00:00Z'
+      notes: Synthetic execution threshold; never a real-site instrument default
+  coupling.observation.tower_concentration.profile_004_synthetic_qc.valid_max_ppbv:
+    value:
+      - 1000.0
+      - 1000.0
+      - 1000.0
+    default: null
+    units: ppbv
+    dtype: list
+    bounds:
+      - 0.001
+      - 1000000.0
+    category: data_quality
+    description: Test-only upper valid bounds for the three PROFILE-004 synthetic receptors
+    references:
+      - WMO (2021), Guide to Instruments and Methods of Observation, WMO-No. 8
+      - CF Metadata Conventions 1.8, quality flag attributes
+    tags:
+      - observation
+      - tower_concentration
+      - synthetic_fixture
+      - quality_control
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC ACP synthetic observation design
+      schema_version: 2.0.0
+      created_by: RELIC Three Papers G5
+      last_modified: '2026-07-30T00:00:00Z'
+      notes: Synthetic execution threshold; never a real-site instrument default
+  coupling.observation.tower_concentration.profile_004_synthetic_qc.base_weight:
+    value:
+      - 1.0
+      - 1.0
+      - 1.0
+    default: null
+    units: dimensionless
+    dtype: list
+    bounds:
+      - 0.0
+      - 1.0
+    category: weighting_parameter
+    description: Test-only base weights for the three PROFILE-004 synthetic receptors
+    references:
+      - WMO (2021), Guide to Instruments and Methods of Observation, WMO-No. 8
+      - CF Metadata Conventions 1.8, quality flag attributes
+    tags:
+      - observation
+      - tower_concentration
+      - synthetic_fixture
+      - quality_control
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC ACP synthetic observation design
+      schema_version: 2.0.0
+      created_by: RELIC Three Papers G5
+      last_modified: '2026-07-30T00:00:00Z'
+      notes: Synthetic execution weight; never a real-site instrument default
+  coupling.observation.state_feedback.background_error_variance:
+    value: 0.01
+    default: 0.01
+    units: dimensionless
+    dtype: float64
+    bounds:
+      - 1.0e-12
+      - 1.0e+6
+    category: model_parameter
+    description: "Background (model) error variance B of the fed-back state variable, in the state units squared (soil moisture m3 m-3 is dimensionless)"
+    references:
+      - Kalman (1960), Journal of Basic Engineering 82, 35-45
+      - Kalnay (2003), Atmospheric Modeling, Data Assimilation and Predictability, ch. 5
+    tags:
+      - observation
+      - state_feedback
+      - assimilation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_contract
+      schema_version: 2.0.0
+      created_by: RELIC repair G11-OBS
+      last_modified: '2026-09-14T00:00:00Z'
+  coupling.observation.state_feedback.observation_error_variance:
+    value: 0.04
+    default: 0.04
+    units: dimensionless
+    dtype: float64
+    bounds:
+      - 1.0e-12
+      - 1.0e+6
+    category: model_parameter
+    description: "Observation error variance R of the direct observation, in the state units squared"
+    references:
+      - Kalman (1960), Journal of Basic Engineering 82, 35-45
+      - Kalnay (2003), Atmospheric Modeling, Data Assimilation and Predictability, ch. 5
+    tags:
+      - observation
+      - state_feedback
+      - assimilation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_contract
+      schema_version: 2.0.0
+      created_by: RELIC repair G11-OBS
+      last_modified: '2026-09-14T00:00:00Z'
+  coupling.observation.state_feedback.max_normalized_innovation:
+    value: 4.0
+    default: 4.0
+    units: dimensionless
+    dtype: float64
+    bounds:
+      - 0.5
+      - 100.0
+    category: numerical_tolerance
+    description: "Innovation gate nu_max: an analysis with |d| / sqrt(B + R) above this value is refused as a whole"
+    references:
+      - Kalman (1960), Journal of Basic Engineering 82, 35-45
+      - Kalnay (2003), Atmospheric Modeling, Data Assimilation and Predictability, ch. 5
+    tags:
+      - observation
+      - state_feedback
+      - assimilation
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_contract
+      schema_version: 2.0.0
+      created_by: RELIC repair G11-OBS
+      last_modified: '2026-09-14T00:00:00Z'
+  coupling.observation.hcho_steady_state_column.marais2012_standard.low_nox_slope:
+    value: 1.34e-12
+    default: 1.34e-12
+    units: s cm2 molecule-1
+    dtype: float64
+    bounds:
+      - 9.8e-13
+      - 1.7e-12
+    category: model_parameter
+    description: "Slope m of S = m Omega_NO2 + c for Omega_NO2 <= 1e15 molecule cm-2; HCHO column-emission sensitivity S of Omega_HCHO = S E_ISOP + B, standard GEOS-Chem isoprene oxidation scheme (primary); printed 1340 +- 120 s per 1e15 molecule cm-2; bounds are the value +- 3 standard deviations"
+    references:
+      - "Marais, E. A., Jacob, D. J., Kurosu, T. P., Chance, K., Murphy, J. G., Reeves, C., Mills, G., Casadio, S., Millet, D. B., Barkley, M. P., Paulot, F. and Mao, J. (2012) Isoprene emissions in Africa inferred from OMI observations of formaldehyde columns, Atmos. Chem. Phys. 12, 6219-6235, doi:10.5194/acp-12-6219-2012; p. 6229, Sect. 4.2 and Fig. 9 inset (reduced-major-axis fit, jackknife standard deviations, 2 x 2.5 degree gridsquare-months over Africa in 2006 at 12:00-15:00 LT)"
+      - "Marais, E. A., Jacob, D. J., Kurosu, T. P., Chance, K., Murphy, J. G., Reeves, C., Mills, G., Casadio, S., Millet, D. B., Barkley, M. P., Paulot, F. and Mao, J. (2012) Isoprene emissions in Africa inferred from OMI observations of formaldehyde columns, Atmos. Chem. Phys. 12, 6219-6235, doi:10.5194/acp-12-6219-2012; p. 6225, Eq. (2) and text: E_ISOP in atoms C cm-2 s-1, so S is a per-carbon sensitivity"
+    tags:
+      - observation
+      - hcho_column
+      - satellite
+      - marais2012_standard
+    dimension: time_per_areal_amount
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: RELIC CR-A-03 HCHO operator (lane A1e)
+      last_modified: '2026-10-18T00:00:00Z'
+      notes: "Values read from the rendered Fig. 9 inset and caption; source extract BVOCsdata/data/paper_results/shared/scientific_source_qualification/20261018_cr_a03_sources_01/source_quotes.json items 5 and 5b; registered by paper-3 design g02_3_hcho_operator_amendment_20261018."
+  coupling.observation.hcho_steady_state_column.marais2012_standard.low_nox_slope_standard_deviation:
+    value: 1.2e-13
+    default: 1.2e-13
+    units: s cm2 molecule-1
+    dtype: float64
+    bounds:
+      - 0.0e+00
+      - .inf
+    category: model_parameter
+    description: "One-sigma jackknife standard deviation of m (standard GEOS-Chem isoprene oxidation scheme (primary)); recorded for the uncertainty budget, not applied by the operator"
+    references:
+      - "Marais, E. A., Jacob, D. J., Kurosu, T. P., Chance, K., Murphy, J. G., Reeves, C., Mills, G., Casadio, S., Millet, D. B., Barkley, M. P., Paulot, F. and Mao, J. (2012) Isoprene emissions in Africa inferred from OMI observations of formaldehyde columns, Atmos. Chem. Phys. 12, 6219-6235, doi:10.5194/acp-12-6219-2012; p. 6229, Sect. 4.2 and Fig. 9 inset (reduced-major-axis fit, jackknife standard deviations, 2 x 2.5 degree gridsquare-months over Africa in 2006 at 12:00-15:00 LT)"
+      - "Marais, E. A., Jacob, D. J., Kurosu, T. P., Chance, K., Murphy, J. G., Reeves, C., Mills, G., Casadio, S., Millet, D. B., Barkley, M. P., Paulot, F. and Mao, J. (2012) Isoprene emissions in Africa inferred from OMI observations of formaldehyde columns, Atmos. Chem. Phys. 12, 6219-6235, doi:10.5194/acp-12-6219-2012; p. 6225, Eq. (2) and text: E_ISOP in atoms C cm-2 s-1, so S is a per-carbon sensitivity"
+    tags:
+      - observation
+      - hcho_column
+      - satellite
+      - marais2012_standard
+      - uncertainty
+    dimension: time_per_areal_amount
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: RELIC CR-A-03 HCHO operator (lane A1e)
+      last_modified: '2026-10-18T00:00:00Z'
+      notes: "Values read from the rendered Fig. 9 inset and caption; source extract BVOCsdata/data/paper_results/shared/scientific_source_qualification/20261018_cr_a03_sources_01/source_quotes.json items 5 and 5b; registered by paper-3 design g02_3_hcho_operator_amendment_20261018."
+  coupling.observation.hcho_steady_state_column.marais2012_standard.low_nox_intercept:
+    value: 5.23e+02
+    default: 5.23e+02
+    units: s
+    dtype: float64
+    bounds:
+      - 2.65e+02
+      - 7.81e+02
+    category: model_parameter
+    description: "Intercept c of S = m Omega_NO2 + c for Omega_NO2 <= 1e15 molecule cm-2; HCHO column-emission sensitivity S of Omega_HCHO = S E_ISOP + B, standard GEOS-Chem isoprene oxidation scheme (primary); printed 523 +- 86 s; bounds are the value +- 3 standard deviations"
+    references:
+      - "Marais, E. A., Jacob, D. J., Kurosu, T. P., Chance, K., Murphy, J. G., Reeves, C., Mills, G., Casadio, S., Millet, D. B., Barkley, M. P., Paulot, F. and Mao, J. (2012) Isoprene emissions in Africa inferred from OMI observations of formaldehyde columns, Atmos. Chem. Phys. 12, 6219-6235, doi:10.5194/acp-12-6219-2012; p. 6229, Sect. 4.2 and Fig. 9 inset (reduced-major-axis fit, jackknife standard deviations, 2 x 2.5 degree gridsquare-months over Africa in 2006 at 12:00-15:00 LT)"
+      - "Marais, E. A., Jacob, D. J., Kurosu, T. P., Chance, K., Murphy, J. G., Reeves, C., Mills, G., Casadio, S., Millet, D. B., Barkley, M. P., Paulot, F. and Mao, J. (2012) Isoprene emissions in Africa inferred from OMI observations of formaldehyde columns, Atmos. Chem. Phys. 12, 6219-6235, doi:10.5194/acp-12-6219-2012; p. 6225, Eq. (2) and text: E_ISOP in atoms C cm-2 s-1, so S is a per-carbon sensitivity"
+    tags:
+      - observation
+      - hcho_column
+      - satellite
+      - marais2012_standard
+    dimension: time
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: RELIC CR-A-03 HCHO operator (lane A1e)
+      last_modified: '2026-10-18T00:00:00Z'
+      notes: "Values read from the rendered Fig. 9 inset and caption; source extract BVOCsdata/data/paper_results/shared/scientific_source_qualification/20261018_cr_a03_sources_01/source_quotes.json items 5 and 5b; registered by paper-3 design g02_3_hcho_operator_amendment_20261018."
+  coupling.observation.hcho_steady_state_column.marais2012_standard.low_nox_intercept_standard_deviation:
+    value: 8.6e+01
+    default: 8.6e+01
+    units: s
+    dtype: float64
+    bounds:
+      - 0.0e+00
+      - .inf
+    category: model_parameter
+    description: "One-sigma jackknife standard deviation of c (standard GEOS-Chem isoprene oxidation scheme (primary)); recorded for the uncertainty budget, not applied by the operator"
+    references:
+      - "Marais, E. A., Jacob, D. J., Kurosu, T. P., Chance, K., Murphy, J. G., Reeves, C., Mills, G., Casadio, S., Millet, D. B., Barkley, M. P., Paulot, F. and Mao, J. (2012) Isoprene emissions in Africa inferred from OMI observations of formaldehyde columns, Atmos. Chem. Phys. 12, 6219-6235, doi:10.5194/acp-12-6219-2012; p. 6229, Sect. 4.2 and Fig. 9 inset (reduced-major-axis fit, jackknife standard deviations, 2 x 2.5 degree gridsquare-months over Africa in 2006 at 12:00-15:00 LT)"
+      - "Marais, E. A., Jacob, D. J., Kurosu, T. P., Chance, K., Murphy, J. G., Reeves, C., Mills, G., Casadio, S., Millet, D. B., Barkley, M. P., Paulot, F. and Mao, J. (2012) Isoprene emissions in Africa inferred from OMI observations of formaldehyde columns, Atmos. Chem. Phys. 12, 6219-6235, doi:10.5194/acp-12-6219-2012; p. 6225, Eq. (2) and text: E_ISOP in atoms C cm-2 s-1, so S is a per-carbon sensitivity"
+    tags:
+      - observation
+      - hcho_column
+      - satellite
+      - marais2012_standard
+      - uncertainty
+    dimension: time
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: RELIC CR-A-03 HCHO operator (lane A1e)
+      last_modified: '2026-10-18T00:00:00Z'
+      notes: "Values read from the rendered Fig. 9 inset and caption; source extract BVOCsdata/data/paper_results/shared/scientific_source_qualification/20261018_cr_a03_sources_01/source_quotes.json items 5 and 5b; registered by paper-3 design g02_3_hcho_operator_amendment_20261018."
+  coupling.observation.hcho_steady_state_column.marais2012_standard.high_nox_constant:
+    value: 1.87e+03
+    default: 1.87e+03
+    units: s
+    dtype: float64
+    bounds:
+      - 1.117e+03
+      - 2.623e+03
+    category: model_parameter
+    description: "Constant S for Omega_NO2 > 1e15 molecule cm-2 (mean of the high-NOx bins); HCHO column-emission sensitivity S of Omega_HCHO = S E_ISOP + B, standard GEOS-Chem isoprene oxidation scheme (primary); printed 1870 +- 251 s; bounds are the value +- 3 standard deviations"
+    references:
+      - "Marais, E. A., Jacob, D. J., Kurosu, T. P., Chance, K., Murphy, J. G., Reeves, C., Mills, G., Casadio, S., Millet, D. B., Barkley, M. P., Paulot, F. and Mao, J. (2012) Isoprene emissions in Africa inferred from OMI observations of formaldehyde columns, Atmos. Chem. Phys. 12, 6219-6235, doi:10.5194/acp-12-6219-2012; p. 6229, Sect. 4.2 and Fig. 9 inset (reduced-major-axis fit, jackknife standard deviations, 2 x 2.5 degree gridsquare-months over Africa in 2006 at 12:00-15:00 LT)"
+      - "Marais, E. A., Jacob, D. J., Kurosu, T. P., Chance, K., Murphy, J. G., Reeves, C., Mills, G., Casadio, S., Millet, D. B., Barkley, M. P., Paulot, F. and Mao, J. (2012) Isoprene emissions in Africa inferred from OMI observations of formaldehyde columns, Atmos. Chem. Phys. 12, 6219-6235, doi:10.5194/acp-12-6219-2012; p. 6225, Eq. (2) and text: E_ISOP in atoms C cm-2 s-1, so S is a per-carbon sensitivity"
+    tags:
+      - observation
+      - hcho_column
+      - satellite
+      - marais2012_standard
+    dimension: time
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: RELIC CR-A-03 HCHO operator (lane A1e)
+      last_modified: '2026-10-18T00:00:00Z'
+      notes: "Values read from the rendered Fig. 9 inset and caption; source extract BVOCsdata/data/paper_results/shared/scientific_source_qualification/20261018_cr_a03_sources_01/source_quotes.json items 5 and 5b; registered by paper-3 design g02_3_hcho_operator_amendment_20261018."
+  coupling.observation.hcho_steady_state_column.marais2012_standard.high_nox_constant_standard_deviation:
+    value: 2.51e+02
+    default: 2.51e+02
+    units: s
+    dtype: float64
+    bounds:
+      - 0.0e+00
+      - .inf
+    category: model_parameter
+    description: "One-sigma jackknife standard deviation of S_high (standard GEOS-Chem isoprene oxidation scheme (primary)); recorded for the uncertainty budget, not applied by the operator"
+    references:
+      - "Marais, E. A., Jacob, D. J., Kurosu, T. P., Chance, K., Murphy, J. G., Reeves, C., Mills, G., Casadio, S., Millet, D. B., Barkley, M. P., Paulot, F. and Mao, J. (2012) Isoprene emissions in Africa inferred from OMI observations of formaldehyde columns, Atmos. Chem. Phys. 12, 6219-6235, doi:10.5194/acp-12-6219-2012; p. 6229, Sect. 4.2 and Fig. 9 inset (reduced-major-axis fit, jackknife standard deviations, 2 x 2.5 degree gridsquare-months over Africa in 2006 at 12:00-15:00 LT)"
+      - "Marais, E. A., Jacob, D. J., Kurosu, T. P., Chance, K., Murphy, J. G., Reeves, C., Mills, G., Casadio, S., Millet, D. B., Barkley, M. P., Paulot, F. and Mao, J. (2012) Isoprene emissions in Africa inferred from OMI observations of formaldehyde columns, Atmos. Chem. Phys. 12, 6219-6235, doi:10.5194/acp-12-6219-2012; p. 6225, Eq. (2) and text: E_ISOP in atoms C cm-2 s-1, so S is a per-carbon sensitivity"
+    tags:
+      - observation
+      - hcho_column
+      - satellite
+      - marais2012_standard
+      - uncertainty
+    dimension: time
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: RELIC CR-A-03 HCHO operator (lane A1e)
+      last_modified: '2026-10-18T00:00:00Z'
+      notes: "Values read from the rendered Fig. 9 inset and caption; source extract BVOCsdata/data/paper_results/shared/scientific_source_qualification/20261018_cr_a03_sources_01/source_quotes.json items 5 and 5b; registered by paper-3 design g02_3_hcho_operator_amendment_20261018."
+  coupling.observation.hcho_steady_state_column.marais2012_paulot.low_nox_slope:
+    value: 1.6e-12
+    default: 1.6e-12
+    units: s cm2 molecule-1
+    dtype: float64
+    bounds:
+      - 1.12e-12
+      - 2.08e-12
+    category: model_parameter
+    description: "Slope m of S = m Omega_NO2 + c for Omega_NO2 <= 1e15 molecule cm-2; HCHO column-emission sensitivity S of Omega_HCHO = S E_ISOP + B, Paulot isoprene oxidation scheme (sensitivity); printed 1600 +- 160 s per 1e15 molecule cm-2; bounds are the value +- 3 standard deviations"
+    references:
+      - "Marais, E. A., Jacob, D. J., Kurosu, T. P., Chance, K., Murphy, J. G., Reeves, C., Mills, G., Casadio, S., Millet, D. B., Barkley, M. P., Paulot, F. and Mao, J. (2012) Isoprene emissions in Africa inferred from OMI observations of formaldehyde columns, Atmos. Chem. Phys. 12, 6219-6235, doi:10.5194/acp-12-6219-2012; p. 6229, Sect. 4.2 and Fig. 9 inset (reduced-major-axis fit, jackknife standard deviations, 2 x 2.5 degree gridsquare-months over Africa in 2006 at 12:00-15:00 LT)"
+      - "Marais, E. A., Jacob, D. J., Kurosu, T. P., Chance, K., Murphy, J. G., Reeves, C., Mills, G., Casadio, S., Millet, D. B., Barkley, M. P., Paulot, F. and Mao, J. (2012) Isoprene emissions in Africa inferred from OMI observations of formaldehyde columns, Atmos. Chem. Phys. 12, 6219-6235, doi:10.5194/acp-12-6219-2012; p. 6225, Eq. (2) and text: E_ISOP in atoms C cm-2 s-1, so S is a per-carbon sensitivity"
+    tags:
+      - observation
+      - hcho_column
+      - satellite
+      - marais2012_paulot
+    dimension: time_per_areal_amount
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: RELIC CR-A-03 HCHO operator (lane A1e)
+      last_modified: '2026-10-18T00:00:00Z'
+      notes: "Values read from the rendered Fig. 9 inset and caption; source extract BVOCsdata/data/paper_results/shared/scientific_source_qualification/20261018_cr_a03_sources_01/source_quotes.json items 5 and 5b; registered by paper-3 design g02_3_hcho_operator_amendment_20261018."
+  coupling.observation.hcho_steady_state_column.marais2012_paulot.low_nox_slope_standard_deviation:
+    value: 1.6e-13
+    default: 1.6e-13
+    units: s cm2 molecule-1
+    dtype: float64
+    bounds:
+      - 0.0e+00
+      - .inf
+    category: model_parameter
+    description: "One-sigma jackknife standard deviation of m (Paulot isoprene oxidation scheme (sensitivity)); recorded for the uncertainty budget, not applied by the operator"
+    references:
+      - "Marais, E. A., Jacob, D. J., Kurosu, T. P., Chance, K., Murphy, J. G., Reeves, C., Mills, G., Casadio, S., Millet, D. B., Barkley, M. P., Paulot, F. and Mao, J. (2012) Isoprene emissions in Africa inferred from OMI observations of formaldehyde columns, Atmos. Chem. Phys. 12, 6219-6235, doi:10.5194/acp-12-6219-2012; p. 6229, Sect. 4.2 and Fig. 9 inset (reduced-major-axis fit, jackknife standard deviations, 2 x 2.5 degree gridsquare-months over Africa in 2006 at 12:00-15:00 LT)"
+      - "Marais, E. A., Jacob, D. J., Kurosu, T. P., Chance, K., Murphy, J. G., Reeves, C., Mills, G., Casadio, S., Millet, D. B., Barkley, M. P., Paulot, F. and Mao, J. (2012) Isoprene emissions in Africa inferred from OMI observations of formaldehyde columns, Atmos. Chem. Phys. 12, 6219-6235, doi:10.5194/acp-12-6219-2012; p. 6225, Eq. (2) and text: E_ISOP in atoms C cm-2 s-1, so S is a per-carbon sensitivity"
+    tags:
+      - observation
+      - hcho_column
+      - satellite
+      - marais2012_paulot
+      - uncertainty
+    dimension: time_per_areal_amount
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: RELIC CR-A-03 HCHO operator (lane A1e)
+      last_modified: '2026-10-18T00:00:00Z'
+      notes: "Values read from the rendered Fig. 9 inset and caption; source extract BVOCsdata/data/paper_results/shared/scientific_source_qualification/20261018_cr_a03_sources_01/source_quotes.json items 5 and 5b; registered by paper-3 design g02_3_hcho_operator_amendment_20261018."
+  coupling.observation.hcho_steady_state_column.marais2012_paulot.low_nox_intercept:
+    value: 7.21e+02
+    default: 7.21e+02
+    units: s
+    dtype: float64
+    bounds:
+      - 3.79e+02
+      - 1.063e+03
+    category: model_parameter
+    description: "Intercept c of S = m Omega_NO2 + c for Omega_NO2 <= 1e15 molecule cm-2; HCHO column-emission sensitivity S of Omega_HCHO = S E_ISOP + B, Paulot isoprene oxidation scheme (sensitivity); printed 721 +- 114 s; bounds are the value +- 3 standard deviations"
+    references:
+      - "Marais, E. A., Jacob, D. J., Kurosu, T. P., Chance, K., Murphy, J. G., Reeves, C., Mills, G., Casadio, S., Millet, D. B., Barkley, M. P., Paulot, F. and Mao, J. (2012) Isoprene emissions in Africa inferred from OMI observations of formaldehyde columns, Atmos. Chem. Phys. 12, 6219-6235, doi:10.5194/acp-12-6219-2012; p. 6229, Sect. 4.2 and Fig. 9 inset (reduced-major-axis fit, jackknife standard deviations, 2 x 2.5 degree gridsquare-months over Africa in 2006 at 12:00-15:00 LT)"
+      - "Marais, E. A., Jacob, D. J., Kurosu, T. P., Chance, K., Murphy, J. G., Reeves, C., Mills, G., Casadio, S., Millet, D. B., Barkley, M. P., Paulot, F. and Mao, J. (2012) Isoprene emissions in Africa inferred from OMI observations of formaldehyde columns, Atmos. Chem. Phys. 12, 6219-6235, doi:10.5194/acp-12-6219-2012; p. 6225, Eq. (2) and text: E_ISOP in atoms C cm-2 s-1, so S is a per-carbon sensitivity"
+    tags:
+      - observation
+      - hcho_column
+      - satellite
+      - marais2012_paulot
+    dimension: time
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: RELIC CR-A-03 HCHO operator (lane A1e)
+      last_modified: '2026-10-18T00:00:00Z'
+      notes: "Values read from the rendered Fig. 9 inset and caption; source extract BVOCsdata/data/paper_results/shared/scientific_source_qualification/20261018_cr_a03_sources_01/source_quotes.json items 5 and 5b; registered by paper-3 design g02_3_hcho_operator_amendment_20261018."
+  coupling.observation.hcho_steady_state_column.marais2012_paulot.low_nox_intercept_standard_deviation:
+    value: 1.14e+02
+    default: 1.14e+02
+    units: s
+    dtype: float64
+    bounds:
+      - 0.0e+00
+      - .inf
+    category: model_parameter
+    description: "One-sigma jackknife standard deviation of c (Paulot isoprene oxidation scheme (sensitivity)); recorded for the uncertainty budget, not applied by the operator"
+    references:
+      - "Marais, E. A., Jacob, D. J., Kurosu, T. P., Chance, K., Murphy, J. G., Reeves, C., Mills, G., Casadio, S., Millet, D. B., Barkley, M. P., Paulot, F. and Mao, J. (2012) Isoprene emissions in Africa inferred from OMI observations of formaldehyde columns, Atmos. Chem. Phys. 12, 6219-6235, doi:10.5194/acp-12-6219-2012; p. 6229, Sect. 4.2 and Fig. 9 inset (reduced-major-axis fit, jackknife standard deviations, 2 x 2.5 degree gridsquare-months over Africa in 2006 at 12:00-15:00 LT)"
+      - "Marais, E. A., Jacob, D. J., Kurosu, T. P., Chance, K., Murphy, J. G., Reeves, C., Mills, G., Casadio, S., Millet, D. B., Barkley, M. P., Paulot, F. and Mao, J. (2012) Isoprene emissions in Africa inferred from OMI observations of formaldehyde columns, Atmos. Chem. Phys. 12, 6219-6235, doi:10.5194/acp-12-6219-2012; p. 6225, Eq. (2) and text: E_ISOP in atoms C cm-2 s-1, so S is a per-carbon sensitivity"
+    tags:
+      - observation
+      - hcho_column
+      - satellite
+      - marais2012_paulot
+      - uncertainty
+    dimension: time
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: RELIC CR-A-03 HCHO operator (lane A1e)
+      last_modified: '2026-10-18T00:00:00Z'
+      notes: "Values read from the rendered Fig. 9 inset and caption; source extract BVOCsdata/data/paper_results/shared/scientific_source_qualification/20261018_cr_a03_sources_01/source_quotes.json items 5 and 5b; registered by paper-3 design g02_3_hcho_operator_amendment_20261018."
+  coupling.observation.hcho_steady_state_column.marais2012_paulot.high_nox_constant:
+    value: 2.23e+03
+    default: 2.23e+03
+    units: s
+    dtype: float64
+    bounds:
+      - 1.708e+03
+      - 2.752e+03
+    category: model_parameter
+    description: "Constant S for Omega_NO2 > 1e15 molecule cm-2 (mean of the high-NOx bins); HCHO column-emission sensitivity S of Omega_HCHO = S E_ISOP + B, Paulot isoprene oxidation scheme (sensitivity); printed 2230 +- 174 s; bounds are the value +- 3 standard deviations"
+    references:
+      - "Marais, E. A., Jacob, D. J., Kurosu, T. P., Chance, K., Murphy, J. G., Reeves, C., Mills, G., Casadio, S., Millet, D. B., Barkley, M. P., Paulot, F. and Mao, J. (2012) Isoprene emissions in Africa inferred from OMI observations of formaldehyde columns, Atmos. Chem. Phys. 12, 6219-6235, doi:10.5194/acp-12-6219-2012; p. 6229, Sect. 4.2 and Fig. 9 inset (reduced-major-axis fit, jackknife standard deviations, 2 x 2.5 degree gridsquare-months over Africa in 2006 at 12:00-15:00 LT)"
+      - "Marais, E. A., Jacob, D. J., Kurosu, T. P., Chance, K., Murphy, J. G., Reeves, C., Mills, G., Casadio, S., Millet, D. B., Barkley, M. P., Paulot, F. and Mao, J. (2012) Isoprene emissions in Africa inferred from OMI observations of formaldehyde columns, Atmos. Chem. Phys. 12, 6219-6235, doi:10.5194/acp-12-6219-2012; p. 6225, Eq. (2) and text: E_ISOP in atoms C cm-2 s-1, so S is a per-carbon sensitivity"
+    tags:
+      - observation
+      - hcho_column
+      - satellite
+      - marais2012_paulot
+    dimension: time
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: RELIC CR-A-03 HCHO operator (lane A1e)
+      last_modified: '2026-10-18T00:00:00Z'
+      notes: "Values read from the rendered Fig. 9 inset and caption; source extract BVOCsdata/data/paper_results/shared/scientific_source_qualification/20261018_cr_a03_sources_01/source_quotes.json items 5 and 5b; registered by paper-3 design g02_3_hcho_operator_amendment_20261018."
+  coupling.observation.hcho_steady_state_column.marais2012_paulot.high_nox_constant_standard_deviation:
+    value: 1.74e+02
+    default: 1.74e+02
+    units: s
+    dtype: float64
+    bounds:
+      - 0.0e+00
+      - .inf
+    category: model_parameter
+    description: "One-sigma jackknife standard deviation of S_high (Paulot isoprene oxidation scheme (sensitivity)); recorded for the uncertainty budget, not applied by the operator"
+    references:
+      - "Marais, E. A., Jacob, D. J., Kurosu, T. P., Chance, K., Murphy, J. G., Reeves, C., Mills, G., Casadio, S., Millet, D. B., Barkley, M. P., Paulot, F. and Mao, J. (2012) Isoprene emissions in Africa inferred from OMI observations of formaldehyde columns, Atmos. Chem. Phys. 12, 6219-6235, doi:10.5194/acp-12-6219-2012; p. 6229, Sect. 4.2 and Fig. 9 inset (reduced-major-axis fit, jackknife standard deviations, 2 x 2.5 degree gridsquare-months over Africa in 2006 at 12:00-15:00 LT)"
+      - "Marais, E. A., Jacob, D. J., Kurosu, T. P., Chance, K., Murphy, J. G., Reeves, C., Mills, G., Casadio, S., Millet, D. B., Barkley, M. P., Paulot, F. and Mao, J. (2012) Isoprene emissions in Africa inferred from OMI observations of formaldehyde columns, Atmos. Chem. Phys. 12, 6219-6235, doi:10.5194/acp-12-6219-2012; p. 6225, Eq. (2) and text: E_ISOP in atoms C cm-2 s-1, so S is a per-carbon sensitivity"
+    tags:
+      - observation
+      - hcho_column
+      - satellite
+      - marais2012_paulot
+      - uncertainty
+    dimension: time
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: RELIC CR-A-03 HCHO operator (lane A1e)
+      last_modified: '2026-10-18T00:00:00Z'
+      notes: "Values read from the rendered Fig. 9 inset and caption; source extract BVOCsdata/data/paper_results/shared/scientific_source_qualification/20261018_cr_a03_sources_01/source_quotes.json items 5 and 5b; registered by paper-3 design g02_3_hcho_operator_amendment_20261018."
+  coupling.observation.hcho_steady_state_column.no2_regime_threshold:
+    value: 1.0e+15
+    default: 1.0e+15
+    units: molecule cm-2
+    dtype: float64
+    bounds:
+      - 1.0e+15
+      - 1.0e+15
+    category: model_parameter
+    description: "Tropospheric NO2 column Omega_t separating the linear S regime (Omega_NO2 <= Omega_t, boundary point linear) from the constant high-NOx S (Omega_NO2 > Omega_t)"
+    references:
+      - "Marais, E. A., Jacob, D. J., Kurosu, T. P., Chance, K., Murphy, J. G., Reeves, C., Mills, G., Casadio, S., Millet, D. B., Barkley, M. P., Paulot, F. and Mao, J. (2012) Isoprene emissions in Africa inferred from OMI observations of formaldehyde columns, Atmos. Chem. Phys. 12, 6219-6235, doi:10.5194/acp-12-6219-2012; p. 6229, Sect. 4.2 and Fig. 9 caption (linear for Omega_NO2 <= 1 x 10^15 molecule cm-2, S levels off above)"
+    tags:
+      - observation
+      - hcho_column
+      - satellite
+      - nox_regime
+    dimension: molar_areal_density
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: RELIC CR-A-03 HCHO operator (lane A1e)
+      last_modified: '2026-10-18T00:00:00Z'
+      notes: "Values read from the rendered Fig. 9 inset and caption; source extract BVOCsdata/data/paper_results/shared/scientific_source_qualification/20261018_cr_a03_sources_01/source_quotes.json items 5 and 5b; registered by paper-3 design g02_3_hcho_operator_amendment_20261018. Fixed bounds: the threshold belongs to the published parameterization."
+  coupling.observation.hcho_steady_state_column.calibrated_no2_lower_end:
+    value: 2.0e+14
+    default: 2.0e+14
+    units: molecule cm-2
+    dtype: float64
+    bounds:
+      - 2.0e+14
+      - 2.0e+14
+    category: model_parameter
+    description: "Lower end of the calibrated low-NOx range; Omega_NO2 below it is flagged outside the calibrated range and still evaluated with the linear S (never clipped)"
+    references:
+      - "Marais, E. A., Jacob, D. J., Kurosu, T. P., Chance, K., Murphy, J. G., Reeves, C., Mills, G., Casadio, S., Millet, D. B., Barkley, M. P., Paulot, F. and Mao, J. (2012) Isoprene emissions in Africa inferred from OMI observations of formaldehyde columns, Atmos. Chem. Phys. 12, 6219-6235, doi:10.5194/acp-12-6219-2012; p. 6229, Sect. 4.3 (low-NOx regime Omega_NO2 = 0.2-1 x 10^15 molecule cm-2 used in the error analysis; no formal lower bound stated)"
+    tags:
+      - observation
+      - hcho_column
+      - satellite
+      - nox_regime
+      - quality_flag
+    dimension: molar_areal_density
+    requires_grad: false
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: RELIC CR-A-03 HCHO operator (lane A1e)
+      last_modified: '2026-10-18T00:00:00Z'
+      notes: "Values read from the rendered Fig. 9 inset and caption; source extract BVOCsdata/data/paper_results/shared/scientific_source_qualification/20261018_cr_a03_sources_01/source_quotes.json items 5 and 5b; registered by paper-3 design g02_3_hcho_operator_amendment_20261018. Registered handling s_threshold_20261018: report results with and without flagged pixels."

@@ -1,0 +1,49 @@
+variable: leaf_temperature
+title: "Leaf Temperature"
+description: "Leaf tissue temperature T_leaf in K of the representative big leaf (the canopy as one leaf per unit ground area). Written by leaf_energy_balance: T_leaf = T_air + dT with dT the linearised Penman-Monteith energy balance R_n - G = H + lambda E, dT = [gamma (g_a + g_c) A / (rho c_p) - g_a g_c D] / (g_a [s g_c + gamma (g_a + g_c)]) (Monteith 1965; Allen et al. 1998 Eqs. 3-4; Jones 2014 Chapter 9), and T_leaf = T_air where leaf_area_index <= 0 (no canopy). On the daily support (temporal_support daily, dt = 86400 s) it is the leaf temperature of the 24-hour mean balance. Readers: megan_bvoc_model with temperature_source leaf_temperature (gamma_T and the T24/T240 history), thermal_stress with air_temperature_source leaf_temperature, and the BVOC response integrator fallback key. It may still be supplied as forcing instead (the tutorial forcing loader sets leaf_temperature := air_temperature). Absolute temperature, non-negative; no CF name (CF canopy_temperature is the bulk canopy temperature), consistent with the SSOT catalog entry leaf_temperature [K]."
+kind: diagnostic
+dimension:
+  udunits: "K"
+  cf_standard_name: null
+support:
+  spatial_kind: leaf
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: "leaf_energy_balance"
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Campbell, G.S. and Norman, J.M. (1998). An Introduction to Environmental Biophysics, 2nd ed. Springer, New York"
+  - "Monteith, J.L. (1965). Evaporation and environment. Symp. Soc. Exp. Biol. 19, 205-224"
+  - "Allen, R.G. et al. (1998). Crop evapotranspiration. FAO Irrigation and Drainage Paper 56, Eqs. 3, 4 and 42"
+  - "Jones, H.G. (2014). Plants and Microclimate, 3rd ed. Cambridge University Press, Chapter 9 (linearised leaf energy balance)"
+numerics:
+  # Absolute temperature: T_leaf >= 0 K; no upper limit is declared.
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "leaf_energy_balance"
+      module: "relic.scientific.biosphere.photosynthesis.leaf_energy_balance"
+      provides: ["leaf_temperature"]
+      unit: "K"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/biosphere/photosynthesis/leaf_energy_balance.py"
+  runtime_role: "big_leaf_energy_balance_leaf_temperature"
+  runtime_writer: "leaf_energy_balance"
+  note: "Writer: LeafEnergyBalance.forward, UpdateItem(REPLACE, per_timestep=False) in K. Readers: MEGANModel with config temperature_source leaf_temperature (relic/scientific/biosphere/bvoc/megan_model.py), ThermalStress with air_temperature_source leaf_temperature (relic/scientific/biosphere/stress/thermal_stress.py), BVOCResponseIntegrator fallback key (relic/scientific/biosphere/bvoc/responses.py). Default MEGAN and ThermalStress read air_temperature. As forcing, the tutorial forcing loader writes it in K as a copy of air_temperature (tutorial/case/utils/netcdf_loader.py:225). SSOT catalog entry coupling/scale_variables.yaml leaf_temperature: units K, cf_standard_name null."

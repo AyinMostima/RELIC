@@ -1,0 +1,37 @@
+variable: carbon_leaching_flux
+title: "Carbon Leaching Flux"
+kind: flux
+dimension:
+  udunits: "g C m-2 s-1"
+  cf_standard_name: null
+owner: "SoluteAdvectionDiffusion1D"
+aliases: []
+incrementable: false
+accumulates: null
+numerics:
+  lower_bound: null
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "SoluteAdvectionDiffusion1D"
+      module: "relic.scientific.pedosphere.transport.solute_advection_diffusion"
+      provides:
+        - "carbon_leaching_flux"
+      unit: "g C m-2 s-1"
+flux_contract:
+  allowed_in: []
+  allowed_out:
+    - "SoluteAdvectionDiffusion1D"
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/pedosphere/transport/solute_advection_diffusion.py"
+  runtime_role: "bottom_doc_boundary_export_flux"
+  runtime_writer: "SoluteAdvectionDiffusion1D"
+  local_budget_residual: "diagnostics.solute_transport.carbon_mass_balance_residual"

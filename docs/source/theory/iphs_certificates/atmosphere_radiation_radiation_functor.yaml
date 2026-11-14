@@ -1,0 +1,350 @@
+certificate_version: '1.0'
+process_id: relic.scientific.atmosphere.radiation.RadiationFunctor
+module_name: RadiationFunctor
+canonical_role: field
+iphs_level: 2
+iphs_level_evidence:
+  classification: IPHS-wrapped open-boundary field process certificate
+  compatible_basis: Process exposes typed radiation-flux cochains and an explicit open energy-balance route without claiming a stored-energy state
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: Typed boundary-flux wrapper with R_net = SW_net + LW_net and no unverified H, J, M, G, entropy, or power-port operator
+  level_2_limit: RadiationFunctor computes instantaneous boundary fluxes and has no independently validated storage functional or conjugate effort-flow pair; level 3 through 5 are not claimed.
+theory_document: docs\source\theory\radiation.md
+theory_document_status: updated
+legacy_formula: R_net = SW_net + LW_net; SW_net = (1-alpha) * SW_down; LW_net = epsilon*LW_down - epsilon*sigma*T_sfc^4; SW_down = SW_pot * tau * max(0,cos(theta)) * f_cloud; LW_down = epsilon_atm * sigma * T_air^4; epsilon_atm = C1 * (e_a/T_air)^(C2)
+literature_formula: R_net = SW_net + LW_net; PPFD = SW_down*f_PAR*c_PPFD; k_T = SW_down/SW_ext,h; Erbs f_dif = 1-0.09k_T for k_T<=0.22, fourth-order polynomial for 0.22<k_T<=0.80, and 0.165 above 0.80
+iphs_formula: Level-2 typed boundary wrapper over R_net = SW_net + LW_net; no Hamiltonian storage, Onsager dissipation, or conjugate power port is asserted
+legacy_expression: R_net = SW_net + LW_net; SW_net = (1-alpha) * SW_down; LW_net = epsilon*LW_down - epsilon*sigma*T_sfc^4; SW_down = SW_pot * tau * max(0,cos(theta)) * f_cloud; LW_down = epsilon_atm * sigma * T_air^4; epsilon_atm = C1 * (e_a/T_air)^(C2)
+iphs_expression: R_net = (1-alpha) SW_down + epsilon_sfc LW_down - epsilon_sfc sigma T_sfc^4; PPFD = SW_down f_PAR c_PPFD; retained values are open boundary fluxes and observations
+input_variables:
+- air_temperature
+- incoming_shortwave_potential
+- cos_zenith
+- surface_temperature
+- relative_humidity
+- surface_albedo
+- surface_emissivity
+- cloud_fraction
+- leaf_area_index
+output_variables:
+- shortwave_down
+- longwave_down
+- net_radiation
+- shortwave_net
+- longwave_net
+- atmospheric_emissivity
+- ppfd
+- diagnostics.radiation.par_energy
+- diagnostics.radiation.par_direct
+- diagnostics.radiation.par_diffuse
+- diagnostics.radiation.ppfd_direct
+- diagnostics.radiation.ppfd_diffuse
+- diagnostics.radiation.diffuse_fraction
+- diagnostics.radiation.longwave_up
+- diagnostics.radiation.longwave_emitted
+- diagnostics.radiation.longwave_reflected
+- diagnostics.radiation.surface_albedo_used
+- diagnostics.radiation.surface_emissivity_used
+- diagnostics.radiation.cos_zenith_used
+- diagnostics.radiation.vapor_pressure_calculated
+- diagnostics.radiation.shortwave_clipping_residual
+- diagnostics.radiation.emissivity_clipping_residual
+- fpar
+- apar_layer
+- diagnostics.radiation.transmission_direct
+- diagnostics.radiation.transmission_diffuse
+parameter_keys:
+- atmosphere.radiation.atmospheric_transmittance
+- atmosphere.radiation.cloud_attenuation_factor
+- atmosphere.radiation.brutsaert_coefficient
+- atmosphere.radiation.brutsaert_exponent
+- atmosphere.radiation.emissivity_clear_min
+- atmosphere.radiation.emissivity_clear_max
+- atmosphere.radiation.cloud_emissivity
+- atmosphere.radiation.canopy.model_type
+- atmosphere.radiation.canopy.layers
+- atmosphere.radiation.canopy.k_b
+- atmosphere.radiation.canopy.k_d
+- atmosphere.radiation.canopy.erbs_low_threshold
+- atmosphere.radiation.canopy.erbs_high_threshold
+- atmosphere.radiation.canopy.erbs_low_coefficients
+- atmosphere.radiation.canopy.erbs_mid_coefficients
+- atmosphere.radiation.canopy.erbs_high_fraction
+- atmosphere.radiation.canopy.lai_profile
+- atmosphere.radiation.canopy.beta_params
+- atmosphere.radiation.canopy.ppfd_conversion
+- atmosphere.radiation.canopy.par_fraction_of_sw
+composition_ports: []
+references:
+- 'Allen, R.G. et al. (1998). FAO-56: Crop evapotranspiration guidelines'
+- Brutsaert, W. (1975). On a derivable formula for long-wave radiation from clear skies
+- Campbell, G.S. & Norman, J.M. (1998). Environmental Biophysics
+- Erbs, D.G. et al. (1982). Solar Energy 28, 293-302
+- Monteith, J.L. & Unsworth, M.H. (2013). Principles of Environmental Physics
+- McCree, K.J. (1972). Test of current definitions of photosynthetically active radiation against leaf photosynthesis data
+- Jacovides, C.P. et al. (2003). Global photosynthetically active radiation and its relationship with global solar radiation
+- van der Schaft, A. and Jeltsema, D. (2014). Port-Hamiltonian systems theory: An introductory overview
+- Nicodemus (1965), Applied Optics 4, 767-775, doi:10.1364/AO.4.000767
+- Noah-MP Technical Note, Eqs. 3.6.330 and 3.6.416-417
+baseline_tests:
+- test\atmosphere\test_radiation_integration.py
+- test\unit\atmosphere\test_radiation_comprehensive.py
+- test\unit\atmosphere\test_canopy_radiation_layers.py
+- test\scientific\test_canopy_radiation_integration.py
+- test\audit\phase8_scientific_inventory.test.py
+validation_tests:
+- test\atmosphere\test_radiation_integration.py
+- test\unit\atmosphere\test_radiation_comprehensive.py
+- test\unit\atmosphere\test_canopy_radiation_layers.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  air_temperature: air_temperature mapped to canonical Phase 8 cochain basis
+  incoming_shortwave_potential: incoming_shortwave_potential mapped to canonical Phase 8 cochain basis
+  cos_zenith: cos_zenith mapped to the declared solar geometry input
+  surface_temperature: surface_temperature mapped to the surface thermal state
+  relative_humidity: relative_humidity mapped to the atmospheric moisture state
+  surface_albedo: surface_albedo mapped to the surface optical state
+  surface_emissivity: surface_emissivity mapped to the surface optical state
+  cloud_fraction: cloud_fraction mapped to the atmospheric cloud state
+  leaf_area_index: conditionally required scalar canopy cochain when canopy transfer is enabled
+parameter_map:
+  atmosphere.radiation.atmospheric_transmittance: Clear-sky shortwave transmittance [dimensionless]
+  atmosphere.radiation.cloud_attenuation_factor: Cloud shortwave attenuation [dimensionless]
+  atmosphere.radiation.brutsaert_coefficient: Brutsaert emissivity coefficient [dimensionless]
+  atmosphere.radiation.brutsaert_exponent: Brutsaert emissivity exponent [dimensionless]
+  atmosphere.radiation.emissivity_clear_min: Minimum clear-sky emissivity [dimensionless]
+  atmosphere.radiation.emissivity_clear_max: Maximum clear-sky emissivity [dimensionless]
+  atmosphere.radiation.cloud_emissivity: Cloud longwave emissivity [dimensionless]
+  atmosphere.radiation.canopy.model_type: Canopy radiation model type, read with canopy radiation enabled [dimensionless]
+  atmosphere.radiation.canopy.layers: Number of canopy layers, read with canopy radiation enabled [dimensionless]
+  atmosphere.radiation.canopy.k_b: Direct-beam extinction coefficient, read with canopy radiation enabled [dimensionless]
+  atmosphere.radiation.canopy.k_d: Diffuse extinction coefficient, read with canopy radiation enabled [dimensionless]
+  atmosphere.radiation.canopy.erbs_low_threshold: Lower Erbs clearness-index threshold [dimensionless]
+  atmosphere.radiation.canopy.erbs_high_threshold: Upper Erbs clearness-index threshold [dimensionless]
+  atmosphere.radiation.canopy.erbs_low_coefficients: Erbs low-clearness polynomial coefficients [dimensionless]
+  atmosphere.radiation.canopy.erbs_mid_coefficients: Erbs middle-clearness polynomial coefficients [dimensionless]
+  atmosphere.radiation.canopy.erbs_high_fraction: Erbs high-clearness diffuse fraction [dimensionless]
+  atmosphere.radiation.canopy.lai_profile: Vertical LAI profile type, read with canopy radiation enabled [dimensionless]
+  atmosphere.radiation.canopy.beta_params: Beta-profile coefficients (a, b), read with canopy radiation enabled [dimensionless]
+  atmosphere.radiation.canopy.ppfd_conversion: PAR energy to PPFD conversion factor [umol J-1]
+  atmosphere.radiation.canopy.par_fraction_of_sw: PAR fraction of shortwave radiation [dimensionless]
+  physical_constants_ssot: Stefan-Boltzmann constant, Celsius-to-Kelvin offset, Pa-to-hPa conversion, and Tetens saturation-pressure coefficients are read only through get_physical_constant
+operator_map:
+  boundary_identity: R_net = SW_net + LW_net is validated as an open energy-flux identity
+  iphs_structure: No H, J_h, M_h, G_h, entropy-production, or power-port operator is claimed at level 2
+unit_map:
+  shortwave_down: W m-2
+  longwave_down: W m-2
+  net_radiation: W m-2
+  shortwave_net: W m-2
+  longwave_net: W m-2
+  atmospheric_emissivity: dimensionless
+  ppfd: umol photons m-2 s-1
+  diagnostics.radiation.par_energy: W m-2
+  diagnostics.radiation.par_direct: W m-2
+  diagnostics.radiation.par_diffuse: W m-2
+  diagnostics.radiation.ppfd_direct: umol photons m-2 s-1
+  diagnostics.radiation.ppfd_diffuse: umol photons m-2 s-1
+  diagnostics.radiation.diffuse_fraction: dimensionless
+  diagnostics.radiation.longwave_up: W m-2
+  diagnostics.radiation.longwave_emitted: W m-2
+  diagnostics.radiation.longwave_reflected: W m-2
+  diagnostics.radiation.surface_albedo_used: dimensionless
+  diagnostics.radiation.surface_emissivity_used: dimensionless
+  diagnostics.radiation.cos_zenith_used: dimensionless
+  diagnostics.radiation.vapor_pressure_calculated: Pa
+  diagnostics.radiation.shortwave_clipping_residual: W m-2
+  diagnostics.radiation.emissivity_clipping_residual: dimensionless
+  fpar: dimensionless
+  apar_layer: W m-2
+  diagnostics.radiation.transmission_direct: W m-2
+  diagnostics.radiation.transmission_diffuse: W m-2
+input_output_map:
+  air_temperature: same interface variable preserved between legacy and IPHS runtime contracts
+  cloud_fraction: same explicit interface variable preserved between the literature calculation and production runtime contract
+  cos_zenith: same explicit interface variable preserved between the literature calculation and production runtime contract
+  apar_layer: same interface variable preserved between legacy and IPHS runtime contracts
+  atmospheric_emissivity: same interface variable preserved between legacy and IPHS runtime contracts
+  fpar: same interface variable preserved between legacy and IPHS runtime contracts
+  incoming_shortwave_potential: same interface variable preserved between legacy and IPHS runtime contracts
+  leaf_area_index: conditionally required canopy interface variable preserved by the selected canopy calculation
+  longwave_down: same interface variable preserved between legacy and IPHS runtime contracts
+  longwave_net: same interface variable preserved between legacy and IPHS runtime contracts
+  net_radiation: same interface variable preserved between legacy and IPHS runtime contracts
+  ppfd: canonical photon-flux output derived unconditionally from shortwave_down
+  diagnostics.radiation.par_energy: unconditional read-only PAR energy diagnostic
+  diagnostics.radiation.par_direct: unconditional read-only direct PAR diagnostic
+  diagnostics.radiation.par_diffuse: unconditional read-only diffuse PAR diagnostic
+  diagnostics.radiation.ppfd_direct: unconditional read-only direct photon-flux diagnostic
+  diagnostics.radiation.ppfd_diffuse: unconditional read-only diffuse photon-flux diagnostic
+  diagnostics.radiation.diffuse_fraction: unconditional read-only diffuse fraction diagnostic
+  diagnostics.radiation.longwave_up: unconditional read-only total emitted plus reflected upward longwave diagnostic
+  diagnostics.radiation.longwave_emitted: unconditional read-only surface-emitted longwave diagnostic
+  diagnostics.radiation.longwave_reflected: unconditional read-only reflected incident longwave diagnostic
+  diagnostics.radiation.surface_albedo_used: unconditional read-only optical-state diagnostic
+  diagnostics.radiation.surface_emissivity_used: unconditional read-only optical-state diagnostic
+  diagnostics.radiation.cos_zenith_used: unconditional read-only solar-geometry diagnostic
+  diagnostics.radiation.vapor_pressure_calculated: unconditional read-only actual-vapor-pressure diagnostic used by Brutsaert emissivity; it is not VPD
+  diagnostics.radiation.shortwave_clipping_residual: unconditional diagnostic residual with no state write
+  diagnostics.radiation.emissivity_clipping_residual: unconditional diagnostic residual with no state write
+  relative_humidity: same explicit interface variable preserved between the literature calculation and production runtime contract
+  shortwave_down: same interface variable preserved between legacy and IPHS runtime contracts
+  shortwave_net: same interface variable preserved between legacy and IPHS runtime contracts
+  surface_albedo: same explicit interface variable preserved between the literature calculation and production runtime contract
+  surface_emissivity: same explicit interface variable preserved between the literature calculation and production runtime contract
+  surface_temperature: same explicit interface variable preserved between the literature calculation and production runtime contract
+interface_map:
+  forward_signature: forward(self, state, time, dt)
+  bridge_class: PhysicalFieldFunctor
+  abstraction_contract: PhysicalField
+  state_write_mode: every retained output is instantaneous UpdateItem mode REPLACE with explicit unit and per_timestep false; diagnostics are DERIVED
+  legacy_inputs:
+  - air_temperature
+  - incoming_shortwave_potential
+  - cos_zenith
+  - surface_temperature
+  - relative_humidity
+  - surface_albedo
+  - surface_emissivity
+  - cloud_fraction
+  - leaf_area_index
+  iphs_inputs:
+  - air_temperature
+  - incoming_shortwave_potential
+  - cos_zenith
+  - surface_temperature
+  - relative_humidity
+  - surface_albedo
+  - surface_emissivity
+  - cloud_fraction
+  - leaf_area_index
+  legacy_outputs:
+  - shortwave_down
+  - longwave_down
+  - net_radiation
+  - shortwave_net
+  - longwave_net
+  - atmospheric_emissivity
+  - ppfd
+  - diagnostics.radiation.par_energy
+  - diagnostics.radiation.par_direct
+  - diagnostics.radiation.par_diffuse
+  - diagnostics.radiation.ppfd_direct
+  - diagnostics.radiation.ppfd_diffuse
+  - diagnostics.radiation.diffuse_fraction
+  - diagnostics.radiation.longwave_up
+  - diagnostics.radiation.longwave_emitted
+  - diagnostics.radiation.longwave_reflected
+  - diagnostics.radiation.surface_albedo_used
+  - diagnostics.radiation.surface_emissivity_used
+  - diagnostics.radiation.cos_zenith_used
+  - diagnostics.radiation.vapor_pressure_calculated
+  - diagnostics.radiation.shortwave_clipping_residual
+  - diagnostics.radiation.emissivity_clipping_residual
+  - fpar
+  - apar_layer
+  - diagnostics.radiation.transmission_direct
+  - diagnostics.radiation.transmission_diffuse
+  iphs_outputs:
+  - shortwave_down
+  - longwave_down
+  - net_radiation
+  - shortwave_net
+  - longwave_net
+  - atmospheric_emissivity
+  - ppfd
+  - diagnostics.radiation.par_energy
+  - diagnostics.radiation.par_direct
+  - diagnostics.radiation.par_diffuse
+  - diagnostics.radiation.ppfd_direct
+  - diagnostics.radiation.ppfd_diffuse
+  - diagnostics.radiation.diffuse_fraction
+  - diagnostics.radiation.longwave_up
+  - diagnostics.radiation.longwave_emitted
+  - diagnostics.radiation.longwave_reflected
+  - diagnostics.radiation.surface_albedo_used
+  - diagnostics.radiation.surface_emissivity_used
+  - diagnostics.radiation.cos_zenith_used
+  - diagnostics.radiation.vapor_pressure_calculated
+  - diagnostics.radiation.shortwave_clipping_residual
+  - diagnostics.radiation.emissivity_clipping_residual
+  - fpar
+  - apar_layer
+  - diagnostics.radiation.transmission_direct
+  - diagnostics.radiation.transmission_diffuse
+  conditional_inputs:
+  - leaf_area_index
+  conditional_outputs:
+  - fpar
+  - apar_layer
+  - diagnostics.radiation.transmission_direct
+  - diagnostics.radiation.transmission_diffuse
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: ParameterManager-backed radiative coefficients, Beer-Lambert canopy transfer, and incident Brutsaert radiation retain their existing calculation; the single corrected greybody surface balance includes absorbed incident and reflected outgoing longwave without a legacy mode.
+  no_legacy_mode: Production forward rejects undeclared canopy models, missing or nonfinite state cochains, model failures, nonpositive dt, and conditional diagnostic modes; it exposes no alias, proxy two-stream branch, default-state, emergency Beer-Lambert, or zero-absorption fallback. All declared namespaced diagnostics are returned on every execution.
+state_advancement_map:
+  potential_basis: typed open radiative-boundary flux cochain
+  effort_variable: not declared because no stored-energy functional or conjugate effort is available
+  state_advancer: The existing simulator and StateManager own state advancement; forward evaluates the declared radiative boundary flux without a second state-update path.
+  runtime_usage: RadiationFunctor.forward evaluates the production radiation balance and optional canopy operator through the level-2 wrapper only.
+parameter_management_map:
+  atmosphere.radiation.atmospheric_transmittance:
+    source: ParameterManager YAML
+  atmosphere.radiation.cloud_attenuation_factor:
+    source: ParameterManager YAML
+  atmosphere.radiation.brutsaert_coefficient:
+    source: ParameterManager YAML
+  atmosphere.radiation.brutsaert_exponent:
+    source: ParameterManager YAML
+  atmosphere.radiation.emissivity_clear_min:
+    source: ParameterManager YAML
+  atmosphere.radiation.emissivity_clear_max:
+    source: ParameterManager YAML
+  atmosphere.radiation.cloud_emissivity:
+    source: ParameterManager YAML
+  atmosphere.radiation.canopy.model_type:
+    source: ParameterManager YAML
+  atmosphere.radiation.canopy.layers:
+    source: ParameterManager YAML
+  atmosphere.radiation.canopy.k_b:
+    source: ParameterManager YAML
+  atmosphere.radiation.canopy.k_d:
+    source: ParameterManager YAML
+  atmosphere.radiation.canopy.erbs_low_threshold:
+    source: ParameterManager YAML
+  atmosphere.radiation.canopy.erbs_high_threshold:
+    source: ParameterManager YAML
+  atmosphere.radiation.canopy.erbs_low_coefficients:
+    source: ParameterManager YAML
+  atmosphere.radiation.canopy.erbs_mid_coefficients:
+    source: ParameterManager YAML
+  atmosphere.radiation.canopy.erbs_high_fraction:
+    source: ParameterManager YAML
+  atmosphere.radiation.canopy.lai_profile:
+    source: ParameterManager YAML
+  atmosphere.radiation.canopy.beta_params:
+    source: ParameterManager YAML
+  atmosphere.radiation.canopy.ppfd_conversion:
+    source: ParameterManager YAML
+  atmosphere.radiation.canopy.par_fraction_of_sw:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares interfaces, execution phase, and conservation semantics
+  state_contract: existing simulator state update path is preserved
+  validation_rule: phase8 scientific inventory and equivalence certificate checks
+dependency_interconnection_map:
+  dependencies: declared through existing metadata or no external dependency
+  direct_functor_calls: none declared by certificate
+overflow_routing_map:
+  diagnostic_residuals: diagnostics.radiation.shortwave_clipping_residual and diagnostics.radiation.emissivity_clipping_residual are unconditionally exposed
+  discarded_residuals: none for declared shortwave and emissivity clipping residuals
+conservation_map:
+  conserved_quantities: energy
+  balance_expression: net_radiation = shortwave_net + longwave_net; PPFD is a read-only observation derived from shortwave_down and is not an additional energy source
+entropy_audit:
+  entropy_claim: not_applicable_no_entropy_production_without_a_thermodynamic_force_or_constitutive_law
+  reason: An instantaneous radiative flux does not define entropy production without a thermodynamic force and constitutive law
+equivalence_type: exact

@@ -1,0 +1,45 @@
+variable: nitrogen_leaching_flux
+title: "Nitrogen Leaching Flux"
+kind: flux
+dimension:
+  udunits: "g N m-2 s-1"
+  cf_standard_name: null
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+numerics:
+  lower_bound: null
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "nitrogen_leaching"
+      module: "relic.scientific.pedosphere.nutrient_cycling.nitrogen_leaching"
+      provides:
+        - "nitrogen_leaching_flux"
+      unit: "g N m-2 s-1"
+    - name: "SoluteAdvectionDiffusion1D"
+      module: "relic.scientific.pedosphere.transport.solute_advection_diffusion"
+      provides:
+        - "nitrogen_leaching_flux"
+      unit: "g N m-2 s-1"
+flux_contract:
+  allowed_in: []
+  allowed_out:
+    - "nitrogen_leaching"
+    - "SoluteAdvectionDiffusion1D"
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/pedosphere/nutrient_cycling/nitrogen_leaching.py"
+  runtime_role: "mutually_exclusive_nitrate_export_flux"
+  runtime_writer: "selected_nitrate_transport_closure"
+  runtime_writers:
+    - "nitrogen_leaching"
+    - "SoluteAdvectionDiffusion1D"

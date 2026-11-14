@@ -1,0 +1,131 @@
+schema_version: 2.0.0
+tier: relic
+namespace: transport.operators
+description: Unified transport operators parameters for RELIC
+metadata:
+  created_by: Yuchong Long
+  created_date: '2025-10-10'
+  last_modified: '2025-10-10'
+  version: 1.0.0
+  tags:
+  - transport
+  - operators
+  - unified
+  - numerical
+notes: Parameters for unified transport operators (diffusion, advection, advection-diffusion)
+parameters:
+  transport.operators.minimal_diffusivity:
+    value: 1.0e-12
+    default: 1.0e-12
+    units: m2 s-1
+    dtype: float32
+    bounds:
+    - 1.0e-15
+    - 1.0e-09
+    category: numerical_parameter
+    description: Minimal diffusivity for numerical stability (near-zero for pure advection)
+    references:
+    - LeVeque, R.J. (2007). Finite Difference Methods for ODEs and PDEs
+    tags:
+    - numerical
+    - stability
+    - advection
+    dimension: diffusivity
+    requires_grad: false
+    provenance:
+      source: numerical_analysis
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-10'
+  transport.operators.enforce_non_negative:
+    value: true
+    default: true
+    units: dimensionless
+    dtype: bool
+    category: constraint_parameter
+    description: Enforce non-negative concentrations in transport operators
+    references:
+    - Physical constraint for concentrations
+    tags:
+    - constraint
+    - non-negative
+    - physical
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: physical_constraints
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-10'
+    bounds:
+    - 0.0
+    - 10
+  transport.operators.check_stability:
+    value: true
+    default: true
+    units: dimensionless
+    dtype: bool
+    category: numerical_parameter
+    description: Enable automatic stability checking for operators
+    references:
+    - Numerical stability analysis
+    tags:
+    - stability
+    - numerical
+    - automatic
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_methods
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-10'
+    bounds:
+    - 0.0
+    - 10
+  transport.operators.water_diffusivity:
+    value: 1.0e-09
+    default: 1.0e-09
+    units: m2 s-1
+    dtype: float32
+    bounds:
+    - 1.0e-12
+    - 1.0e-08
+    category: scenario_parameter
+    description: Typical molecular diffusivity for solutes in water
+    references:
+    - Wise, D.L. and Houghton, G. (1966). Diffusion coefficients in water
+    tags:
+    - water
+    - solute
+    - scenario
+    dimension: diffusivity
+    requires_grad: false
+    provenance:
+      source: aqueous_chemistry
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-10'
+  transport.operators.cache_operators:
+    value: true
+    default: true
+    units: dimensionless
+    dtype: bool
+    category: performance_parameter
+    description: Cache computed differential operators for reuse
+    references:
+    - Memory-time tradeoff optimization
+    tags:
+    - performance
+    - caching
+    - memory
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: performance_optimization
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-10'
+    bounds:
+    - 0.0
+    - 10

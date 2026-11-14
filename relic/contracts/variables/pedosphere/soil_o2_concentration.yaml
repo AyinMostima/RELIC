@@ -1,0 +1,43 @@
+variable: soil_o2_concentration
+title: "Soil Oxygen Concentration"
+description: "Soil oxygen concentration per water volume in mol m-3 (the water-volume basis of CLM4.5 Technical Note Eq. 19.1), limiting methanotrophy in methane_oxidation through O2 / (K_O2 + O2) with K_O2 = 0.02 mol m-3 (pedosphere.methane.oxidation.half_saturation_o2; Riley et al. 2011, Table 1). Required; finite and non-negative. No relic Functor writes it (supplied as forcing)."
+kind: forcing
+dimension:
+  udunits: "mol m-3"
+  cf_standard_name: null
+support:
+  spatial_kind: grid_cell
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Riley, W.J. et al. (2011). Barriers to predicting changes in global terrestrial methane fluxes: analyses using CLM4Me, a methane biogeochemistry model integrated in CESM. Biogeosciences 8, 1925-1953, doi:10.5194/bg-8-1925-2011"
+  - "Oleson, K.W. et al. (2013). Technical Description of version 4.5 of the Community Land Model (CLM). NCAR/TN-503+STR, Sect. 19 (Eq. 19.1)"
+numerics:
+  # Non-negative concentration; the reader rejects negative values.
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies: []
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/pedosphere/methane/oxidation.py"
+  runtime_role: "soil_oxygen_concentration_forcing"
+  runtime_writer: null
+  note: "Reader: MethaneOxidationFunctor (metadata input_variables; a missing value raises; finite, >= 0; Monod factor O2 / (K_O2 + O2) with O2 and K_O2 per water volume). No RELIC Functor writes soil_o2_concentration."

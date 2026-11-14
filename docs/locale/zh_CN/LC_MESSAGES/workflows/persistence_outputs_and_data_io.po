@@ -1,0 +1,845 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C)
+# This file is distributed under the same license as the RELIC package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: RELIC 1.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-31 06:10-0700\n"
+"PO-Revision-Date: 2026-07-28 13:17+0800\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh_Hans_CN\n"
+"Language-Team: zh_Hans_CN <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:1
+msgid "Persistence, Outputs, and Data I/O"
+msgstr "持久化、输出与 Data I/O"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:3
+msgid "RELIC provides three distinct persistence layers:"
+msgstr "RELIC提供了三层持久性："
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:5
+msgid "`StateManager` snapshots for in-memory transactional restore."
+msgstr "`StateManager`快照用于内存事务恢复。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:6
+msgid "`RELICSimulator` checkpoints for runtime continuation."
+msgstr "`RELICSimulator`阶段检查点用于runtime继续。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:7
+msgid "Data and provenance writers for durable scientific outputs."
+msgstr "数据和provenance写作者为持久科学输出。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:9
+msgid "These layers serve different contracts and are not interchangeable."
+msgstr "这些层有不同的契约，不能互换使用。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:11
+msgid "State snapshots"
+msgstr "状态推进快照"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:13
+msgid "`StateManager.checkpoint()` returns an in-memory mapping containing state tensors, counters, diagnostics, history, conservation records, and pending provenance transaction data. `restore(snapshot)` accepts only a valid mapping produced by that state manager contract."
+msgstr "`StateManager.checkpoint()`返回一个包含状态张量、计数器、diagnostics、历史记录、守恒记录和待处理起源事务数据的内存映射。`restore(snapshot)`仅接受由该状态管理合约生成的有效映射。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:46
+msgid "Expected output:"
+msgstr "预期输出："
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:52
+msgid "`restore()` raises `TypeError` for a non-mapping snapshot and `ValueError` when the required state mapping is absent. Use snapshots around local transactions; they are not a stable cross-version file format."
+msgstr "`restore()` raises `TypeError` for a non-mapping snapshot and `ValueError` when the required state mapping is absent. Use snapshots around local transactions； they are not a stable cross-version file format."
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:56
+msgid "Simulator checkpoints"
+msgstr "Simulator断点"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:73
+msgid "`relic\\core\\simulator\\checkpoint.py` is the sole owner of the durable checkpoint format. Without `snapshot`, the public create call captures the live state and requires an explicit, non-existing target path; an existing file raises `FileExistsError`. It creates parent directories, writes a unique sibling temporary file, and atomically commits the target. `snapshot` is a frozen checkpoint payload captured at an accepted step boundary for a checkpoint delivery: it is written as given and never rebuilt from live state, and an existing target is accepted only when its verified payload is identical, in which case the receipt is returned again; a different file raises `FileExistsError`. The call never selects an implicit output directory and never overwrites an existing checkpoint."
+msgstr "`relic\\core\\simulator\\checkpoint.py` 是持久检查点格式的唯一所有者。未提供 `snapshot` 时，公开创建调用捕获当前状态，要求显式给出尚不存在的目标路径；目标文件已存在则抛出 `FileExistsError`。它会创建父目录，写入唯一命名的同级临时文件，再原子提交目标。`snapshot` 是在已接受时间步边界为检查点交付捕获的冻结载荷：按原样写入，绝不根据当前状态重建。只有已有目标经验证与该载荷相同时才会接受，并再次返回回执；文件内容不同则抛出 `FileExistsError`。该调用不选择隐式输出目录，也不覆盖已有检查点。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:143
+msgid "Both operations return `path`, `format_version`, `size_bytes`, file `sha256`, canonical `payload_sha256`, and `provider_epoch`. Creation leaves `provider_epoch=None`; a successful restore reports the newly committed view epoch. Automatic checkpoint names are `checkpoint_directory/<run_id>/checkpoint_step_<12-digit-step>.pt`. `run_id` belongs to the simulator, survives restart, and changes on reset."
+msgstr "两个操作都返回 `path`、`format_version`、`size_bytes`、文件 `sha256`、canonical `payload_sha256` 和 `provider_epoch`。创建时 `provider_epoch=None`；成功恢复则报告新提交视图的 epoch。自动检查点的名称为 `checkpoint_directory/<run_id>/checkpoint_step_<12-digit-step>.pt`。`run_id` 属于 simulator，在重启后保留，并在 reset 时改变。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:150
+msgid "Format 3 includes the frozen `delivery_state`: accepted pending obligations, receipts, job definitions, and flat checkpoint-node references. Restoring a checkpoint reconciles accepted notifications and delivery work through the existing owners; it does not recapture newer live outputs or deliver effects during state restoration. Retry retains each original run and destination. Delivery is at-least-once: every obligation carries an idempotency key and a receipt, so redelivery to an idempotent consumer is effectively-once. Cross-system exactly-once delivery requires the counterpart to take part in the protocol and is not claimed. Only obligations present in the persisted checkpoint are durably recoverable."
+msgstr "格式 3 包含冻结的 `delivery_state`：已接受但尚待履行的义务、回执、作业定义和平铺的检查点节点引用。恢复检查点时，通过现有所有者协调已接受的通知与交付工作；不会重新捕获更新后的运行时输出，也不会在状态恢复过程中执行外部效果。重试保留每项工作的原始运行身份和目的地。交付语义为至少一次：每项义务均带有幂等键和回执，因此对幂等消费者的重复交付具有实际一次的效果。跨系统的恰好一次交付需要对端参与协议，本系统不作此声明。只有已写入持久检查点的义务才能在持久恢复中找回。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:161
+msgid "The versioned `relic.simulator.checkpoint` payload contains:"
+msgstr "版本化的 `relic.simulator.checkpoint` payload 包含："
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:163
+msgid "simulator time, counters, configuration-relevant runtime fields, and output history;"
+msgstr "simulator 时间、计数器、与配置相关的 runtime 字段以及输出历史；"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:165
+msgid "one validated in-memory `StateManager.checkpoint()` snapshot;"
+msgstr "一个经过验证的内存内 `StateManager.checkpoint()` snapshot；"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:166
+#, python-brace-format
+msgid "every registered Functor's `{state_dict, parameter_bindings}` entry: standard PyTorch module state (including safe `get_extra_state()` data) and live values of manager bindings held by reference, including nested Functors;"
+msgstr "每个已注册 Functor 的 `{state_dict, parameter_bindings}` 条目：标准 PyTorch 模块状态（包括安全的 `get_extra_state()` 数据），以及按引用持有的管理器绑定的当前值，包含嵌套 Functor；"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:169
+msgid "Functor topology, dependency order/groups, StateManager schema, scientific configuration/metadata/parameter contracts, resolved devices, and distributed rank/world-size signature;"
+msgstr "Functor 拓扑、依赖顺序/分组、StateManager schema、科学配置/metadata/参数 contract、已解析的 device，以及 distributed rank/world-size 签名；"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:172
+msgid "Python, Torch CPU, optional legacy global NumPy, and CUDA random number generator (RNG) states;"
+msgstr "Python、Torch CPU、可选旧版全局 NumPy 以及 CUDA 的随机数生成器（Random Number Generator, RNG）状态；"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:173
+msgid "a canonical payload Secure Hash Algorithm 256-bit (SHA-256) integrity record."
+msgstr "规范载荷的 256 位安全散列算法（Secure Hash Algorithm 256-bit, SHA-256）完整性校验记录。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:175
+msgid "Restore uses `torch.load(..., map_location=\"cpu\", weights_only=True)`, requires the exact `relic.simulator.checkpoint` format and `format_version=3`, and has no unsafe deserialization fallback. Only version 3 is written. A version-2 file is upgraded in memory: held bindings move from module state into `parameter_bindings`; an unknown state entry raises `ValueError`. The upgraded payload is resealed and validated, and `format_upgrade` in the restore receipt records `from_format_version`, `to_format_version`, and `moved_bindings`. Binding restore requires matching key sets, shape, and dtype and preserves the live object, gradient flag, and device. CUDA RNG presence must match the resolved runtime symmetrically, including the CUDA device count; when pinning `RELICSimulator` to `\"device\": \"cpu\"` on a CUDA-capable host, pass `device=torch.device(\"cpu\")` to an externally constructed `StateManager` so both owners resolve CPU tensors symmetrically. The current single-file format fails closed on both create and restore when an active distributed runtime has `world_size > 1`."
+msgstr "恢复操作调用 `torch.load(..., map_location=\"cpu\", weights_only=True)`，严格要求 `relic.simulator.checkpoint` 格式标识与 `format_version=3`，不设非安全反序列化回退路径。写出操作仅生成版本 3 格式。读取版本 2 检查点时会在内存中执行升级：按引用持有的参数绑定从模块状态迁移至 `parameter_bindings`，遇到未知状态条目则抛出 `ValueError`；升级后的载荷将重新计算完整性摘要并完成校验，恢复回执中的 `format_upgrade` 字段记录 `from_format_version`、`to_format_version` 与 `moved_bindings`。参数绑定恢复要求键集合、张量形状与数据类型严格一致，并保留在线张量对象、梯度标志与所属设备。检查点中 CUDA RNG 状态的存在性及 CUDA 设备数量必须与当前解析出的运行时环境双向对称匹配；在具备 CUDA 的宿主机上将 `RELICSimulator` 固定为 `\"device\": \"cpu\"` 时，若从外部构造 `StateManager`，需同步传入 `device=torch.device(\"cpu\")` 以确保两处所有者对称解析为 CPU 张量。当活动分布式运行时的 `world_size > 1` 时，当前单文件检查点格式在创建与恢复阶段均执行封闭拒绝。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:191
+msgid "Restore requires a prepared, compatible simulator. It validates payload integrity, topology, scientific contracts, devices, distributed context, StateManager state, Functor state dictionaries, and RNG data before applying the restart. A failure before provider-view publication restores the pre-restore runtime fields, StateManager, Functor state, RNG, accepted pending work, and registration metadata. Once the new provider view is published, its epoch and scientific state remain committed even if retirement, cleanup, or receipt I/O fails; that error is reported as post-publication failure and must not rewind a world that readers may already have observed."
+msgstr "恢复要求一个已准备好且兼容的 simulator。在应用重启之前，它会验证 payload 完整性、拓扑、科学 contract、device、distributed context、StateManager 状态、Functor state dictionary 以及 RNG 数据。在 provider 视图发布之前发生的失败会恢复恢复前的 runtime 字段、StateManager、Functor 状态、RNG、已接受的待处理工作以及注册 metadata。一旦新的 provider 视图发布，即使退役、清理或回执 I/O 失败，其 epoch 与科学状态仍保持已提交；该错误作为发布后失败报告，且不得回退读者可能已经观察到的世界。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:201
+msgid "A checkpoint does not capture the state of external services or data sources. An external adapter stores only its source and model binding (`get_extra_state()`), and restoring that binding into an adapter bound to another source or model raises `ValueError`. Its opened datasets are not part of the checkpoint; a restarted run opens them again through `discover()` and `open()`. Adapter `forward(state, time, dt, *, calendar_type, time_origin)` selects forcing at `time_origin + time` using its declared `time_interpolation`; it does not own a separate mutable time cursor. An explicitly bound forcing sequence has the simulator-owned cursor, which advances only on accepted steps and is restored by the checkpoint."
+msgstr "检查点不捕获外部服务或数据源的状态。外部适配器只保存其数据源和模型绑定（`get_extra_state()`）；将该绑定恢复到另一个数据源或模型的适配器时，会抛出 `ValueError`。已打开的数据集不属于检查点；重启运行通过 `discover()` 和 `open()` 重新打开它们。适配器的 `forward(state, time, dt, *, calendar_type, time_origin)` 按声明的 `time_interpolation` 选择 `time_origin + time` 时刻的强迫，不持有另一个可变时间游标。显式绑定的强迫序列使用模拟器持有的游标，仅在时间步接受后推进，并由检查点恢复。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:212
+msgid "The default restore is exact. The same owner accepts a `RestartCompatibilityCertificate` for bounded declared contract/parameter differences and state renames that preserve units, shape, and dtype. It binds the actual source and target topology digests; it cannot waive kernel, implementation, Functor-type, execution-order, or runtime-environment changes. Its forcing policy either preserves the exact cursor or explicitly clears it. `GraphMigrationCertificate` handles declared renaming/addition/retirement in its restricted graph family, including history requirements and mapped owners. The two certificate arguments are mutually exclusive. Neither provides arbitrary code equivalence, unit conversion, or shape migration."
+msgstr "默认恢复是精确恢复。同一 owner 接受 `RestartCompatibilityCertificate`，用于有界的已声明 contract/参数差异以及保持单位、shape 和 dtype 的状态重命名。它绑定实际的源与目标拓扑摘要；它不能豁免 kernel、实现、Functor 类型、执行顺序或 runtime 环境的变化。其 forcing 策略要么保留精确的 cursor，要么显式清除它。`GraphMigrationCertificate` 处理其受限 graph 族中已声明的重命名/添加/退役，包括历史要求与映射后的 owner。这两个证书参数互斥。二者都不提供任意代码等价、单位转换或 shape 迁移。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:223
+msgid "`StateManager.checkpoint()` remains an in-memory transaction primitive. It is embedded in the durable simulator payload but is not an independent file format or a second persistence owner. Likewise, Functors use `state_dict()`/`load_state_dict()` and PyTorch `get_extra_state()`/`set_extra_state()` without introducing a parallel restart API. Stochastic Functors built on `FunctorSubstreamMixin`, including `OrnsteinUhlenbeckTemperatureFunctor` (`relic.scientific.atmosphere.stochastic_temperature`) and `MarkedPoissonRainfallFunctor` (`relic.scientific.atmosphere.stochastic_rainfall`), persist their Wiener or marked-jump substream cursor in `extra_state`, so accepted-step rollback and `restore_checkpoint()` replay the identical stochastic sample path. Manager bindings held by reference are outside module state; the same checkpoint owner captures and restores them through `parameter_bindings`."
+msgstr "`StateManager.checkpoint()` 仅作为内存级事务原语使用，其快照数据嵌入在模拟器的持久化载荷内部，不构成独立文件格式，也不充当第二持久化所有者。同理，各 Functor 直接复用 `state_dict()`/`load_state_dict()` 与 PyTorch 的 `get_extra_state()`/`set_extra_state()` 接口，不另建平行的重启 API。基于 `FunctorSubstreamMixin` 构建的随机过程 Functor——包括 `OrnsteinUhlenbeckTemperatureFunctor`（`relic.scientific.atmosphere.stochastic_temperature`）与 `MarkedPoissonRainfallFunctor`（`relic.scientific.atmosphere.stochastic_rainfall`）——将其维纳过程（Wiener）或标记跳跃子流游标持久化在 `extra_state` 中，从而使已接受步回滚与 `restore_checkpoint()` 精确重放同一条随机样本轨道。按引用持有的参数管理器绑定位于模块状态字典之外，由同一检查点所有者通过 `parameter_bindings` 统一捕获并恢复。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:237
+msgid "Automatic checkpoints are disabled by default. Enabling them requires all three runtime settings:"
+msgstr "自动检查点默认禁用。启用它们需要以下全部三个 runtime 设置："
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:257
+msgid "The frequency must be positive. Automatic persistence occurs only after an accepted scientific and provenance step commit, using `checkpoint_step_<12-digit-step>.pt` in the explicit directory's `run_id` subdirectory. File errors propagate, and there is no public checkpoint cleanup API."
+msgstr "频率必须为正。自动持久化仅在科学与 provenance step 提交被接受之后发生，使用显式目录下 `run_id` 子目录中的 `checkpoint_step_<12-digit-step>.pt`。文件错误会向上传播，且没有公开的检查点清理 API。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:263
+msgid "A bitwise-equal uninterrupted run and split restart run is strong dynamic evidence only for the tested graph, inputs, fixed-step protocol, dependency stack, and device environment. It does not promise cross-platform, cross-version, cross-device, or multi-rank bitwise identity."
+msgstr "不间断运行与拆分重启运行之间的逐位相等，仅对所测试的 graph、输入、固定步长协议、依赖栈和 device 环境构成强动态证据。它不承诺跨平台、跨版本、跨 device 或多 rank 的逐位一致。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:268
+msgid "Run bundles"
+msgstr "运行捆綁"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:305
+msgid "`write_run_bundle` is imported from `relic.orchestration.compiler`; the `relic.orchestration` package does not export it. `graph` must be the canonical `GraphIR` that `plan` was compiled from; another type raises `TypeError` and a different graph raises `ValueError`. `run_id` names the provenance run (default: the current UTC time, `YYYYMMDDTHHMMSSZ`). `input_files` lists the input files to hash; when it is omitted, `graph.metadata[\"input_files\"]` is used. `metadata` adds caller entries to the bundle metadata; the keys `schema_version` and `graph_metadata` are reserved and raise `ValueError`."
+msgstr "`write_run_bundle` 从 `relic.orchestration.compiler` 导入；`relic.orchestration` 包不导出它。`graph` 必须是编译 `plan` 所用的规范 `GraphIR`；类型不同会抛出 `TypeError`，图不同会抛出 `ValueError`。`run_id` 指定溯源运行名称（默认采用当前 UTC 时间，`YYYYMMDDTHHMMSSZ`）。`input_files` 列出要计算哈希的输入文件；省略时使用 `graph.metadata[\"input_files\"]`。`metadata` 向证据包元数据加入调用方条目；`schema_version` 和 `graph_metadata` 是保留键，使用时会抛出 `ValueError`。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:315
+msgid "The bundle records the declarative workflow, compile result, runtime log target, environment and repository evidence, input checksums when input files are declared, and W3C Provenance Data Model (PROV) metadata."
+msgstr "溯源包记录声明式工作流定义、图编译结果、运行时日志目标、运行环境与代码仓库证据、已声明输入文件的校验和，以及 W3C 溯源数据模型（W3C Provenance Data Model, PROV）元数据。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Artifact"
+msgstr "artifact"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Purpose"
+msgstr "用途"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`workflow.json`"
+msgstr "`workflow.json`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Serialized GraphIR."
+msgstr "GraphIR"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`execution_plan.json`"
+msgstr "`execution_plan.json`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Serialized execution steps."
+msgstr "序列化的执行步骤。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`compile_report.json`"
+msgstr "`compile_report.json`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Validation, structural audit, adapters, and compile metadata."
+msgstr "验证、结构审计、适配器和编译metadata"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`runtime.log.jsonl`"
+msgstr "`runtime.log.jsonl`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Runtime event stream target."
+msgstr "Runtime事件流目标."
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`env_snapshot.txt`"
+msgstr "`env_snapshot.txt`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Execution-environment snapshot."
+msgstr "执行环境快照."
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`git_status.json`"
+msgstr "`git_status.json`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Repository-state evidence."
+msgstr "证据库状态"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`inputs_manifest.sha256`"
+msgstr "`inputs_manifest.sha256`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Hash manifest for declared input files."
+msgstr "声明文件的散列摘要manifest."
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`prov.jsonld`"
+msgstr "`prov.jsonld`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Machine-readable provenance graph."
+msgstr "可机器读取的 provenance 图表."
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`manifest.json`"
+msgstr "`manifest.json`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Run identity, metadata, and the path of every bundle artifact."
+msgstr "运行身份、元数据，以及证据包中每个产物的路径。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`checksums.sha256`"
+msgstr "`checksums.sha256`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Hashes of the bundle files."
+msgstr "证据包文件的哈希。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:332
+msgid "`write_run_bundle()` creates the target directory, verifies the sealed bundle, and returns normalized artifact paths. It raises `TypeError` if the provenance recorder does not return the required mapping."
+msgstr "`write_run_bundle()` 创建目标目录，验证封装后的证据包，并返回规范化产物路径。溯源记录器未返回要求的映射时，抛出 `TypeError`。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:336
+msgid "Conservation diagnostic output"
+msgstr "Conservationdiagnostic输出"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:394
+msgid "The writer converts conservation summaries to an xarray dataset and delegates Climate and Forecast (CF) attribute synchronization and output creation to `DataWriter`, without adding time bounds. It returns the `WriteResult` and raises `OSError` when the write or its output validation fails. `metadata_registry` replaces the default per-variable diagnostic metadata. `delivery_key` is stored as the global attribute `relic_delivery_key`, so a retried delivery with the same key and options keeps the original creation timestamp. `summaries` and `time_coords` must describe the same sequence of simulation steps."
+msgstr "该写出器将守恒诊断摘要转换为 xarray 数据集，并将气候与预报（Climate and Forecast, CF）属性同步及文件落盘委托给 `DataWriter`，期间不附加时间边界变量。写出成功时返回 `WriteResult`，写出失败或输出校验未通过时抛出 `OSError`。`metadata_registry` 可替换默认的逐变量诊断元数据。`delivery_key` 作为全局属性 `relic_delivery_key` 持久化，确保使用相同交付键与配置重试写出时保留原始创建时间戳。`summaries` 与 `time_coords` 必须对应同一模拟步序列。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:404
+msgid "`DataIO`"
+msgstr "`DataIO`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:422
+msgid "Read configuration"
+msgstr "读取配置"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`ReadConfig` field"
+msgstr "`ReadConfig`字段"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Default"
+msgstr "默认值"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Meaning"
+msgstr "含义"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`format`"
+msgstr "`format`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`AUTO`"
+msgstr "`AUTO`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Detect the supported source format."
+msgstr "检测支持的源格式。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`chunks`"
+msgstr "`chunks`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`None`"
+msgstr "`None`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Optional xarray chunk mapping."
+msgstr "xarray 分块映射选项"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`parallel`"
+msgstr "`parallel`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`True`"
+msgstr "`True`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Enable supported parallel I/O behavior."
+msgstr "启用支持的并行I/O行为。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`cache_size`"
+msgstr "`cache_size`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`128`"
+msgstr "`128`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Reader cache size in MB."
+msgstr "MB的读取器缓存大小"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`cf_validate`"
+msgstr "`cf_validate`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Check each variable's explicit `standard_name` and `units` with `CFConventions.validate_cf_compliance`; the check runs only inside the `cf_standardize` step."
+msgstr "使用 `CFConventions.validate_cf_compliance` 检查每个变量显式给出的 `standard_name` 和 `units`；该检查只在 `cf_standardize` 步骤内执行。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`cf_standardize`"
+msgstr "`cf_standardize`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Run the explicit-metadata CF step. It never renames variables, infers attributes, or changes values or units. With `cf_validate`, invalid metadata sets `ReadResult.success` and `ReadResult.validation_passed` to `False`, or raises `ValueError` when `strict_cf` is set. The step always adds a warning that dataset-level CF conformance was not evaluated."
+msgstr "运行显式元数据 CF 步骤。它不重命名变量、不推断属性，也不改变值或单位。启用 `cf_validate` 时，无效元数据将 `ReadResult.success` 和 `ReadResult.validation_passed` 设为 `False`；若同时设置 `strict_cf`，则抛出 `ValueError`。该步骤始终添加一条警告，说明尚未评估数据集级 CF 合规性。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`strict_cf`"
+msgstr "`strict_cf`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`False`"
+msgstr "`False`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Raise for metadata (CF standard-name and unit) findings; without it such findings are recorded and the result is marked failed. Every other failure (a failed processing pipeline, tensor conversion, write, chunking request or file close) raises in both modes; raw or partial data are never returned in its place."
+msgstr "对元数据（CF 标准名称和单位）问题抛出异常；未启用时则记录问题，并将结果标为失败。其他所有失败（处理流水线、张量转换、写入、分块请求或文件关闭失败）在两种模式下都会抛出异常，不以原始或不完整数据代替结果。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`process_time`"
+msgstr "`process_time`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Process time coordinates."
+msgstr "处理时间坐标。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`time_bounds`"
+msgstr "`time_bounds`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Compute missing time bounds where supported."
+msgstr "在支持的情况下计算缺失时间bounds。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`standard_calendar`"
+msgstr "`standard_calendar`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Keep the source calendar. `True` accepts only `gregorian` and raises for any other calendar, because no cross-calendar conversion exists."
+msgstr "保留源日历。`True` 只接受 `gregorian`，其他日历都会报错，因为尚无跨日历转换。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`variables`"
+msgstr "`variables`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Variables to include; `None` means all."
+msgstr "变量包括；`None`表示全部。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`exclude_vars`"
+msgstr "`exclude_vars`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Variables to exclude."
+msgstr "需要排除的变量"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`standard_names_only`"
+msgstr "`standard_names_only`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Return only variables with standard-name support."
+msgstr "仅返回具有 standard-name 支持的 variable。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`apply_unit_conversion`"
+msgstr "`apply_unit_conversion`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Convert CF-consistent variables to `target_units` or to the CF canonical unit of their `standard_name` (see below)."
+msgstr "将符合 CF 要求的变量转换为 `target_units`，或其 `standard_name` 的 CF 规范单位（见下文）。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`target_units`"
+msgstr "`target_units`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Variable-to-target-unit mapping; each unit must be CF-consistent with the variable's `standard_name`."
+msgstr "变量到目标单位的映射；每个单位都必须符合该变量 `standard_name` 的 CF 要求。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`file_path`"
+msgstr "`file_path`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Not read by the reader; pass the path to the read call."
+msgstr "读取器不读取此项；请把路径传给读取调用。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`validate_data`"
+msgstr "`validate_data`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Run data validation."
+msgstr "运行数据验证。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`fill_missing`"
+msgstr "`fill_missing`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Fill supported missing coordinate data."
+msgstr "填充支持的缺失坐标数据。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`quality_flags`"
+msgstr "`quality_flags`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Accepted but not used; the reader adds no quality flags."
+msgstr "接受但不使用；读取器不添加质量标志。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`to_torch`"
+msgstr "`to_torch`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Return a tensor mapping in place of an xarray dataset."
+msgstr "返回张量映射以替代 xarray 数据集。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`torch_dtype`"
+msgstr "`torch_dtype`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`torch.float32`"
+msgstr "`torch.float32`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Tensor output type."
+msgstr "Tensor 输出类型。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`torch_device`"
+msgstr "`torch_device`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`\"cpu\"`"
+msgstr "`\"cpu\"`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Tensor output device."
+msgstr "Tensor输出设备。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:449
+msgid "Unit conversion on read"
+msgstr "读取时的单位转换"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:451
+msgid "With `apply_unit_conversion=True`, the reader converts each variable that has both `units` and `standard_name` attributes. The target is `target_units[name]` when given, otherwise the canonical unit of the standard name in the CF table. Variables without these attributes, or whose standard name defines no canonical unit, are left unchanged. The source and the target unit must both be CF-consistent with the standard name."
+msgstr "启用 `apply_unit_conversion=True` 时，读取器转换同时具有 `units` 和 `standard_name` 属性的各个变量。给出 `target_units[name]` 时，以其为目标单位；否则使用 CF 表中该标准名称的规范单位。没有这些属性，或标准名称未定义规范单位的变量保持不变。源单位和目标单位都必须符合该标准名称的 CF 要求。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:458
+msgid "The values are converted only by the shared `UnitConverter`. It uses an explicit conversion rule when one exists; otherwise it converts a pair of units of the same dimension that differ only by a scale factor through UDUNITS, for example `kg m-2 day-1` to `kg m-2 s-1`. Affine pairs without a rule, such as `degF` to `K`, and pairs of different dimensions still need an explicit rule. The reader passes an empty `ConversionContext`: it supplies no temperature, pressure, or density, so a conversion that needs one fails."
+msgstr "数值仅通过共用的 `UnitConverter` 转换。存在显式转换规则时使用该规则；否则，通过 UDUNITS 转换量纲相同且仅相差比例因子的单位对，例如 `kg m-2 day-1` 到 `kg m-2 s-1`。没有规则的仿射单位对（如 `degF` 到 `K`）以及不同量纲的单位对仍需显式规则。读取器传入空的 `ConversionContext`，不提供温度、压力或密度，因此需要这些量的转换会失败。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:466
+msgid "A converted variable keeps `standard_name` and its other attributes, gets the new `units`, and records the previous unit in `original_units`; a note is added to `ReadResult.warnings`. A variable with a CF-inconsistent unit, or one that cannot be converted, keeps its values and units, and the read is marked failed: `ReadResult.success` and `ReadResult.validation_passed` become `False` and the reason is added to `warnings`. With `strict_cf=True` the read raises `ValueError` instead. `DataIO.read()` returns only the data, so inspect the `ReadResult` from `DataIO.reader.read_dataset(...)` or `convert_format(...)`, or set `strict_cf=True`."
+msgstr "转换后的变量保留 `standard_name` 及其他属性，获得新的 `units`，并在 `original_units` 中记录原单位；`ReadResult.warnings` 中会加入说明。单位不符合 CF 要求或无法转换的变量保留原值与原单位，同时读取结果标为失败：`ReadResult.success` 和 `ReadResult.validation_passed` 变为 `False`，原因加入 `warnings`。启用 `strict_cf=True` 时，读取改为抛出 `ValueError`。`DataIO.read()` 仅返回数据，因此应检查 `DataIO.reader.read_dataset(...)` 或 `convert_format(...)` 返回的 `ReadResult`，或设置 `strict_cf=True`。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:477
+msgid "Conversions of model state that need context take it from `UnitConverter.get_conversion_context(state, *, layer_thickness_variable=None, layer_thickness=None, temperature=None, pressure=None)`. The layer thickness (the context field `soil_depth`, in m) comes only from the state variable that the converted variable declares as its layer thickness (the `layer_thickness_variable` of its variable contract, which the transport bridge reads), read pointwise, or from an explicit `layer_thickness`. Giving both raises `ValueError`, as does a named variable that is missing from `state`; no fixed state name such as `soil_depth` or `root_zone_depth` is looked up. Temperature is read only from `air_temperature` and pressure only from `atmospheric_pressure`; the alias `air_pressure` is resolved upstream by the ContractRegistry, and no other name is tried. A conversion that needs another temperature or pressure, such as a leaf or soil temperature, receives it through the explicit `temperature` [K] or `pressure` [Pa] argument, which takes precedence over the state. `water_density` is taken from `state` when present. State fields are kept as tensors. No default values are filled in: a field that stays `None` makes the conversion that needs it raise."
+msgstr "需要上下文的模型状态转换从 `UnitConverter.get_conversion_context(state, *, layer_thickness_variable=None, layer_thickness=None, temperature=None, pressure=None)` 获取上下文。层厚（上下文字段 `soil_depth`，单位 m）只来自待转换变量声明的层厚状态变量（变量契约中的 `layer_thickness_variable`，由输运桥读取），逐点读取；也可通过显式 `layer_thickness` 提供。两者同时提供会抛出 `ValueError`；指定变量不在 `state` 中也会抛出该异常。不会查找 `soil_depth` 或 `root_zone_depth` 等固定状态名。温度只从 `air_temperature` 读取，压力只从 `atmospheric_pressure` 读取；别名 `air_pressure` 由上游 ContractRegistry 解析，不尝试其他名称。需要其他温度或压力（例如叶温或土温）的转换通过显式 `temperature` [K] 或 `pressure` [Pa] 参数接收，其优先级高于状态值。存在 `state` 时，从中读取 `water_density`。状态字段保持为张量。不填入默认值：某字段仍为 `None` 时，需要它的转换会报错。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:494
+msgid "Write configuration"
+msgstr "编写配置"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`WriteConfig` field"
+msgstr "`WriteConfig`字段"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`NETCDF4`"
+msgstr "`NETCDF4`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Output format."
+msgstr "输出格式。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`compression`"
+msgstr "`compression`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`ZSTD`"
+msgstr "`ZSTD`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Compression method."
+msgstr "压缩方法。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`compression_level`"
+msgstr "`compression_level`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`4`"
+msgstr "`4`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Compression level from 1 through 9."
+msgstr "1 到 9 的压缩级别。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Explicit chunk mapping."
+msgstr "显式切.chunk映射"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`auto_chunk`"
+msgstr "`auto_chunk`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Select chunks automatically."
+msgstr "选择块自动"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`chunk_time_first`"
+msgstr "`chunk_time_first`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Prefer time-oriented chunks."
+msgstr "以时间为导向的片段优先"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`cf_sync`"
+msgstr "`cf_sync`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Synchronize CF attributes."
+msgstr "同步CF属性"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`add_bounds`"
+msgstr "`add_bounds`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Add coordinate bounds when supported."
+msgstr "在支持时添加坐标bounds。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`update_history`"
+msgstr "`update_history`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Update the dataset history attribute."
+msgstr "更新数据集历史属性"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`title`, `institution`, `source`, `comment`, `references`"
+msgstr "`title`， `institution`， `source`， `comment`， `references`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Optional global metadata."
+msgstr "可选全局metadata."
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Sequential writing; `True` raises `NotImplementedError`."
+msgstr "顺序写入；`True` 会抛出 `NotImplementedError`。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`validate_output`"
+msgstr "`validate_output`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Validate the written output."
+msgstr "验证输出内容。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`create_dirs`"
+msgstr "`create_dirs`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Create missing parent directories."
+msgstr "创建缺失的父目录."
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:513
+msgid "Read, write, and convert"
+msgstr "读写转换"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Method"
+msgstr "方法"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Return value"
+msgstr "返回值"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`read(source, **kwargs)`"
+msgstr "`read(source, **kwargs)`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`xarray.Dataset` or `dict[str, Tensor]`"
+msgstr "`xarray.Dataset` 或 `dict[str, Tensor]`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`read_variables(source, variables, **kwargs)`"
+msgstr "`read_variables(source, variables, **kwargs)`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Variable mapping"
+msgstr "变量映射"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`read_tensors(source, variables, device=\"cpu\", dtype=torch.float32)`"
+msgstr "`read_tensors(source, variables, device=\"cpu\", dtype=torch.float32)`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Tensor mapping"
+msgstr "Tensor 映射"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`write(data, output_path, **kwargs)`"
+msgstr "`write(data, output_path, **kwargs)`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`WriteResult`"
+msgstr "`WriteResult`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`write_tensors(tensors, output_path, coordinates=None, metadata=None, **kwargs)`"
+msgstr "`write_tensors(tensors, output_path, coordinates=None, metadata=None, **kwargs)`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`convert_format(source_path, target_path, target_format, **kwargs)`"
+msgstr "`convert_format(source_path, target_path, target_format, **kwargs)`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`(ReadResult, WriteResult)`"
+msgstr "`(ReadResult, WriteResult)`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`get_file_info(file_path)`"
+msgstr "`get_file_info(file_path)`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "File metadata mapping; a file whose metadata cannot be read raises (no mapping carrying an `error` entry)."
+msgstr "文件元数据映射；无法读取元数据时直接报错，不返回含 `error` 条目的映射。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:589
+msgid "`ReadResult` retains loaded data, metadata, CF and validation flags, warnings, timing, file size, time-processing status, and standardized-variable mappings. `WriteResult` reports the output path, size, timing, compression ratio, CF and validation flags, warnings, variables, coordinates, and computed bounds."
+msgstr "`ReadResult` 保留已加载的 data、metadata、CF 与 validation flag、warning、timing、file size、time-processing status 以及 standardized-variable mapping。`WriteResult` 报告 output path、size、timing、compression ratio、CF 与 validation flag、warning、variable、coordinate 以及计算得到的 bound。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:594
+msgid "Interpret every CF result by its declared scope. The existing `CFConventions.validate_cf_compliance(...)` checks one variable's official standard name and compatible units; it reports `single_variable_standard_name_and_units`, not whole-dataset conformance. `CFConventions.validate_dataset_conformance(...)` evaluates `declared_dataset_scope`: the Conventions declaration, units, official names, axis values, time units/calendar, coordinates and bounds references/shapes, missing-value consistency, and cell-method syntax/dimensions. Grid mappings, discrete sampling geometries, gathering compression, external variables, and group hierarchies are outside that scope. Name Table v94 membership cannot itself authorize a dataset Conventions declaration."
+msgstr "请按其声明范围解读每个 CF 结果。现有的 `CFConventions.validate_cf_compliance(...)` 检查单个变量的官方 standard name 与兼容单位；它报告的是 `single_variable_standard_name_and_units`，而非整个数据集的合规。`CFConventions.validate_dataset_conformance(...)` 评估 `declared_dataset_scope`：Conventions 声明、单位、官方名称、axis 取值、时间单位/calendar、coordinate 与 bounds 的引用/shape、缺失值一致性，以及 cell-method 语法/dimension。Grid mapping、离散采样几何、gathering 压缩、外部变量以及 group 层级都不在该范围内。Name Table v94 成员身份本身不能授权数据集的 Conventions 声明。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:606
+msgid "The external `IOHandler.read(...)` reports its dataset check through `IOResult.cf_validation_scope`, `dataset_conformance_checked`, and `cf_conformance_issues`; `cf_compliant=True` requires that the declared check actually ran and found no issue. Other result types and unchecked paths must not inherit this claim merely from a similarly named boolean field."
+msgstr "外部的 `IOHandler.read(...)` 通过 `IOResult.cf_validation_scope`、`dataset_conformance_checked` 和 `cf_conformance_issues` 报告其数据集检查；`cf_compliant=True` 要求所声明的检查实际运行且未发现问题。其他 result 类型和未经检查的路径不得仅因一个名称相似的布尔字段而继承该声明。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:612
+msgid "Supported read formats include NetCDF4, NetCDF3, HDF5, Zarr, and CSV. Supported write formats include NetCDF4, NetCDF3, Zarr, and CSV. A missing file raises `FileNotFoundError`; unsupported data or formats raise `ValueError`; strict CF violations raise `ValueError`."
+msgstr "支持的读取格式包括NetCDF4，NetCDF3，HDF5，Zarr和CSV。支持的写入格式包括NetCDF4，NetCDF3，Zarr和CSV。缺失文件引发`FileNotFoundError`；不支持的数据或格式引发`ValueError`；严格的CF违规引发`ValueError`。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:617
+msgid "For conversion overrides, prefix reader-only options with `read_`:"
+msgstr "对于转换覆盖，将只读选项前缀为`read_`:"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:663
+msgid "Experimental data quality and streaming gates"
+msgstr "实验性数据质量与流式处理门禁"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:665
+msgid "Two experimental data modules remain gated by explicit environment variables checked at import time:"
+msgstr "两个实验性数据模块受导入阶段检查的显式环境变量门禁保护："
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:668
+msgid "`relic.data.quality` (`QualityValidator`, `RangeRule`, `ValidationIssue`) requires `RELIC_EXPERIMENTAL_DATA_QUALITY=1` before import; otherwise `require_experimental_feature` raises `RuntimeError`."
+msgstr "`relic.data.quality`（包含 `QualityValidator`、`RangeRule`、`ValidationIssue`）要求在导入前设置 `RELIC_EXPERIMENTAL_DATA_QUALITY=1`，未设置时 `require_experimental_feature` 直接抛出 `RuntimeError`。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:671
+msgid "`relic.data.streaming` requires `RELIC_EXPERIMENTAL_STREAMING=1` before import; otherwise the exported names raise `StreamingDisabledError` (or `RuntimeError`)."
+msgstr "`relic.data.streaming` 要求在导入前设置 `RELIC_EXPERIMENTAL_STREAMING=1`，未设置时访问其导出符号会抛出 `StreamingDisabledError`（或 `RuntimeError`）。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:675
+msgid "Streaming windows"
+msgstr "流式窗口"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Field"
+msgstr "字段"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`size`"
+msgstr "`size`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Window length; a window is complete when the newest record is at least `size` after the window start. The reduced output is stamped at the window centre."
+msgstr "窗口长度；最新记录至少位于窗口起点之后 `size` 时，窗口才完整。归约输出的时间戳位于窗口中心。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`step`"
+msgstr "`step`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Advance of the window start; `None` uses `size`."
+msgstr "窗口起点的推进量；`None` 使用 `size`。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`aggregation_method`"
+msgstr "`aggregation_method`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Reduction over time: `mean`, `sum`, `min`, or `max`, written as `cell_methods = \"time: <method>\"`. Any other value, including `\"MEAN\"`, raises `ValueError` when the window is built."
+msgstr "时间归约方式：`mean`、`sum`、`min` 或 `max`，以 `cell_methods = \"time: <method>\"` 指定。任何其他值（包括 `\"MEAN\"`）都会在构建窗口时引发 `ValueError`。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`quality_checks`"
+msgstr "`quality_checks`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Run quality control on each window."
+msgstr "对每个窗口执行质量控制。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:693
+msgid "The window has no coverage or gap fields; passing `min_data_fraction` or `max_gap_duration` raises `TypeError`. Coverage and gap limits come from the quality-control parameters `coupling.scales.temporal.coverage_threshold` and `coupling.scales.temporal.quality_control.*`."
+msgstr "窗口没有覆盖率或缺口字段；传入 `min_data_fraction` 或 `max_gap_duration` 会抛出 `TypeError`。覆盖率与缺口限制来自质量控制参数 `coupling.scales.temporal.coverage_threshold` 和 `coupling.scales.temporal.quality_control.*`。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:698
+msgid "With `quality_checks=True`, the window time series of each variable is checked before the reduction with `QualityController.validate_for_operation(series, time_coord, \"aggregation\")`. A series fails when its valid fraction is below the coverage threshold or its quality grade is below `acceptable`; the reduced variable then gets the attribute `quality_flags = \"validation_failed\"`. A variable without a time dimension gets `\"not_assessed\"`. A numeric time axis needs CF `units` and `calendar` attributes, and window data without a `time` dimension raises. Errors propagate to the stream consumer; a failed window is not dropped with a warning."
+msgstr "启用 `quality_checks=True` 时，在归约前使用 `QualityController.validate_for_operation(series, time_coord, \"aggregation\")` 检查每个变量的窗口时间序列。有效比例低于覆盖率阈值，或质量等级低于 `acceptable` 时，该序列失败；归约后的变量会获得属性 `quality_flags = \"validation_failed\"`。没有时间维的变量获得 `\"not_assessed\"`。数值时间轴需要 CF 的 `units` 和 `calendar` 属性；窗口数据没有 `time` 维时会报错。错误传递给流消费者，不会仅记录警告后丢弃失败窗口。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:709
+msgid "CF attributes after scaling"
+msgstr "尺度转换后的 CF 属性"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:711
+msgid "`CFAttributeSynchronizer` in `relic.data.standards.cf_conventions` carries explicit CF metadata through a processing step. It does not change or unit-convert the data tensor, and it does not infer units, variable roles, grids, or coordinates. Each `sync_after_*` method passes the data and metadata through `CFConventions.sync_variable_attributes`, which derives two metadata values from the data: `shape` (`list(data.shape)`) and, for non-empty data, `actual_range` (`[float(data.min()), float(data.max())]`). The range is `[nan, nan]` when the data contain NaN. For empty data `actual_range` is not written, so a value already in the input metadata is kept. The method-specific attributes in the table below are written on top of these two fields."
+msgstr "`relic.data.standards.cf_conventions` 中的 `CFAttributeSynchronizer` 在处理步骤中传递显式 CF 元数据。它不改变数据张量或转换其单位，也不推断单位、变量角色、网格或坐标。每个 `sync_after_*` 方法都通过 `CFConventions.sync_variable_attributes` 传递数据与元数据；后者从数据导出两个元数据值：`shape`（`list(data.shape)`），以及非空数据的 `actual_range`（`[float(data.min()), float(data.max())]`）。数据含 NaN 时，范围为 `[nan, nan]`。空数据不写入 `actual_range`，因此保留输入元数据中已有的值。下表的方法专属属性写在这两个字段之上。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:723
+msgid "`sync_variable_attributes` first checks the standard name and units of the input metadata and raises `ValueError` for an issue even when `strict_mode` is `False`; the only exception is when every issue is an undefined unit contract for the standard name. With `strict_mode=True`, the updated metadata is checked again, and an issue found by this bounded CF check raises `ValueError`."
+msgstr "`sync_variable_attributes` 首先检查输入元数据的标准名称和单位；即使 `strict_mode` 为 `False`，有问题时也会抛出 `ValueError`。唯一例外是所有问题都属于该标准名称的单位契约未定义。启用 `strict_mode=True` 时，会再次检查更新后的元数据；这一有限范围的 CF 检查发现问题时，抛出 `ValueError`。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Behavior"
+msgstr "行为"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`sync_after_aggregation(data, metadata, aggregation_method, dimension=\"time\", *, source_label, target_label)`"
+msgstr "`sync_after_aggregation(data, metadata, aggregation_method, dimension=\"time\", *, source_label, target_label)`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Sets the `<dimension>: <method>` cell method and appends `Aggregated <dimension> from <source_label> to <target_label> (<dimension>: <method>)` to `history`."
+msgstr "设置 `<dimension>: <method>` 单元方法，并向 `history` 追加 `Aggregated <dimension> from <source_label> to <target_label> (<dimension>: <method>)`。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`sync_after_disaggregation(data, metadata, disaggregation_method, dimension=\"area\", *, source_label, target_label)`"
+msgstr "`sync_after_disaggregation(data, metadata, disaggregation_method, dimension=\"area\", *, source_label, target_label)`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Same, with a `Disaggregated ...` entry. The allowed cell methods depend on `dimension`: `sum` (each fine cell holds its own total) or `mean` (each fine cell holds a mean) for `area`, and `sum`, `mean`, or `point` (instantaneous states) for `time`. Other methods and other dimensions raise `ValueError`."
+msgstr "行为相同，但采用 `Disaggregated ...` 条目。允许的单元方法取决于 `dimension`：`area` 允许 `sum`（每个细单元保存自身总量）或 `mean`（每个细单元保存均值）；`time` 允许 `sum`、`mean` 或 `point`（瞬时状态）。其他方法和其他维度均抛出 `ValueError`。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`sync_after_regridding(data, metadata, regrid_method, source_grid, target_grid)`"
+msgstr "`sync_after_regridding(data, metadata, regrid_method, source_grid, target_grid)`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Requires `shape` in both grids and a non-empty string for each name in `CF_REGRID_TARGET_GRID_FIELDS` (`grid_mapping`, `lat_name`, `lon_name`) in `target_grid`; writes `grid_mapping` and `coordinates` and appends a regridding entry to `history`."
+msgstr "要求两个网格都包含 `shape`，并且 `target_grid` 中 `CF_REGRID_TARGET_GRID_FIELDS` 列出的各名称（`grid_mapping`、`lat_name`、`lon_name`）都对应非空字符串；写入 `grid_mapping` 和 `coordinates`，并向 `history` 追加重网格化记录。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "`sync_after_temporal_aggregation(data, metadata, time_coord, operation, method, coverage_stats, *, source_label, target_label)`"
+msgstr "`sync_after_temporal_aggregation(data, metadata, time_coord, operation, method, coverage_stats, *, source_label, target_label)`"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md
+msgid "Calls `sync_after_aggregation` (`operation=\"aggregation\"`) or `sync_after_disaggregation` (`operation=\"disaggregation\"`) with `dimension=\"time\"`. The variable keeps its `standard_name`, `units`, and `long_name`, gets the `time: <method>` cell method, and gains the history entry `Aggregated time from <source_label> to <target_label> (time: <method>)` (or `Disaggregated time ...`). Coverage fields come from the required `coverage_stats` (`coverage_fraction`, or `valid_points` and `total_points`): `coverage_fraction`, `coverage_threshold` read from `coupling.scales.temporal.coverage_threshold`, and `quality_state` (`good_data` or `insufficient_coverage`). The attributes of the result time coordinate are returned under `time_coordinate`, with `bounds` only when the coordinate has bounds; in strict mode only these time-coordinate attributes get the temporal check."
+msgstr "使用 `dimension=\"time\"` 调用 `sync_after_aggregation`（`operation=\"aggregation\"`）或 `sync_after_disaggregation`（`operation=\"disaggregation\"`）。变量保留 `standard_name`、`units` 和 `long_name`，获得 `time: <method>` 单元方法，并增加历史条目 `Aggregated time from <source_label> to <target_label> (time: <method>)`（或 `Disaggregated time ...`）。覆盖率字段来自必需的 `coverage_stats`（`coverage_fraction`，或 `valid_points` 和 `total_points`）：`coverage_fraction`、从 `coupling.scales.temporal.coverage_threshold` 读取的 `coverage_threshold`，以及 `quality_state`（`good_data` 或 `insufficient_coverage`）。结果时间坐标的属性返回在 `time_coordinate` 中，仅当坐标带有边界时才包含 `bounds`；严格模式下仅对这些时间坐标属性执行时间检查。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:737
+msgid "The source and target labels are required, non-empty scale labels such as `\"hourly\"` and `\"daily\"`; a missing or empty label raises."
+msgstr "源标签和目标标签必须提供，且为非空尺度标签，例如 `\"hourly\"` 和 `\"daily\"`；标签缺失或为空会报错。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:740
+msgid "Data I/O command checks"
+msgstr "数据I/O命令检查"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:748
+msgid "Use `--help` on the selected subcommand before an operation because format-specific arguments are command-specific."
+msgstr "在选择子命令前使用`--help`因为特定格式的参数是命令特定的。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:751
+msgid "`data io check` runs the I/O health checks. The I/O performance check is an error when its read or write benchmark fails (a failed memory benchmark lowers a healthy result to a warning); the streaming throughput check of the experimental `data stream check` is an error when a benchmark raises."
+msgstr "`data io check` 执行 I/O 健康检查。I/O 性能检查中的读取或写入基准失败时，结果为错误（内存基准失败会将健康结果降为警告）；实验性 `data stream check` 的流式吞吐检查在基准抛出异常时结果为错误。"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:756
+msgid "Related documentation"
+msgstr "相关文档"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:758
+msgid "[Architecture](../architecture.md)"
+msgstr "[架构](../architecture.md)"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:759
+msgid "[State, Functors, and Simulation](state_functors_and_simulation.md)"
+msgstr "[State、Functors 与模拟](state_functors_and_simulation.md)"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:760
+msgid "[Graph Validation and Execution](graph_validation_and_execution.md)"
+msgstr "[Graph 验证与执行](graph_validation_and_execution.md)"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:761
+msgid "[Orchestration](../orchestration.md)"
+msgstr "[Orchestration（编排）](../orchestration.md)"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:762
+msgid "[Science index](../science/index.rst)"
+msgstr "[Science 索引](../science/index.rst)"
+
+#: <RELIC_ROOT>/docs/source/public/workflows/persistence_outputs_and_data_io.md:763
+msgid "[Theory index](../theory/index.rst)"
+msgstr "[Theory 索引](../theory/index.rst)"
+

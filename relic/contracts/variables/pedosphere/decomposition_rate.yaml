@@ -1,0 +1,40 @@
+variable: carbon_decomposition_rate
+title: "Gross Carbon Decomposition Rate"
+kind: flux
+dimension:
+  udunits: "g C m-2 s-1"
+  cf_standard_name: null
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+numerics:
+  lower_bound: null
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "first_order_decomposition"
+      module: "relic.scientific.pedosphere.decomposition.first_order"
+      provides: ["carbon_decomposition_rate"]
+      unit: "g C m-2 s-1"
+    - name: "pools_matrix"
+      module: "relic.scientific.pedosphere.carbon_pools.pools_matrix"
+      provides: ["carbon_decomposition_rate"]
+      unit: "g C m-2 s-1"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/pedosphere/decomposition/first_order.py"
+  runtime_role: "mutually_exclusive_gross_decomposition_rate"
+  runtime_writers:
+    - "first_order_decomposition"
+    - "pools_matrix"

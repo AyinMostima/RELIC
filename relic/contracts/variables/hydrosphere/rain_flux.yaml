@@ -1,0 +1,52 @@
+variable: rain_flux
+title: "Rainfall Mass Flux"
+description: "Liquid precipitation (rain) mass flux reaching the land surface after the snow_pack rain/snow phase partition of precipitation_flux: P_rain = P * (1 - f_snow), f_snow = 1 when air_temperature <= rain_snow_temperature_threshold and 0 otherwise (Anderson 1976). Rain bypasses the snowpack storage; surface_runoff reads it together with snow_melt_flux as the surface water input P = P_rain + M, and bucket_soil_moisture reads the same sum as the water input of the soil store when hydrosphere.soil_moisture.water_input_source is rain_flux_plus_snow_melt_flux. Non-negative magnitude, positive downward into the land surface; CF v94 rainfall_flux (kg m-2 s-1)."
+kind: flux
+dimension:
+  udunits: "kg m-2 s-1"
+  cf_standard_name: "rainfall_flux"
+support:
+  spatial_kind: grid_cell
+  area_basis: ground_area
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: "snow_pack"
+aliases: ["rainfall_flux"]
+incrementable: false
+accumulates: null
+references:
+  - "Anderson, E.A. (1976). A point energy and mass balance model of a snow cover. NOAA Technical Report NWS 19"
+  - "CF Standard Name Table v94: rainfall_flux (kg m-2 s-1)"
+# Sign convention: non-negative downward magnitude. precipitation_flux is
+# bounded below by 0 and P_rain = P * (1 - f_snow) with f_snow in {0, 1};
+# surface_runoff rejects a negative surface water input.
+numerics:
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "snow_pack"
+      module: "relic.scientific.hydrosphere.snow.snowpack"
+      provides: ["rain_flux"]
+      unit: "kg m-2 s-1"
+flux_contract:
+  allowed_in:
+    - "snow_pack"
+  allowed_out:
+    - "surface_runoff"
+    - "bucket_soil_moisture"
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/hydrosphere/snow/snowpack.py"
+  runtime_role: "phase_partitioned_liquid_precipitation_flux"
+  runtime_writer: "snow_pack"
+  note: "Written only by snow_pack as UpdateItem(REPLACE, per_timestep=False) in kg m-2 s-1 (snowpack.py:125 output_variables; :591 and :600-601 phase partition; :656 mm s-1 -> kg m-2 s-1; :686 update). Read by surface_runoff only when hydrosphere.runoff.surface_water_input_source is rain_flux_plus_snow_melt_flux (surface.py:178 input_variables; :205 optional_input_variables; :268-272 source selector; :766-767 P = rain_flux + snow_melt_flux; :773-774 rejects negative input); in that mode surface_runoff declares snow_pack, the SCM owner of rain_flux and snow_melt_flux (resolved at surface.py:333-344), as a required dependency (:276-279), so the snowpack partition runs first in the same step. With the default source precipitation_flux the pair is never read, so snow_pack and surface_runoff share one simulator state without counting precipitation twice. bucket_soil_moisture reads the pair only when hydrosphere.soil_moisture.water_input_source is rain_flux_plus_snow_melt_flux (bucket.py WATER_INPUT_SOURCES; P = rain_flux + snow_melt_flux in forward), with snow_pack as a lagged provider whose committed outflow it consumes (a zero-order hold when snow_pack runs in a slower execution group); with its default source precipitation_flux it never reads the pair."

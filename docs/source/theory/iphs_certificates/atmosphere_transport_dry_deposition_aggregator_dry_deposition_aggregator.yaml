@@ -1,0 +1,195 @@
+certificate_version: '1.0'
+process_id: relic.scientific.atmosphere.transport.dry_deposition_aggregator.DryDepositionAggregator
+module_name: DryDepositionAggregator
+canonical_role: transport
+iphs_level: 3
+iphs_level_evidence:
+  classification: IPHS-structured transport process certificate
+  compatible_basis: Process declares DEC cochains, a positive dry-deposition Hodge mobility, and an open surface export port
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: x_dot = -D_h q_h + G_h u_h with q_h = star_dep C_h
+  structural_contribution: Cochain, Hodge, flux, and port structures are declared for assembly audit
+  assembly_participation: Certificate participates in Phase 8 inventory and GraphIR structural audit
+  level_3_limit: Typed form, Hodge, port, or related structure is declared, but no runtime-linked IPHSStructureSpec contribution and executable level 4 or 5 certificate binding is present.
+theory_document: docs\source\theory\atmosphere_dry_deposition_aggregator.md
+theory_document_status: updated
+legacy_formula: r_eff,s = r_b,s + r_c,s; v_d,s = 1 / (r_a + r_eff,s); Delta C_s = max(-C_s, -v_d,s C_s Delta t / h_pbl)
+literature_formula: r_eff,s = r_b,s + r_c,s; v_d,s = 1 / (r_a + r_eff,s); Delta C_s = max(-C_s, -v_d,s C_s Delta t / h_pbl)
+iphs_formula: x_dot = -D_h q_h + G_h u_h, q_h = star_dep C_h, y_h = G_h^T e_h
+legacy_expression: r_eff,s = r_b,s + r_c,s; v_d,s = 1 / (r_a + r_eff,s); Delta C_s = max(-C_s, -v_d,s C_s Delta t / h_pbl)
+iphs_expression: x_dot = -D_h q_h + G_h u_h, q_h = star_dep C_h, y_h = G_h^T e_h
+input_variables:
+- no_mixing_ratio
+- no2_mixing_ratio
+- o3_mixing_ratio
+- so2_mixing_ratio
+- pbl_height
+- aerodynamic_resistance
+output_variables:
+- no_mixing_ratio
+- no2_mixing_ratio
+- o3_mixing_ratio
+- so2_mixing_ratio
+- diagnostics.dry_deposition.total_mixing_ratio_increment
+- diagnostics.dry_deposition.total_limiter_residual
+- diagnostics.dry_deposition.normalized_mass_balance_residual
+- diagnostics.dry_deposition.enabled
+parameter_keys:
+- atmosphere.dry_deposition.enabled
+- atmosphere.dry_deposition.species_list
+- atmosphere.dry_deposition.species.no.effective_non_aerodynamic_resistance
+- atmosphere.dry_deposition.species.no2.effective_non_aerodynamic_resistance
+- atmosphere.dry_deposition.species.o3.effective_non_aerodynamic_resistance
+- atmosphere.dry_deposition.species.so2.effective_non_aerodynamic_resistance
+- atmosphere.dry_deposition.reference_height
+- atmosphere.dry_deposition.structural_reference_deposition_velocity
+composition_ports:
+- dry_deposition_surface_export
+references:
+- Wesely, M.L. (1989). Parameterization of surface resistances to gaseous dry deposition. Atmos. Environ., 23, 1293-1304
+- Zhang, L., Brook, J.R., & Vet, R. (2003). A revised parameterization for gaseous dry deposition. Atmos. Chem. Phys., 3, 2067-2082
+- Baldocchi, D.D., Hicks, B.B., & Camara, P. (1987). A canopy stomatal resistance model for gaseous deposition. Atmos. Environ., 21, 91-101
+- Hicks, B.B. et al. (1987). A preliminary multiple resistance routine for deriving dry deposition velocities. Atmos. Environ., 21, 1039-1044
+baseline_tests:
+- test\atmosphere\transport\test_dry_deposition_aggregator_parameters.py
+- test\atmosphere\transport\dry_deposition_sign.test.py
+- test\atmosphere\transport\surface_layer_source.test.py
+- test\unit\transport\test_atmosphere_transport_l1.py
+- test\unit\atmosphere\transport\test_atmosphere_transport_advanced_l1.py
+- test\audit\phase8_scientific_inventory.test.py
+validation_tests:
+- test\integration\test_l2_transport_integration.py
+- test\system\test_l3_transport_system.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  no_mixing_ratio: atmospheric NO state read as a mixing ratio and written as a timestep-integrated sink increment [mol mol-1]
+  no2_mixing_ratio: atmospheric NO2 state read as a mixing ratio and written as a timestep-integrated sink increment [mol mol-1]
+  o3_mixing_ratio: atmospheric O3 state read as a mixing ratio and written as a timestep-integrated sink increment [mol mol-1]
+  so2_mixing_ratio: atmospheric SO2 state read as a mixing ratio and written as a timestep-integrated sink increment [mol mol-1]
+  pbl_height: pbl_height mapped to canonical Phase 8 cochain basis
+  aerodynamic_resistance: aerodynamic resistance supplied by atmospheric_turbulence, or by external forcing under surface_layer_source = external_forcing [s m-1]
+  diagnostics.dry_deposition.total_mixing_ratio_increment: sum of species increments for monitoring [mol mol-1]
+  diagnostics.dry_deposition.total_limiter_residual: summed difference between unconstrained and submitted increments [mol mol-1]
+  diagnostics.dry_deposition.normalized_mass_balance_residual: per-species submitted increment minus unconstrained increment and limiter residual [mol mol-1]
+  diagnostics.dry_deposition.enabled: explicit activation flag [1]
+parameter_map:
+  atmosphere.dry_deposition.enabled: Activation switch of the dry deposition aggregator [dimensionless]
+  atmosphere.dry_deposition.species_list: Ordered canonical deposited species [dimensionless]
+  atmosphere.dry_deposition.species.no.effective_non_aerodynamic_resistance: Effective resistance r_b + r_c of NO [s m-1]
+  atmosphere.dry_deposition.species.no2.effective_non_aerodynamic_resistance: Effective resistance r_b + r_c of NO2 [s m-1]
+  atmosphere.dry_deposition.species.o3.effective_non_aerodynamic_resistance: Effective resistance r_b + r_c of O3 [s m-1]
+  atmosphere.dry_deposition.species.so2.effective_non_aerodynamic_resistance: Effective resistance r_b + r_c of SO2 [s m-1]
+  atmosphere.dry_deposition.reference_height: Reference height of the deposition velocity [m]
+  atmosphere.dry_deposition.structural_reference_deposition_velocity: Reference deposition velocity of the static Hodge contract [m s-1]
+operator_map:
+  D_h: existing divergence/transport operator
+  q_h: declared flux cochain
+  G_h: boundary/source port map
+unit_map:
+  no_mixing_ratio: mol mol-1
+  no2_mixing_ratio: mol mol-1
+  o3_mixing_ratio: mol mol-1
+  so2_mixing_ratio: mol mol-1
+  pbl_height: m
+  aerodynamic_resistance: s m-1
+  diagnostics.dry_deposition.total_mixing_ratio_increment: mol mol-1
+  diagnostics.dry_deposition.total_limiter_residual: mol mol-1
+  diagnostics.dry_deposition.normalized_mass_balance_residual: mol mol-1
+  diagnostics.dry_deposition.enabled: '1'
+input_output_map:
+  no_mixing_ratio: input atmospheric state receives the explicit timestep-integrated dry-deposition sink increment
+  no2_mixing_ratio: input atmospheric state receives the explicit timestep-integrated dry-deposition sink increment
+  o3_mixing_ratio: input atmospheric state receives the explicit timestep-integrated dry-deposition sink increment
+  so2_mixing_ratio: input atmospheric state receives the explicit timestep-integrated dry-deposition sink increment
+  diagnostics.dry_deposition.total_mixing_ratio_increment: numeric sum of submitted species increments
+  diagnostics.dry_deposition.total_limiter_residual: explicit route for the increment removed by numerical rate and availability limits
+  diagnostics.dry_deposition.normalized_mass_balance_residual: per-species normalized open-boundary residual checked without cancellation across species
+  diagnostics.dry_deposition.enabled: explicit activation diagnostic with no disabled-state writer
+  pbl_height: same interface variable preserved between legacy and IPHS runtime contracts
+  aerodynamic_resistance: same interface variable preserved between runtime and structural contracts
+interface_map:
+  forward_signature: forward(self, state, time, dt, **kwargs)
+  bridge_class: TransportMechanismFunctor
+  abstraction_contract: TransportMechanism
+  state_write_mode: atmospheric states use UpdateItem(ACCUMULATE, per_timestep=True); diagnostics are read-only tensors
+  legacy_inputs:
+  - no_mixing_ratio
+  - no2_mixing_ratio
+  - o3_mixing_ratio
+  - so2_mixing_ratio
+  - pbl_height
+  - aerodynamic_resistance
+  iphs_inputs:
+  - no_mixing_ratio
+  - no2_mixing_ratio
+  - o3_mixing_ratio
+  - so2_mixing_ratio
+  - pbl_height
+  - aerodynamic_resistance
+  legacy_outputs:
+  - no_mixing_ratio
+  - no2_mixing_ratio
+  - o3_mixing_ratio
+  - so2_mixing_ratio
+  - diagnostics.dry_deposition.total_mixing_ratio_increment
+  - diagnostics.dry_deposition.total_limiter_residual
+  - diagnostics.dry_deposition.normalized_mass_balance_residual
+  - diagnostics.dry_deposition.enabled
+  iphs_outputs:
+  - no_mixing_ratio
+  - no2_mixing_ratio
+  - o3_mixing_ratio
+  - so2_mixing_ratio
+  - diagnostics.dry_deposition.total_mixing_ratio_increment
+  - diagnostics.dry_deposition.total_limiter_residual
+  - diagnostics.dry_deposition.normalized_mass_balance_residual
+  - diagnostics.dry_deposition.enabled
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: Existing ParameterManager-backed calculations define canonical IPHS operator coefficients, rates, ports, or observations.
+  no_legacy_mode: true
+state_advancement_map:
+  potential_basis: declared RELIC state, port, or observation cochain basis
+  effort_variable: ParameterManager-backed thermodynamic effort, driver, or diagnostic input used by the module
+  state_advancer: Delta C_s = max(-C_s, -C_s Delta t / ((r_a + r_eff,s) h_pbl)) with explicit boundary_export routing
+  runtime_usage: DryDepositionAggregator.forward evaluates one normalized mixing-ratio sink and returns timestep-integrated UpdateItems; no strict surface mass-flux proof is claimed.
+parameter_management_map:
+  atmosphere.dry_deposition.enabled:
+    source: ParameterManager YAML
+  atmosphere.dry_deposition.species_list:
+    source: ParameterManager YAML
+  atmosphere.dry_deposition.species.no.effective_non_aerodynamic_resistance:
+    source: ParameterManager YAML
+  atmosphere.dry_deposition.species.no2.effective_non_aerodynamic_resistance:
+    source: ParameterManager YAML
+  atmosphere.dry_deposition.species.o3.effective_non_aerodynamic_resistance:
+    source: ParameterManager YAML
+  atmosphere.dry_deposition.species.so2.effective_non_aerodynamic_resistance:
+    source: ParameterManager YAML
+  atmosphere.dry_deposition.reference_height:
+    source: ParameterManager YAML
+  atmosphere.dry_deposition.structural_reference_deposition_velocity:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares interfaces, execution phase, and conservation semantics
+  state_contract: existing simulator state update path is preserved
+  validation_rule: phase8 scientific inventory and equivalence certificate checks
+dependency_interconnection_map:
+  dependencies: atmospheric_turbulence by default; none under surface_layer_source = external_forcing, where aerodynamic_resistance is State:ExternalForcing and the law is unchanged
+  direct_functor_calls: none declared by certificate
+overflow_routing_map:
+  diagnostic_residuals: diagnostics.dry_deposition.total_limiter_residual explicitly reports the difference between unconstrained and submitted increments
+  normalized_balance: diagnostics.dry_deposition.normalized_mass_balance_residual reports the per-species submitted-minus-potential-minus-limiter identity
+  discarded_residuals: none; disabled runtime returns no state writer, enabled=0, and an explicit zero balance residual
+conservation_map:
+  conserved_quantities: per-species normalized molar burden under well-mixed PBL and constant air molar density assumptions
+  balance_expression: P_s = v_d,s C_s Delta t / h_pbl; E_s = min(P_s,C_s); L_s = P_s-E_s; Delta C_s = -E_s; R_s = Delta C_s + P_s - L_s = 0
+  local_check: process-specific hook returns max(abs(R_s)) without cancellation across species; total_limiter_residual is not treated as a violation
+  open_system_route: boundary_export; no physical surface molar or mass flux is claimed without air molar density
+entropy_audit:
+  operator_sign: rates, mobilities, or diagnostic maps are non-negative or checked by existing validation hooks where physically required
+  sigma_expression: canonical entropy production is non-negative for dissipative subexpressions
+  validation_hook: process-specific normalized per-species mass-balance residual plus existing Hodge and dissipative-structure checks
+equivalence_type: port_equivalent

@@ -1,0 +1,37 @@
+variable: ch4_atmospheric_flux
+title: "Methane Atmospheric Carbon Flux"
+kind: flux
+dimension:
+  udunits: "g C m-2 s-1"
+  cf_standard_name: null
+owner: "pedosphere_methane_budget"
+aliases: []
+incrementable: false
+accumulates: carbon.total
+numerics:
+  lower_bound: null
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "pedosphere_methane_budget"
+      module: "relic.scientific.pedosphere.methane.budget_coupler"
+      provides:
+        - "ch4_atmospheric_flux"
+      unit: "g C m-2 s-1"
+flux_contract:
+  allowed_in: []
+  allowed_out:
+    - "pedosphere_methane_budget"
+  budget_check:
+    guardian: "pedosphere_methane_budget"
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/pedosphere/methane/budget_coupler.py"
+  runtime_role: "conservative_methane_atmospheric_boundary_flux"
+  runtime_writer: "pedosphere_methane_budget"
+  local_budget_residual: "diagnostics.methane_budget.mass_balance_residual"

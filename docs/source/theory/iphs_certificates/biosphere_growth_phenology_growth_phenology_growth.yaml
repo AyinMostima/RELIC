@@ -1,0 +1,124 @@
+{
+  "certificate_version": "1.0",
+  "process_id": "relic.scientific.biosphere.growth.phenology_growth.PhenologyGrowth",
+  "module_name": "PhenologyGrowth",
+  "canonical_role": "observation",
+
+  "iphs_level": 1,
+  "iphs_level_evidence": {
+    "classification": "IPHS-compatible selected-owner activity-diagnostic certificate",
+    "compatible_basis": "Read-only observation contract with declared interface and no state ownership",
+    "level_1_limit": "The empirical response has no independently validated Hamiltonian, effort, J, M, port-power, or GENERIC degeneracy evidence; strict IPHS is not claimed."
+  },
+  "theory_document": "docs\\source\\theory\\growth.md",
+  "theory_document_status": "updated",
+  "legacy_formula": "The prior interface evaluated f(GDD, temperature, photoperiod) and exposed public phenological_factor and growth_active outputs.",
+  "literature_formula": "Phenology controls ecosystem carbon processes; the exact fixed binary threshold is a calibrated model configuration rather than a universal literature law.",
+  "iphs_formula": "diagnostics.phenology.growth_active = I[phenological_factor > growth_active_threshold], with no state advancement",
+  "legacy_expression": "f = f(GDD, temperature, photoperiod); rate = f",
+  "iphs_expression": "diagnostics.phenology.growth_active = O_h(phenological_factor)",
+  "input_variables": [
+    "phenological_factor"
+  ],
+  "output_variables": [
+    "diagnostics.phenology.growth_active"
+  ],
+  "parameter_keys": [
+    "biosphere.growth.allocation.growth_active_threshold"
+  ],
+  "composition_ports": [
+    "phenological_factor",
+    "diagnostics.phenology.growth_active"
+  ],
+  "references": [
+    "Richardson et al. (2013). Climate change, phenology, and phenological control. Agric For Meteorol 169:156-173",
+    "Gao et al. (2025). pnetr: an R package for the PnET family of forest ecosystem models."
+  ],
+  "baseline_tests": [
+    "test\\unit\\biosphere\\growth\\test_phenology_growth_l1.py",
+    "test\\growth\\test_growth_module_L2.py",
+    "test\\growth\\test_growth_module_L3.py"
+  ],
+  "validation_tests": [
+    "test\\unit\\biosphere\\growth\\test_phenology_growth_l1.py",
+    "test\\integration\\biosphere\\test_growth_integration.py",
+    "test\\audit\\phase8_scientific_inventory.test.py"
+  ],
+  "state_map": {
+    "phenological_factor": "required dimensionless control from one selected main phenology owner",
+    "diagnostics.phenology.growth_active": "dimensionless Boolean-valued activity diagnostic"
+  },
+  "parameter_map": {
+    "biosphere.growth.allocation.growth_active_threshold": "calibratable activity threshold from ParameterManager"
+  },
+  "operator_map": {
+    "O_h": "declared empirical observation map; no state, Hamiltonian, J, or M operator is asserted"
+  },
+  "unit_map": {
+    "phenological_factor": "dimensionless",
+    "diagnostics.phenology.growth_active": "dimensionless"
+  },
+  "input_output_map": {
+    "phenological_factor": "required selected-owner input to O_h",
+    "diagnostics.phenology.growth_active": "Boolean threshold diagnostic derived from phenological_factor"
+  },
+  "interface_map": {
+    "forward_signature": "forward(self, state, time, dt, **kwargs)",
+    "bridge_class": "BiologicalProcessFunctor",
+    "abstraction_contract": "BiologicalProcess",
+    "state_write_mode": "one dimensionless REPLACE UpdateItem with per_timestep=false; no conserved state write",
+    "legacy_inputs": [
+      "phenological_factor"
+    ],
+    "iphs_inputs": [
+      "phenological_factor"
+    ],
+    "legacy_outputs": [
+      "diagnostics.phenology.growth_active"
+    ],
+    "iphs_outputs": [
+      "diagnostics.phenology.growth_active"
+    ]
+  },
+  "runtime_replacement_map": {
+    "runtime_uses_iphs": false,
+    "legacy_removed": false,
+    "replacement_entrypoint": "forward",
+    "preserved_numerics": "The ParameterManager-backed strict threshold comparison is retained as a level-1 observation map.",
+    "no_legacy_mode": "No old input alias, GDD-temperature-photoperiod formula, hidden default, PFT option, selectable legacy branch, or second state-advance law is exposed."
+  },
+  "state_advancement_map": {
+    "potential_basis": "declared selected-owner control and diagnostic basis",
+    "effort_variable": "not applicable to this non-strict empirical observation",
+    "state_advancer": "none; diagnostics.phenology.growth_active = O_h(phenological_factor) is observation-only",
+    "runtime_usage": "PhenologyGrowth.forward evaluates O_h once and emits one explicit REPLACE UpdateItem without advancing state."
+  },
+  "parameter_management_map": {
+    "biosphere.growth.allocation.growth_active_threshold": {
+      "source": "ParameterManager calibrated phenomenological diagnostic YAML"
+    }
+  },
+  "composition_management_map": {
+    "functor_metadata": "existing FunctorMetadata declares interfaces, execution phase, and conservation semantics",
+    "state_contract": "the namespaced activity diagnostic uses the existing StateManager REPLACE path",
+    "validation_rule": "phase8 scientific inventory and equivalence certificate checks"
+  },
+  "dependency_interconnection_map": {
+    "dependencies": "exactly one Static, GDD, GSI, or Crop phenology owner is selected at composition time and supplies phenological_factor; this observer does not write that port",
+    "direct_functor_calls": "none; the composition-time selected phenology owner supplies phenological_factor through the state graph and this observer invokes no owner instance"
+  },
+  "overflow_routing_map": {
+    "diagnostic_residuals": "phenological_factor must already be finite and within [0, 1]; the Boolean comparison has no clipped residual",
+    "discarded_residuals": "non-finite or out-of-range phenological_factor is rejected before commit and the Boolean stage observation performs no clipping"
+  },
+  "conservation_map": {
+    "conserved_quantities": "none; this observer writes no LAI, carbon, nitrogen, water, or energy state",
+    "balance_expression": "delta_conserved_state = 0"
+  },
+  "entropy_audit": {
+    "operator_sign": "not applicable to a state-neutral level-1 observation",
+    "sigma_expression": "not applicable"
+  },
+  "equivalence_type": "diagnostic"
+}
+

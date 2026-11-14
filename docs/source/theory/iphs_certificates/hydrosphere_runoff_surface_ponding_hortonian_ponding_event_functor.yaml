@@ -1,0 +1,177 @@
+certificate_version: '1.0'
+process_id: relic.scientific.hydrosphere.runoff.surface_ponding.HortonianPondingEventFunctor
+module_name: HortonianPondingEventFunctor
+canonical_role: field
+iphs_level: 2
+iphs_level_evidence:
+  classification: IPHS-wrapped hybrid topology event detector certificate (infiltration excess and the ponding onset/cessation requests, category topology_change)
+  compatible_basis: One prognostic cochain on the cell basis, the infiltration excess surface_ponding_excess [mm], read together with the cumulative rainfall depth, the ponded depth, and the connectivity flag; ParameterManager-backed capacity and thresholds
+  runtime_replacement: forward computes the excess of the step from the rainfall depth increment kept in module extra state and emits the topology request as an ExternalIntent that the simulator lifecycle owner commits after the accepted step; no legacy branch exists
+  canonical_operator: E = max(0, dH - I_max dt); onset guard a = 0 and max E >= E_on; cessation guard a = 1, E = 0 and max h <= h_off; the committed remap is x^+ = P x^- + R eta on (h, E, a)
+  level_2_limit: The canonical hybrid-event runtime wrapper is declared and executed, but no typed-cochain IPHS structure, Hamiltonian, entropy, or strict jump map beyond the declared affine remap is claimed; strict level 4 or 5 evidence is not applicable to this threshold event model.
+theory_document: docs\source\theory\hydrosphere_surface_ponding.md
+theory_document_status: updated
+legacy_formula: E = max(0, dH - I_max dt)
+literature_formula: Hortonian infiltration excess (Horton 1933) with a depression-storage onset threshold (Beven 2012) and an event-triggered hybrid jump (Goebel, Sanfelice and Teel 2012)
+iphs_formula: x^+ = P_h x^- + R_h eta_h on (h, E, a); C x^+ = C x^- (onset) or C x^+ = C x^- + Pi (cessation); no IPHS operator is claimed
+legacy_expression: E_n = max(0, H_n - H_{n-1} - I_max dt / 3600)
+iphs_expression: onset request when a = 0 and max E_n >= E_on; cessation request when a = 1, E_n = 0 and max h_n <= h_off; requests are pure ExternalIntent descriptors
+input_variables:
+- stochastic_rainfall_depth
+- surface_ponding_active
+- surface_ponded_depth
+output_variables:
+- surface_ponding_excess
+- diagnostics.ponding_event.excess_depth
+- diagnostics.ponding_event.rainfall_increment
+- diagnostics.ponding_event.infiltrated_excess
+parameter_keys:
+- hydrosphere.runoff.ponding_infiltration_capacity
+- hydrosphere.runoff.ponding_onset_depth
+- hydrosphere.runoff.ponding_cessation_depth
+composition_ports: []
+references:
+- Horton, R.E. (1933). Trans. Am. Geophys. Union 14, 446-460
+- Beven, K.J. (2012). Rainfall-Runoff Modelling, The Primer, 2nd ed., Wiley
+- Goebel, R., Sanfelice, R.G. & Teel, A.R. (2012). Hybrid Dynamical Systems, Princeton
+baseline_tests:
+- test\unit\hydrosphere\test_surface_ponding.py
+- test\audit\phase8_scientific_inventory.test.py
+validation_tests:
+- test\unit\hydrosphere\test_surface_ponding.py
+- test\core\simulator_topology_transition.test.py
+- test\integration\test_surface_ponding_topology_integration.py
+- test\unit\validation\framework\rules\stochastic_sdae_structure.test.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  stochastic_rainfall_depth: cumulative rainfall depth H [mm] read from the rainfall provider
+  surface_ponding_active: connectivity flag a [1] (0 disconnected, 1 connected), changed only by the committed remap
+  surface_ponded_depth: ponded depth h [mm] read for the cessation guard
+  surface_ponding_excess: prognostic infiltration excess E of the step [mm], replaced every step
+  diagnostics.ponding_event.excess_depth: E of the emitted step [mm]
+  diagnostics.ponding_event.rainfall_increment: dH of the emitted step [mm]
+  diagnostics.ponding_event.infiltrated_excess: E infiltrated through depression storage while disconnected [mm]
+parameter_map:
+  hydrosphere.runoff.ponding_infiltration_capacity: steady infiltration capacity I_max from ParameterManager [mm h-1]
+  hydrosphere.runoff.ponding_onset_depth: onset threshold E_on from ParameterManager [mm]
+  hydrosphere.runoff.ponding_cessation_depth: cessation threshold h_off from ParameterManager [mm]
+operator_map:
+  excess: E = max(0, dH - I_max dt / 3600) with dH = H_n - H_{n-1} kept in module extra state (replay-critical)
+  onset_request: ExternalIntent(topology, ponding_onset) when a = 0 and max E >= E_on
+  cessation_request: ExternalIntent(topology, ponding_cessation) when a = 1, E = 0 and max h <= h_off
+  commit: relic.core.simulator.registration.apply_topology_transition commits retire/connect, the affine remap, the ledger audit, and one provider epoch after the accepted step
+unit_map:
+  stochastic_rainfall_depth: mm
+  surface_ponding_active: '1'
+  surface_ponded_depth: mm
+  surface_ponding_excess: mm
+  diagnostics.ponding_event.excess_depth: mm
+  diagnostics.ponding_event.rainfall_increment: mm
+  diagnostics.ponding_event.infiltrated_excess: mm
+input_output_map:
+  stochastic_rainfall_depth: canonical state input from the rainfall provider
+  surface_ponding_active: canonical state input (uniform 0 or 1 over cells)
+  surface_ponded_depth: canonical state input
+  surface_ponding_excess: UpdateItem REPLACE in mm, per_timestep false
+  diagnostics.ponding_event.excess_depth: canonical REPLACE observation
+  diagnostics.ponding_event.rainfall_increment: canonical REPLACE observation
+  diagnostics.ponding_event.infiltrated_excess: canonical REPLACE observation
+interface_map:
+  forward_signature: forward(self, state, time, dt, **kwargs)
+  bridge_class: PhysicalFieldFunctor
+  abstraction_contract: PhysicalField
+  constructor_selection: "HortonianPondingEventFunctor(config={'rainfall_provider': 'stochastic_rainfall'})"
+  state_write_mode: UpdateItem REPLACE for the excess and REPLACE observations for diagnostics; topology requests are ExternalIntent outputs
+  legacy_inputs:
+  - stochastic_rainfall_depth
+  - surface_ponding_active
+  - surface_ponded_depth
+  iphs_inputs:
+  - stochastic_rainfall_depth
+  - surface_ponding_active
+  - surface_ponded_depth
+  legacy_outputs:
+  - surface_ponding_excess
+  - diagnostics.ponding_event.excess_depth
+  - diagnostics.ponding_event.rainfall_increment
+  - diagnostics.ponding_event.infiltrated_excess
+  iphs_outputs:
+  - surface_ponding_excess
+  - diagnostics.ponding_event.excess_depth
+  - diagnostics.ponding_event.rainfall_increment
+  - diagnostics.ponding_event.infiltrated_excess
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward -> ExternalIntent(topology) -> relic.core.simulator.registration.apply_topology_transition
+  preserved_numerics: The single forward path partitions the rainfall increment exactly into infiltration and excess and requests the transition; the commit applies the declared affine remap with an exact ledger audit.
+  no_legacy_mode: No selectable legacy runtime branch is exposed; the Functor was introduced directly on the lifecycle owner.
+  non_strict_reason: Level 2 declares the canonical hybrid-event runtime wrapper; no IPHS structure, Hamiltonian, or entropy claim is made for a threshold event.
+state_advancement_map:
+  potential_basis: infiltration excess on the declared cell basis; no storage functional is claimed
+  effort_variable: none; the event is a threshold on the excess and the ponded depth
+  state_advancer: E_n = max(0, dH_n - I_max dt / 3600) emitted as REPLACE; the topology remap (h, E, a) -> (h + E, 0, 1) or (0, E, 0) is committed by the lifecycle owner
+  runtime_usage: HortonianPondingEventFunctor.forward validates the inputs, forms the increment from module extra state, emits the excess and three REPLACE diagnostics, and adds one ExternalIntent when a guard holds; the intent is validated before the step commits and executed after acceptance by retry_external_deliveries.
+parameter_management_map:
+  hydrosphere.runoff.ponding_infiltration_capacity:
+    source: ParameterManager YAML
+  hydrosphere.runoff.ponding_onset_depth:
+    source: ParameterManager YAML
+  hydrosphere.runoff.ponding_cessation_depth:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares three state inputs, one state output, three diagnostics, one dependency (the rainfall provider), and the mass law
+  state_contract: SCM contracts surface_ponding_excess (owner ponding_event), surface_ponded_depth, surface_ponding_active (topology writers topology:ponding_onset and topology:ponding_cessation) and the diagnostics.ponding_event.* contracts type the GraphIR ports
+  validation_rule: stochastic_sdae_check with the topology_change execution binding (hybrid_topology_transitions with P_h, ledger_map, ledger_change, reset_route relic.core.simulator.registration.apply_topology_transition; topology_restart with graph_epoch_owner relic.core.simulator.registration and event_queue_state_key relic.core.simulator.execution_loop.retry_external_deliveries), phase8 scientific inventory, and equivalence certificate checks
+  topology_binding: execution_bindings.topology_change names this class, its forward, the state triple, topology_state_scope state_manager, and the lifecycle test as executed evidence
+dependency_interconnection_map:
+  dependencies: get_dependencies() returns the rainfall provider name (default stochastic_rainfall)
+  direct_functor_calls: none; the transition is committed by the registration owner through the delivery queue
+overflow_routing_map:
+  invalid_state_route: missing, non-tensor, non-floating, non-finite states, a decreasing cumulative depth, or a non-uniform or non-binary flag fail before any UpdateItem
+  inadmissible_timestep_route: a non-positive or non-finite step fails before any output
+  duplicate_request_route: a request for a transition whose guard no longer holds is refused by the lifecycle owner (repeated reset)
+  undeclared_request_route: a request naming an undeclared transition is refused while the step can still roll back
+  discarded_residuals: no residual is discarded; the excess is either stored (connected) or reported as infiltrated (disconnected)
+conservation_map:
+  conserved_quantities: water depth ledger C = [1, 1, 0] on (h, E, a) across the committed remap
+  balance_expression: dH = min(dH, I_max dt) + E each step; C x^+ = C x^- at onset and C x^+ = C x^- - h^- at cessation (declared infiltration)
+entropy_audit:
+  operator_sign: E >= 0 and I_max > 0, E_on > 0, h_off > 0 by ParameterManager bounds
+  sigma_expression: no entropy-production claim is made; the event is a threshold on the surface water budget
+stochastic_sdae_map:
+  declares_stochastic_terms: false
+  requires_noise_covariance: false
+  declares_fdt_noise: false
+  requires_conservative_noise_flux: false
+  requires_descriptor_constraint: false
+  requires_jump_reset: false
+  hybrid_topology_transitions:
+    ponding_onset:
+      state_vars: [surface_ponded_depth, surface_ponding_excess, surface_ponding_active]
+      state_remap: [[1.0, 1.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
+      reset_vector: [0.0, 0.0, 1.0]
+      ledger_map: [[1.0, 1.0, 0.0]]
+      ledger_change: [[0.0]]
+      guard: surface_ponding_active = 0
+      reset_route: relic.core.simulator.registration.apply_topology_transition
+      audit_route: diagnostics.topology_transition.ledger_residual
+    ponding_cessation:
+      state_vars: [surface_ponded_depth, surface_ponding_excess, surface_ponding_active]
+      state_remap: [[0.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 0.0]]
+      reset_vector: [0.0, 0.0, 0.0]
+      ledger_map: [[1.0, 1.0, 0.0]]
+      ledger_change: declared Pi = -h^- routed to diagnostics.topology_transition.ledger_change
+      guard: surface_ponding_active = 1
+      reset_route: relic.core.simulator.registration.apply_topology_transition
+      audit_route: diagnostics.topology_transition.ledger_residual
+  topology_restart:
+    checkpoint_owner: relic.core.simulator.checkpoint
+    graph_epoch_owner: relic.core.simulator.registration
+    event_queue_state_key: relic.core.simulator.execution_loop.retry_external_deliveries
+  execution_binding:
+    functor_class: relic.scientific.hydrosphere.runoff.surface_ponding.HortonianPondingEventFunctor
+    forward_owner: relic.scientific.hydrosphere.runoff.surface_ponding.HortonianPondingEventFunctor.forward
+    topology_state_scope: state_manager
+    validation_test: test\core\simulator_topology_transition.test.py
+equivalence_type: exact

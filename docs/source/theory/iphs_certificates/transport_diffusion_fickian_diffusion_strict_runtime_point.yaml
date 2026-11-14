@@ -1,0 +1,210 @@
+certificate_version: '1.0'
+process_id: relic.scientific.transport.diffusion.FickianDiffusion
+constructor_selection:
+  strict_runtime_point: true
+  spatial_dims: 1
+module_name: fickian_diffusion
+canonical_role: transport
+formulation: dissipative_ph
+iphs_level: 4
+iphs_level_evidence:
+  classification: Strict dissipative port-Hamiltonian certificate for the closed one-dimensional finite-volume diffusion selection strict_runtime_point=true
+  compatible_basis: State cochain c_h in kg m-3 on one unbatched one-dimensional cell basis; storage H_h = 0.5 c_h^T c_h, effort e_H = c_h, resistance R_h = d_h^T diag(K_f) d_h / dx^2 with harmonic face coefficients
+  runtime_replacement: forward keeps the single OperatorFactory transport.diffusion production law and, for this selection, additionally evaluates IPHSStructureSpec.canonical_drift with J_h = 0 (zero_field) and R_h, verifies that (J_h - R_h) e_H reproduces the production finite-volume rate, and runs IPHSStructureSpec.validate(required_level=4) on the same bound storage every emitted step
+  canonical_operator: c_dot = (J_h - R_h) e_H with J_h = 0, R_h = d_h^T diag(K_f) d_h / dx^2, e_H = dH_h/dc_h = c_h; dH_h/dt = -e_H^T R_h e_H = -sigma_0 <= 0
+  structural_contribution: Cochain, Hodge, flux, and port structures are declared for assembly audit; the runtime point binds the global closed finite-volume resistance, not the local material diagonal
+  assembly_participation: Certificate participates in Phase 8 inventory and GraphIR structural audit through the class-level level 3 certificate; this selection certificate binds the strict runtime point
+  storage_functional:
+    runtime_owner: relic.scientific.transport.diffusion.FickianDiffusion._closed_dph_runtime_point
+    value_key: storage
+    state_keys:
+    - tracer_concentration
+    units: kg2 m-6
+    theory_anchor: transport_fickian_diffusion:level_4_dph_runtime_point
+    validation_test: test\transport\test_diffusion_l1.py
+  effort_definition:
+    runtime_owner: relic.computation.operators.iphs.IPHSStructureSpec.canonical_drift
+    value_key: energy_effort
+    derivative_of: storage_functional
+    method: autograd
+    validation_test: test\transport\test_diffusion_l1.py
+  dissipation_audit:
+    runtime_owner: relic.computation.operators.iphs.IPHSStructureSpec.validate
+    operator_owner: relic.scientific.transport.diffusion.FickianDiffusion._closed_dph_runtime_point
+    operator_kind: resistance_R
+    value_key: energy_dissipation
+    balance_key: closed_port_energy_rate
+    inequality: dH_dt<=port_power
+    tolerance_parameter_key: validation.iphs.runtime_point_tolerance
+    validation_test: test\transport\test_diffusion_l1.py
+  port_power_audit:
+    runtime_owner: relic.computation.operators.iphs.IPHSStructureSpec.canonical_drift
+    balance_key: closed_boundary_port_power
+    sign_convention: out_of_system
+    tolerance_parameter_key: validation.iphs.runtime_point_tolerance
+    validation_test: test\transport\test_diffusion_l1.py
+  level_4_scope: Level 4 holds for the executed runtime point of each emitted step of the closed one-dimensional selection; the process-bound witness (governed FunctorBase call, committed tracer_concentration, accepted step) must accompany this certificate when validated, otherwise it remains descriptive. Dirichlet and extrapolated boundaries carry a matter port whose port-power linkage is not claimed.
+theory_document: docs\source\theory\transport_fickian_diffusion.md
+theory_document_status: updated
+legacy_formula: dc/dt = div(K * grad(c)) + S
+literature_formula: Fickian diffusion in conservative form with flux J = -D grad(c) and storage tendency dc/dt = -div(J) + S; closed finite-volume form dH/dt = -sum_f K_f (dc_f/dx)^2 <= 0 for H = 0.5 c.c (Crank 1975; Patankar 1980; van der Schaft and Jeltsema 2014)
+iphs_formula: c_dot = (J_h - R_h) e_H; J_h = 0; R_h = d_h^T diag(K_f) d_h / dx^2; e_H = c_h; dH_h/dt = -e_H^T R_h e_H <= 0
+legacy_expression: dc/dt = div(K * grad(c)) + S
+iphs_expression: c_dot = (J_h - R_h) e_H; J_h = 0; R_h = d_h^T diag(K_f) d_h / dx^2; e_H = c_h; dH_h/dt = -e_H^T R_h e_H <= 0
+input_variables:
+- tracer_concentration
+- source_term
+- tracer_concentration_boundary_state
+output_variables:
+- tracer_concentration
+- diagnostics.diffusion_stability
+- diagnostics.conservation_error
+parameter_keys:
+- transport.diffusion.diffusivity
+- transport.diffusion.grid_spacing
+- transport.diffusion.temperature_exponent
+- transport.numerical.conservation_tolerance
+- transport.numerical.enforce_non_negative
+- transport.numerical.track_conservation
+- transport.numerical.cfl_diffusion_max
+- transport.numerical.default_boundary_type
+- transport.numerical.implicit_midpoint_max_iter
+- transport.numerical.implicit_midpoint_tolerance
+composition_ports: []
+references:
+- Crank, J. (1975). The Mathematics of Diffusion. Oxford University Press.
+- Patankar, S.V. (1980). Numerical Heat Transfer and Fluid Flow. Hemisphere.
+- van der Schaft, A. & Jeltsema, D. (2014). Port-Hamiltonian Systems Theory, Foundations and Trends in Systems and Control.
+- LeVeque, R.J. (2007). Finite Difference Methods for Ordinary and Partial Differential Equations. SIAM.
+baseline_tests:
+- test\transport\test_diffusion_l1.py
+- test\transport\transport_phase8_iphs_contract.test.py
+validation_tests:
+- test\transport\test_diffusion_l1.py
+- test\transport\transport_phase8_iphs_contract.test.py
+state_map:
+  tracer_concentration: state cochain c_h of the closed one-dimensional selection; the runtime point binds it as the dPH state x
+  source_term: optional input that must be absent or identically zero for this selection; forward rejects a nonzero source_term before integration (fail-closed), so the executed step equals the audited source-free drift
+  tracer_concentration_boundary_state: rejected for closed boundaries; not consumed by this selection
+  diagnostics.diffusion_stability: diffusion CFL audit
+  diagnostics.conservation_error: mass conservation residual
+parameter_map:
+  transport.diffusion.diffusivity: D in K_f [m2 s-1]
+  transport.diffusion.grid_spacing: metric spacing dx [m]
+  transport.diffusion.temperature_exponent: temperature scaling exponent [dimensionless]
+  transport.numerical.conservation_tolerance: mass conservation tolerance [dimensionless]
+  transport.numerical.enforce_non_negative: positivity-domain enforcement flag [bool]
+  transport.numerical.track_conservation: conservation diagnostic flag [bool]
+  transport.numerical.cfl_diffusion_max: maximum diffusion stability number [dimensionless]
+  transport.numerical.default_boundary_type: default finite-volume boundary closure [categorical]
+  transport.numerical.implicit_midpoint_max_iter: implicit midpoint iteration limit [count]
+  transport.numerical.implicit_midpoint_tolerance: implicit midpoint convergence tolerance [dimensionless]
+operator_map:
+  J_h: zero reversible operator declared through poisson_operator=zero_field
+  R_h: d_h^T diag(K_f) d_h / dx^2, symmetric positive semidefinite for positive diffusivities; d_h is the cell-to-face difference over interior faces plus the periodic seam and K_f the harmonic face coefficient
+  G_h: none for the certified closed selection
+  D_h: canonical finite-volume divergence in OperatorFactory transport.diffusion, reproduced exactly by -R_h e_H at the runtime point
+unit_map:
+  tracer_concentration: kg m-3
+  source_term: kg m-3 s-1
+  tracer_concentration_boundary_state: kg m-3
+  diagnostics.diffusion_stability: dimensionless
+  diagnostics.conservation_error: dimensionless
+input_output_map:
+  tracer_concentration: integrated state increment is emitted as UpdateItem ACCUMULATE with per_timestep true
+  source_term: accepted only when absent or identically zero; a nonzero source rate is rejected before the canonical finite-volume operator runs
+  tracer_concentration_boundary_state: rejected for the closed boundaries of this selection
+  diagnostics.diffusion_stability: always reports max dt sum_k K_k over dx_k squared
+  diagnostics.conservation_error: emitted only when conservation tracking is enabled
+interface_map:
+  forward_signature: forward(self, state, time, dt, **kwargs)
+  bridge_class: TransportMechanismFunctor
+  abstraction_contract: TransportMechanism
+  constructor_selection: FickianDiffusion(spatial_dims=1, boundary_method in {zero, neumann, open, periodic}, strict_runtime_point=True)
+  state_write_mode: UpdateItem ACCUMULATE with per_timestep true
+  legacy_inputs:
+  - tracer_concentration
+  - source_term
+  - tracer_concentration_boundary_state
+  iphs_inputs:
+  - tracer_concentration
+  - source_term
+  - tracer_concentration_boundary_state
+  legacy_outputs:
+  - tracer_concentration
+  - diagnostics.diffusion_stability
+  - diagnostics.conservation_error
+  iphs_outputs:
+  - tracer_concentration
+  - diagnostics.diffusion_stability
+  - diagnostics.conservation_error
+  optional_inputs:
+  - source_term
+  optional_outputs:
+  - diagnostics.conservation_error
+runtime_replacement_map:
+  runtime_uses_iphs: true
+  legacy_removed: true
+  legacy_never_existed: true
+  runtime_owner: relic.scientific.transport.diffusion.FickianDiffusion._closed_dph_runtime_point
+  removed_legacy_symbols: []
+  replacement_entrypoint: forward -> OperatorFactory transport.diffusion -> apply_diffusion, audited by _closed_dph_runtime_point
+  validation_test: test\transport\test_diffusion_l1.py
+  preserved_numerics: The unified conservative finite-volume operator realizes div(K grad(c)); the runtime point rebuilds R_h from the same harmonic face coefficients and rejects the step if the canonical drift does not reproduce the production rate.
+  no_legacy_mode: No runtime flag exposes a separate pre-Phase 8 diffusion branch.
+state_advancement_map:
+  potential_basis: tracer concentration cochain c_h bound as the dPH state with H_h = 0.5 c_h^T c_h on the same autograd graph
+  effort_variable: e_H = dH_h/dc_h = c_h obtained by torch.autograd.grad inside canonical_drift
+  state_advancer: c_dot = (J_h - R_h) e_H with J_h = 0 and R_h = d_h^T diag(K_f) d_h / dx^2, integrated by the production finite-volume operator as Delta c = dt c_dot for explicit Euler
+  runtime_usage: forward calls the single OperatorFactory diffusion path, emits one integrated UpdateItem ACCUMULATE, and for this selection verifies the Level 4 runtime point through IPHSStructureSpec.validate(required_level=4) with the bound storage on every emitted step; the audit is exposed by last_strict_iphs_audit and cleared by a rejected step.
+parameter_management_map:
+  transport.diffusion.diffusivity:
+    source: ParameterManager YAML
+  transport.diffusion.grid_spacing:
+    source: ParameterManager YAML
+  transport.diffusion.temperature_exponent:
+    source: ParameterManager YAML
+  transport.numerical.conservation_tolerance:
+    source: ParameterManager YAML
+  transport.numerical.enforce_non_negative:
+    source: ParameterManager YAML
+  transport.numerical.track_conservation:
+    source: ParameterManager YAML
+  transport.numerical.cfl_diffusion_max:
+    source: ParameterManager YAML
+  transport.numerical.default_boundary_type:
+    source: ParameterManager YAML
+  transport.numerical.implicit_midpoint_max_iter:
+    source: ParameterManager YAML
+  transport.numerical.implicit_midpoint_tolerance:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares transport role and state interface
+  structural_protocol: declared_forms, required_parameters, build_hodge_terms, dissipative_structure, ports
+  state_contract: existing TransportMechanismFunctor.wrap_update and StateManager path
+  runtime_point: _closed_dph_runtime_point assembles R_h and binds IPHSStructureSpec for the closed selection
+dependency_interconnection_map:
+  dependencies: get_dependencies returns the existing dependency list
+  direct_functor_calls: none; only the canonical OperatorFactory and the canonical IPHS operator are invoked
+  chain_maps:
+  - tracer_concentration state cochain to the canonical tracer_concentration increment
+overflow_routing_map:
+  non_negative_projection: disabled; a negative candidate state fails fast without clipping
+  boundary_exchange: none for the closed selection; dirichlet and extrapolate are rejected by the selection
+  conservation_residual: diagnostics.conservation_error receives mass residual when tracking is enabled
+  runtime_point_mismatch: a canonical drift that does not reproduce the production finite-volume rate fails the step before any audit is exposed
+  discarded_residuals: negative candidates fail without projection and no residual is dropped
+conservation_map:
+  conserved_quantity: mass
+  balance_expression: Delta M = 0 for the closed source-free selection (a nonzero S is rejected); the runtime point additionally certifies dH_h/dt = -e_H^T R_h e_H <= 0
+  local_check: scale-stable float64 ledger residual normalized by old and new mass scales
+  functor_law: FunctorMetadata.conservation_laws includes mass
+entropy_audit:
+  dissipative_operator: R_h = d_h^T diag(K_f) d_h / dx^2 is symmetric positive semidefinite for positive diffusivity
+  storage_functional: H_h(c_h) = 0.5 * c_h.T c_h
+  effort_definition: e_H = c_h
+  sigma_expression: energy_dissipation = e_H^T R_h e_H = sum_f K_f (dc_f/dx)^2 >= 0
+  dH_balance: closed_port_energy_rate = -energy_dissipation at every emitted runtime point
+  units_and_scope: H is an unweighted concentration norm [kg2 m-6]; the dissipation is norm dissipation [kg2 m-6 s-1], not thermodynamic entropy production
+  validation_hook: IPHSStructureSpec.validate(required_level=4) on the bound storage of each emitted step, exposed by last_strict_iphs_audit
+equivalence_type: port_equivalent

@@ -1,0 +1,97 @@
+﻿schema_version: 2.0.0
+tier: relic
+namespace: pedosphere.grid
+description: Default spatial discretization for pedosphere transport columns
+metadata:
+  version: 1.0.0
+  created_by: Yuchong Long
+  last_modified: '2025-11-18T00:00:00Z'
+  schema_url: https://github.com/relic/parameter-schema/v2.0.0
+parameters:
+  pedosphere.grid.dz:
+    value: 0.05
+    units: m
+    dtype: float32
+    bounds:
+    - 0.01
+    - 0.2
+    category: numerical_parameter
+    description: Default vertical layer thickness used for 1D Richards columns near the surface
+    references:
+    - Hillel (1998) Environmental Soil Physics
+    - Maxwell & Miller (2005) Advances in Water Resources 28:273-284
+    tags:
+    - spatial_discretization
+    - richards_solver
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: pedosphere_transport_defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-18T00:00:00Z'
+  pedosphere.grid.dx:
+    value: 1.0
+    default: 1.0
+    units: m
+    dtype: float32
+    bounds:
+    - 0.1
+    - 10.0
+    category: numerical_parameter
+    description: Representative horizontal cell size for 2D pedosphere transport
+    references:
+    - Maxwell & Miller (2005) Advances in Water Resources 28:273-284
+    tags:
+    - spatial_discretization
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: pedosphere_transport_defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-18T00:00:00Z'
+  pedosphere.grid.n_layers:
+    value: 10
+    units: dimensionless
+    dtype: int
+    bounds:
+    - 1
+    - 100
+    category: grid_layout
+    description: Default number of soil layers for 1D pedosphere transport and gas diffusion
+    references:
+    - Campbell & Norman (1998) Environmental Biophysics
+    tags:
+    - grid
+    - pedosphere
+    - transport
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_configuration
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-03-01T00:00:00Z'
+  pedosphere.grid.soil_depth:
+    value: 1.5
+    units: m
+    dtype: float32
+    bounds:
+    - 0.1
+    - 10.0
+    category: grid_layout
+    description: Total soil column depth used for pedosphere grids
+    references:
+    - Saxton & Rawls (2006) Soil Sci. Soc. Am. J. 70:1569-1578
+    tags:
+    - soil_profile
+    - grid
+    - pedosphere
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: soil_physics_literature
+      schema_version: 2.0.0
+      created_by: RELIC Parameter System
+      last_modified: '2025-03-01T00:00:00Z'

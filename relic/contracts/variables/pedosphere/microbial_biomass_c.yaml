@@ -1,0 +1,34 @@
+variable: microbial_biomass_c
+title: "Microbial Biomass C"
+kind: state
+dimension:
+  udunits: "g C m-2"
+  cf_standard_name: null
+owner: "microbial_enzyme_decomposition"
+aliases: []
+incrementable: true
+accumulates: carbon.total
+numerics:
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments:
+    - name: "microbial_enzyme_decomposition"
+      module: "relic.scientific.pedosphere.decomposition.microbial_enzyme"
+      provides: ["microbial_biomass_c"]
+      unit: "g C m-2"
+  tendencies: []
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/pedosphere/decomposition/microbial_enzyme.py"
+  runtime_role: "microbial_enzyme_biomass_state_increment"
+  runtime_writer: "microbial_enzyme_decomposition"

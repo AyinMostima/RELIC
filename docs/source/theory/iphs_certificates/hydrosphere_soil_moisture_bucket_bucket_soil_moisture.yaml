@@ -1,0 +1,192 @@
+certificate_version: '1.0'
+process_id: relic.scientific.hydrosphere.soil_moisture.bucket.BucketSoilMoisture
+module_name: bucket_soil_moisture
+canonical_role: transport
+iphs_level: 3
+iphs_level_evidence:
+  classification: IPHS-structured transport process certificate
+  compatible_basis: Process declares composition-safe IPHS or DEC structure
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: DEC/IPHS transport operator with conservative flux routing
+  structural_contribution: Cochain, Hodge, flux, and port structures are declared for assembly audit
+  assembly_participation: Certificate participates in Phase 8 inventory and GraphIR structural audit
+  level_3_limit: Typed form, Hodge, port, or related structure is declared, but no runtime-linked IPHSStructureSpec contribution and executable level 4 or 5 certificate binding is present.
+theory_document: docs\source\theory\hydrosphere_bucket.md
+theory_document_status: updated
+legacy_formula: The bucket model updates volumetric soil moisture from precipitation minus evapotranspiration, saturation-excess runoff, and drainage.
+literature_formula: Single-layer bucket hydrology conserves water storage through P - ET - Q - D and uses empirical runoff and drainage closures bounded by wilting point and saturation.
+iphs_formula: theta_dot = (P - ET - Q - D) / (rho_w * Z); q = star_K g_h; star_K = diag(rho_w * K_sat) >= 0.
+legacy_expression: theta_new = clamp(theta + (P - ET - Q - D) * dt / (rho_w * Z), theta_wp, theta_sat), with flux correction for mass closure.
+iphs_expression: theta_dot = (P - ET - Q - D) / (rho_w * Z); sigma = X_h.T star_K X_h >= 0.
+input_variables:
+- soil_moisture
+- precipitation_flux
+- evapotranspiration_flux
+- rain_flux
+- snow_melt_flux
+output_variables:
+- soil_moisture
+- surface_runoff_flux
+- drainage_flux
+- diagnostics.soil_moisture_bucket
+parameter_keys:
+- hydrosphere.soil_moisture.soil_depth
+- hydrosphere.soil_moisture.field_capacity
+- hydrosphere.soil_moisture.wilting_point
+- hydrosphere.soil_moisture.porosity
+- hydrosphere.soil_moisture.saturated_hydraulic_conductivity
+- hydrosphere.soil_moisture.drainage_factor
+- hydrosphere.soil_moisture.drainage_exponent
+- hydrosphere.soil_moisture.water_input_source
+composition_ports:
+- bucket_evapotranspiration_flux
+- bucket_surface_runoff_flux
+- bucket_drainage_flux
+references:
+- Manabe, S. (1969). Climate and the ocean circulation. Monthly Weather Review, 97, 739-774.
+- Huang, J., van den Dool, H.M., and Georgakakos, K.P. (1996). Analysis of model-calculated soil moisture. Journal of Climate, 9, 1350-1362.
+- Rodriguez-Iturbe, I. and Porporato, A. (2004). Ecohydrology of water-controlled ecosystems. Cambridge University Press.
+- 'Eagleson, P.S. (1978). Climate, soil, and vegetation: water balance dynamics. Water Resources Research, 14, 705-712.'
+baseline_tests:
+- test\scientific\hydrosphere\soil_moisture\bucket_soil_moisture.test.py
+- test\scientific\hydrosphere\transport\hydrosphere_transport_mechanisms.test.py::TestBucketSoilMoisture
+validation_tests:
+- test\scientific\hydrosphere\soil_moisture\bucket_soil_moisture.test.py
+- test\scientific\hydrosphere\metadata_completeness.test.py
+- test\core\splitting_sub_flow_order.test.py
+- test\core\splitting_admissibility.test.py
+- test\core\splitting_checkpoint_restore.test.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  soil_moisture: volumetric soil water content theta [m3 m-3]
+  precipitation_flux: incoming precipitation matter flux P, read only with water_input_source precipitation_flux [kg m-2 s-1]
+  rain_flux: rain reaching the ground from the snowpack partition, read only with water_input_source rain_flux_plus_snow_melt_flux [kg m-2 s-1]
+  snow_melt_flux: snowmelt release of the snowpack, read with rain_flux only under water_input_source rain_flux_plus_snow_melt_flux [kg m-2 s-1]
+  evapotranspiration_flux: outgoing evapotranspiration matter flux ET [kg m-2 s-1]
+  surface_runoff_flux: saturation-excess runoff matter flux Q [kg m-2 s-1]
+  drainage_flux: deep drainage matter flux D [kg m-2 s-1]
+  diagnostics.soil_moisture_bucket: read-only residual and water-stress diagnostics
+parameter_map:
+  hydrosphere.soil_moisture.soil_depth: effective bucket depth Z [m]
+  hydrosphere.soil_moisture.field_capacity: field capacity theta_fc [m3 m-3]
+  hydrosphere.soil_moisture.wilting_point: wilting point theta_wp [m3 m-3]
+  hydrosphere.soil_moisture.porosity: saturation theta_sat [m3 m-3]
+  hydrosphere.soil_moisture.saturated_hydraulic_conductivity: saturated hydraulic conductivity K_sat [m s-1]
+  hydrosphere.soil_moisture.drainage_factor: free-drainage factor f_d of K_eff = f_d K_sat [dimensionless]
+  hydrosphere.soil_moisture.drainage_exponent: drainage power-law exponent b [dimensionless]
+  hydrosphere.soil_moisture.water_input_source: declared water input (precipitation_flux or rain_flux_plus_snow_melt_flux); instance config overrides the YAML value
+operator_map:
+  B_h: bucket storage balance incidence for P, ET, Q, and D
+  star_K: build_hodge_contract and build_hodge_terms HodgeStarSpec
+  runoff_closure: saturation-excess projection above theta_sat
+  drainage_closure: K_sat * f_drainage * (theta / theta_sat)^b limited by water above field capacity
+  unit_conversion: mass flux divided by rho_w and storage conversion theta * Z * rho_w
+  time_integration: sequential held-input P-ET, saturation-excess runoff, explicit power-law drainage and bounded replacement of the integrated soil_moisture state; no second time multiplication
+  sub_flow_accuracy: FunctorMetadata.sub_flow_accuracy ORDER_1 on smooth inactive-limit branches; the unforced witness is theta_dot = -k theta^b with k = K_sat f_D / (Z theta_sat^b), advanced by explicit Euler; T11 validates the independent analytic solution and records the coarse drainage-cap plateau
+  splitting_boundary: the existing S1 same-fast-group snowpack-to-bucket flux-coupling refusal is unchanged; ORDER_1 is neither an EXACT declaration nor second-order Strang certification
+unit_map:
+  soil_moisture: m3 m-3
+  precipitation_flux: kg m-2 s-1
+  rain_flux: kg m-2 s-1
+  snow_melt_flux: kg m-2 s-1
+  evapotranspiration_flux: kg m-2 s-1
+  surface_runoff_flux: kg m-2 s-1
+  drainage_flux: kg m-2 s-1
+  diagnostics.soil_moisture_bucket.soil_moisture_change_rate: m3 m-3 s-1
+  diagnostics.soil_moisture_bucket.soil_water_storage: kg m-2
+  diagnostics.soil_moisture_bucket.clipped_mass_residual: kg m-2 s-1
+  diagnostics.soil_moisture_bucket.drainage_limiter_residual: m s-1
+input_output_map:
+  soil_moisture: same theta state is read and replaced by both legacy and IPHS forms
+  precipitation_flux: same incoming boundary flux drives storage gain under water_input_source precipitation_flux
+  rain_flux: with snow_melt_flux, the incoming boundary flux P = rain_flux + snow_melt_flux under water_input_source rain_flux_plus_snow_melt_flux
+  snow_melt_flux: with rain_flux, the incoming boundary flux P = rain_flux + snow_melt_flux under water_input_source rain_flux_plus_snow_melt_flux
+  evapotranspiration_flux: same outgoing boundary flux is limited by water above wilting point
+  surface_runoff_flux: same saturation-excess output is emitted through UpdateItem(REPLACE)
+  drainage_flux: same corrected drainage output is emitted through UpdateItem(REPLACE)
+interface_map:
+  forward_signature: forward(self, state, time, dt, **kwargs)
+  bridge_class: TransportMechanismFunctor
+  abstraction_contract: TransportMechanism
+  state_write_mode: canonical state and flux outputs use explicit UpdateItem(REPLACE) through StateManager
+  legacy_inputs:
+  - soil_moisture
+  - precipitation_flux
+  - evapotranspiration_flux
+  - rain_flux
+  - snow_melt_flux
+  iphs_inputs:
+  - soil_moisture
+  - precipitation_flux
+  - evapotranspiration_flux
+  - rain_flux
+  - snow_melt_flux
+  legacy_outputs:
+  - soil_moisture
+  - surface_runoff_flux
+  - drainage_flux
+  - diagnostics.soil_moisture_bucket
+  iphs_outputs:
+  - soil_moisture
+  - surface_runoff_flux
+  - drainage_flux
+  - diagnostics.soil_moisture_bucket
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: The existing mass-conservative bucket water balance realizes the canonical IPHS storage-port equation.
+  no_legacy_mode: No runtime flag exposes a separate pre-Phase 8 bucket branch.
+state_advancement_map:
+  potential_basis: bucket soil water storage cochain theta_h
+  effort_variable: infiltration, ET, runoff, and drainage matter ports with storage capacity rho_w Z
+  state_advancer: theta_dot = (P - ET - Q - D) / (rho_w * Z)
+  runtime_usage: forward applies the canonical bucket storage-port balance and routes overflow or clipping residuals.
+parameter_management_map:
+  hydrosphere.soil_moisture.soil_depth:
+    source: ParameterManager YAML
+  hydrosphere.soil_moisture.field_capacity:
+    source: ParameterManager YAML
+  hydrosphere.soil_moisture.wilting_point:
+    source: ParameterManager YAML
+  hydrosphere.soil_moisture.porosity:
+    source: ParameterManager YAML
+  hydrosphere.soil_moisture.saturated_hydraulic_conductivity:
+    source: ParameterManager YAML
+  hydrosphere.soil_moisture.drainage_factor:
+    source: ParameterManager YAML
+  hydrosphere.soil_moisture.drainage_exponent:
+    source: ParameterManager YAML
+  hydrosphere.soil_moisture.water_input_source:
+    source: ParameterManager YAML with instance config override
+  relic.physical.constants.water.density_liquid:
+    source: physical constants SSOT via get_physical_constant
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares hydrosphere transport role and ET/runoff/groundwater coupling interfaces
+  structural_protocol: declared_forms, required_parameters, build_hodge_terms, dissipative_structure, ports
+  state_contract: existing TransportMechanismFunctor and StateManager UpdateItem path
+  ports:
+  - bucket_evapotranspiration_flux
+  - bucket_surface_runoff_flux
+  - bucket_drainage_flux
+dependency_interconnection_map:
+  dependencies: no required or optional dependency; Penman-Monteith and Priestley-Taylor ET providers are declared lagged alternatives, while external StateManager forcing remains valid; with water_input_source rain_flux_plus_snow_melt_flux the SCM owner of rain_flux and snow_melt_flux (snow_pack) is a lagged provider, so the committed snowpack outflow is consumed and, when the snowpack runs in a slower execution group, held between its calls as an acknowledged zero-order hold
+  direct_functor_calls: none; precipitation and evapotranspiration are state ports and ET providers are lagged alternatives rather than invoked instances
+  chain_maps:
+  - precipitation_flux boundary input to soil_moisture storage
+  - evapotranspiration_flux, surface_runoff_flux, and drainage_flux leave through existing state graph
+overflow_routing_map:
+  saturation_projection: theta above saturation is routed to surface_runoff_flux
+  wilting_projection: lower-bound storage projection is reflected in clipped_mass_residual
+  drainage_limit: potential drainage minus corrected drainage is emitted as drainage_limiter_residual
+  discarded_residuals: saturation excess is routed to surface_runoff_flux, lower-bound projection is retained in clipped_mass_residual, and drainage_limiter_residual records potential minus accepted drainage
+conservation_map:
+  conserved_quantity: water mass
+  balance_expression: Delta theta * Z * rho_w / dt = P - ET - Q - D - clipped_mass_residual, with P = precipitation_flux or rain_flux + snow_melt_flux per the declared water_input_source (never both)
+  local_check: check_conservation_laws reads only diagnostics.soil_moisture_bucket.clipped_mass_residual
+  port_balance: bucket ET, runoff, and drainage ports carry outgoing matter
+entropy_audit:
+  dissipative_operator: star_K and M_h are symmetric positive semidefinite for positive rho_w and K_sat
+  sigma_expression: sigma = X_h.T star_K X_h >= 0
+  validation_hook: build_hodge_contract(strict=True) and dissipative_structure eigenvalue checks
+equivalence_type: port_equivalent

@@ -1,0 +1,287 @@
+certificate_version: '1.0'
+process_id: relic.scientific.biosphere.bvoc.synthesis.isoprene.IsopreneSynthesis
+module_name: IsopreneSynthesis
+canonical_role: reaction
+iphs_level: 2
+iphs_level_evidence:
+  classification: IPHS-wrapped reaction process certificate
+  compatible_basis: Reaction process is expressed through conserved or open stoichiometric ledgers
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: N_h r_h reaction-network state advance
+  level_2_limit: The canonical runtime wrapper is declared, but no executable typed-cochain or IPHS structural contribution is bound; strict level 4 or 5 evidence is not claimed.
+theory_document: docs\source\theory\bvoc_emissions.md
+theory_document_status: updated
+legacy_formula: "MEP Pathway: G3P + Pyruvate --DXS--> DXP --DXR--> MEP ---> DMAPP\n            Isoprene Synthesis: DMAPP --IS--> Isoprene\n            J_DXS = V_max_DXS * [G3P]*[Pyr] / ((K_G3P + [G3P]) * (K_Pyr + [Pyr]))\n            J_IS(T_air) = V_max_IS(T_air) * [DMAPP] / (K_DMAPP + [DMAPP]) * K_CO2/(K_CO2 + C_a)\n            A_ATP = J_DMAPP * nu_ATP; A_NADPH = J_DMAPP * nu_NADPH\n            T_air and C_a are explicit grid-cell proxies because no unique leaf-temperature or intercellular-CO2 state owner exists."
+literature_formula: "MEP Pathway: G3P + Pyruvate --DXS--> DXP --DXR--> MEP ---> DMAPP\n            Isoprene Synthesis: DMAPP --IS--> Isoprene\n            J_DXS = V_max_DXS * [G3P]*[Pyr] / ((K_G3P + [G3P]) * (K_Pyr + [Pyr]))\n            J_IS(T_air) = V_max_IS(T_air) * [DMAPP] / (K_DMAPP + [DMAPP]) * K_CO2/(K_CO2 + C_a)\n            A_ATP = J_DMAPP * nu_ATP; A_NADPH = J_DMAPP * nu_NADPH\n            The exact proxy and kinetic closure is ParameterManager-backed and is not claimed as a universal leaf-scale law."
+iphs_formula: x_dot = N_h r_h with ParameterManager-backed process rates r_h and declared stoichiometric/output map N_h
+legacy_expression: "J_DXS = V_max_DXS [G3P][Pyr] / ((K_G3P + [G3P])(K_Pyr + [Pyr])); J_IS = V_max_IS(T_air) [DMAPP] / (K_DMAPP + [DMAPP]) K_CO2/(K_CO2 + C_a); L_eff = (1 - exp(-k LAI)) / k; F_ground = F_leaf L_eff"
+iphs_expression: x_dot = N_h r_h with ParameterManager-backed process rates r_h and declared stoichiometric/output map N_h
+input_variables:
+- air_temperature
+- gross_photosynthesis
+- electron_transport_rate
+- atmospheric_co2_ppm
+- leaf_area_index
+output_variables:
+- isoprene_emission
+- bvoc_carbon_allocation_flux
+- diagnostics.bvoc.isoprene.emission_rate_molar
+- diagnostics.bvoc.isoprene.emission_rate_mass
+- diagnostics.bvoc.isoprene.dmapp_concentration
+- diagnostics.bvoc.isoprene.mep_pathway_flux
+- diagnostics.bvoc.isoprene.synthase_activity
+- diagnostics.bvoc.isoprene.co2_inhibition_factor
+- diagnostics.bvoc.isoprene.energy_limitation_factor
+- diagnostics.bvoc.isoprene.g3p_availability
+- diagnostics.bvoc.isoprene.pyruvate_availability
+- diagnostics.bvoc.isoprene.atp_demand
+- diagnostics.bvoc.isoprene.nadph_demand
+parameter_keys:
+- biosphere.bvoc.mep.v_max_dxs
+- biosphere.bvoc.mep.k_g3p
+- biosphere.bvoc.mep.k_pyruvate
+- biosphere.bvoc.mep.q10_dxs
+- biosphere.bvoc.mep.atp_per_dmapp
+- biosphere.bvoc.mep.nadph_per_dmapp
+- biosphere.bvoc.isoprene_synthase.v_max
+- biosphere.bvoc.isoprene_synthase.k_dmapp
+- biosphere.bvoc.isoprene_synthase.k_co2_inhibition
+- biosphere.bvoc.isoprene_synthase.q10
+- biosphere.bvoc.isoprene_synthase.enable_co2_inhibition
+- relic.physical.constants.molecular_weights.isoprene
+- biosphere.bvoc.carbon_fraction.isoprene
+- biosphere.bvoc.isoprene_synthase.f_g3p
+- biosphere.bvoc.isoprene_synthase.f_pyruvate
+- biosphere.bvoc.isoprene_synthase.g3p_flux_to_concentration
+- biosphere.bvoc.isoprene_synthase.pyruvate_flux_to_concentration
+- biosphere.bvoc.isoprene_synthase.dmapp_flux_to_concentration
+- biosphere.bvoc.isoprene_synthase.atp_per_electron_transport
+- biosphere.bvoc.isoprene_synthase.nadph_per_electron_transport
+- relic.physical.constants.temperature.reference_temperature
+- validation.numerical.coupling_max
+- biosphere.photosynthesis.canopy_light_extinction
+- validation.numerical.epsilon
+- validation.numerical.epsilon_energy
+composition_ports:
+- air_temperature
+- gross_photosynthesis
+- electron_transport_rate
+- atmospheric_co2_ppm
+- leaf_area_index
+references:
+- Guenther et al. (2012). The Model of Emissions of Gases and Aerosols from Nature version 2.1 (MEGAN2.1). Geoscientific Model Development.
+- Lichtenthaler (1999). The 1-deoxy-D-xylulose-5-phosphate pathway of isoprenoid biosynthesis in plants. Annual Review of Plant Physiology and Plant Molecular Biology.
+- Rasulov et al. (2009). Evidence that light, carbon dioxide, and oxygen dependencies of leaf isoprene emission are driven by energy status in hybrid aspen. Plant Physiology.
+- Vranova et al. (2013). Network analysis of the MVA and MEP pathways for isoprenoid synthesis. Annual Review of Plant Biology.
+- Koppmann (2007). Volatile Organic Compounds in the Atmosphere. Wiley.
+- Monsi and Saeki (1953). Uber den Lichtfaktor in den Pflanzengesellschaften und seine Bedeutung fur die Stoffproduktion. Japanese Journal of Botany 14, 22-52.
+- de Pury and Farquhar (1997). Simple scaling of photosynthesis from leaves to canopies without the errors of big-leaf models. Plant, Cell and Environment.
+baseline_tests:
+- test\unit\biosphere\bvoc\test_isoprene_synthesis_l1.py
+validation_tests:
+- test\integration\biosphere\bvoc\test_bvoc_integration_l2.py
+- test\unit\biosphere\test_bvoc_conservation.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  air_temperature: grid-cell air-temperature proxy mapped to canonical Phase 8 cochain basis
+  gross_photosynthesis: gross_photosynthesis mapped to canonical Phase 8 cochain basis
+  electron_transport_rate: electron_transport_rate mapped to canonical Phase 8 cochain basis
+  atmospheric_co2_ppm: ambient CO2 proxy mapped to canonical Phase 8 cochain basis
+  leaf_area_index: grid-cell leaf area per ground area used by the declared Beer-Lambert canopy bridge
+parameter_map:
+  biosphere.bvoc.mep.v_max_dxs: Maximum velocity of DXS enzyme [umol m-2 s-1]
+  biosphere.bvoc.mep.k_g3p: Michaelis constant for G3P substrate [umol m-3]
+  biosphere.bvoc.mep.k_pyruvate: Michaelis constant for pyruvate substrate [umol m-3]
+  biosphere.bvoc.mep.q10_dxs: Temperature sensitivity factor for DXS enzyme [dimensionless]
+  biosphere.bvoc.mep.atp_per_dmapp: ATP molecules required per DMAPP produced [dimensionless]
+  biosphere.bvoc.mep.nadph_per_dmapp: NADPH molecules required per DMAPP produced [dimensionless]
+  biosphere.bvoc.isoprene_synthase.v_max: Maximum velocity of isoprene synthase [umol m-2 s-1]
+  biosphere.bvoc.isoprene_synthase.k_dmapp: Michaelis constant for DMAPP substrate [umol m-3]
+  biosphere.bvoc.isoprene_synthase.k_co2_inhibition: Ambient CO2 inhibition proxy constant [umol mol-1]
+  biosphere.bvoc.isoprene_synthase.q10: Temperature sensitivity factor for isoprene synthase [dimensionless]
+  biosphere.bvoc.isoprene_synthase.enable_co2_inhibition: Flag enabling CO2 inhibition feedback [dimensionless]
+  relic.physical.constants.molecular_weights.isoprene: Molecular weight of isoprene [g mol-1]
+  biosphere.bvoc.carbon_fraction.isoprene: Carbon mass fraction for isoprene (C5H8) used in conservation diagnostics [dimensionless]
+  biosphere.bvoc.isoprene_synthase.f_g3p: Fraction of photosynthetic G3P allocated to isoprene synthesis [dimensionless]
+  biosphere.bvoc.isoprene_synthase.f_pyruvate: Fraction of photosynthetic pyruvate allocated to isoprene synthesis [dimensionless]
+  biosphere.bvoc.isoprene_synthase.g3p_flux_to_concentration: Scaling factor converting G3P flux to concentration [s m-1]
+  biosphere.bvoc.isoprene_synthase.pyruvate_flux_to_concentration: Scaling factor converting pyruvate flux to concentration [s m-1]
+  biosphere.bvoc.isoprene_synthase.dmapp_flux_to_concentration: Scaling factor converting DMAPP flux to concentration [s m-1]
+  biosphere.bvoc.isoprene_synthase.atp_per_electron_transport: ATP produced per unit electron transport flux [dimensionless]
+  biosphere.bvoc.isoprene_synthase.nadph_per_electron_transport: NADPH produced per unit electron transport flux [dimensionless]
+  relic.physical.constants.temperature.reference_temperature: Q10 reference temperature (25 degC) from the physical-constant SSOT [K]
+  validation.numerical.coupling_max: Upper bound of the MEP energy-limitation factor [dimensionless]
+  biosphere.photosynthesis.canopy_light_extinction: Beer-Lambert extinction coefficient shared with canopy photosynthesis [dimensionless]
+  validation.numerical.epsilon: Denominator floor of the DXS kinetics [dimensionless]
+  validation.numerical.epsilon_energy: Denominator floor of the ATP and NADPH demand ratios [dimensionless]
+  isoprene_mw: relic.physical.constants.molecular_weights.isoprene via get_physical_constant
+operator_map:
+  N_h: declared stoichiometric or output incidence map for this reaction process
+  r_h: ParameterManager-backed process-rate vector evaluated by the production forward path
+  effective_leaf_area: L_eff = (1 - exp(-k LAI)) / k maps leaf-area kinetics to ground-area ports
+unit_map:
+  isoprene_emission: mol m-2 s-1
+  bvoc_carbon_allocation_flux: kg C m-2 s-1
+  diagnostics.bvoc.isoprene.emission_rate_molar: umol m-2 s-1
+  diagnostics.bvoc.isoprene.emission_rate_mass: ug m-2 s-1
+  diagnostics.bvoc.isoprene.dmapp_concentration: umol m-3
+  diagnostics.bvoc.isoprene.mep_pathway_flux: umol m-2 s-1
+  diagnostics.bvoc.isoprene.synthase_activity: umol m-2 s-1
+  diagnostics.bvoc.isoprene.co2_inhibition_factor: '1'
+  diagnostics.bvoc.isoprene.energy_limitation_factor: '1'
+  diagnostics.bvoc.isoprene.g3p_availability: umol m-2 s-1
+  diagnostics.bvoc.isoprene.pyruvate_availability: umol m-2 s-1
+  diagnostics.bvoc.isoprene.atp_demand: umol m-2 s-1
+  diagnostics.bvoc.isoprene.nadph_demand: umol m-2 s-1
+input_output_map:
+  bvoc_carbon_allocation_flux: non-negative carbon allocation magnitude exposed to the plant carbon ledger
+  air_temperature: required grid-cell temperature proxy preserved by the canonical runtime contract
+  atmospheric_co2_ppm: required ambient CO2 proxy preserved by the canonical runtime contract
+  electron_transport_rate: same interface variable preserved between legacy and IPHS runtime contracts
+  leaf_area_index: required grid-cell canopy support for the leaf-area to ground-area bridge
+  isoprene_emission: canonical mutually exclusive atmosphere-facing species port
+  diagnostics.bvoc.isoprene.emission_rate_molar: species-resolved molar diagnostic emitted by the canonical IPHS runtime
+  diagnostics.bvoc.isoprene.emission_rate_mass: traditional mass observation isolated from the species port
+  diagnostics.bvoc.isoprene.dmapp_concentration: internal DMAPP observation
+  diagnostics.bvoc.isoprene.mep_pathway_flux: internal MEP flux observation
+  diagnostics.bvoc.isoprene.synthase_activity: internal synthase-rate observation
+  diagnostics.bvoc.isoprene.co2_inhibition_factor: internal CO2-response observation
+  diagnostics.bvoc.isoprene.energy_limitation_factor: internal energy-response observation
+  diagnostics.bvoc.isoprene.g3p_availability: internal G3P allocation observation
+  diagnostics.bvoc.isoprene.pyruvate_availability: internal pyruvate allocation observation
+  diagnostics.bvoc.isoprene.atp_demand: internal ATP-demand observation
+  diagnostics.bvoc.isoprene.nadph_demand: internal NADPH-demand observation
+  gross_photosynthesis: same interface variable preserved between legacy and IPHS runtime contracts
+interface_map:
+  forward_signature: forward(self, state, time, dt)
+  bridge_class: BiologicalProcessFunctor
+  abstraction_contract: BiologicalProcess
+  state_write_mode: existing RELIC simulator and StateManager update path
+  legacy_inputs:
+  - air_temperature
+  - gross_photosynthesis
+  - electron_transport_rate
+  - atmospheric_co2_ppm
+  - leaf_area_index
+  iphs_inputs:
+  - air_temperature
+  - gross_photosynthesis
+  - electron_transport_rate
+  - atmospheric_co2_ppm
+  - leaf_area_index
+  legacy_outputs:
+  - isoprene_emission
+  - bvoc_carbon_allocation_flux
+  - diagnostics.bvoc.isoprene.emission_rate_molar
+  - diagnostics.bvoc.isoprene.emission_rate_mass
+  - diagnostics.bvoc.isoprene.dmapp_concentration
+  - diagnostics.bvoc.isoprene.mep_pathway_flux
+  - diagnostics.bvoc.isoprene.synthase_activity
+  - diagnostics.bvoc.isoprene.co2_inhibition_factor
+  - diagnostics.bvoc.isoprene.energy_limitation_factor
+  - diagnostics.bvoc.isoprene.g3p_availability
+  - diagnostics.bvoc.isoprene.pyruvate_availability
+  - diagnostics.bvoc.isoprene.atp_demand
+  - diagnostics.bvoc.isoprene.nadph_demand
+  iphs_outputs:
+  - isoprene_emission
+  - bvoc_carbon_allocation_flux
+  - diagnostics.bvoc.isoprene.emission_rate_molar
+  - diagnostics.bvoc.isoprene.emission_rate_mass
+  - diagnostics.bvoc.isoprene.dmapp_concentration
+  - diagnostics.bvoc.isoprene.mep_pathway_flux
+  - diagnostics.bvoc.isoprene.synthase_activity
+  - diagnostics.bvoc.isoprene.co2_inhibition_factor
+  - diagnostics.bvoc.isoprene.energy_limitation_factor
+  - diagnostics.bvoc.isoprene.g3p_availability
+  - diagnostics.bvoc.isoprene.pyruvate_availability
+  - diagnostics.bvoc.isoprene.atp_demand
+  - diagnostics.bvoc.isoprene.nadph_demand
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: Existing ParameterManager-backed calculations define canonical IPHS operator coefficients, rates, ports, or observations.
+  no_legacy_mode: No selectable legacy runtime branch is exposed for Phase 8 completion.
+state_advancement_map:
+  potential_basis: declared RELIC state, port, or observation cochain basis
+  effort_variable: ParameterManager-backed thermodynamic effort, driver, or diagnostic input used by the module
+  state_advancer: x_dot = N_h r_h with explicit stoichiometric_N and rates evaluated by advance_reaction_network
+  runtime_usage: IsopreneSynthesis.forward calls advance_reaction_network with declared stoichiometric_N and rates before emitting canonical outputs.
+  explicit_stoichiometric_usage: IsopreneSynthesis.forward materializes stoichiometric_N and rates, then lowers x_dot=N_h r_h through advance_reaction_network.
+parameter_management_map:
+  biosphere.bvoc.mep.v_max_dxs:
+    source: ParameterManager YAML
+  biosphere.bvoc.mep.k_g3p:
+    source: ParameterManager YAML
+  biosphere.bvoc.mep.k_pyruvate:
+    source: ParameterManager YAML
+  biosphere.bvoc.mep.q10_dxs:
+    source: ParameterManager YAML
+  biosphere.bvoc.mep.atp_per_dmapp:
+    source: ParameterManager YAML
+  biosphere.bvoc.mep.nadph_per_dmapp:
+    source: ParameterManager YAML
+  biosphere.bvoc.isoprene_synthase.v_max:
+    source: ParameterManager YAML
+  biosphere.bvoc.isoprene_synthase.k_dmapp:
+    source: ParameterManager YAML
+  biosphere.bvoc.isoprene_synthase.k_co2_inhibition:
+    source: ParameterManager YAML
+  biosphere.bvoc.isoprene_synthase.q10:
+    source: ParameterManager YAML
+  biosphere.bvoc.isoprene_synthase.enable_co2_inhibition:
+    source: ParameterManager YAML
+  relic.physical.constants.molecular_weights.isoprene:
+    source: ParameterManager YAML
+  biosphere.bvoc.carbon_fraction.isoprene:
+    source: ParameterManager YAML
+  biosphere.bvoc.isoprene_synthase.f_g3p:
+    source: ParameterManager YAML
+  biosphere.bvoc.isoprene_synthase.f_pyruvate:
+    source: ParameterManager YAML
+  biosphere.bvoc.isoprene_synthase.g3p_flux_to_concentration:
+    source: ParameterManager YAML
+  biosphere.bvoc.isoprene_synthase.pyruvate_flux_to_concentration:
+    source: ParameterManager YAML
+  biosphere.bvoc.isoprene_synthase.dmapp_flux_to_concentration:
+    source: ParameterManager YAML
+  biosphere.bvoc.isoprene_synthase.atp_per_electron_transport:
+    source: ParameterManager YAML
+  biosphere.bvoc.isoprene_synthase.nadph_per_electron_transport:
+    source: ParameterManager YAML
+  relic.physical.constants.temperature.reference_temperature:
+    source: ParameterManager YAML
+  validation.numerical.coupling_max:
+    source: ParameterManager YAML
+  biosphere.photosynthesis.canopy_light_extinction:
+    source: ParameterManager YAML
+  validation.numerical.epsilon:
+    source: ParameterManager YAML
+  validation.numerical.epsilon_energy:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares interfaces, execution phase, and conservation semantics
+  state_contract: existing simulator state update path is preserved
+  validation_rule: phase8 scientific inventory and equivalence certificate checks
+dependency_interconnection_map:
+  dependencies:
+  - air_temperature
+  - gross_photosynthesis
+  - electron_transport_rate
+  - atmospheric_co2_ppm
+  - leaf_area_index
+  direct_functor_calls: none declared by certificate
+overflow_routing_map:
+  diagnostic_residuals: bounded response factors are reported explicitly; allocated carbon is routed through bvoc_carbon_allocation_flux
+  discarded_residuals: isoprene carbon leaves through isoprene_emission and the corresponding boundary carbon is exported through bvoc_carbon_allocation_flux; bounded response factors are emitted as diagnostics and the carbon-boundary identity is audited
+conservation_map:
+  conserved_quantities:
+  - carbon_boundary
+  balance_expression: r_C = F_C,alloc - convert(F_iso * MW_iso * f_C, g C m-2 s-1, kg C m-2 s-1); carbon_boundary = ||r_C||_inf. The process remains open and no closed local or global carbon-stock balance is claimed.
+  local_check: check_conservation_laws requires the canonical isoprene_emission and bvoc_carbon_allocation_flux outputs, validates finite matching tensors, and reports the infinity norm of their stoichiometric mapping residual.
+  open_system_route: port
+entropy_audit:
+  operator_sign: rates, mobilities, or diagnostic maps are non-negative or checked by existing validation hooks where physically required
+  sigma_expression: canonical entropy production is non-negative for dissipative subexpressions
+equivalence_type: thermodynamic_embedding

@@ -1,0 +1,66 @@
+from __future__ import annotations
+
+import torch
+from torch import Tensor
+
+from relic.core.functor import (
+    BiologicalProcessFunctor,
+    FunctorMetadata,
+    ProcessCategory,
+    SpatialScale,
+    VariableKind,
+)
+
+
+class {{FUNCTOR_CLASS}}(BiologicalProcessFunctor):
+    """Scaffolded biological process functor."""
+
+    def __init__(self, config=None, name="{{EXTENSION_KEY}}", **kwargs):
+        metadata = FunctorMetadata(
+            name=name,
+            category=ProcessCategory.BIOLOGICAL_PROCESS,
+            description="Scaffolded biological extension functor.",
+            references=[
+                "Farquhar et al. (1980). Planta 149:78-90.",
+                "Manzoni and Porporato (2009). Soil Biology and Biochemistry 41:1355-1379.",
+            ],
+            mathematical_expression="{{OUTPUT_VARIABLE}} = template_rate * driver_carbon",
+            input_variables=["driver_carbon"],
+            output_variables=["{{OUTPUT_VARIABLE}}"],
+            spatial_scale=SpatialScale.PATCH,
+            variable_kind=VariableKind.FLUX,
+        )
+        super().__init__(name=name, config=config or {}, metadata=metadata, **kwargs)
+
+    def get_dependencies(self):
+        # Static Functor dependencies of this extension (Functor names, never
+        # state variables). FunctorBase merges them with config["dependencies"],
+        # set_dependencies and add_dependency; a bare list would drop those.
+        return self._merge_declared_dependencies([])
+
+    def forward(self, state, time, dt, **kwargs):
+        # References: Farquhar et al. (1980); Manzoni and Porporato (2009).
+        # Mathematical expression: flux = k * C_driver.
+        # Parameters: k=template_rate [s-1], C_driver=driver_carbon [state units].
+        driver = state.get("driver_carbon")
+        if driver is None:
+            driver_tensor = torch.tensor(0.0, dtype=torch.float32)
+        elif isinstance(driver, Tensor):
+            driver_tensor = driver
+        else:
+            driver_tensor = torch.tensor(float(driver), dtype=torch.float32)
+
+        rate_value = self.get_parameter_value("template_rate", required=False)
+        if rate_value is None:
+            raise ValueError("Missing parameter 'template_rate'. Define it in parameters.yaml.")
+        if isinstance(rate_value, Tensor):
+            rate_tensor = rate_value.to(device=driver_tensor.device, dtype=driver_tensor.dtype)
+        else:
+            rate_tensor = torch.tensor(
+                float(rate_value),
+                device=driver_tensor.device,
+                dtype=driver_tensor.dtype,
+            )
+
+        return {"{{OUTPUT_VARIABLE}}": rate_tensor * driver_tensor}
+

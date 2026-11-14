@@ -1,0 +1,521 @@
+schema_version: 2.0.0
+tier: relic
+namespace: transport.diffusion
+description: Diffusion coefficients and numerical controls for transport modules
+metadata:
+  created_by: RELIC Parameter System
+  last_modified: '2026-01-07T14:20:26Z'
+  schema_url: https://github.com/relic/parameter-schema/v2.0.0
+  version: 1.0.0
+functor_metadata:
+  spatial_scale: grid_cell
+  variable_kind: state
+  input_variables:
+    - tracer_concentration
+    - source_term
+    - tracer_concentration_boundary_state
+  output_variables:
+    - tracer_concentration
+    - tracer_concentration_diffusive_boundary_flux
+    - diagnostics.diffusion_stability
+    - diagnostics.conservation_error
+  conservation_laws:
+    - mass
+  references:
+    - Crank (1975)
+    - Bird et al. (2007)
+    - LeVeque (2007)
+parameters:
+  transport.diffusion.diffusivity:
+    value: 1.0e-05
+    default: 1.0e-05
+    units: m2 s-1
+    dtype: float32
+    bounds:
+    - 1.0e-12
+    - 0.01
+    category: transport_property
+    description: Default molecular diffusion coefficient used when species-specific data are unavailable
+    references:
+    - Typical molecular diffusion in air at 25 degC
+    tags:
+    - diffusion
+    - default
+    dimension: diffusivity
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.diffusion.acp_manufactured_constant_eddy_diffusivity:
+    value: 1.0
+    default: 1.0
+    units: m2 s-1
+    dtype: float32
+    bounds:
+    - 0.001
+    - 10.0
+    category: transport_parameter
+    description: Constant eddy diffusivity used only by the bounded ACP one-dimensional manufactured transport benchmark
+    references:
+    - Crank (1975) The Mathematics of Diffusion
+    - LeVeque (2007) Finite Difference Methods for Ordinary and Partial Differential Equations
+    - Stull (1988) An Introduction to Boundary Layer Meteorology
+    tags:
+    - diffusion
+    - constant_eddy_diffusivity
+    - manufactured_solution
+    - acp_profile
+    dimension: diffusivity
+    requires_grad: false
+    provenance:
+      source: RELIC ACP manufactured benchmark design
+      schema_version: 2.0.0
+      created_by: RELIC Three Papers G5
+      last_modified: '2026-07-30T00:00:00Z'
+  transport.diffusion.grid_spacing:
+    value: 1.0
+    default: 1.0
+    units: m
+    dtype: float32
+    bounds:
+    - 1.0e-06
+    - 1000.0
+    category: discretization_parameter
+    description: Default computational grid spacing for diffusion-only discretizations
+    references:
+    - Spatial discretization requirement for finite-difference diffusion solvers
+    tags:
+    - diffusion
+    - grid_spacing
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.diffusion.acp_manufactured_vertical_grid_spacing:
+    value: 10.0
+    default: 10.0
+    units: m
+    dtype: float32
+    bounds:
+    - 10.0
+    - 10.0
+    category: discretization_parameter
+    description: Uniform vertical cell spacing used only by the bounded ACP one-dimensional manufactured transport benchmark
+    references:
+    - Patankar (1980) Numerical Heat Transfer and Fluid Flow
+    - LeVeque (2007) Finite Difference Methods for Ordinary and Partial Differential Equations
+    tags:
+    - diffusion
+    - uniform_vertical_grid
+    - manufactured_solution
+    - acp_profile
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: RELIC ACP manufactured benchmark design
+      schema_version: 2.0.0
+      created_by: RELIC Three Papers G5
+      last_modified: '2026-07-30T00:00:00Z'
+  transport.diffusion.temperature_exponent:
+    value: 1.5
+    default: 1.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 2.0
+    category: transport_parameter
+    description: Exponent n in D(T) = D0 * (T/T0)^n for temperature scaling of gas diffusivity
+    references:
+    - Fuller et al. (1966) Industrial & Engineering Chemistry 5(7):260-267
+    tags:
+    - temperature_scaling
+    - diffusion
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.diffusion.anisotropy_ratio_xy:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 10.0
+    category: transport_parameter
+    description: Ratio of diffusivity in the x-direction relative to the y-direction
+    references:
+    - Anisotropic media characterization in porous transport systems
+    tags:
+    - anisotropy
+    - diffusion
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.diffusion.anisotropy_ratio_xz:
+    value: 1.0
+    default: 1.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 10.0
+    category: transport_parameter
+    description: Ratio of diffusivity in the x-direction relative to the z-direction
+    references:
+    - Anisotropic media characterization in porous transport systems
+    tags:
+    - anisotropy
+    - diffusion
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.diffusion.default_boundary_type:
+    value: neumann
+    default: neumann
+    units: dimensionless
+    dtype: string
+    allowed_values:
+    - dirichlet
+    - neumann
+    - robin
+    bounds: null
+    category: boundary_parameter
+    description: Default boundary condition type applied when diffusion boundary type is unspecified
+    references:
+    - Boundary condition specification for diffusion equations
+    tags:
+    - boundary_condition
+    - diffusion
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.diffusion.default_boundary_value:
+    value: 0.0
+    default: 0.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - -1000.0
+    - 1000.0
+    category: boundary_parameter
+    description: Default scalar value applied in diffusion boundary conditions when no explicit value is provided
+    references:
+    - Boundary condition specification for diffusion equations
+    tags:
+    - boundary_condition
+    - default_value
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: RELIC transport module
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.diffusion.h2o_in_air:
+    value: 2.4e-05
+    default: 2.4e-05
+    units: m2 s-1
+    dtype: float32
+    bounds:
+    - 1.0e-05
+    - 4.0e-05
+    category: transport_property
+    description: Molecular diffusion coefficient of water vapor in air at 25 degC
+    references:
+    - Fuller et al. (1966) Industrial & Engineering Chemistry 5(7):260-267
+    tags:
+    - species
+    - air_diffusion
+    dimension: diffusivity
+    requires_grad: false
+    provenance:
+      source: Species diffusion database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.diffusion.co2_in_air:
+    value: 1.6e-05
+    default: 1.6e-05
+    units: m2 s-1
+    dtype: float32
+    bounds:
+    - 8.0e-06
+    - 3.0e-05
+    category: transport_property
+    description: Molecular diffusion coefficient of carbon dioxide in air at 25 degC
+    references:
+    - Fuller et al. (1966) Industrial & Engineering Chemistry 5(7):260-267
+    tags:
+    - species
+    - air_diffusion
+    dimension: diffusivity
+    requires_grad: false
+    provenance:
+      source: Species diffusion database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.diffusion.o2_in_air:
+    value: 2.1e-05
+    default: 2.1e-05
+    units: m2 s-1
+    dtype: float32
+    bounds:
+    - 1.0e-05
+    - 3.5e-05
+    category: transport_property
+    description: Molecular diffusion coefficient of oxygen in air at 25 degC
+    references:
+    - Fuller et al. (1966) Industrial & Engineering Chemistry 5(7):260-267
+    tags:
+    - species
+    - air_diffusion
+    dimension: diffusivity
+    requires_grad: false
+    provenance:
+      source: Species diffusion database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.diffusion.ch4_in_air:
+    value: 2.2e-05
+    default: 2.2e-05
+    units: m2 s-1
+    dtype: float32
+    bounds:
+    - 1.0e-05
+    - 4.0e-05
+    category: transport_property
+    description: Molecular diffusion coefficient of methane in air at 25 degC
+    references:
+    - Fuller et al. (1966) Industrial & Engineering Chemistry 5(7):260-267
+    tags:
+    - species
+    - air_diffusion
+    dimension: diffusivity
+    requires_grad: false
+    provenance:
+      source: Species diffusion database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.diffusion.no_in_air:
+    value: 2.2e-05
+    default: 2.2e-05
+    units: m2 s-1
+    dtype: float32
+    bounds:
+    - 1.0e-05
+    - 4.0e-05
+    category: transport_property
+    description: Molecular diffusion coefficient of nitric oxide in air at 25 degC
+    references:
+    - Fuller et al. (1966) Industrial & Engineering Chemistry 5(7):260-267
+    tags:
+    - species
+    - air_diffusion
+    dimension: diffusivity
+    requires_grad: false
+    provenance:
+      source: Species diffusion database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.diffusion.no2_in_air:
+    value: 1.5e-05
+    default: 1.5e-05
+    units: m2 s-1
+    dtype: float32
+    bounds:
+    - 8.0e-06
+    - 3.0e-05
+    category: transport_property
+    description: Molecular diffusion coefficient of nitrogen dioxide in air at 25 degC
+    references:
+    - Fuller et al. (1966) Industrial & Engineering Chemistry 5(7):260-267
+    tags:
+    - species
+    - air_diffusion
+    dimension: diffusivity
+    requires_grad: false
+    provenance:
+      source: Species diffusion database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.diffusion.so2_in_air:
+    value: 1.3e-05
+    default: 1.3e-05
+    units: m2 s-1
+    dtype: float32
+    bounds:
+    - 6.0e-06
+    - 2.5e-05
+    category: transport_property
+    description: Molecular diffusion coefficient of sulfur dioxide in air at 25 degC
+    references:
+    - Fuller et al. (1966) Industrial & Engineering Chemistry 5(7):260-267
+    tags:
+    - species
+    - air_diffusion
+    dimension: diffusivity
+    requires_grad: false
+    provenance:
+      source: Species diffusion database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.diffusion.soil_porosity_factor:
+    value: 1.0
+    default: 1.0
+    units: m3 m-3
+    dtype: float32
+    bounds:
+    - 0.1
+    - 2.0
+    category: soil_hydraulic_parameter
+    description: Porosity correction factor applied to soil gas diffusion
+    references:
+    - Moldrup et al. (2000) Soil Science Society of America Journal 64:1588-1596
+    tags:
+    - soil
+    - porosity
+    dimension: volume_fraction
+    requires_grad: false
+    provenance:
+      source: Soil gas diffusion studies
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.diffusion.solute_in_water_default:
+    value: 1.0e-09
+    default: 1.0e-09
+    units: m2 s-1
+    dtype: float32
+    bounds:
+    - 1.0e-12
+    - 1.0e-08
+    category: transport_property
+    description: Default molecular diffusion coefficient for dissolved solutes in water
+    references:
+    - Typical molecular diffusion in water at 25 degC
+    tags:
+    - species
+    - water_diffusion
+    dimension: diffusivity
+    requires_grad: false
+    provenance:
+      source: Aquatic chemistry literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.diffusion.co2_in_water:
+    value: 1.9e-09
+    default: 1.9e-09
+    units: m2 s-1
+    dtype: float32
+    bounds:
+    - 5.0e-10
+    - 5.0e-09
+    category: transport_property
+    description: Molecular diffusion coefficient of carbon dioxide in water at 25 degC
+    references:
+    - Wise & Houghton (1966) Chemical Reviews 66:463-500
+    tags:
+    - species
+    - water_diffusion
+    dimension: diffusivity
+    requires_grad: false
+    provenance:
+      source: Aquatic chemistry literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.diffusion.o2_in_water:
+    value: 2.3e-09
+    default: 2.3e-09
+    units: m2 s-1
+    dtype: float32
+    bounds:
+    - 5.0e-10
+    - 5.0e-09
+    category: transport_property
+    description: Molecular diffusion coefficient of oxygen in water at 25 degC
+    references:
+    - Wise & Houghton (1966) Chemical Reviews 66:463-500
+    tags:
+    - species
+    - water_diffusion
+    dimension: diffusivity
+    requires_grad: false
+    provenance:
+      source: Aquatic chemistry literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.diffusion.turbulent_schmidt_number:
+    value: 0.7
+    default: 0.7
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 2.0
+    category: numerical_parameter
+    description: Turbulent Schmidt number used for atmospheric diffusion parameterizations
+    references:
+    - Atmospheric turbulence theory (Stull 1988)
+    tags:
+    - turbulence
+    - schmidt_number
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Atmospheric turbulence parameterization
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'
+  transport.diffusion.mixing_length_scale:
+    value: 1.0
+    default: 1.0
+    units: m
+    dtype: float32
+    bounds:
+    - 0.01
+    - 1000.0
+    category: numerical_parameter
+    description: Characteristic mixing length used for turbulent diffusion parameterizations
+    references:
+    - Turbulent diffusion parameterization guidelines
+    tags:
+    - turbulence
+    - mixing_length
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: Atmospheric turbulence parameterization
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-19T00:00:00Z'

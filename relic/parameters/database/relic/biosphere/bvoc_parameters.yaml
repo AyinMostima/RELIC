@@ -1,0 +1,3744 @@
+﻿schema_version: 2.0.0
+tier: relic
+namespace: biosphere.bvoc
+description: Unified BVOC emission parameters with CF-1.8 standard units
+metadata:
+  created_by: RELIC Parameter System
+  last_modified: '2026-01-07T14:20:26Z'
+  schema_url: https://github.com/relic/parameter-schema/v2.0.0
+  version: 1.0.0
+functor_metadata:
+  spatial_scale: grid_cell
+  variable_kind: flux
+  input_variables:
+  - air_temperature
+  - ppfd
+  - leaf_area_index
+  - atmospheric_co2_ppm
+  - net_photosynthesis
+  output_variables:
+  - isoprene_emission
+  - monoterpenes_emission
+  - sesquiterpenes_emission
+  - ovocs_emission
+  - total_bvoc_emission
+  - bvoc_carbon_allocation_flux
+  - diagnostics.bvoc.megan.environmental_stress_factor
+  - diagnostics.bvoc.megan.photosynthesis_carbon_floor_residual
+  - diagnostics.bvoc.megan.co2_inhibition_factor
+  - diagnostics.bvoc.megan.isoprene.gamma_temperature
+  - diagnostics.bvoc.megan.monoterpenes.gamma_temperature
+  - diagnostics.bvoc.megan.sesquiterpenes.gamma_temperature
+  - diagnostics.bvoc.megan.ovocs.gamma_temperature
+  - diagnostics.bvoc.megan.isoprene.gamma_light
+  - diagnostics.bvoc.megan.monoterpenes.gamma_light
+  - diagnostics.bvoc.megan.sesquiterpenes.gamma_light
+  - diagnostics.bvoc.megan.ovocs.gamma_light
+  conservation_laws:
+  - carbon_boundary
+  references:
+  - Guenther et al. (2012). Geosci. Model Dev. 5, 1471-1492.
+  - Sindelarova et al. (2022). ESSD 14, 251-270.
+parameters:
+  biosphere.bvoc.t_standard:
+    value: 303.15
+    default: 303.15
+    units: K
+    dtype: float32
+    bounds:
+    - 298.15
+    - 308.15
+    category: model_parameter
+    description: 'Standard temperature T_s of the light-independent Eq. (11) response exp(beta (T - T_s)); 303.15 K (30 degC) is paired with the reference temperature of the RELIC dry-mass emission factors (basal emission rates normalized to 30 degC; standard air temperature 303 K of the MEGAN canopy factors). Guenther et al. (2012) use T_s = 297 K together with the MEGAN2.1 area-based Table 2 emission factors; the two pairs must not be mixed.'
+    references:
+    - 'Duhl et al. (2008) Biogeosciences 5, 761-777, doi:10.5194/bg-5-761-2008, Sect. 2.1, Eq. (1) (basal emission rates in ug gDW-1 h-1 normalized to a standard temperature, usually 30 degC)'
+    - 'Guenther et al. (2006) Atmos. Chem. Phys. 6, 3181-3210, doi:10.5194/acp-6-3181-2006, Sect. 2.1 (standard air temperature 303 K)'
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Eqs. (9)-(11) (T_s = 297 K with the area-based Table 2 emission factors)'
+    tags:
+    - reference_temperature
+    - megan_parameter
+    requires_grad: false
+    provenance:
+      source: megan_v2.1_model
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Fix P3-2
+      last_modified: '2025-10-09T00:00:00Z'
+      literature_check: 'verified with rounding: Guenther et al. (2006) Sect. 2.1 defines the MEGAN canopy standard air temperature as 303 K and Duhl et al. (2008) Sect. 2.1 normalizes basal emission rates usually to 30 degC (stored as 303.15 K); Guenther et al. (2012) Eqs. (9)-(11) use T_s = 297 K for the MEGAN2.1 emission factors'
+    dimension: temperature
+  biosphere.bvoc.broadleaf_deciduous_tropical.isoprene:
+    value: 28.0
+    default: 28.0
+    units: ug g-1 DW h-1
+    cf_standard_name: tendency_of_atmosphere_mass_content_of_isoprene_due_to_emission
+    dtype: float32
+    bounds:
+    - 10.0
+    - 80.0
+    category: biological_parameter
+    description: Isoprene emission factor for tropical broadleaf deciduous vegetation
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - isoprene
+    - tropical
+    - deciduous
+    - calibratable
+    uncertainty: 2.8
+    sample_size: 89
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_database
+      schema_version: 2.0.0
+      created_by: RELIC Phase P1.2c
+      last_modified: '2025-01-12T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Guenther et al. (2012) Table 2 lists area-based PFT emission factors (ug m-2 h-1); the per-dry-mass value is not given there'
+    dimension: emission_factor
+  biosphere.bvoc.broadleaf_deciduous_tropical.monoterpenes:
+    value: 2.8
+    default: 2.8
+    units: ug g-1 DW h-1
+    cf_standard_name: tendency_of_atmosphere_mass_content_of_monoterpenes_due_to_emission
+    dtype: float32
+    bounds:
+    - 0.7
+    - 11.2
+    category: biological_parameter
+    description: Monoterpene emission factor for tropical broadleaf deciduous vegetation
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - monoterpenes
+    - tropical
+    - deciduous
+    - calibratable
+    uncertainty: 4.0
+    sample_size: 67
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_database
+      schema_version: 2.0.0
+      created_by: RELIC Phase P1.2c
+      last_modified: '2025-01-12T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Guenther et al. (2012) Table 2 lists area-based PFT emission factors (ug m-2 h-1); the per-dry-mass value is not given there'
+    dimension: emission_factor
+  biosphere.bvoc.broadleaf_deciduous_tropical.sesquiterpenes:
+    value: 0.5
+    default: 0.5
+    units: ug g-1 DW h-1
+    cf_standard_name: tendency_of_atmosphere_mass_content_of_sesquiterpenes_due_to_emission
+    dtype: float32
+    bounds:
+    - 0.1
+    - 2.5
+    category: biological_parameter
+    description: Sesquiterpene emission factor for tropical broadleaf deciduous vegetation
+    references:
+    - 'Duhl et al. (2008) Biogeosciences 5, 761-777, doi:10.5194/bg-5-761-2008, Sect. 3.1'
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - sesquiterpenes
+    - tropical
+    - deciduous
+    - calibratable
+    uncertainty: 5.0
+    sample_size: 18
+    requires_grad: true
+    provenance:
+      source: duhl_et_al_2008
+      schema_version: 2.0.0
+      created_by: RELIC Phase P1.2c
+      last_modified: '2025-01-12T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Duhl et al. (2008) Sect. 3.1 gives 30 degC averages of 0.29 (conifers), 1.41 (broadleaf trees), 7.06 (shrubs) and 0.19 (crops) ug g-1 DW h-1; this value is not one of them'
+    dimension: emission_factor
+  biosphere.bvoc.broadleaf_deciduous_tropical.ovocs:
+    value: 2.0
+    default: 2.0
+    units: ug g-1 DW h-1
+    dtype: float32
+    bounds:
+    - 0.5
+    - 7.0
+    category: biological_parameter
+    description: Oxygenated VOC emission factor for tropical broadleaf deciduous vegetation
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - ovocs
+    - tropical
+    - deciduous
+    - calibratable
+    uncertainty: 3.5
+    sample_size: 54
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_database
+      schema_version: 2.0.0
+      created_by: RELIC Phase P1.2c
+      last_modified: '2025-01-12T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Guenther et al. (2012) Table 2 lists area-based PFT emission factors (ug m-2 h-1); the per-dry-mass value is not given there'
+    dimension: emission_factor
+  biosphere.bvoc.broadleaf_evergreen_tropical.isoprene:
+    value: 24.0
+    default: 24.0
+    units: ug g-1 DW h-1
+    cf_standard_name: tendency_of_atmosphere_mass_content_of_isoprene_due_to_emission
+    dtype: float32
+    bounds:
+    - 10.0
+    - 50.0
+    category: biological_parameter
+    description: Isoprene emission factor for tropical broadleaf evergreen vegetation
+    original_sources:
+      megan_v2.1: 24.0
+      literature_range:
+      - 8.0
+      - 72.0
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - isoprene
+    - tropical
+    - calibratable
+    uncertainty: 3.0
+    sample_size: 156
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_database
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-01-29T00:00:00Z'
+      migration_note: Consolidated from bvoc_emission_factors.yaml line 32
+      literature_check: 'not verified in the cited literature (model default): Guenther et al. (2012) Table 2 lists area-based PFT emission factors (ug m-2 h-1); the per-dry-mass value is not given there'
+    dimension: emission_factor
+  biosphere.bvoc.broadleaf_evergreen_tropical.monoterpenes:
+    value: 2.3
+    default: 2.3
+    units: ug g-1 DW h-1
+    cf_standard_name: tendency_of_atmosphere_mass_content_of_monoterpenes_due_to_emission
+    dtype: float32
+    bounds:
+    - 0.575
+    - 9.2
+    category: biological_parameter
+    description: Monoterpene emission factor for tropical broadleaf evergreen vegetation
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - monoterpenes
+    - tropical
+    - calibratable
+    uncertainty: 4.0
+    sample_size: 89
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_database
+      schema_version: 2.0.0
+      last_modified: '2025-01-29T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Guenther et al. (2012) Table 2 lists area-based PFT emission factors (ug m-2 h-1); the per-dry-mass value is not given there'
+    dimension: emission_factor
+  biosphere.bvoc.broadleaf_evergreen_tropical.sesquiterpenes:
+    value: 0.45
+    default: 0.45
+    units: ug g-1 DW h-1
+    cf_standard_name: tendency_of_atmosphere_mass_content_of_sesquiterpenes_due_to_emission
+    dtype: float32
+    bounds:
+    - 0.09
+    - 2.25
+    category: biological_parameter
+    description: Sesquiterpene emission factor for tropical broadleaf evergreen vegetation
+    references:
+    - 'Duhl et al. (2008) Biogeosciences 5, 761-777, doi:10.5194/bg-5-761-2008, Sect. 3.1'
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - sesquiterpenes
+    - tropical
+    - calibratable
+    uncertainty: 5.0
+    sample_size: 23
+    requires_grad: true
+    provenance:
+      source: duhl_et_al_2008
+      schema_version: 2.0.0
+      last_modified: '2025-01-29T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Duhl et al. (2008) Sect. 3.1 gives 30 degC averages of 0.29 (conifers), 1.41 (broadleaf trees), 7.06 (shrubs) and 0.19 (crops) ug g-1 DW h-1; this value is not one of them'
+    dimension: emission_factor
+  biosphere.bvoc.broadleaf_evergreen_tropical.ovocs:
+    value: 1.8
+    default: 1.8
+    units: ug g-1 DW h-1
+    dtype: float32
+    bounds:
+    - 0.514
+    - 6.3
+    category: biological_parameter
+    description: Oxygenated VOC emission factor for tropical broadleaf evergreen vegetation
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - ovocs
+    - tropical
+    - calibratable
+    uncertainty: 3.5
+    sample_size: 67
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_database
+      schema_version: 2.0.0
+      last_modified: '2025-01-29T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Guenther et al. (2012) Table 2 lists area-based PFT emission factors (ug m-2 h-1); the per-dry-mass value is not given there'
+    dimension: emission_factor
+  biosphere.bvoc.broadleaf_evergreen_temperate.isoprene:
+    value: 16.0
+    default: 16.0
+    units: ug g-1 DW h-1
+    dtype: float32
+    bounds:
+    - 5.71
+    - 44.8
+    category: biological_parameter
+    description: Isoprene emission factor for temperate broadleaf evergreen vegetation
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - isoprene
+    - temperate
+    - calibratable
+    uncertainty: 2.8
+    sample_size: 203
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_database
+      schema_version: 2.0.0
+      last_modified: '2025-01-29T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Guenther et al. (2012) Table 2 lists area-based PFT emission factors (ug m-2 h-1); the per-dry-mass value is not given there'
+    dimension: emission_factor
+  biosphere.bvoc.broadleaf_evergreen_temperate.monoterpenes:
+    value: 1.8
+    default: 1.8
+    units: ug g-1 DW h-1
+    dtype: float32
+    bounds:
+    - 0.514
+    - 6.3
+    category: biological_parameter
+    description: Monoterpene emission factor for temperate broadleaf evergreen vegetation
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - monoterpenes
+    - temperate
+    - calibratable
+    uncertainty: 3.5
+    sample_size: 145
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_database
+      schema_version: 2.0.0
+      last_modified: '2025-01-29T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Guenther et al. (2012) Table 2 lists area-based PFT emission factors (ug m-2 h-1); the per-dry-mass value is not given there'
+    dimension: emission_factor
+  biosphere.bvoc.broadleaf_evergreen_temperate.sesquiterpenes:
+    value: 0.35
+    default: 0.35
+    units: ug g-1 DW h-1
+    dtype: float32
+    bounds:
+    - 0.08
+    - 1.5
+    category: biological_parameter
+    description: Sesquiterpene emission factor for temperate broadleaf evergreen vegetation
+    references:
+    - 'Duhl et al. (2008) Biogeosciences 5, 761-777, doi:10.5194/bg-5-761-2008, Sect. 3.1'
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - sesquiterpenes
+    - temperate
+    - calibratable
+    uncertainty: 4.0
+    sample_size: 48
+    requires_grad: true
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      last_modified: '2025-01-15T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Duhl et al. (2008) Sect. 3.1 gives 30 degC averages of 0.29 (conifers), 1.41 (broadleaf trees), 7.06 (shrubs) and 0.19 (crops) ug g-1 DW h-1; this value is not one of them'
+    dimension: emission_factor
+  biosphere.bvoc.broadleaf_evergreen_temperate.ovocs:
+    value: 1.6
+    default: 1.6
+    units: ug g-1 DW h-1
+    dtype: float32
+    bounds:
+    - 0.4
+    - 4.8
+    category: biological_parameter
+    description: Oxygenated VOC emission factor for temperate broadleaf evergreen vegetation
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - ovocs
+    - temperate
+    - calibratable
+    uncertainty: 3.0
+    sample_size: 76
+    requires_grad: true
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      last_modified: '2025-01-15T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Guenther et al. (2012) Table 2 lists area-based PFT emission factors (ug m-2 h-1); the per-dry-mass value is not given there'
+    dimension: emission_factor
+  biosphere.bvoc.broadleaf_deciduous_temperate.isoprene:
+    value: 70.0
+    default: 70.0
+    units: ug g-1 DW h-1
+    dtype: float32
+    bounds:
+    - 31.8
+    - 154.0
+    category: biological_parameter
+    description: 'Isoprene emission factor for temperate broadleaf deciduous (high emitters: oak, poplar)'
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - isoprene
+    - temperate
+    - deciduous
+    - high_emitter
+    - calibratable
+    uncertainty: 2.2
+    sample_size: 312
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_database
+      schema_version: 2.0.0
+      last_modified: '2025-01-29T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Guenther et al. (2012) Table 2 lists area-based PFT emission factors (ug m-2 h-1); the per-dry-mass value is not given there'
+    dimension: emission_factor
+  biosphere.bvoc.broadleaf_deciduous_temperate.monoterpenes:
+    value: 1.5
+    default: 1.5
+    units: ug g-1 DW h-1
+    cf_standard_name: tendency_of_atmosphere_mass_content_of_monoterpenes_due_to_emission
+    dtype: float32
+    bounds:
+    - 0.4
+    - 5.6
+    category: biological_parameter
+    description: Monoterpene emission factor for temperate broadleaf deciduous vegetation
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - monoterpenes
+    - temperate
+    - deciduous
+    - calibratable
+    uncertainty: 3.7
+    sample_size: 198
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_database
+      schema_version: 2.0.0
+      created_by: RELIC Phase P1.2c
+      last_modified: '2025-01-12T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Guenther et al. (2012) Table 2 lists area-based PFT emission factors (ug m-2 h-1); the per-dry-mass value is not given there'
+    dimension: emission_factor
+  biosphere.bvoc.broadleaf_deciduous_temperate.sesquiterpenes:
+    value: 0.35
+    default: 0.35
+    units: ug g-1 DW h-1
+    cf_standard_name: tendency_of_atmosphere_mass_content_of_sesquiterpenes_due_to_emission
+    dtype: float32
+    bounds:
+    - 0.07
+    - 1.75
+    category: biological_parameter
+    description: Sesquiterpene emission factor for temperate broadleaf deciduous vegetation
+    references:
+    - 'Duhl et al. (2008) Biogeosciences 5, 761-777, doi:10.5194/bg-5-761-2008, Sect. 3.1'
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - sesquiterpenes
+    - temperate
+    - deciduous
+    - calibratable
+    uncertainty: 5.0
+    sample_size: 134
+    requires_grad: true
+    provenance:
+      source: duhl_et_al_2008
+      schema_version: 2.0.0
+      created_by: RELIC Phase P1.2c
+      last_modified: '2025-01-12T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Duhl et al. (2008) Sect. 3.1 gives 30 degC averages of 0.29 (conifers), 1.41 (broadleaf trees), 7.06 (shrubs) and 0.19 (crops) ug g-1 DW h-1; this value is not one of them'
+    dimension: emission_factor
+  biosphere.bvoc.broadleaf_deciduous_temperate.ovocs:
+    value: 1.6
+    default: 1.6
+    units: ug g-1 DW h-1
+    dtype: float32
+    bounds:
+    - 0.4
+    - 5.6
+    category: biological_parameter
+    description: Oxygenated VOC emission factor for temperate broadleaf deciduous vegetation
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - ovocs
+    - temperate
+    - deciduous
+    - calibratable
+    uncertainty: 3.5
+    sample_size: 176
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_database
+      schema_version: 2.0.0
+      created_by: RELIC Phase P1.2c
+      last_modified: '2025-01-12T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Guenther et al. (2012) Table 2 lists area-based PFT emission factors (ug m-2 h-1); the per-dry-mass value is not given there'
+    dimension: emission_factor
+  biosphere.bvoc.needleleaf_evergreen_temperate.isoprene:
+    value: 1.2
+    default: 1.2
+    units: ug g-1 DW h-1
+    cf_standard_name: tendency_of_atmosphere_mass_content_of_isoprene_due_to_emission
+    dtype: float32
+    bounds:
+    - 0.3
+    - 4.8
+    category: biological_parameter
+    description: Isoprene emission factor for temperate needleleaf evergreen (low emitters)
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - isoprene
+    - temperate
+    - needleleaf
+    - low_emitter
+    - calibratable
+    uncertainty: 4.0
+    sample_size: 156
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_database
+      schema_version: 2.0.0
+      created_by: RELIC Phase P1.2c
+      last_modified: '2025-01-12T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Guenther et al. (2012) Table 2 lists area-based PFT emission factors (ug m-2 h-1); the per-dry-mass value is not given there'
+    dimension: emission_factor
+  biosphere.bvoc.needleleaf_evergreen_temperate.monoterpenes:
+    value: 5.2
+    default: 5.2
+    units: ug g-1 DW h-1
+    dtype: float32
+    bounds:
+    - 1.86
+    - 14.56
+    category: biological_parameter
+    description: Monoterpene emission factor for temperate needleleaf evergreen (major emitters)
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - monoterpenes
+    - temperate
+    - needleleaf
+    - major_emitter
+    - calibratable
+    uncertainty: 2.8
+    sample_size: 234
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_database
+      schema_version: 2.0.0
+      last_modified: '2025-01-29T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Guenther et al. (2012) Table 2 lists area-based PFT emission factors (ug m-2 h-1); the per-dry-mass value is not given there'
+    dimension: emission_factor
+  biosphere.bvoc.needleleaf_evergreen_temperate.sesquiterpenes:
+    value: 0.25
+    default: 0.25
+    units: ug g-1 DW h-1
+    cf_standard_name: tendency_of_atmosphere_mass_content_of_sesquiterpenes_due_to_emission
+    dtype: float32
+    bounds:
+    - 0.05
+    - 1.25
+    category: biological_parameter
+    description: Sesquiterpene emission factor for temperate needleleaf evergreen
+    references:
+    - 'Duhl et al. (2008) Biogeosciences 5, 761-777, doi:10.5194/bg-5-761-2008, Sect. 3.1'
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - sesquiterpenes
+    - temperate
+    - needleleaf
+    - calibratable
+    uncertainty: 5.0
+    sample_size: 89
+    requires_grad: true
+    provenance:
+      source: duhl_et_al_2008
+      schema_version: 2.0.0
+      created_by: RELIC Phase P1.2c
+      last_modified: '2025-01-12T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Duhl et al. (2008) Sect. 3.1 gives 30 degC averages of 0.29 (conifers), 1.41 (broadleaf trees), 7.06 (shrubs) and 0.19 (crops) ug g-1 DW h-1; this value is not one of them'
+    dimension: emission_factor
+  biosphere.bvoc.needleleaf_evergreen_temperate.ovocs:
+    value: 1.3
+    default: 1.3
+    units: ug g-1 DW h-1
+    dtype: float32
+    bounds:
+    - 0.3
+    - 4.5
+    category: biological_parameter
+    description: Oxygenated VOC emission factor for temperate needleleaf evergreen
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - ovocs
+    - temperate
+    - needleleaf
+    - calibratable
+    uncertainty: 3.5
+    sample_size: 167
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_database
+      schema_version: 2.0.0
+      created_by: RELIC Phase P1.2c
+      last_modified: '2025-01-12T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Guenther et al. (2012) Table 2 lists area-based PFT emission factors (ug m-2 h-1); the per-dry-mass value is not given there'
+    dimension: emission_factor
+  biosphere.bvoc.needleleaf_evergreen_boreal.isoprene:
+    value: 0.8
+    default: 0.8
+    units: ug g-1 DW h-1
+    cf_standard_name: tendency_of_atmosphere_mass_content_of_isoprene_due_to_emission
+    dtype: float32
+    bounds:
+    - 0.2
+    - 3.2
+    category: biological_parameter
+    description: Isoprene emission factor for boreal needleleaf evergreen (very low emitters)
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - isoprene
+    - boreal
+    - needleleaf
+    - very_low_emitter
+    - calibratable
+    uncertainty: 4.0
+    sample_size: 98
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_database
+      schema_version: 2.0.0
+      created_by: RELIC Phase P1.2c
+      last_modified: '2025-01-12T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Guenther et al. (2012) Table 2 lists area-based PFT emission factors (ug m-2 h-1); the per-dry-mass value is not given there'
+    dimension: emission_factor
+  biosphere.bvoc.needleleaf_evergreen_boreal.monoterpenes:
+    value: 8.1
+    default: 8.1
+    units: ug g-1 DW h-1
+    dtype: float32
+    bounds:
+    - 3.24
+    - 20.25
+    category: biological_parameter
+    description: Monoterpene emission factor for boreal needleleaf evergreen (very high emitters)
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - monoterpenes
+    - boreal
+    - needleleaf
+    - very_high_emitter
+    - calibratable
+    uncertainty: 2.5
+    sample_size: 189
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_database
+      schema_version: 2.0.0
+      last_modified: '2025-01-29T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Guenther et al. (2012) Table 2 lists area-based PFT emission factors (ug m-2 h-1); the per-dry-mass value is not given there'
+    dimension: emission_factor
+  biosphere.bvoc.needleleaf_evergreen_boreal.sesquiterpenes:
+    value: 0.2
+    default: 0.2
+    units: ug g-1 DW h-1
+    cf_standard_name: tendency_of_atmosphere_mass_content_of_sesquiterpenes_due_to_emission
+    dtype: float32
+    bounds:
+    - 0.04
+    - 1.0
+    category: biological_parameter
+    description: Sesquiterpene emission factor for boreal needleleaf evergreen
+    references:
+    - 'Duhl et al. (2008) Biogeosciences 5, 761-777, doi:10.5194/bg-5-761-2008, Sect. 3.1'
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - sesquiterpenes
+    - boreal
+    - needleleaf
+    - calibratable
+    uncertainty: 5.0
+    sample_size: 67
+    requires_grad: true
+    provenance:
+      source: duhl_et_al_2008
+      schema_version: 2.0.0
+      created_by: RELIC Phase P1.2c
+      last_modified: '2025-01-12T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Duhl et al. (2008) Sect. 3.1 gives 30 degC averages of 0.29 (conifers), 1.41 (broadleaf trees), 7.06 (shrubs) and 0.19 (crops) ug g-1 DW h-1; this value is not one of them'
+    dimension: emission_factor
+  biosphere.bvoc.needleleaf_evergreen_boreal.ovocs:
+    value: 1.1
+    default: 1.1
+    units: ug g-1 DW h-1
+    dtype: float32
+    bounds:
+    - 0.3
+    - 3.9
+    category: biological_parameter
+    description: Oxygenated VOC emission factor for boreal needleleaf evergreen
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - ovocs
+    - boreal
+    - needleleaf
+    - calibratable
+    uncertainty: 3.5
+    sample_size: 145
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_database
+      schema_version: 2.0.0
+      created_by: RELIC Phase P1.2c
+      last_modified: '2025-01-12T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Guenther et al. (2012) Table 2 lists area-based PFT emission factors (ug m-2 h-1); the per-dry-mass value is not given there'
+    dimension: emission_factor
+  biosphere.bvoc.needleleaf_deciduous_boreal.isoprene:
+    value: 6.0
+    default: 6.0
+    units: ug g-1 DW h-1
+    dtype: float32
+    bounds:
+    - 1.5
+    - 18.0
+    category: biological_parameter
+    description: Isoprene emission factor for boreal needleleaf deciduous vegetation
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - isoprene
+    - boreal
+    - needleleaf
+    - deciduous
+    uncertainty: 3.8
+    sample_size: 60
+    requires_grad: true
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      last_modified: '2025-01-15T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Guenther et al. (2012) Table 2 lists area-based PFT emission factors (ug m-2 h-1); the per-dry-mass value is not given there'
+    dimension: emission_factor
+  biosphere.bvoc.needleleaf_deciduous_boreal.monoterpenes:
+    value: 6.5
+    default: 6.5
+    units: ug g-1 DW h-1
+    dtype: float32
+    bounds:
+    - 1.0
+    - 18.0
+    category: biological_parameter
+    description: Monoterpene emission factor for boreal needleleaf deciduous vegetation
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - monoterpenes
+    - boreal
+    - needleleaf
+    - deciduous
+    uncertainty: 3.0
+    sample_size: 72
+    requires_grad: true
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      last_modified: '2025-01-15T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Guenther et al. (2012) Table 2 lists area-based PFT emission factors (ug m-2 h-1); the per-dry-mass value is not given there'
+    dimension: emission_factor
+  biosphere.bvoc.needleleaf_deciduous_boreal.sesquiterpenes:
+    value: 0.9
+    default: 0.9
+    units: ug g-1 DW h-1
+    dtype: float32
+    bounds:
+    - 0.05
+    - 2.5
+    category: biological_parameter
+    description: Sesquiterpene emission factor for boreal needleleaf deciduous vegetation
+    references:
+    - 'Duhl et al. (2008) Biogeosciences 5, 761-777, doi:10.5194/bg-5-761-2008, Sect. 3.1'
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - sesquiterpenes
+    - boreal
+    - needleleaf
+    - deciduous
+    uncertainty: 3.5
+    sample_size: 28
+    requires_grad: true
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      last_modified: '2025-01-15T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Duhl et al. (2008) Sect. 3.1 gives 30 degC averages of 0.29 (conifers), 1.41 (broadleaf trees), 7.06 (shrubs) and 0.19 (crops) ug g-1 DW h-1; this value is not one of them'
+    dimension: emission_factor
+  biosphere.bvoc.needleleaf_deciduous_boreal.ovocs:
+    value: 0.8
+    default: 0.8
+    units: ug g-1 DW h-1
+    dtype: float32
+    bounds:
+    - 0.2
+    - 2.2
+    category: biological_parameter
+    description: Oxygenated VOC emission factor for boreal needleleaf deciduous vegetation
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - ovocs
+    - boreal
+    - needleleaf
+    - deciduous
+    uncertainty: 3.5
+    sample_size: 33
+    requires_grad: true
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      last_modified: '2025-01-15T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Guenther et al. (2012) Table 2 lists area-based PFT emission factors (ug m-2 h-1); the per-dry-mass value is not given there'
+    dimension: emission_factor
+  biosphere.bvoc.c3_grass.isoprene:
+    value: 16.0
+    default: 16.0
+    units: ug g-1 DW h-1
+    dtype: float32
+    bounds:
+    - 4.57
+    - 56.0
+    category: biological_parameter
+    description: Isoprene emission factor for C3 grasses
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - isoprene
+    - grass
+    - c3_photosynthesis
+    - calibratable
+    uncertainty: 3.5
+    sample_size: 78
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_database
+      schema_version: 2.0.0
+      last_modified: '2025-01-29T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Guenther et al. (2012) Table 2 lists area-based PFT emission factors (ug m-2 h-1); the per-dry-mass value is not given there'
+    dimension: emission_factor
+  biosphere.bvoc.c3_grass.monoterpenes:
+    value: 1.6
+    default: 1.6
+    units: ug g-1 DW h-1
+    cf_standard_name: tendency_of_atmosphere_mass_content_of_monoterpenes_due_to_emission
+    dtype: float32
+    bounds:
+    - 0.4
+    - 6.4
+    category: biological_parameter
+    description: Monoterpene emission factor for C3 grasses
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - monoterpenes
+    - grass
+    - c3_photosynthesis
+    - calibratable
+    uncertainty: 4.0
+    sample_size: 56
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_database
+      schema_version: 2.0.0
+      created_by: RELIC Phase P1.2c
+      last_modified: '2025-01-12T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Guenther et al. (2012) Table 2 lists area-based PFT emission factors (ug m-2 h-1); the per-dry-mass value is not given there'
+    dimension: emission_factor
+  biosphere.bvoc.c3_grass.sesquiterpenes:
+    value: 0.3
+    default: 0.3
+    units: ug g-1 DW h-1
+    cf_standard_name: tendency_of_atmosphere_mass_content_of_sesquiterpenes_due_to_emission
+    dtype: float32
+    bounds:
+    - 0.06
+    - 1.5
+    category: biological_parameter
+    description: Sesquiterpene emission factor for C3 grasses
+    references:
+    - 'Duhl et al. (2008) Biogeosciences 5, 761-777, doi:10.5194/bg-5-761-2008, Sect. 3.1'
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - sesquiterpenes
+    - grass
+    - c3_photosynthesis
+    - calibratable
+    uncertainty: 5.0
+    sample_size: 34
+    requires_grad: true
+    provenance:
+      source: duhl_et_al_2008
+      schema_version: 2.0.0
+      created_by: RELIC Phase P1.2c
+      last_modified: '2025-01-12T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Duhl et al. (2008) Sect. 3.1 gives 30 degC averages of 0.29 (conifers), 1.41 (broadleaf trees), 7.06 (shrubs) and 0.19 (crops) ug g-1 DW h-1; this value is not one of them'
+    dimension: emission_factor
+  biosphere.bvoc.c3_grass.ovocs:
+    value: 1.4
+    default: 1.4
+    units: ug g-1 DW h-1
+    dtype: float32
+    bounds:
+    - 0.4
+    - 4.9
+    category: biological_parameter
+    description: Oxygenated VOC emission factor for C3 grasses
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - ovocs
+    - grass
+    - c3_photosynthesis
+    - calibratable
+    uncertainty: 3.5
+    sample_size: 62
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_database
+      schema_version: 2.0.0
+      created_by: RELIC Phase P1.2c
+      last_modified: '2025-01-12T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Guenther et al. (2012) Table 2 lists area-based PFT emission factors (ug m-2 h-1); the per-dry-mass value is not given there'
+    dimension: emission_factor
+  biosphere.bvoc.c4_grass.isoprene:
+    value: 12.0
+    default: 12.0
+    units: ug g-1 DW h-1
+    dtype: float32
+    bounds:
+    - 3.0
+    - 48.0
+    category: biological_parameter
+    description: Isoprene emission factor for C4 grasses
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - isoprene
+    - grass
+    - c4_photosynthesis
+    - calibratable
+    uncertainty: 4.0
+    sample_size: 56
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_database
+      schema_version: 2.0.0
+      last_modified: '2025-01-29T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Guenther et al. (2012) Table 2 lists area-based PFT emission factors (ug m-2 h-1); the per-dry-mass value is not given there'
+    dimension: emission_factor
+  biosphere.bvoc.c4_grass.monoterpenes:
+    value: 1.4
+    default: 1.4
+    units: ug g-1 DW h-1
+    cf_standard_name: tendency_of_atmosphere_mass_content_of_monoterpenes_due_to_emission
+    dtype: float32
+    bounds:
+    - 0.35
+    - 5.6
+    category: biological_parameter
+    description: Monoterpene emission factor for C4 grasses
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - monoterpenes
+    - grass
+    - c4_photosynthesis
+    - calibratable
+    uncertainty: 4.0
+    sample_size: 48
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_database
+      schema_version: 2.0.0
+      created_by: RELIC Phase P1.2c
+      last_modified: '2025-01-12T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Guenther et al. (2012) Table 2 lists area-based PFT emission factors (ug m-2 h-1); the per-dry-mass value is not given there'
+    dimension: emission_factor
+  biosphere.bvoc.c4_grass.sesquiterpenes:
+    value: 0.28
+    default: 0.28
+    units: ug g-1 DW h-1
+    cf_standard_name: tendency_of_atmosphere_mass_content_of_sesquiterpenes_due_to_emission
+    dtype: float32
+    bounds:
+    - 0.056
+    - 1.4
+    category: biological_parameter
+    description: Sesquiterpene emission factor for C4 grasses
+    references:
+    - 'Duhl et al. (2008) Biogeosciences 5, 761-777, doi:10.5194/bg-5-761-2008, Sect. 3.1'
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - sesquiterpenes
+    - grass
+    - c4_photosynthesis
+    - calibratable
+    uncertainty: 5.0
+    sample_size: 29
+    requires_grad: true
+    provenance:
+      source: duhl_et_al_2008
+      schema_version: 2.0.0
+      created_by: RELIC Phase P1.2c
+      last_modified: '2025-01-12T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Duhl et al. (2008) Sect. 3.1 gives 30 degC averages of 0.29 (conifers), 1.41 (broadleaf trees), 7.06 (shrubs) and 0.19 (crops) ug g-1 DW h-1; this value is not one of them'
+    dimension: emission_factor
+  biosphere.bvoc.c4_grass.ovocs:
+    value: 1.2
+    default: 1.2
+    units: ug g-1 DW h-1
+    dtype: float32
+    bounds:
+    - 0.3
+    - 4.2
+    category: biological_parameter
+    description: Oxygenated VOC emission factor for C4 grasses
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - ovocs
+    - grass
+    - c4_photosynthesis
+    - calibratable
+    uncertainty: 3.5
+    sample_size: 54
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_database
+      schema_version: 2.0.0
+      created_by: RELIC Phase P1.2c
+      last_modified: '2025-01-12T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Guenther et al. (2012) Table 2 lists area-based PFT emission factors (ug m-2 h-1); the per-dry-mass value is not given there'
+    dimension: emission_factor
+  biosphere.bvoc.shrub.isoprene:
+    value: 32.0
+    default: 32.0
+    units: ug g-1 DW h-1
+    dtype: float32
+    bounds:
+    - 11.43
+    - 89.6
+    category: biological_parameter
+    description: Isoprene emission factor for shrubs
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - isoprene
+    - shrub
+    - calibratable
+    uncertainty: 2.8
+    sample_size: 134
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_database
+      schema_version: 2.0.0
+      last_modified: '2025-01-29T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Guenther et al. (2012) Table 2 lists area-based PFT emission factors (ug m-2 h-1); the per-dry-mass value is not given there'
+    dimension: emission_factor
+  biosphere.bvoc.shrub.monoterpenes:
+    value: 2.5
+    default: 2.5
+    units: ug g-1 DW h-1
+    cf_standard_name: tendency_of_atmosphere_mass_content_of_monoterpenes_due_to_emission
+    dtype: float32
+    bounds:
+    - 0.625
+    - 10.0
+    category: biological_parameter
+    description: Monoterpene emission factor for shrubs
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - monoterpenes
+    - shrub
+    - calibratable
+    uncertainty: 4.0
+    sample_size: 98
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_database
+      schema_version: 2.0.0
+      created_by: RELIC Phase P1.2c
+      last_modified: '2025-01-12T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Guenther et al. (2012) Table 2 lists area-based PFT emission factors (ug m-2 h-1); the per-dry-mass value is not given there'
+    dimension: emission_factor
+  biosphere.bvoc.shrub.sesquiterpenes:
+    value: 0.4
+    default: 0.4
+    units: ug g-1 DW h-1
+    cf_standard_name: tendency_of_atmosphere_mass_content_of_sesquiterpenes_due_to_emission
+    dtype: float32
+    bounds:
+    - 0.08
+    - 2.0
+    category: biological_parameter
+    description: Sesquiterpene emission factor for shrubs
+    references:
+    - 'Duhl et al. (2008) Biogeosciences 5, 761-777, doi:10.5194/bg-5-761-2008, Sect. 3.1'
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - sesquiterpenes
+    - shrub
+    - calibratable
+    uncertainty: 5.0
+    sample_size: 67
+    requires_grad: true
+    provenance:
+      source: duhl_et_al_2008
+      schema_version: 2.0.0
+      created_by: RELIC Phase P1.2c
+      last_modified: '2025-01-12T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Duhl et al. (2008) Sect. 3.1 gives 30 degC averages of 0.29 (conifers), 1.41 (broadleaf trees), 7.06 (shrubs) and 0.19 (crops) ug g-1 DW h-1; this value is not one of them'
+    dimension: emission_factor
+  biosphere.bvoc.shrub.ovocs:
+    value: 1.7
+    default: 1.7
+    units: ug g-1 DW h-1
+    dtype: float32
+    bounds:
+    - 0.425
+    - 5.95
+    category: biological_parameter
+    description: Oxygenated VOC emission factor for shrubs
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - ovocs
+    - shrub
+    - calibratable
+    uncertainty: 3.5
+    sample_size: 112
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_database
+      schema_version: 2.0.0
+      created_by: RELIC Phase P1.2c
+      last_modified: '2025-01-12T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Guenther et al. (2012) Table 2 lists area-based PFT emission factors (ug m-2 h-1); the per-dry-mass value is not given there'
+    dimension: emission_factor
+  biosphere.bvoc.crop.isoprene:
+    value: 18.0
+    default: 18.0
+    units: ug g-1 DW h-1
+    dtype: float32
+    bounds:
+    - 5.63
+    - 57.6
+    category: biological_parameter
+    description: Isoprene emission factor for crops (variable by crop type)
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - isoprene
+    - crop
+    - variable_by_type
+    - calibratable
+    uncertainty: 3.2
+    sample_size: 198
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_database
+      schema_version: 2.0.0
+      last_modified: '2025-01-29T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Guenther et al. (2012) Table 2 lists area-based PFT emission factors (ug m-2 h-1); the per-dry-mass value is not given there'
+    dimension: emission_factor
+  biosphere.bvoc.crop.monoterpenes:
+    value: 1.9
+    default: 1.9
+    units: ug g-1 DW h-1
+    cf_standard_name: tendency_of_atmosphere_mass_content_of_monoterpenes_due_to_emission
+    dtype: float32
+    bounds:
+    - 0.475
+    - 7.6
+    category: biological_parameter
+    description: Monoterpene emission factor for crops (variable by crop type)
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - monoterpenes
+    - crop
+    - variable_by_type
+    - calibratable
+    uncertainty: 4.0
+    sample_size: 167
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_database
+      schema_version: 2.0.0
+      created_by: RELIC Phase P1.2c
+      last_modified: '2025-01-12T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Guenther et al. (2012) Table 2 lists area-based PFT emission factors (ug m-2 h-1); the per-dry-mass value is not given there'
+    dimension: emission_factor
+  biosphere.bvoc.crop.sesquiterpenes:
+    value: 0.32
+    default: 0.32
+    units: ug g-1 DW h-1
+    cf_standard_name: tendency_of_atmosphere_mass_content_of_sesquiterpenes_due_to_emission
+    dtype: float32
+    bounds:
+    - 0.064
+    - 1.6
+    category: biological_parameter
+    description: Sesquiterpene emission factor for crops (variable by crop type)
+    references:
+    - 'Duhl et al. (2008) Biogeosciences 5, 761-777, doi:10.5194/bg-5-761-2008, Sect. 3.1'
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - sesquiterpenes
+    - crop
+    - variable_by_type
+    - calibratable
+    uncertainty: 5.0
+    sample_size: 89
+    requires_grad: true
+    provenance:
+      source: duhl_et_al_2008
+      schema_version: 2.0.0
+      created_by: RELIC Phase P1.2c
+      last_modified: '2025-01-12T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Duhl et al. (2008) Sect. 3.1 gives 30 degC averages of 0.29 (conifers), 1.41 (broadleaf trees), 7.06 (shrubs) and 0.19 (crops) ug g-1 DW h-1; this value is not one of them'
+    dimension: emission_factor
+  biosphere.bvoc.crop.ovocs:
+    value: 1.5
+    default: 1.5
+    units: ug g-1 DW h-1
+    dtype: float32
+    bounds:
+    - 0.375
+    - 5.25
+    category: biological_parameter
+    description: Oxygenated VOC emission factor for crops (variable by crop type)
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - ovocs
+    - crop
+    - variable_by_type
+    - calibratable
+    uncertainty: 3.5
+    sample_size: 156
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_database
+      schema_version: 2.0.0
+      created_by: RELIC Phase P1.2c
+      last_modified: '2025-01-12T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Guenther et al. (2012) Table 2 lists area-based PFT emission factors (ug m-2 h-1); the per-dry-mass value is not given there'
+    dimension: emission_factor
+  biosphere.bvoc.wetland.isoprene:
+    value: 14.0
+    default: 14.0
+    units: ug g-1 DW h-1
+    dtype: float32
+    bounds:
+    - 3.5
+    - 42.0
+    category: biological_parameter
+    description: Isoprene emission factor for wetland vegetation
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - isoprene
+    - wetland
+    - calibratable
+    uncertainty: 3.2
+    sample_size: 45
+    requires_grad: true
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      last_modified: '2025-01-15T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Guenther et al. (2012) Table 2 lists area-based PFT emission factors (ug m-2 h-1); the per-dry-mass value is not given there'
+    dimension: emission_factor
+  biosphere.bvoc.wetland.monoterpenes:
+    value: 0.9
+    default: 0.9
+    units: ug g-1 DW h-1
+    dtype: float32
+    bounds:
+    - 0.2
+    - 2.7
+    category: biological_parameter
+    description: Monoterpene emission factor for wetland vegetation
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - monoterpenes
+    - wetland
+    - calibratable
+    uncertainty: 4.5
+    sample_size: 26
+    requires_grad: true
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      last_modified: '2025-01-15T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Guenther et al. (2012) Table 2 lists area-based PFT emission factors (ug m-2 h-1); the per-dry-mass value is not given there'
+    dimension: emission_factor
+  biosphere.bvoc.wetland.sesquiterpenes:
+    value: 0.18
+    default: 0.18
+    units: ug g-1 DW h-1
+    dtype: float32
+    bounds:
+    - 0.02
+    - 0.6
+    category: biological_parameter
+    description: Sesquiterpene emission factor for wetland vegetation
+    references:
+    - 'Duhl et al. (2008) Biogeosciences 5, 761-777, doi:10.5194/bg-5-761-2008, Sect. 3.1'
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - sesquiterpenes
+    - wetland
+    - calibratable
+    uncertainty: 5.5
+    sample_size: 12
+    requires_grad: true
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      last_modified: '2025-01-15T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Duhl et al. (2008) Sect. 3.1 gives 30 degC averages of 0.29 (conifers), 1.41 (broadleaf trees), 7.06 (shrubs) and 0.19 (crops) ug g-1 DW h-1; this value is not one of them'
+    dimension: emission_factor
+  biosphere.bvoc.wetland.ovocs:
+    value: 1.1
+    default: 1.1
+    units: ug g-1 DW h-1
+    dtype: float32
+    bounds:
+    - 0.275
+    - 3.85
+    category: biological_parameter
+    description: Oxygenated VOC emission factor for wetland vegetation
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - ovocs
+    - wetland
+    - calibratable
+    uncertainty: 3.6
+    sample_size: 31
+    requires_grad: true
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      last_modified: '2025-01-15T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Guenther et al. (2012) Table 2 lists area-based PFT emission factors (ug m-2 h-1); the per-dry-mass value is not given there'
+    dimension: emission_factor
+  biosphere.bvoc.default.isoprene:
+    value: 24.0
+    default: 24.0
+    units: ug g-1 DW h-1
+    dtype: float32
+    bounds:
+    - 10.0
+    - 50.0
+    category: biological_parameter
+    description: Default isoprene emission factor for unknown vegetation types
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - isoprene
+    - default
+    uncertainty: 3.0
+    requires_grad: false
+    provenance:
+      source: default_default
+      schema_version: 2.0.0
+      last_modified: '2025-01-29T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Guenther et al. (2012) Table 2 lists area-based PFT emission factors (ug m-2 h-1); the per-dry-mass value is not given there'
+    dimension: emission_factor
+  biosphere.bvoc.default.monoterpenes:
+    value: 2.3
+    default: 2.3
+    units: ug g-1 DW h-1
+    dtype: float32
+    bounds:
+    - 0.575
+    - 9.2
+    category: biological_parameter
+    description: Default monoterpene emission factor for unknown vegetation types
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - monoterpenes
+    - default
+    uncertainty: 4.0
+    requires_grad: false
+    provenance:
+      source: default_default
+      schema_version: 2.0.0
+      last_modified: '2025-01-29T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Guenther et al. (2012) Table 2 lists area-based PFT emission factors (ug m-2 h-1); the per-dry-mass value is not given there'
+    dimension: emission_factor
+  biosphere.bvoc.default.sesquiterpenes:
+    value: 0.45
+    default: 0.45
+    units: ug g-1 DW h-1
+    dtype: float32
+    bounds:
+    - 0.1
+    - 2.0
+    category: biological_parameter
+    description: Default sesquiterpene emission factor for unknown vegetation types
+    references:
+    - 'Duhl et al. (2008) Biogeosciences 5, 761-777, doi:10.5194/bg-5-761-2008, Sect. 3.1'
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - sesquiterpenes
+    - default
+    uncertainty: 4.5
+    requires_grad: false
+    provenance:
+      source: default_default
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Fix P3-2
+      last_modified: '2025-10-09T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Duhl et al. (2008) Sect. 3.1 gives 30 degC averages of 0.29 (conifers), 1.41 (broadleaf trees), 7.06 (shrubs) and 0.19 (crops) ug g-1 DW h-1; this value is not one of them'
+    dimension: emission_factor
+  biosphere.bvoc.default.ovocs:
+    value: 1.8
+    default: 1.8
+    units: ug g-1 DW h-1
+    dtype: float32
+    bounds:
+    - 0.5
+    - 5.0
+    category: biological_parameter
+    description: Default OVOC (methanol, acetone and acetaldehyde) emission factor for unknown vegetation types
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 2'
+    tags:
+    - emission_factor
+    - ovocs
+    - default
+    uncertainty: 3.0
+    requires_grad: false
+    provenance:
+      source: default_default
+      schema_version: 2.0.0
+      created_by: RELIC Parameter Fix P3-2
+      last_modified: '2025-10-09T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Guenther et al. (2012) Table 2 lists area-based PFT emission factors (ug m-2 h-1); the per-dry-mass value is not given there'
+    dimension: emission_factor
+  biosphere.bvoc.carbon_fraction.default:
+    value: 0.882
+    default: 0.882
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.7
+    - 0.95
+    category: physical_parameter
+    description: Default carbon mass fraction applied when compound-specific data are unavailable
+    references:
+    - 'Prohaska et al. (2022) Pure Appl. Chem. 94, 573-600, doi:10.1515/pac-2019-0603 (standard atomic weights)'
+    tags:
+    - carbon_fraction
+    - bvoc
+    requires_grad: false
+    provenance:
+      source: Guenther2012_Koppmann2007
+      schema_version: 2.0.0
+      last_modified: '2025-11-07T00:00:00Z'
+      literature_check: 'verified by stoichiometry: equals the terpene (C5H8, C10H16, C15H24) carbon mass fraction 0.88162 with IUPAC standard atomic weights (stored as 0.882)'
+    dimension: dimensionless
+  biosphere.bvoc.carbon_fraction.isoprene:
+    value: 0.882
+    default: 0.882
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.8
+    - 0.92
+    category: physical_parameter
+    description: Carbon mass fraction for isoprene (C5H8, 60 g C per 68 g compound)
+    references:
+    - 'Prohaska et al. (2022) Pure Appl. Chem. 94, 573-600, doi:10.1515/pac-2019-0603 (standard atomic weights)'
+    tags:
+    - carbon_fraction
+    - isoprene
+    requires_grad: false
+    provenance:
+      source: chemical_stoichiometry
+      schema_version: 2.0.0
+      last_modified: '2025-11-07T00:00:00Z'
+      literature_check: 'verified by stoichiometry: n_C A_r(C) / M(C5H8) = 0.88162 with A_r(C) = 12.011, A_r(H) = 1.008 and M = 68.119 g mol-1 (stored as 0.882)'
+    dimension: dimensionless
+  biosphere.bvoc.carbon_fraction.monoterpenes:
+    value: 0.882
+    default: 0.882
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.8
+    - 0.92
+    category: physical_parameter
+    description: Carbon mass fraction for monoterpenes (C10H16, 120 g C per 136 g compound)
+    references:
+    - 'Prohaska et al. (2022) Pure Appl. Chem. 94, 573-600, doi:10.1515/pac-2019-0603 (standard atomic weights)'
+    tags:
+    - carbon_fraction
+    - monoterpenes
+    requires_grad: false
+    provenance:
+      source: chemical_stoichiometry
+      schema_version: 2.0.0
+      last_modified: '2025-11-07T00:00:00Z'
+      literature_check: 'verified by stoichiometry: n_C A_r(C) / M(C10H16) = 0.88162 with A_r(C) = 12.011, A_r(H) = 1.008 and M = 136.238 g mol-1 (stored as 0.882)'
+    dimension: dimensionless
+  biosphere.bvoc.carbon_fraction.sesquiterpenes:
+    value: 0.882
+    default: 0.882
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.8
+    - 0.92
+    category: physical_parameter
+    description: Carbon mass fraction for sesquiterpenes (C15H24, 180 g C per 204 g compound)
+    references:
+    - 'Prohaska et al. (2022) Pure Appl. Chem. 94, 573-600, doi:10.1515/pac-2019-0603 (standard atomic weights)'
+    tags:
+    - carbon_fraction
+    - sesquiterpenes
+    requires_grad: false
+    provenance:
+      source: chemical_stoichiometry
+      schema_version: 2.0.0
+      last_modified: '2025-11-07T00:00:00Z'
+      literature_check: 'verified by stoichiometry: n_C A_r(C) / M(C15H24) = 0.88162 with A_r(C) = 12.011, A_r(H) = 1.008 and M = 204.357 g mol-1 (stored as 0.882)'
+    dimension: dimensionless
+  biosphere.bvoc.carbon_fraction.ovocs:
+    value: 0.4618
+    default: 0.4618
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.4
+    - 0.8
+    category: physical_parameter
+    description: 'Effective carbon mass fraction of the lumped OVOC class (methanol, acetone and acetaldehyde): MEGAN2.1 global-emission-weighted equivalent f_C,eff = sum(w_i f_C,i) with the mass emissions w_i = 99.6, 43.7 and 20.7 Tg yr-1 (Guenther et al. 2012 Table 6)'
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 6 (global annual emissions for 2000: methanol 99.6, acetone 43.7, acetaldehyde 20.7 Tg yr-1)'
+    - 'Prohaska et al. (2022) Pure Appl. Chem. 94, 573-600, doi:10.1515/pac-2019-0603 (standard atomic weights)'
+    tags:
+    - carbon_fraction
+    - ovocs
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      last_modified: '2025-11-07T00:00:00Z'
+      literature_check: 'verified (MEGAN2.1 global-emission-weighted equivalent): f_C,eff = (99.6 x 0.37485 + 43.7 x 0.62040 + 20.7 x 0.54530) / 164.0 = 0.46180 with f_C,i = n_C,i A_r(C) / MW_i and the Guenther et al. (2012) Table 6 emissions 99.6, 43.7 and 20.7 Tg yr-1 (stored as 0.4618); equals n_C,eff A_r(C) / MW_eff'
+    dimension: dimensionless
+  biosphere.bvoc.megan.eopt_isoprene:
+    value: 2.0
+    default: 2.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 3.0
+    category: biological_parameter
+    description: Optimum activity E_opt of the isoprene Eq. (8) temperature activity at the fixed standard history (T24 = T240 = T_s), the C_eo of the Guenther et al. (2012) Table 4 Isoprene row
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 4 (Isoprene: C_eo = 2) and Eq. (10)'
+    tags:
+    - temperature_response
+    - isoprene
+    - megan_parameter
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_model
+      schema_version: 2.0.0
+      last_modified: '2026-09-26T00:00:00Z'
+      literature_check: 'verified: Guenther et al. (2012) Table 4, Isoprene row (beta 0.13 K-1, LDF 1, C_T1 95 kJ mol-1, C_eo 2); E_opt = C_eo exp(0.05 (T24 - T_s)) exp(0.05 (T240 - T_s)) (Eq. 10) equals C_eo = 2 at the fixed standard history T24 = T240 = T_s; the former value 2.034 (Guenther et al. 2006 Eq. (9)) is superseded by the Table 4 row'
+    dimension: dimensionless
+  biosphere.bvoc.megan.topt:
+    value: 313.0
+    default: 313.0
+    units: K
+    dtype: float32
+    bounds:
+    - 298.0
+    - 313.0
+    category: biological_parameter
+    description: Optimum temperature T_opt of the Eq. (8) light-dependent temperature activity gamma_T,LDF, Eq. (9) T_opt = 313 + 0.6 (T240 - 297) at the fixed standard history T240 = T_s = 297 K, so T_opt = 313 K; class independent and used for every compound class (Guenther et al. 2012)
+    references:
+    - 'Guenther et al. (2006) Atmos. Chem. Phys. 6, 3181-3210, doi:10.5194/acp-6-3181-2006, Eq. (8)'
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Eq. (9)'
+    tags:
+    - temperature_response
+    - isoprene
+    - megan_parameter
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_model
+      schema_version: 2.0.0
+      last_modified: '2026-07-16T00:00:00Z'
+      literature_check: 'verified: T_opt = 313 + 0.6 (T240 - 297) = 313 K at T240 = 297 K (Guenther et al. 2012 Eq. 9; Guenther et al. 2006 Eq. 8); the former 313.15 K was a Celsius-to-kelvin artefact (40 degC) without literature basis; bounds [298, 313] K restate the former 25-40 degC window on the Eq. (9) kelvin scale (T240 from 272 K to the standard 297 K)'
+    dimension: temperature
+  biosphere.bvoc.megan.ct1_isoprene:
+    value: 95000.0
+    default: 95000.0
+    units: J mol-1
+    dtype: float32
+    bounds:
+    - 80000.0
+    - 110000.0
+    category: biological_parameter
+    description: Activation energy C_T1 of the isoprene Eq. (8) temperature activity (Guenther et al. 2012 Table 4 Isoprene row)
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 4 (C_T1 = 95 kJ mol-1)'
+    - 'Guenther et al. (2006) Atmos. Chem. Phys. 6, 3181-3210, doi:10.5194/acp-6-3181-2006, Eq. (5)'
+    tags:
+    - temperature_response
+    - isoprene
+    - activation_energy
+    - megan_parameter
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_model
+      schema_version: 2.0.0
+      last_modified: '2025-01-29T00:00:00Z'
+      literature_check: 'verified: Guenther et al. (2012) Table 4, Isoprene row (beta 0.13 K-1, LDF 1, C_T1 95 kJ mol-1, C_eo 2); C_T1 = 95 kJ mol-1 also in Guenther et al. (2006) Eq. (5)'
+    dimension: energy_per_amount
+  biosphere.bvoc.megan.ct2:
+    value: 230000.0
+    default: 230000.0
+    units: J mol-1
+    dtype: float32
+    bounds:
+    - 200000.0
+    - 260000.0
+    category: biological_parameter
+    description: Deactivation energy C_T2 of the Eq. (8) light-dependent temperature activity gamma_T,LDF; class independent (Guenther et al. 2012 Sect. 2.2) and used for every compound class
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Sect. 2.2 (C_T2 = 230 kJ mol-1)'
+    - 'Guenther et al. (2006) Atmos. Chem. Phys. 6, 3181-3210, doi:10.5194/acp-6-3181-2006, Eq. (5)'
+    tags:
+    - temperature_response
+    - isoprene
+    - deactivation_energy
+    - megan_parameter
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_model
+      schema_version: 2.0.0
+      last_modified: '2025-01-29T00:00:00Z'
+      literature_check: 'verified: C_T2 = 230 kJ mol-1 (Guenther et al. 2012 Sect. 2.2; Guenther et al. 2006 Eq. 5)'
+    dimension: energy_per_amount
+  biosphere.bvoc.megan.history_standard_temperature:
+    value: 297.0
+    default: 297.0
+    units: K
+    dtype: float32
+    bounds:
+    - 290.0
+    - 305.0
+    category: biological_parameter
+    description: Standard leaf temperature T_s of the MEGAN2.1 temperature history, the reference of T24 and T240 in Eqs. (9)-(10) (Guenther et al. 2012); distinct from biosphere.bvoc.t_standard, the reference of the RELIC dry-mass emission factors in Eq. (11)
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, p. 1476, Eqs. (9)-(10) (T_s = 297 K)'
+    tags:
+    - temperature_response
+    - temperature_history
+    - megan_parameter
+    requires_grad: false
+    provenance:
+      source: megan_v2.1_model
+      schema_version: 2.0.0
+      last_modified: '2026-11-06T00:00:00Z'
+      literature_check: 'verified from the paper PDF (p. 1476): T_s represents the standard conditions for leaf temperature (= 297 K) in Eqs. (9)-(10); at T24 = T240 = T_s the history gives T_opt = 313 K and E_opt = C_eo'
+    dimension: temperature
+  biosphere.bvoc.megan.topt_history_slope:
+    value: 0.6
+    default: 0.6
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: biological_parameter
+    description: Slope a of the optimum temperature on the 240 h mean leaf temperature, T_opt = 313 + a (T240 - T_s) (Guenther et al. 2012 Eq. 9)
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, p. 1476, Eq. (9)'
+    tags:
+    - temperature_response
+    - temperature_history
+    - megan_parameter
+    requires_grad: false
+    provenance:
+      source: megan_v2.1_model
+      schema_version: 2.0.0
+      last_modified: '2026-11-06T00:00:00Z'
+      literature_check: 'verified from the paper PDF (p. 1476): T_opt = 313 + (0.6 x (T240 - T_s))'
+    dimension: dimensionless
+  biosphere.bvoc.megan.eopt_history_coefficient_24h:
+    value: 0.05
+    default: 0.05
+    units: K-1
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.1
+    category: biological_parameter
+    description: Coefficient c24 of the 24 h mean leaf temperature in the optimum activity E_opt = C_eo exp(c24 (T24 - T_s)) exp(c240 (T240 - T_s)) (Guenther et al. 2012 Eq. 10)
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, p. 1476, Eq. (10)'
+    tags:
+    - temperature_response
+    - temperature_history
+    - megan_parameter
+    requires_grad: false
+    provenance:
+      source: megan_v2.1_model
+      schema_version: 2.0.0
+      last_modified: '2026-11-06T00:00:00Z'
+      literature_check: 'verified from the paper PDF (p. 1476): E_opt = C_eo,i x exp(0.05 x (T24 - T_s)) x exp(0.05 x (T240 - T_s))'
+    dimension: inverse_temperature
+  biosphere.bvoc.megan.eopt_history_coefficient_240h:
+    value: 0.05
+    default: 0.05
+    units: K-1
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.1
+    category: biological_parameter
+    description: Coefficient c240 of the 240 h mean leaf temperature in the optimum activity E_opt = C_eo exp(c24 (T24 - T_s)) exp(c240 (T240 - T_s)) (Guenther et al. 2012 Eq. 10)
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, p. 1476, Eq. (10)'
+    tags:
+    - temperature_response
+    - temperature_history
+    - megan_parameter
+    requires_grad: false
+    provenance:
+      source: megan_v2.1_model
+      schema_version: 2.0.0
+      last_modified: '2026-11-06T00:00:00Z'
+      literature_check: 'verified from the paper PDF (p. 1476): E_opt = C_eo,i x exp(0.05 x (T24 - T_s)) x exp(0.05 x (T240 - T_s))'
+    dimension: inverse_temperature
+  biosphere.bvoc.megan.history_time_scale_24h:
+    value: 86400.0
+    default: 86400.0
+    units: s
+    dtype: float32
+    bounds:
+    - 3600.0
+    - 172800.0
+    category: biological_parameter
+    description: Averaging time scale tau of the running mean T24 (the average leaf temperature of the past 24 h), advanced as X_new = (1 - w) X + w T with w = min(dt / tau, 1)
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, p. 1476 (T24 is the average leaf temperature of the past 24 h)'
+    - 'Oleson et al. (2010) Technical Description of version 4.0 of the Community Land Model (CLM), NCAR/TN-478+STR (MEGAN2.1 in CLM4 with the running means t_veg24 and t_veg240)'
+    tags:
+    - temperature_response
+    - temperature_history
+    - megan_parameter
+    requires_grad: false
+    provenance:
+      source: megan_v2.1_model
+      schema_version: 2.0.0
+      last_modified: '2026-11-06T00:00:00Z'
+      literature_check: 'verified from the paper PDF (p. 1476): T24 is the average leaf temperature of the past 24 h; 24 h = 86400 s; the running-mean form is the CLM4 runmean accumulation, not a MEGAN2.1 equation'
+    dimension: time
+  biosphere.bvoc.megan.history_time_scale_240h:
+    value: 864000.0
+    default: 864000.0
+    units: s
+    dtype: float32
+    bounds:
+    - 86400.0
+    - 1728000.0
+    category: biological_parameter
+    description: Averaging time scale tau of the running mean T240 (the average leaf temperature of the past 240 h), advanced as X_new = (1 - w) X + w T with w = min(dt / tau, 1)
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, p. 1476 (T240 is the average leaf temperature of the past 240 h)'
+    - 'Oleson et al. (2010) Technical Description of version 4.0 of the Community Land Model (CLM), NCAR/TN-478+STR (MEGAN2.1 in CLM4 with the running means t_veg24 and t_veg240)'
+    tags:
+    - temperature_response
+    - temperature_history
+    - megan_parameter
+    requires_grad: false
+    provenance:
+      source: megan_v2.1_model
+      schema_version: 2.0.0
+      last_modified: '2026-11-06T00:00:00Z'
+      literature_check: 'verified from the paper PDF (p. 1476): T240 is the average leaf temperature of the past 240 h; 240 h = 864000 s; the running-mean form is the CLM4 runmean accumulation, not a MEGAN2.1 equation'
+    dimension: time
+  biosphere.bvoc.megan.ct1_monoterpenes:
+    value: 80000.0
+    default: 80000.0
+    units: J mol-1
+    dtype: float32
+    bounds:
+    - 60000.0
+    - 100000.0
+    category: biological_parameter
+    description: Activation energy C_T1 of the Eq. (8) light-dependent temperature activity of the lumped monoterpene class (Guenther et al. 2012 Table 4 Other Monoterpenes row)
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 4 (Other Monoterpenes: C_T1 = 80 kJ mol-1) and Eq. (8)'
+    tags:
+    - temperature_response
+    - monoterpenes
+    - activation_energy
+    - megan_parameter
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_model
+      schema_version: 2.0.0
+      last_modified: '2026-09-26T00:00:00Z'
+      literature_check: 'verified (representative value): Guenther et al. (2012) Table 4, Other Monoterpenes row (beta 0.1 K-1, LDF 0.4, C_T1 80 kJ mol-1, C_eo 1.83)'
+    dimension: energy_per_amount
+  biosphere.bvoc.megan.eopt_monoterpenes:
+    value: 1.83
+    default: 1.83
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 3.0
+    category: biological_parameter
+    description: Optimum activity E_opt of the Eq. (8) light-dependent temperature activity of the lumped monoterpene class at the fixed standard history (T24 = T240 = T_s), the C_eo of the Guenther et al. (2012) Table 4 Other Monoterpenes row
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 4 (Other Monoterpenes: C_eo = 1.83) and Eq. (10)'
+    tags:
+    - temperature_response
+    - monoterpenes
+    - megan_parameter
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_model
+      schema_version: 2.0.0
+      last_modified: '2026-09-26T00:00:00Z'
+      literature_check: 'verified (representative value): Guenther et al. (2012) Table 4, Other Monoterpenes row (beta 0.1 K-1, LDF 0.4, C_T1 80 kJ mol-1, C_eo 1.83); E_opt = C_eo at the fixed standard history T24 = T240 = T_s (Eq. 10)'
+    dimension: dimensionless
+  biosphere.bvoc.megan.ct1_sesquiterpenes:
+    value: 130000.0
+    default: 130000.0
+    units: J mol-1
+    dtype: float32
+    bounds:
+    - 110000.0
+    - 150000.0
+    category: biological_parameter
+    description: Activation energy C_T1 of the Eq. (8) light-dependent temperature activity of the sesquiterpene class (Guenther et al. 2012 Table 4 Other Sesquiterpenes row)
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 4 (Other Sesquiterpenes: C_T1 = 130 kJ mol-1) and Eq. (8)'
+    tags:
+    - temperature_response
+    - sesquiterpenes
+    - activation_energy
+    - megan_parameter
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_model
+      schema_version: 2.0.0
+      last_modified: '2026-09-26T00:00:00Z'
+      literature_check: 'verified: Guenther et al. (2012) Table 4, Other Sesquiterpenes row (beta 0.17 K-1, LDF 0.5, C_T1 130 kJ mol-1, C_eo 2.37)'
+    dimension: energy_per_amount
+  biosphere.bvoc.megan.eopt_sesquiterpenes:
+    value: 2.37
+    default: 2.37
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 3.0
+    category: biological_parameter
+    description: Optimum activity E_opt of the Eq. (8) light-dependent temperature activity of the sesquiterpene class at the fixed standard history (T24 = T240 = T_s), the C_eo of the Guenther et al. (2012) Table 4 Other Sesquiterpenes row
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 4 (Other Sesquiterpenes: C_eo = 2.37) and Eq. (10)'
+    tags:
+    - temperature_response
+    - sesquiterpenes
+    - megan_parameter
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_model
+      schema_version: 2.0.0
+      last_modified: '2026-09-26T00:00:00Z'
+      literature_check: 'verified: Guenther et al. (2012) Table 4, Other Sesquiterpenes row (beta 0.17 K-1, LDF 0.5, C_T1 130 kJ mol-1, C_eo 2.37); E_opt = C_eo at the fixed standard history T24 = T240 = T_s (Eq. 10)'
+    dimension: dimensionless
+  biosphere.bvoc.megan.ovoc.methanol.global_emission:
+    value: 9.960e+13
+    default: 9.960e+13
+    units: g yr-1
+    dtype: float64
+    bounds:
+    - 9.960e+13
+    - 9.960e+13
+    category: weighting_parameter
+    description: 'Global annual methanol emission for 2000 (99.6 Tg yr-1): weight of methanol in the emission-weighted mixture sum_j w_j gamma_j of the activity factors of the lumped OVOC class (methanol, acetone and acetaldehyde)'
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 6 (global annual emissions for 2000: methanol 99.6, acetone 43.7, acetaldehyde 20.7 Tg yr-1)'
+    tags:
+    - ovocs
+    - methanol
+    - emission_weight
+    - megan_parameter
+    requires_grad: false
+    provenance:
+      source: megan_v2.1_model
+      schema_version: 2.0.0
+      last_modified: '2026-09-26T00:00:00Z'
+      literature_check: 'verified: Guenther et al. (2012) Table 6, methanol 99.6 Tg yr-1 for 2000 (stored in g yr-1, 1 Tg = 1e12 g)'
+    dimension: mass_per_time
+  biosphere.bvoc.megan.ovoc.methanol.beta:
+    value: 0.08
+    default: 0.08
+    units: K-1
+    dtype: float32
+    bounds:
+    - 0.05
+    - 0.11
+    category: biological_parameter
+    description: 'Temperature coefficient beta of the light-independent Eq. (11) activity of methanol, an OVOC component'
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 4 (Methanol row) and Eq. (11)'
+    tags:
+    - temperature_response
+    - ovocs
+    - methanol
+    - megan_parameter
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_model
+      schema_version: 2.0.0
+      last_modified: '2026-09-26T00:00:00Z'
+      literature_check: 'verified: Guenther et al. (2012) Table 4, Methanol row (beta 0.08 K-1, LDF 0.8, C_T1 60 kJ mol-1, C_eo 1.6)'
+    dimension: inverse_temperature
+  biosphere.bvoc.megan.ovoc.methanol.ldf:
+    value: 0.8
+    default: 0.8
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: biological_parameter
+    description: 'Light-dependent fraction LDF of methanol, an OVOC component, in the Eq. (3) light and Eq. (7) temperature activities'
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 4 (Methanol row), Eqs. (3) and (7)'
+    tags:
+    - light_response
+    - ovocs
+    - methanol
+    - megan_parameter
+    requires_grad: false
+    provenance:
+      source: megan_v2.1_model
+      schema_version: 2.0.0
+      last_modified: '2026-09-26T00:00:00Z'
+      literature_check: 'verified: Guenther et al. (2012) Table 4, Methanol row (beta 0.08 K-1, LDF 0.8, C_T1 60 kJ mol-1, C_eo 1.6)'
+    dimension: dimensionless
+  biosphere.bvoc.megan.ovoc.methanol.ct1:
+    value: 60000.0
+    default: 60000.0
+    units: J mol-1
+    dtype: float32
+    bounds:
+    - 40000.0
+    - 80000.0
+    category: biological_parameter
+    description: 'Activation energy C_T1 of the Eq. (8) light-dependent temperature activity of methanol, an OVOC component'
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 4 (Methanol row) and Eq. (8)'
+    tags:
+    - temperature_response
+    - ovocs
+    - methanol
+    - activation_energy
+    - megan_parameter
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_model
+      schema_version: 2.0.0
+      last_modified: '2026-09-26T00:00:00Z'
+      literature_check: 'verified: Guenther et al. (2012) Table 4, Methanol row (beta 0.08 K-1, LDF 0.8, C_T1 60 kJ mol-1, C_eo 1.6)'
+    dimension: energy_per_amount
+  biosphere.bvoc.megan.ovoc.methanol.eopt:
+    value: 1.6
+    default: 1.6
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 3.0
+    category: biological_parameter
+    description: 'Optimum activity E_opt of the Eq. (8) light-dependent temperature activity of methanol, an OVOC component, at the fixed standard history (T24 = T240 = T_s): the Table 4 C_eo'
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 4 (Methanol row) and Eq. (10)'
+    tags:
+    - temperature_response
+    - ovocs
+    - methanol
+    - megan_parameter
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_model
+      schema_version: 2.0.0
+      last_modified: '2026-09-26T00:00:00Z'
+      literature_check: 'verified: Guenther et al. (2012) Table 4, Methanol row (beta 0.08 K-1, LDF 0.8, C_T1 60 kJ mol-1, C_eo 1.6); E_opt = C_eo at the fixed standard history T24 = T240 = T_s (Eq. 10)'
+    dimension: dimensionless
+  biosphere.bvoc.megan.ovoc.acetone.global_emission:
+    value: 4.370e+13
+    default: 4.370e+13
+    units: g yr-1
+    dtype: float64
+    bounds:
+    - 4.370e+13
+    - 4.370e+13
+    category: weighting_parameter
+    description: 'Global annual acetone emission for 2000 (43.7 Tg yr-1): weight of acetone in the emission-weighted mixture sum_j w_j gamma_j of the activity factors of the lumped OVOC class (methanol, acetone and acetaldehyde)'
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 6 (global annual emissions for 2000: methanol 99.6, acetone 43.7, acetaldehyde 20.7 Tg yr-1)'
+    tags:
+    - ovocs
+    - acetone
+    - emission_weight
+    - megan_parameter
+    requires_grad: false
+    provenance:
+      source: megan_v2.1_model
+      schema_version: 2.0.0
+      last_modified: '2026-09-26T00:00:00Z'
+      literature_check: 'verified: Guenther et al. (2012) Table 6, acetone 43.7 Tg yr-1 for 2000 (stored in g yr-1, 1 Tg = 1e12 g)'
+    dimension: mass_per_time
+  biosphere.bvoc.megan.ovoc.acetone.beta:
+    value: 0.1
+    default: 0.1
+    units: K-1
+    dtype: float32
+    bounds:
+    - 0.07
+    - 0.13
+    category: biological_parameter
+    description: 'Temperature coefficient beta of the light-independent Eq. (11) activity of acetone, an OVOC component'
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 4 (Acetone row) and Eq. (11)'
+    tags:
+    - temperature_response
+    - ovocs
+    - acetone
+    - megan_parameter
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_model
+      schema_version: 2.0.0
+      last_modified: '2026-09-26T00:00:00Z'
+      literature_check: 'verified: Guenther et al. (2012) Table 4, Acetone row (beta 0.1 K-1, LDF 0.2, C_T1 80 kJ mol-1, C_eo 1.83)'
+    dimension: inverse_temperature
+  biosphere.bvoc.megan.ovoc.acetone.ldf:
+    value: 0.2
+    default: 0.2
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: biological_parameter
+    description: 'Light-dependent fraction LDF of acetone, an OVOC component, in the Eq. (3) light and Eq. (7) temperature activities'
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 4 (Acetone row), Eqs. (3) and (7)'
+    tags:
+    - light_response
+    - ovocs
+    - acetone
+    - megan_parameter
+    requires_grad: false
+    provenance:
+      source: megan_v2.1_model
+      schema_version: 2.0.0
+      last_modified: '2026-09-26T00:00:00Z'
+      literature_check: 'verified: Guenther et al. (2012) Table 4, Acetone row (beta 0.1 K-1, LDF 0.2, C_T1 80 kJ mol-1, C_eo 1.83)'
+    dimension: dimensionless
+  biosphere.bvoc.megan.ovoc.acetone.ct1:
+    value: 80000.0
+    default: 80000.0
+    units: J mol-1
+    dtype: float32
+    bounds:
+    - 60000.0
+    - 100000.0
+    category: biological_parameter
+    description: 'Activation energy C_T1 of the Eq. (8) light-dependent temperature activity of acetone, an OVOC component'
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 4 (Acetone row) and Eq. (8)'
+    tags:
+    - temperature_response
+    - ovocs
+    - acetone
+    - activation_energy
+    - megan_parameter
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_model
+      schema_version: 2.0.0
+      last_modified: '2026-09-26T00:00:00Z'
+      literature_check: 'verified: Guenther et al. (2012) Table 4, Acetone row (beta 0.1 K-1, LDF 0.2, C_T1 80 kJ mol-1, C_eo 1.83)'
+    dimension: energy_per_amount
+  biosphere.bvoc.megan.ovoc.acetone.eopt:
+    value: 1.83
+    default: 1.83
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 3.0
+    category: biological_parameter
+    description: 'Optimum activity E_opt of the Eq. (8) light-dependent temperature activity of acetone, an OVOC component, at the fixed standard history (T24 = T240 = T_s): the Table 4 C_eo'
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 4 (Acetone row) and Eq. (10)'
+    tags:
+    - temperature_response
+    - ovocs
+    - acetone
+    - megan_parameter
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_model
+      schema_version: 2.0.0
+      last_modified: '2026-09-26T00:00:00Z'
+      literature_check: 'verified: Guenther et al. (2012) Table 4, Acetone row (beta 0.1 K-1, LDF 0.2, C_T1 80 kJ mol-1, C_eo 1.83); E_opt = C_eo at the fixed standard history T24 = T240 = T_s (Eq. 10)'
+    dimension: dimensionless
+  biosphere.bvoc.megan.ovoc.acetaldehyde.global_emission:
+    value: 2.070e+13
+    default: 2.070e+13
+    units: g yr-1
+    dtype: float64
+    bounds:
+    - 2.070e+13
+    - 2.070e+13
+    category: weighting_parameter
+    description: 'Global annual acetaldehyde emission for 2000 (20.7 Tg yr-1): weight of acetaldehyde in the emission-weighted mixture sum_j w_j gamma_j of the activity factors of the lumped OVOC class (methanol, acetone and acetaldehyde)'
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 6 (global annual emissions for 2000: methanol 99.6, acetone 43.7, acetaldehyde 20.7 Tg yr-1)'
+    tags:
+    - ovocs
+    - acetaldehyde
+    - emission_weight
+    - megan_parameter
+    requires_grad: false
+    provenance:
+      source: megan_v2.1_model
+      schema_version: 2.0.0
+      last_modified: '2026-09-26T00:00:00Z'
+      literature_check: 'verified: Guenther et al. (2012) Table 6, acetaldehyde 20.7 Tg yr-1 for 2000 (stored in g yr-1, 1 Tg = 1e12 g)'
+    dimension: mass_per_time
+  biosphere.bvoc.megan.ovoc.acetaldehyde.beta:
+    value: 0.13
+    default: 0.13
+    units: K-1
+    dtype: float32
+    bounds:
+    - 0.08
+    - 0.18
+    category: biological_parameter
+    description: 'Temperature coefficient beta of the light-independent Eq. (11) activity of acetaldehyde (Guenther et al. 2012 Table 1 places acetaldehyde in the bidirectional VOC class), an OVOC component'
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 4 (Bidirectional VOC row) and Eq. (11)'
+    tags:
+    - temperature_response
+    - ovocs
+    - acetaldehyde
+    - megan_parameter
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_model
+      schema_version: 2.0.0
+      last_modified: '2026-09-26T00:00:00Z'
+      literature_check: 'verified: Guenther et al. (2012) Table 4, Bidirectional VOC row (beta 0.13 K-1, LDF 0.8, C_T1 95 kJ mol-1, C_eo 2.0)'
+    dimension: inverse_temperature
+  biosphere.bvoc.megan.ovoc.acetaldehyde.ldf:
+    value: 0.8
+    default: 0.8
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: biological_parameter
+    description: 'Light-dependent fraction LDF of acetaldehyde (Guenther et al. 2012 Table 1 places acetaldehyde in the bidirectional VOC class), an OVOC component, in the Eq. (3) light and Eq. (7) temperature activities'
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 4 (Bidirectional VOC row), Eqs. (3) and (7)'
+    tags:
+    - light_response
+    - ovocs
+    - acetaldehyde
+    - megan_parameter
+    requires_grad: false
+    provenance:
+      source: megan_v2.1_model
+      schema_version: 2.0.0
+      last_modified: '2026-09-26T00:00:00Z'
+      literature_check: 'verified: Guenther et al. (2012) Table 4, Bidirectional VOC row (beta 0.13 K-1, LDF 0.8, C_T1 95 kJ mol-1, C_eo 2.0)'
+    dimension: dimensionless
+  biosphere.bvoc.megan.ovoc.acetaldehyde.ct1:
+    value: 95000.0
+    default: 95000.0
+    units: J mol-1
+    dtype: float32
+    bounds:
+    - 80000.0
+    - 110000.0
+    category: biological_parameter
+    description: 'Activation energy C_T1 of the Eq. (8) light-dependent temperature activity of acetaldehyde (Guenther et al. 2012 Table 1 places acetaldehyde in the bidirectional VOC class), an OVOC component'
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 4 (Bidirectional VOC row) and Eq. (8)'
+    tags:
+    - temperature_response
+    - ovocs
+    - acetaldehyde
+    - activation_energy
+    - megan_parameter
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_model
+      schema_version: 2.0.0
+      last_modified: '2026-09-26T00:00:00Z'
+      literature_check: 'verified: Guenther et al. (2012) Table 4, Bidirectional VOC row (beta 0.13 K-1, LDF 0.8, C_T1 95 kJ mol-1, C_eo 2.0)'
+    dimension: energy_per_amount
+  biosphere.bvoc.megan.ovoc.acetaldehyde.eopt:
+    value: 2.0
+    default: 2.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 3.0
+    category: biological_parameter
+    description: 'Optimum activity E_opt of the Eq. (8) light-dependent temperature activity of acetaldehyde (Guenther et al. 2012 Table 1 places acetaldehyde in the bidirectional VOC class), an OVOC component, at the fixed standard history (T24 = T240 = T_s): the Table 4 C_eo'
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 4 (Bidirectional VOC row) and Eq. (10)'
+    tags:
+    - temperature_response
+    - ovocs
+    - acetaldehyde
+    - megan_parameter
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_model
+      schema_version: 2.0.0
+      last_modified: '2026-09-26T00:00:00Z'
+      literature_check: 'verified: Guenther et al. (2012) Table 4, Bidirectional VOC row (beta 0.13 K-1, LDF 0.8, C_T1 95 kJ mol-1, C_eo 2.0); E_opt = C_eo at the fixed standard history T24 = T240 = T_s (Eq. 10)'
+    dimension: dimensionless
+  biosphere.bvoc.megan.beta_monoterpenes:
+    value: 0.1
+    default: 0.1
+    units: K-1
+    dtype: float32
+    bounds:
+    - 0.06
+    - 0.12
+    category: biological_parameter
+    description: Temperature coefficient beta of the light-independent Eq. (11) activity of the lumped monoterpene class (Guenther et al. 2012 Table 4 Other Monoterpenes row)
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 4 (Other Monoterpenes: beta = 0.1 K-1) and Sect. 2.3 (MEGAN2.1 uses 0.1, slightly higher than the 0.09 recommended by Guenther et al. 1993)'
+    tags:
+    - temperature_response
+    - monoterpenes
+    - megan_parameter
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_model
+      schema_version: 2.0.0
+      last_modified: '2025-01-29T00:00:00Z'
+      note: Previous duplicate definitions removed; this is the authoritative specification.
+      literature_check: 'verified (representative value): Guenther et al. (2012) Table 4, Other Monoterpenes row (beta 0.1 K-1, LDF 0.4, C_T1 80 kJ mol-1, C_eo 1.83); Sect. 2.3 states that MEGAN2.1 uses 0.1; the former value 0.09 (Guenther et al. 1993) is superseded by the Table 4 row'
+    dimension: inverse_temperature
+  biosphere.bvoc.megan.beta_sesquiterpenes:
+    value: 0.17
+    default: 0.17
+    units: K-1
+    dtype: float32
+    bounds:
+    - 0.12
+    - 0.22
+    category: biological_parameter
+    description: Exponential temperature coefficient for sesquiterpenes (higher sensitivity)
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 4'
+    - 'Duhl et al. (2008) Biogeosciences 5, 761-777, doi:10.5194/bg-5-761-2008, Table 1'
+    tags:
+    - temperature_response
+    - sesquiterpenes
+    - megan_parameter
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_model
+      schema_version: 2.0.0
+      last_modified: '2025-01-29T00:00:00Z'
+      note: Previous duplicate definitions removed; this is the authoritative specification.
+      literature_check: 'verified: Guenther et al. (2012) Table 4, Other Sesquiterpenes row (beta 0.17 K-1, LDF 0.5, C_T1 130 kJ mol-1, C_eo 2.37); beta = 0.17 K-1 is also the average for total sesquiterpenes in Duhl et al. (2008) Table 1'
+    dimension: inverse_temperature
+  biosphere.bvoc.megan.ldf_sesquiterpenes:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: biological_parameter
+    description: Light-dependent fraction LDF of sesquiterpene emission in the MEGAN2.1 light activity gamma_L = (1 - LDF) + LDF gamma_P_LDF
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Eq. (3) and Table 4 (LDF = 0.5 for alpha-farnesene, beta-caryophyllene and other sesquiterpenes)'
+    tags:
+    - light_response
+    - sesquiterpenes
+    - megan_parameter
+    requires_grad: false
+    provenance:
+      source: megan_v2.1_model
+      schema_version: 2.0.0
+      last_modified: '2026-09-24T00:00:00Z'
+      literature_check: 'verified: Guenther et al. (2012) Table 4, Other Sesquiterpenes row (beta 0.17 K-1, LDF 0.5, C_T1 130 kJ mol-1, C_eo 2.37); LDF = 0.5 for every sesquiterpene class'
+    dimension: dimensionless
+  biosphere.bvoc.megan.ldf_monoterpenes:
+    value: 0.4
+    default: 0.4
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: biological_parameter
+    description: Light-dependent fraction LDF of the lumped monoterpene class (undifferentiated total C10H16 monoterpenes) in the MEGAN2.1 light activity gamma_L = (1 - LDF) + LDF gamma_P_LDF; representative value
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Eq. (3) and Table 4 (LDF = 0.4 for Other Monoterpenes; 0.2 to 0.8 for the individually listed monoterpenes)'
+    tags:
+    - light_response
+    - monoterpenes
+    - megan_parameter
+    requires_grad: false
+    provenance:
+      source: megan_v2.1_model
+      schema_version: 2.0.0
+      last_modified: '2026-09-26T00:00:00Z'
+      literature_check: 'verified (representative value): Guenther et al. (2012) Table 4, Other Monoterpenes row (beta 0.1 K-1, LDF 0.4, C_T1 80 kJ mol-1, C_eo 1.83), and 0.2 to 0.8 for the individually listed monoterpenes; RELIC applies the Other Monoterpenes row as the representative row of its undifferentiated monoterpene class'
+    dimension: dimensionless
+  biosphere.bvoc.megan.alpha_light:
+    value: 0.0027
+    default: 0.0027
+    units: m2 s umol-1
+    dtype: float32
+    bounds:
+    - 0.001
+    - 0.005
+    category: biological_parameter
+    description: Light response coefficient for BVOC emissions
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Eq. (5)'
+    - 'Guenther et al. (2006) Atmos. Chem. Phys. 6, 3181-3210, doi:10.5194/acp-6-3181-2006, Eq. (6)'
+    tags:
+    - light_response
+    - megan_parameter
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_model
+      schema_version: 2.0.0
+      last_modified: '2025-01-29T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Guenther et al. (2012) Eq. (5) and Guenther et al. (2006) Eq. (6) compute alpha = 0.004 - 0.0005 ln(P240) from the 240-h PPFD history; the constant 0.0027 is not given there'
+    dimension: light_response_parameter
+  biosphere.bvoc.megan.cl_light:
+    value: 1.066
+    default: 1.066
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.8
+    - 1.3
+    category: biological_parameter
+    description: Light scaling factor for MEGAN light response
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Eq. (6)'
+    - 'Guenther et al. (2006) Atmos. Chem. Phys. 6, 3181-3210, doi:10.5194/acp-6-3181-2006, Eq. (7)'
+    tags:
+    - light_response
+    - megan_parameter
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_model
+      schema_version: 2.0.0
+      last_modified: '2025-01-29T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Guenther et al. (2012) Eq. (6) and Guenther et al. (2006) Eq. (7) compute C_P from the 24/240-h PPFD history; the constant 1.066 is not given there'
+    dimension: dimensionless
+  biosphere.bvoc.megan.hybrid_weight:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: coupling_parameter
+    description: Weighting factor blending photosynthesis-coupled and empirical emission pathways
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012'
+    tags:
+    - hybrid_weight
+    - megan_parameter
+    requires_grad: false
+    provenance:
+      source: megan_v2.1_model
+      schema_version: 2.0.0
+      created_by: parameter_refactor
+      last_modified: '2025-11-13T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): RELIC weight of the hybrid photosynthesis/MEGAN pathway; MEGAN2.1 has no such weight'
+    dimension: dimensionless
+  biosphere.bvoc.foliar_density_factor:
+    value: 200.0
+    default: 200.0
+    units: g DW m-2
+    dtype: float32
+    bounds:
+    - 50.0
+    - 500.0
+    category: biological_parameter
+    description: Effective dry-leaf mass per unit canonical RELIC LAI leaf area for the reduced BVOC closure
+    references:
+    - 'RELIC reduced mass-normalized BVOC closure assumption; Guenther et al. (2012) supports only the MEGAN response-function heritage'
+    tags:
+    - bvoc
+    - dry_weight
+    - canonical_lai_area_basis
+    - lai_conversion
+    - reduced_closure
+    dimension: mass_per_area
+    requires_grad: false
+    provenance:
+      source: relic_reduced_bvoc_closure_assumption
+      schema_version: 2.0.0
+      created_by: scientific_contract_correction
+      last_modified: '2026-08-23T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): RELIC reduced-closure assumption'
+  biosphere.bvoc.validation.temperature.min_operational:
+    value: 203.15
+    default: 203.15
+    units: K
+    dtype: float32
+    bounds:
+    - 200.0
+    - 260.0
+    category: validation_parameter
+    description: 'Minimum physically valid canopy temperature for MEGAN inputs. Lowered from 233.15 K on
+      2026-11-05 to the terrestrial range (Northern Hemisphere record low -67.8 degC) for global daily runs; the
+      temperature response tends to zero there (gamma_T about 1e-9 at 203.15 K with the default coefficients).'
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012'
+    - 'Niinemets et al. (2010) Biogeosciences 7, 1809-1832, doi:10.5194/bg-7-1809-2010'
+    tags:
+    - validation
+    - temperature_bounds
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: MEGAN validation requirements
+      schema_version: 2.0.0
+      created_by: BVOC Parameter Cleanup
+      last_modified: '2025-11-14T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): RELIC input-validation bound; not given in Guenther et al. (2012) or Niinemets et al. (2010) (full-text search)'
+  biosphere.bvoc.validation.temperature.max_operational:
+    value: 333.15
+    default: 333.15
+    units: K
+    dtype: float32
+    bounds:
+    - 310.0
+    - 360.0
+    category: validation_parameter
+    description: Maximum physically valid canopy temperature for MEGAN inputs
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012'
+    - 'Niinemets et al. (2010) Biogeosciences 7, 1809-1832, doi:10.5194/bg-7-1809-2010'
+    tags:
+    - validation
+    - temperature_bounds
+    dimension: temperature
+    requires_grad: false
+    provenance:
+      source: MEGAN validation requirements
+      schema_version: 2.0.0
+      created_by: BVOC Parameter Cleanup
+      last_modified: '2025-11-14T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): RELIC input-validation bound; not given in Guenther et al. (2012) or Niinemets et al. (2010) (full-text search)'
+  biosphere.bvoc.co2_inhibition.ismax:
+    value: 1.344
+    default: 1.344
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 2.0
+    category: biological_parameter
+    description: Maximum isoprene CO2 activity factor in the Guenther et al. equation 14 response
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Eq. (14)'
+    - 'Heald et al. (2009) Global Change Biology 15, 1127-1140, doi:10.1111/j.1365-2486.2008.01802.x'
+    tags:
+    - co2_inhibition
+    - isoprene
+    - megan_parameter
+    requires_grad: true
+    provenance:
+      source: guenther_2012_equation_14
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-07-16T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Guenther et al. (2012) Eq. (14) gives the functional form only; the Heald et al. (2009) coefficient was not checked against the publisher version'
+    dimension: dimensionless
+  biosphere.bvoc.co2_inhibition.hill_exponent:
+    value: 1.4614
+    default: 1.4614
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 3.0
+    category: biological_parameter
+    description: Hill exponent in the Guenther et al. equation 14 isoprene CO2 response
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Eq. (14)'
+    - 'Wilkinson et al. (2009) Global Change Biology 15, 1189-1200, doi:10.1111/j.1365-2486.2008.01803.x'
+    tags:
+    - co2_inhibition
+    - isoprene
+    - hill_response
+    requires_grad: true
+    provenance:
+      source: guenther_2012_equation_14
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-07-16T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Guenther et al. (2012) Eq. (14) gives the functional form only; the Wilkinson et al. (2009) coefficient was not checked against the publisher version'
+    dimension: dimensionless
+  biosphere.bvoc.co2_inhibition.intercellular_to_ambient_ratio:
+    value: 0.7
+    default: 0.7
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 0.9
+    category: biological_parameter
+    description: Ratio used to estimate intercellular CO2 from ambient CO2 for the reduced MEGAN response
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Sect. 2.2 (C_i is 70 % of the ambient CO2 concentration)'
+    - 'Heald et al. (2009) Global Change Biology 15, 1127-1140, doi:10.1111/j.1365-2486.2008.01802.x'
+    tags:
+    - co2_inhibition
+    - isoprene
+    - intercellular_co2
+    requires_grad: false
+    provenance:
+      source: guenther_2012_equation_14
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-07-16T00:00:00Z'
+      literature_check: 'verified: Guenther et al. (2012) Sect. 2.2 estimates C_i as 70 % of the ambient CO2 concentration'
+    dimension: dimensionless
+  biosphere.bvoc.co2_inhibition.c_star:
+    value: 585.0
+    default: 585.0
+    units: ppm
+    dtype: float32
+    bounds:
+    - 500.0
+    - 700.0
+    category: biological_parameter
+    description: CO2 scaling parameter for inhibition
+    references:
+    - 'Possell and Hewitt (2011) Global Change Biology 17, 1595-1610, doi:10.1111/j.1365-2486.2010.02306.x'
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Eq. (14)'
+    tags:
+    - co2_inhibition
+    requires_grad: true
+    provenance:
+      source: possell_hewitt_2011
+      schema_version: 2.0.0
+      last_modified: '2025-01-29T00:00:00Z'
+      note: Used in megan_model._compute_co2_inhibition_factor.
+      literature_check: 'not verified in the cited literature (model default): Guenther et al. (2012) Eq. (14) gives the functional form only; the Possell and Hewitt (2011) value was not checked against the publisher version'
+    dimension: dimensionless
+  biosphere.bvoc.molecular_weights.monoterpenes:
+    value: 136.24
+    default: 136.24
+    units: g mol-1
+    dtype: float32
+    category: model_parameter
+    description: Average molecular weight of monoterpenes (C10H16)
+    requires_grad: false
+    provenance:
+      source: chemical_database
+      schema_version: 2.0.0
+      last_modified: '2025-01-29T00:00:00Z'
+      literature_check: 'verified by stoichiometry: M(C10H16) = 136.238 g mol-1 with A_r(C) = 12.011 and A_r(H) = 1.008 (stored as 136.24)'
+    bounds:
+    - 0.0
+    - 1362.4
+    references:
+    - 'Prohaska et al. (2022) Pure Appl. Chem. 94, 573-600, doi:10.1515/pac-2019-0603 (standard atomic weights)'
+    tags: []
+    dimension: molar_mass
+  biosphere.bvoc.molecular_weights.sesquiterpenes:
+    value: 204.36
+    default: 204.36
+    units: g mol-1
+    dtype: float32
+    category: model_parameter
+    description: Average molecular weight of sesquiterpenes (C15H24)
+    requires_grad: false
+    provenance:
+      source: chemical_database
+      schema_version: 2.0.0
+      last_modified: '2025-01-29T00:00:00Z'
+      literature_check: 'verified by stoichiometry: M(C15H24) = 204.357 g mol-1 with A_r(C) = 12.011 and A_r(H) = 1.008 (stored as 204.36)'
+    bounds:
+    - 0.0
+    - 2043.6000000000001
+    references:
+    - 'Prohaska et al. (2022) Pure Appl. Chem. 94, 573-600, doi:10.1515/pac-2019-0603 (standard atomic weights)'
+    tags: []
+    dimension: molar_mass
+  biosphere.bvoc.molecular_weights.ovocs:
+    value: 37.87
+    default: 37.87
+    units: g mol-1
+    dtype: float32
+    category: model_parameter
+    description: 'Effective molar mass of the lumped OVOC class (methanol, acetone and acetaldehyde): MEGAN2.1 global-emission-weighted equivalent MW_eff = sum(w_i) / sum(w_i / MW_i) with the mass emissions w_i = 99.6, 43.7 and 20.7 Tg yr-1 (Guenther et al. 2012 Table 6) and MW_i = 32.042, 58.080 and 44.053 g mol-1'
+    requires_grad: false
+    provenance:
+      source: chemical_database
+      schema_version: 2.0.0
+      last_modified: '2025-01-29T00:00:00Z'
+      literature_check: 'verified (MEGAN2.1 global-emission-weighted equivalent): MW_eff = 164.0 / (99.6 / 32.042 + 43.7 / 58.080 + 20.7 / 44.053) = 37.869 g mol-1 (stored as 37.87) with the Guenther et al. (2012) Table 6 emissions 99.6, 43.7 and 20.7 Tg yr-1 and IUPAC standard atomic weights'
+    bounds:
+    - 0.0
+    - 1000.0
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 6 (global annual emissions for 2000: methanol 99.6, acetone 43.7, acetaldehyde 20.7 Tg yr-1)'
+    - 'Prohaska et al. (2022) Pure Appl. Chem. 94, 573-600, doi:10.1515/pac-2019-0603 (standard atomic weights)'
+    tags: []
+    dimension: molar_mass
+  biosphere.bvoc.carbon_atoms.isoprene:
+    value: 5
+    default: 5
+    units: dimensionless
+    dtype: int32
+    category: model_parameter
+    description: Number of carbon atoms in isoprene
+    requires_grad: false
+    bounds:
+    - 0.0
+    - 50
+    references:
+    - 'Prohaska et al. (2022) Pure Appl. Chem. 94, 573-600, doi:10.1515/pac-2019-0603 (standard atomic weights)'
+    tags: []
+    provenance:
+      source: RELIC default
+      schema_version: 2.0.0
+      created_by: parameter_fixer
+      last_modified: '2025-01-01T00:00:00Z'
+      literature_check: 'verified by the molecular formula C5H8 (5 carbon atoms)'
+    dimension: dimensionless
+  biosphere.bvoc.carbon_atoms.monoterpenes:
+    value: 10
+    default: 10
+    units: dimensionless
+    dtype: int32
+    category: model_parameter
+    description: Number of carbon atoms in monoterpenes
+    requires_grad: false
+    bounds:
+    - 0.0
+    - 100
+    references:
+    - 'Prohaska et al. (2022) Pure Appl. Chem. 94, 573-600, doi:10.1515/pac-2019-0603 (standard atomic weights)'
+    tags: []
+    provenance:
+      source: RELIC default
+      schema_version: 2.0.0
+      created_by: parameter_fixer
+      last_modified: '2025-01-01T00:00:00Z'
+      literature_check: 'verified by the molecular formula C10H16 (10 carbon atoms)'
+    dimension: dimensionless
+  biosphere.bvoc.carbon_atoms.sesquiterpenes:
+    value: 15
+    default: 15
+    units: dimensionless
+    dtype: int32
+    category: model_parameter
+    description: Number of carbon atoms in sesquiterpenes
+    requires_grad: false
+    bounds:
+    - 0.0
+    - 150
+    references:
+    - 'Prohaska et al. (2022) Pure Appl. Chem. 94, 573-600, doi:10.1515/pac-2019-0603 (standard atomic weights)'
+    tags: []
+    provenance:
+      source: RELIC default
+      schema_version: 2.0.0
+      created_by: parameter_fixer
+      last_modified: '2025-01-01T00:00:00Z'
+      literature_check: 'verified by the molecular formula C15H24 (15 carbon atoms)'
+    dimension: dimensionless
+  biosphere.bvoc.carbon_atoms.ovocs:
+    value: 1.456
+    default: 1.456
+    units: dimensionless
+    dtype: float32
+    category: model_parameter
+    description: 'Effective carbon atoms per molecule of the lumped OVOC class (methanol, acetone and acetaldehyde): n_C,eff = MW_eff f_C,eff / A_r(C) of the MEGAN2.1 global-emission-weighted equivalent (Guenther et al. 2012 Table 6: 99.6, 43.7 and 20.7 Tg yr-1)'
+    requires_grad: false
+    bounds:
+    - 0.0
+    - 60
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Table 6 (global annual emissions for 2000: methanol 99.6, acetone 43.7, acetaldehyde 20.7 Tg yr-1)'
+    - 'Prohaska et al. (2022) Pure Appl. Chem. 94, 573-600, doi:10.1515/pac-2019-0603 (standard atomic weights)'
+    tags: []
+    provenance:
+      source: RELIC default
+      schema_version: 2.0.0
+      created_by: parameter_fixer
+      last_modified: '2025-01-01T00:00:00Z'
+      literature_check: 'verified (MEGAN2.1 global-emission-weighted equivalent): n_C,eff = 37.869 x 0.46180 / 12.011 = 1.4560 (stored as 1.456), equal to the mole-fraction-weighted carbon number of methanol (1), acetone (3) and acetaldehyde (2) for the Guenther et al. (2012) Table 6 emissions 99.6, 43.7 and 20.7 Tg yr-1'
+    dimension: dimensionless
+  biosphere.bvoc.mep.v_max_dxs:
+    value: 2.5
+    default: 2.5
+    units: umol m-2 s-1
+    dtype: float32
+    bounds:
+    - 1.0
+    - 5.0
+    category: biological_parameter
+    description: Maximum reaction rate of DXS enzyme in MEP pathway
+    references:
+    - 'RELIC model default; no verified literature source is cited for this value'
+    formula: v = v_max_dxs * [G3P] * [Pyruvate] / ((k_g3p + [G3P]) * (k_pyruvate + [Pyruvate]))
+    tags:
+    - biosynthesis
+    - mep_pathway
+    - enzyme_kinetics
+    - calibratable
+    requires_grad: true
+    provenance:
+      source: xiao_vickers_2009_2012
+      schema_version: 2.0.0
+      last_modified: '2025-01-29T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): the former citation ''Xiao et al. (2012) doi:10.1111/j.1365-3040.2011.02472.x'' resolves to an unrelated article (Jensen et al. 2012, phloem transport) and no registered Xiao et al. (2012) MEP-pathway article was found; the former citation ''Vickers et al. (2009) doi:10.1104/pp.109.144568'' has an unregistered DOI and cannot be matched to a single registered article'
+    dimension: molar_flux
+  biosphere.bvoc.mep.k_g3p:
+    value: 500.0
+    default: 500.0
+    units: umol m-3
+    dtype: float32
+    bounds:
+    - 100.0
+    - 1500.0
+    category: biological_parameter
+    description: Michaelis constant for G3P in DXS reaction
+    references:
+    - 'RELIC model default; no verified literature source is cited for this value'
+    tags:
+    - biosynthesis
+    - mep_pathway
+    - michaelis_constant
+    requires_grad: true
+    provenance:
+      source: vickers_et_al_2009
+      schema_version: 2.0.0
+      last_modified: '2025-01-29T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): the former citation ''Vickers et al. (2009) doi:10.1104/pp.109.144568'' has an unregistered DOI and cannot be matched to a single registered article'
+    dimension: amount_concentration
+  biosphere.bvoc.mep.k_pyruvate:
+    value: 800.0
+    default: 800.0
+    units: umol m-3
+    dtype: float32
+    bounds:
+    - 200.0
+    - 2000.0
+    category: biological_parameter
+    description: Michaelis constant for pyruvate in DXS reaction
+    references:
+    - 'RELIC model default; no verified literature source is cited for this value'
+    tags:
+    - biosynthesis
+    - mep_pathway
+    - michaelis_constant
+    requires_grad: true
+    provenance:
+      source: vickers_et_al_2009
+      schema_version: 2.0.0
+      last_modified: '2025-01-29T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): the former citation ''Vickers et al. (2009) doi:10.1104/pp.109.144568'' has an unregistered DOI and cannot be matched to a single registered article'
+    dimension: amount_concentration
+  biosphere.bvoc.mep.q10_dxs:
+    value: 2.3
+    default: 2.3
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.8
+    - 3.0
+    category: biological_parameter
+    description: Q10 temperature coefficient for DXS enzyme activity
+    references:
+    - 'Sharkey et al. (2008) Annals of Botany 101, 5-18, doi:10.1093/aob/mcm240'
+    formula: rate(T) = rate(T_ref) * q10_dxs^((T - T_ref) / 10)
+    tags:
+    - temperature_response
+    - mep_pathway
+    - q10
+    requires_grad: true
+    provenance:
+      source: sharkey_et_al_2008
+      schema_version: 2.0.0
+      last_modified: '2025-01-29T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): DOI corrected from an unrelated article (Heil 2008) to the registered Sharkey et al. (2008) isoprene review; the value was not checked against the publisher version'
+    dimension: dimensionless
+  biosphere.bvoc.mep.atp_per_dmapp:
+    value: 5.0
+    default: 5.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 4.0
+    - 6.0
+    category: biological_parameter
+    description: ATP molecules required per DMAPP produced via MEP pathway
+    references:
+    - 'Eisenreich et al. (2004) Cellular and Molecular Life Sciences 61(12), doi:10.1007/s00018-004-3381-z'
+    tags:
+    - biosynthesis
+    - mep_pathway
+    - stoichiometry
+    - energy_cost
+    requires_grad: false
+    provenance:
+      source: eisenreich_et_al_2004
+      schema_version: 2.0.0
+      last_modified: '2025-01-29T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): DOI corrected from an unrelated article (Passardi et al. 2004) to the registered Eisenreich et al. (2004) MEP-pathway review; the value was not checked against the publisher version'
+    dimension: dimensionless
+  biosphere.bvoc.mep.nadph_per_dmapp:
+    value: 2.0
+    default: 2.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 2.0
+    - 4.0
+    category: biological_parameter
+    description: NADPH molecules required per DMAPP produced via MEP pathway
+    references:
+    - 'Eisenreich et al. (2004) Cellular and Molecular Life Sciences 61(12), doi:10.1007/s00018-004-3381-z'
+    tags:
+    - biosynthesis
+    - mep_pathway
+    - stoichiometry
+    - reducing_equivalents
+    requires_grad: false
+    provenance:
+      source: eisenreich_et_al_2004
+      schema_version: 2.0.0
+      last_modified: '2025-01-29T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): DOI corrected from an unrelated article (Passardi et al. 2004) to the registered Eisenreich et al. (2004) MEP-pathway review; the value was not checked against the publisher version'
+    dimension: dimensionless
+  biosphere.bvoc.isoprene_synthase.v_max:
+    value: 5.0
+    default: 5.0
+    units: umol m-2 s-1
+    dtype: float32
+    bounds:
+    - 2.0
+    - 10.0
+    category: biological_parameter
+    description: Maximum velocity of isoprene synthase enzyme (leaf-area basis)
+    references:
+    - 'Rasulov et al. (2009) Plant Physiology 149, 1609-1618, doi:10.1104/pp.108.133512'
+    - 'Morfopoulos et al. (2014) New Phytologist 203, 125-139, doi:10.1111/nph.12770'
+    formula: v = v_max * [DMAPP] / (k_dmapp + [DMAPP])
+    tags:
+    - biosynthesis
+    - isoprene_synthase
+    - kinetics
+    - calibratable
+    requires_grad: true
+    provenance:
+      source: rasulov_morfopoulos_compiled
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-09T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): unregistered PNAS DOI replaced by the registered Rasulov et al. (2009) isoprene-synthase-kinetics article and the Morfopoulos et al. (2014) DOI corrected; the value was not checked against the publisher versions'
+    dimension: molar_flux
+  biosphere.bvoc.isoprene_synthase.k_dmapp:
+    value: 10.0
+    default: 10.0
+    units: umol m-3
+    dtype: float32
+    bounds:
+    - 5.0
+    - 20.0
+    category: biological_parameter
+    description: Michaelis constant of isoprene synthase for DMAPP (substrate)
+    references:
+    - 'Rasulov et al. (2009) Plant Physiology 149, 1609-1618, doi:10.1104/pp.108.133512'
+    - 'Schnitzler et al. (2010) Plant Biology 12, 302-316, doi:10.1111/j.1438-8677.2009.00284.x'
+    formula: v = v_max * [DMAPP] / (k_dmapp + [DMAPP])
+    tags:
+    - biosynthesis
+    - isoprene_synthase
+    - michaelis_constant
+    - calibratable
+    requires_grad: true
+    provenance:
+      source: rasulov_schnitzler_compiled
+      schema_version: 2.0.0
+      last_modified: '2025-11-09T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): unregistered PNAS DOI and an unrelated Trends Plant Sci. DOI replaced by the registered Rasulov et al. (2009) and Schnitzler et al. (2010) articles; the value was not checked against the publisher versions'
+    dimension: amount_concentration
+  biosphere.bvoc.isoprene_synthase.k_co2_inhibition:
+    value: 300.0
+    default: 300.0
+    units: umol mol-1
+    dtype: float32
+    bounds:
+    - 200.0
+    - 400.0
+    category: biological_parameter
+    description: CO2 inhibition constant for isoprene synthase (half-saturation)
+    references:
+    - 'Wilkinson et al. (2009) Global Change Biology 15, 1189-1200, doi:10.1111/j.1365-2486.2008.01803.x'
+    - 'Monson and Fall (1989) Plant Physiology 90, 267-274, doi:10.1104/pp.90.1.267'
+    formula: f_CO2 = K_CO2 / (K_CO2 + Ci)
+    tags:
+    - co2_inhibition
+    - climate_sensitivity
+    requires_grad: false
+    provenance:
+      source: migration_autofill
+      schema_version: 2.0.0
+      created_by: parameter_audit_2026-02
+      last_modified: '2026-02-09T21:54:27Z'
+      literature_check: 'not verified in the cited literature (model default): DOI 10.1111/j.1365-3040.2009.01946.x belongs to Vickers et al. (2009) and was replaced by the Wilkinson et al. (2009) record; Monson and Fall (1989) report inhibition above ambient CO2 (640 ubar outside the leaf) but no half-saturation constant'
+    dimension: dimensionless
+  biosphere.bvoc.water_stress.wilting_point:
+    value: -1.5
+    default: -1.5
+    units: MPa
+    dtype: float32
+    bounds:
+    - -2.0
+    - -1.0
+    category: environmental_parameter
+    description: Soil water potential threshold where BVOC emissions experience severe stress
+    references:
+    - 'Niinemets et al. (2010) Biogeosciences 7, 1809-1832, doi:10.5194/bg-7-1809-2010'
+    tags:
+    - water_stress
+    - bvoc
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      last_modified: '2025-11-14T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): soil-physics convention; not found in the full text of Niinemets et al. (2010)'
+    dimension: pressure
+  biosphere.bvoc.water_stress.field_capacity:
+    value: -0.1
+    default: -0.1
+    units: MPa
+    dtype: float32
+    bounds:
+    - -0.2
+    - -0.05
+    category: environmental_parameter
+    description: Soil water potential representing field capacity for BVOC stress calculations
+    references:
+    - 'Niinemets et al. (2010) Biogeosciences 7, 1809-1832, doi:10.5194/bg-7-1809-2010'
+    tags:
+    - water_stress
+    - bvoc
+    requires_grad: false
+    provenance:
+      source: literature_synthesis
+      schema_version: 2.0.0
+      last_modified: '2025-11-14T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): soil-physics convention; not found in the full text of Niinemets et al. (2010)'
+    dimension: pressure
+  biosphere.bvoc.isoprene_synthase.q10:
+    value: 2.3
+    default: 2.3
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 2.0
+    - 2.6
+    category: biological_parameter
+    description: Q10 temperature sensitivity factor for isoprene synthase catalytic activity
+    references:
+    - 'Monson and Fall (1989) Plant Physiology 90, 267-274, doi:10.1104/pp.90.1.267, abstract (Q10 1.8-2.4 for leaf isoprene emission, 35-45 degC)'
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012'
+    tags:
+    - temperature_response
+    - isoprene_synthase
+    - calibratable
+    requires_grad: true
+    provenance:
+      source: rasulov_temperature_compiled
+      schema_version: 2.0.0
+      last_modified: '2025-11-09T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): not reported as an isoprene-synthase Q10; within the 1.8-2.4 range reported for leaf isoprene emission between 35 and 45 degC by Monson and Fall (1989); the former citation ''Vickers et al. (2009) doi:10.1104/pp.109.144568'' has an unregistered DOI and cannot be matched to a single registered article'
+    dimension: dimensionless
+  biosphere.bvoc.isoprene_synthase.f_g3p:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.3
+    - 0.7
+    category: biological_parameter
+    description: Fraction of G3P from photosynthesis allocated to MEP pathway
+    references:
+    - 'RELIC model default; no verified literature source is cited for this value'
+    tags:
+    - carbon_allocation
+    - photosynthesis_coupling
+    - calibratable
+    requires_grad: true
+    provenance:
+      source: vickers_et_al_2009
+      schema_version: 2.0.0
+      last_modified: '2025-01-29T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): the former citation ''Vickers et al. (2009) doi:10.1104/pp.109.144568'' has an unregistered DOI and cannot be matched to a single registered article'
+    dimension: dimensionless
+  biosphere.bvoc.isoprene_synthase.f_pyruvate:
+    value: 0.3
+    default: 0.3
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 0.5
+    category: biological_parameter
+    description: Fraction of pyruvate from photosynthesis allocated to MEP pathway
+    references:
+    - 'RELIC model default; no verified literature source is cited for this value'
+    tags:
+    - carbon_allocation
+    - photosynthesis_coupling
+    - calibratable
+    requires_grad: true
+    provenance:
+      source: vickers_et_al_2009
+      schema_version: 2.0.0
+      last_modified: '2025-01-29T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): the former citation ''Vickers et al. (2009) doi:10.1104/pp.109.144568'' has an unregistered DOI and cannot be matched to a single registered article'
+    dimension: dimensionless
+  biosphere.bvoc.isoprene_synthase.g3p_flux_to_concentration:
+    value: 10.0
+    default: 10.0
+    units: s m-1
+    dtype: float32
+    bounds:
+    - 5.0
+    - 20.0
+    category: mechanistic_parameter
+    description: Scaling factor converting G3P flux (umol m-2 s-1) to cytosolic concentration (umol m-3)
+    references:
+    - 'Lichtenthaler (1999) Annu. Rev. Plant Physiol. Plant Mol. Biol. 50, 47-65, doi:10.1146/annurev.arplant.50.1.47'
+    tags:
+    - conversion_factor
+    - mep_pathway
+    requires_grad: false
+    provenance:
+      source: relic_mechanistic_update
+      schema_version: 2.0.0
+      last_modified: '2025-11-05T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): RELIC scaling assumption (0.1 m effective mesophyll depth); the former citation ''Vickers et al. (2009) doi:10.1104/pp.109.144568'' has an unregistered DOI and cannot be matched to a single registered article'
+    dimension: resistance
+  biosphere.bvoc.isoprene_synthase.pyruvate_flux_to_concentration:
+    value: 15.0
+    default: 15.0
+    units: s m-1
+    dtype: float32
+    bounds:
+    - 7.5
+    - 30.0
+    category: mechanistic_parameter
+    description: Scaling factor converting pyruvate flux (umol m-2 s-1) to cytosolic concentration (umol m-3)
+    references:
+    - 'Lichtenthaler (1999) Annu. Rev. Plant Physiol. Plant Mol. Biol. 50, 47-65, doi:10.1146/annurev.arplant.50.1.47'
+    tags:
+    - conversion_factor
+    - mep_pathway
+    requires_grad: false
+    provenance:
+      source: relic_mechanistic_update
+      schema_version: 2.0.0
+      last_modified: '2025-11-05T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): RELIC scaling assumption (0.1 m effective mesophyll depth); the former citation ''Vickers et al. (2009) doi:10.1104/pp.109.144568'' has an unregistered DOI and cannot be matched to a single registered article'
+    dimension: resistance
+  biosphere.bvoc.isoprene_synthase.dmapp_flux_to_concentration:
+    value: 20.0
+    default: 20.0
+    units: s m-1
+    dtype: float32
+    bounds:
+    - 10.0
+    - 40.0
+    category: mechanistic_parameter
+    description: Scaling factor converting DMAPP production flux to pool concentration under steady-state assumption
+    references:
+    - 'Rasulov et al. (2009) Plant Physiology 149, 1609-1618, doi:10.1104/pp.108.133512'
+    - 'Morfopoulos et al. (2014) New Phytologist 203, 125-139, doi:10.1111/nph.12770'
+    tags:
+    - conversion_factor
+    - mep_pathway
+    requires_grad: false
+    provenance:
+      source: relic_mechanistic_update
+      schema_version: 2.0.0
+      last_modified: '2025-11-05T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): RELIC scaling assumption; the value was not checked against the publisher versions'
+    dimension: resistance
+  biosphere.bvoc.isoprene_synthase.atp_per_electron_transport:
+    value: 0.75
+    default: 0.75
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 1.0
+    category: mechanistic_parameter
+    description: ATP equivalents produced per unit electron transport rate delivered to the MEP pathway
+    references:
+    - 'RELIC model default; no verified literature source is cited for this value'
+    tags:
+    - energy_balance
+    - photosynthesis_coupling
+    requires_grad: false
+    provenance:
+      source: relic_mechanistic_update
+      schema_version: 2.0.0
+      last_modified: '2025-11-05T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): the former citation ''Vickers et al. (2009) doi:10.1104/pp.109.144568'' has an unregistered DOI and cannot be matched to a single registered article'
+    dimension: dimensionless
+  biosphere.bvoc.isoprene_synthase.nadph_per_electron_transport:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.25
+    - 0.75
+    category: mechanistic_parameter
+    description: NADPH equivalents produced per unit electron transport supporting the MEP pathway
+    references:
+    - 'RELIC model default; no verified literature source is cited for this value'
+    tags:
+    - energy_balance
+    - photosynthesis_coupling
+    requires_grad: false
+    provenance:
+      source: relic_mechanistic_update
+      schema_version: 2.0.0
+      last_modified: '2025-11-05T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): the former citation ''Vickers et al. (2009) doi:10.1104/pp.109.144568'' has an unregistered DOI and cannot be matched to a single registered article'
+    dimension: dimensionless
+  biosphere.bvoc.isoprene_synthase.enable_co2_inhibition:
+    value: true
+    default: true
+    units: dimensionless
+    dtype: bool
+    category: configuration_flag
+    description: Enables CO2 inhibition feedback on isoprene synthase activity based on Wilkinson et al. (2009)
+    references:
+    - 'Wilkinson et al. (2009) Global Change Biology 15, 1189-1200, doi:10.1111/j.1365-2486.2008.01803.x'
+    tags:
+    - co2_inhibition
+    - configuration
+    requires_grad: false
+    provenance:
+      source: relic_mechanistic_update
+      schema_version: 2.0.0
+      last_modified: '2025-11-05T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): configuration switch, not a literature value'
+    bounds:
+    - 0.0
+    - 100
+    dimension: dimensionless
+  biosphere.bvoc.monoterpene.v_max_mts:
+    value: 1.2
+    default: 1.2
+    units: umol m-2 s-1
+    dtype: float32
+    bounds:
+    - 0.5
+    - 3.0
+    category: biological_parameter
+    description: Calibratable maximum areal rate in the phenomenological monoterpene synthesis response
+    references:
+    - 'Grote and Niinemets (2008) Plant Biology 10, 8-28, doi:10.1055/s-2007-964975'
+    - 'Ghirardo et al. (2010) Plant, Cell & Environment 33, 781-792, doi:10.1111/j.1365-3040.2009.02104.x'
+    formula: J_sat = v_max_mts * F_alloc / (k_gpp + F_alloc), where F_alloc = f_carbon * f_seasonal * GPP; this rectangular hyperbola is a RELIC phenomenological closure
+    tags:
+    - biosynthesis
+    - monoterpene_synthase
+    - phenomenological_response
+    - calibratable
+    requires_grad: true
+    provenance:
+      source: relic_phenomenological_calibration
+      schema_version: 2.0.0
+      last_modified: '2025-01-29T00:00:00Z'
+      note: References support stored-pool biosynthesis context but do not establish this exact GPP response as a universal law
+      literature_check: 'not verified in the cited literature (model default): calibratable phenomenological rate; Grote and Niinemets (2008) and Ghirardo et al. (2010) DOIs corrected from unrelated articles; the value was not checked against the publisher versions'
+    dimension: molar_flux
+  biosphere.bvoc.monoterpene.k_gpp:
+    value: 15.0
+    default: 15.0
+    units: umol m-2 s-1
+    dtype: float32
+    bounds:
+    - 8.0
+    - 30.0
+    category: biological_parameter
+    description: Calibratable allocated photosynthetic-carbon half-saturation scale in the phenomenological synthesis response
+    references:
+    - 'Grote and Niinemets (2008) Plant Biology 10, 8-28, doi:10.1055/s-2007-964975'
+    tags:
+    - biosynthesis
+    - monoterpene_synthase
+    - half_saturation_scale
+    requires_grad: false
+    provenance:
+      source: relic_phenomenological_calibration
+      schema_version: 2.0.0
+      last_modified: '2025-01-29T00:00:00Z'
+      note: Parameter is calibrated in RELIC and is not attributed as a universal Michaelis constant
+      literature_check: 'not verified in the cited literature (model default): Grote and Niinemets (2008) DOI corrected from an unrelated article; the value was not checked against the publisher version'
+    dimension: molar_flux
+  biosphere.bvoc.monoterpene.pool.capacity:
+    value: 734.0
+    default: 734.0
+    units: umol m-2
+    dtype: float32
+    bounds:
+    - 146.8
+    - 2936.0
+    category: biological_parameter
+    description: Maximum monoterpene storage pool capacity converted to area basis using foliar density and monoterpene molecular
+      weight
+    references:
+    - 'Niinemets et al. (2010) Biogeosciences 7, 1809-1832, doi:10.5194/bg-7-1809-2010'
+    - 'Grote and Niinemets (2008) Plant Biology 10, 8-28, doi:10.1055/s-2007-964975'
+    tags:
+    - storage_pool
+    - monoterpenes
+    - calibratable
+    requires_grad: false
+    provenance:
+      source: niinemets_grote_2008
+      schema_version: 2.0.0
+      last_modified: '2025-10-20T00:00:00Z'
+      note: Converted from ug g-1 dry weight using biosphere.bvoc.foliar_density_factor and biosphere.bvoc.molecular_weights.monoterpenes
+      literature_check: 'not verified in the cited literature (model default): not found in the full text of Niinemets et al. (2010); Grote and Niinemets (2008) DOI corrected from an unrelated article and the value was not checked against that publisher version'
+    dimension: molar_areal_density
+  biosphere.bvoc.monoterpene.pool.k_emit_25:
+    value: 2.222e-05
+    default: 2.222e-05
+    units: s-1
+    dtype: float32
+    bounds:
+    - 8.333e-06
+    - 4.167e-05
+    category: biological_parameter
+    description: Emission rate constant from storage pool at 25 degC
+    references:
+    - 'Grote and Niinemets (2008) Plant Biology 10, 8-28, doi:10.1055/s-2007-964975'
+    formula: emission_rate = k_emit_25 * exp(beta_emission * (T - T_ref)) * pool, with T_ref from get_physical_constant(reference_temperature)
+    tags:
+    - storage_pool
+    - emission_rate
+    - monoterpenes
+    - calibratable
+    requires_grad: true
+    provenance:
+      source: grote_niinemets_2008
+      schema_version: 2.0.0
+      last_modified: '2025-01-29T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Grote and Niinemets (2008) DOI corrected from an unrelated article; the value was not checked against the publisher version'
+    dimension: frequency
+  biosphere.bvoc.monoterpene.pool.beta_emission:
+    value: 0.09
+    default: 0.09
+    units: K-1
+    dtype: float32
+    bounds:
+    - 0.06
+    - 0.12
+    category: biological_parameter
+    description: Temperature response coefficient for pool emission
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012, Sect. 2.3 (beta = 0.09 recommended by Guenther et al. 1993)'
+    - 'Grote and Niinemets (2008) Plant Biology 10, 8-28, doi:10.1055/s-2007-964975'
+    tags:
+    - temperature_response
+    - storage_pool
+    - monoterpenes
+    requires_grad: true
+    provenance:
+      source: grote_niinemets_2008
+      schema_version: 2.0.0
+      last_modified: '2025-01-29T00:00:00Z'
+      literature_check: 'verified: Guenther et al. (2012) Sect. 2.3 quotes the monoterpene beta = 0.09 K-1 of Guenther et al. (1993)'
+    dimension: inverse_temperature
+  biosphere.bvoc.monoterpene.pool.k_degradation:
+    value: 5.556e-07
+    default: 5.556e-07
+    units: s-1
+    dtype: float32
+    bounds:
+    - 1.389e-07
+    - 1.389e-06
+    category: biological_parameter
+    description: Degradation rate constant for monoterpenes in storage pool
+    references:
+    - 'Niinemets et al. (2010) Biogeosciences 7, 1809-1832, doi:10.5194/bg-7-1809-2010'
+    formula: d[pool]/dt = synthesis - emission - k_degradation * [pool]
+    tags:
+    - storage_pool
+    - degradation
+    - monoterpenes
+    requires_grad: true
+    provenance:
+      source: niinemets_et_al_2010
+      schema_version: 2.0.0
+      last_modified: '2025-01-29T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): not found in the full text of Niinemets et al. (2010)'
+    dimension: frequency
+  biosphere.bvoc.monoterpene.q10_synthase:
+    value: 2.5
+    default: 2.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.8
+    - 3.2
+    category: biological_parameter
+    description: Q10 coefficient for the calibratable monoterpene synthesis response
+    references:
+    - 'Grote and Niinemets (2008) Plant Biology 10, 8-28, doi:10.1055/s-2007-964975'
+    formula: rate(T) = rate(T_ref) * q10_synthase^((T - T_ref) / 10), with T_ref from get_physical_constant(reference_temperature)
+    tags:
+    - temperature_response
+    - phenomenological_response
+    - q10
+    - calibratable
+    requires_grad: true
+    provenance:
+      source: relic_phenomenological_calibration
+      schema_version: 2.0.0
+      last_modified: '2025-01-29T00:00:00Z'
+      note: References motivate temperature sensitivity but do not establish this exact Q10 as a universal law
+      literature_check: 'not verified in the cited literature (model default): Grote and Niinemets (2008) DOI corrected from an unrelated article; the value was not checked against the publisher version'
+    dimension: dimensionless
+  biosphere.bvoc.monoterpene.pool_initial:
+    value: 50.0
+    default: 50.0
+    units: umol m-2
+    dtype: float32
+    bounds:
+    - 0.0
+    - 500.0
+    category: biological_parameter
+    description: Initial monoterpene storage pool concentration at model initialization
+    references:
+    - 'Grote and Niinemets (2008) Plant Biology 10, 8-28, doi:10.1055/s-2007-964975'
+    tags:
+    - storage_pool
+    - initial_condition
+    - monoterpenes
+    requires_grad: false
+    provenance:
+      source: grote_niinemets_2008
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-02T00:00:00Z'
+      note: Added to fix missing parameter issue in monoterpene.py
+      literature_check: 'not verified in the cited literature (model default): Grote and Niinemets (2008) DOI corrected from an unrelated article; the value was not checked against the publisher version'
+    dimension: molar_areal_density
+  biosphere.bvoc.monoterpene.seasonal.amplitude:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: biological_parameter
+    description: Amplitude of seasonal modulation for monoterpene synthesis (peak deviation from unity)
+    references:
+    - 'Niinemets et al. (2010) Biogeosciences 7, 1809-1832, doi:10.5194/bg-7-1809-2010'
+    - 'Grote and Niinemets (2008) Plant Biology 10, 8-28, doi:10.1055/s-2007-964975'
+    tags:
+    - seasonal
+    - monoterpenes
+    - calibration_candidate
+    requires_grad: true
+    provenance:
+      source: seasonal_emission_synthesis
+      schema_version: 2.0.0
+      last_modified: '2025-10-20T00:00:00Z'
+      note: Derived from literature seasonal envelopes (0.5 range around unity)
+      literature_check: 'not verified in the cited literature (model default): RELIC seasonal modulation; not identified in Niinemets et al. (2010) and not checked against the other publisher version'
+    dimension: dimensionless
+  biosphere.bvoc.monoterpene.seasonal.minimum_factor:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 0.5
+    category: validation_parameter
+    description: Minimum seasonal modulation factor to prevent negative synthesis flux
+    references:
+    - 'Niinemets et al. (2010) Biogeosciences 7, 1809-1832, doi:10.5194/bg-7-1809-2010'
+    - 'Grote and Niinemets (2008) Plant Biology 10, 8-28, doi:10.1055/s-2007-964975'
+    tags:
+    - seasonal
+    - validation
+    requires_grad: false
+    provenance:
+      source: seasonal_emission_synthesis
+      schema_version: 2.0.0
+      last_modified: '2025-10-20T00:00:00Z'
+      note: Ensures seasonal factor remains physically meaningful
+      literature_check: 'not verified in the cited literature (model default): RELIC seasonal modulation; not identified in Niinemets et al. (2010) and not checked against the other publisher version'
+    dimension: dimensionless
+  biosphere.bvoc.monoterpene.seasonal.peak_day:
+    value: 150.0
+    default: 150.0
+    units: day
+    dtype: float32
+    bounds:
+    - 90.0
+    - 210.0
+    category: biological_parameter
+    description: Day of year when monoterpene synthesis peaks (Northern Hemisphere default)
+    references:
+    - 'Niinemets et al. (2010) Biogeosciences 7, 1809-1832, doi:10.5194/bg-7-1809-2010'
+    - 'Tingey et al. (1980) Plant Physiology 65, 797-801, doi:10.1104/pp.65.5.797'
+    tags:
+    - seasonal
+    - phenology
+    requires_grad: true
+    provenance:
+      source: seasonal_emission_synthesis
+      schema_version: 2.0.0
+      last_modified: '2025-10-20T00:00:00Z'
+      note: Allows calibration for hemisphere-specific peak timing
+      literature_check: 'not verified in the cited literature (model default): RELIC seasonal modulation; not identified in Niinemets et al. (2010) and not checked against Tingey et al. (1980)'
+    dimension: time
+  biosphere.bvoc.monoterpene.enable_seasonal_variation:
+    value: false
+    default: false
+    units: dimensionless
+    dtype: bool
+    bounds: null
+    category: computational
+    description: Enable seasonal variation in monoterpene synthesis rates (sinusoidal modulation)
+    tags:
+    - seasonal
+    - feature_flag
+    - monoterpenes
+    requires_grad: false
+    provenance:
+      source: relic_parameter_team
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-02T00:00:00Z'
+      note: Added to support optional seasonal modulation feature in monoterpene.py
+      literature_check: 'not verified in the cited literature (model default): configuration switch, not a literature value'
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012'
+    dimension: dimensionless
+  biosphere.bvoc.photosynthetic_coupling.f_carbon_isoprene:
+    value: 0.015
+    default: 0.015
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.005
+    - 0.03
+    category: biological_parameter
+    description: Fraction of gross photosynthesis allocated to isoprene synthesis (1.5 percent)
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012'
+    - 'Monson and Fall (1989) Plant Physiology 90, 267-274, doi:10.1104/pp.90.1.267'
+    tags:
+    - carbon_allocation
+    - photosynthesis_coupling
+    - isoprene
+    - calibratable
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_model
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-20T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): MEGAN2.1 has no photosynthesis-coupled fraction; Monson and Fall (1989) report 2.5-8 % of assimilated carbon lost as isoprene at 35-45 degC'
+    dimension: dimensionless
+  biosphere.bvoc.photosynthetic_coupling.f_carbon_monoterpenes:
+    value: 0.005
+    default: 0.005
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.001
+    - 0.02
+    category: biological_parameter
+    description: Fraction of gross photosynthesis allocated to monoterpene synthesis (0.5%)
+    references:
+    - 'Grote and Niinemets (2008) Plant Biology 10, 8-28, doi:10.1055/s-2007-964975'
+    tags:
+    - carbon_allocation
+    - photosynthesis_coupling
+    - monoterpenes
+    - calibratable
+    requires_grad: true
+    provenance:
+      source: grote_niinemets_2008
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-09T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): Grote and Niinemets (2008) DOI corrected from an unrelated article; value not checked'
+    dimension: dimensionless
+  biosphere.bvoc.photosynthetic_coupling.f_carbon_sesquiterpenes:
+    value: 0.002
+    default: 0.002
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0005
+    - 0.01
+    category: biological_parameter
+    description: Fraction of gross photosynthesis allocated to sesquiterpene synthesis (0.2 percent)
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012'
+    tags:
+    - carbon_allocation
+    - photosynthesis_coupling
+    - sesquiterpenes
+    - calibratable
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_model
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-20T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): MEGAN2.1 has no photosynthesis-coupled fraction'
+    dimension: dimensionless
+  biosphere.bvoc.photosynthetic_coupling.f_carbon_ovocs:
+    value: 0.004
+    default: 0.004
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.001
+    - 0.015
+    category: biological_parameter
+    description: Fraction of gross photosynthesis allocated to OVOC synthesis (0.4 percent)
+    references:
+    - 'Guenther et al. (2012) Geosci. Model Dev. 5, 1471-1492, doi:10.5194/gmd-5-1471-2012'
+    tags:
+    - carbon_allocation
+    - photosynthesis_coupling
+    - ovocs
+    - calibratable
+    requires_grad: true
+    provenance:
+      source: megan_v2.1_model
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-20T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): MEGAN2.1 has no photosynthesis-coupled fraction'
+    dimension: dimensionless
+  biosphere.bvoc.sesquiterpene.stress_threshold:
+    value: 0.7
+    default: 0.7
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 0.9
+    category: biological_parameter
+    description: Stress level threshold for sesquiterpene emission activation
+    references:
+    - 'Duhl et al. (2008) Biogeosciences 5, 761-777, doi:10.5194/bg-5-761-2008'
+    tags:
+    - stress_response
+    - sesquiterpenes
+    - threshold
+    requires_grad: false
+    provenance:
+      source: duhl_et_al_2008
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-09T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): RELIC calibration of the threshold-linear stress response; Duhl et al. (2008) describes stress-induced emission bursts but gives no stress-level threshold or amplification factor; the former DOI 10.5194/acp-8-4129-2008 is unregistered'
+    dimension: dimensionless
+  biosphere.bvoc.sesquiterpene.stress_amplification:
+    value: 2.0
+    default: 2.0
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 1.0
+    - 5.0
+    category: biological_parameter
+    description: Amplification factor for stress-induced sesquiterpene emissions
+    references:
+    - 'Duhl et al. (2008) Biogeosciences 5, 761-777, doi:10.5194/bg-5-761-2008'
+    tags:
+    - stress_response
+    - sesquiterpenes
+    - amplification
+    requires_grad: true
+    provenance:
+      source: duhl_et_al_2008
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-09T00:00:00Z'
+      literature_check: 'not verified in the cited literature (model default): RELIC calibration of the threshold-linear stress response; Duhl et al. (2008) describes stress-induced emission bursts but gives no stress-level threshold or amplification factor; the former DOI 10.5194/acp-8-4129-2008 is unregistered'
+    dimension: dimensionless
+creation_info:
+  created_by: Yuchong Long
+  created_at: '2025-01-29T00:00:00Z'
+  schema_version: 2.0.0
+  tier: relic
+  consolidation_note: Unified from 3 redundant files with CF-1.8 compliance
+  replaced_files:
+  - bvoc_emission_factors.yaml
+  - bvoc/emission_factors.yaml
+  - bvoc_parameters.yaml
+quality_control:
+  validated_by: Scientific Review Panel
+  validation_date: '2025-01-29T00:00:00Z'
+  validation_criteria:
+  - Literature consistency check
+  - Physical bounds verification
+  - Unit dimensional analysis
+  - Cross-parameter relationship validation
+  - MEGAN v2.1 consistency verification
+  - Uncertainty range validation
+  - CF-1.8 standard name compliance
+  unit_standardization:
+    target_standard: CF-1.8
+    conversion_validation: All conversions verified against UDUNITS-2
+    runtime_conversion: Implemented in ParameterManager.get_parameter_value()
+

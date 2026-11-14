@@ -1,0 +1,46 @@
+variable: temperature
+title: "Temperature (Generic Driver Name)"
+description: "Absolute temperature T [K] read under the bare state name temperature by atmospheric_advection_diffusion (near-surface air temperature of the Monin-Obukhov length, monin-obukhov scheme only), fire_management (air temperature of the fuel-moisture factor) and sesquiterpene_synthesis (temperature of the BVOC emission response). Thermal stress reads air_temperature only and accepts no alias. Every reader uses kelvin; the medium (air or leaf) is reader-specific, so no CF standard name applies. tillage_management reads soil_temperature, not this name. Non-negative absolute temperature. No relic Functor writes it: it is supplied as forcing or initial state. An absent value raises in atmospheric_advection_diffusion (monin-obukhov scheme) and falls back to a reader-specific ParameterManager default in fire_management."
+kind: forcing
+dimension:
+  # Kelvin for every reader; the canonical media-specific variables are
+  # air_temperature, soil_temperature and leaf_temperature.
+  udunits: "K"
+  cf_standard_name: null
+support:
+  spatial_kind: grid_cell
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Monteith, J.L. and Unsworth, M.H. (2008). Principles of Environmental Physics, 3rd ed., Academic Press"
+  - "Stull, R.B. (1988). An Introduction to Boundary Layer Meteorology, Kluwer Academic Publishers"
+numerics:
+  # Sign convention: absolute (thermodynamic) temperature, T >= 0 K; no upper
+  # limit is declared.
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies: []
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/atmosphere/transport/AtmosphericAdvectionDiffusionFunctor.py"
+  runtime_role: "external_generic_temperature_forcing"
+  runtime_writer: null
+  note: "No RELIC Functor writes temperature. Readers, all in K: atmospheric_advection_diffusion input, required only by the monin-obukhov scheme (relic/scientific/atmosphere/transport/AtmosphericAdvectionDiffusionFunctor.py:183,221-228; no default, a missing value raises :1039-1056; Obukhov-length T :1101); fire_management input (relic/scientific/anthroposphere/management/fire_management.py:271; air temperature :1091; read :1623-1627 with no default, a missing value raises, domain T >= 0 K, an out-of-domain value raises; anthroposphere.management.temperature is only the reference temperature of the moisture factor); sesquiterpene_synthesis input (relic/scientific/biosphere/bvoc/synthesis/sesquiterpene.py:171; T [K] :289; read :296-314,439); biological-range check 223.15-333.15 K (relic/validation/framework/functor_integration.py:689-693). UnitConverter (relic/data/standards/unit_converter.py:147) treats temperature as a spelling of air_temperature [K]. Written in K outside relic by the tutorial forcing loader as temperature := air_temperature (tutorial/case/utils/netcdf_loader.py:226)."

@@ -1,0 +1,47 @@
+variable: infiltration_flux
+title: "Infiltration Flux"
+kind: flux
+dimension:
+  udunits: "kg m-2 s-1"
+  cf_standard_name: null
+# No support block on purpose. The frozen bounded-synthesis oracle
+# NCS-PROFILE005-ORACLE-V1 (experiments/publication_profiles/
+# ncs_model_synthesis/oracle_cases/bounded_oracle_v1.yaml, gate test
+# test/unit/publication/test_run_g7_ncs_mvp.py) records infiltration_flux and
+# capillary_rise_flux as the support gaps that reject its four
+# soil_water_owner=richards selections. With both declared, the two
+# et_owner=priestley_taylor selections compile strictly, but the one-cell
+# soil_moisture cannot feed the layer profile that richards_soil_moisture
+# requires, so they do not execute. Declare this support only together with a
+# superseding oracle issued by its gate owner.
+owner: "surface_runoff"
+aliases: []
+incrementable: false
+accumulates: null
+numerics:
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "surface_runoff"
+      module: "relic.scientific.hydrosphere.runoff.surface"
+      provides: ["infiltration_flux"]
+      unit: "kg m-2 s-1"
+flux_contract:
+  allowed_in:
+    - "surface_runoff"
+  allowed_out:
+    - "richards_soil_moisture"
+    - "soil_water_transport"
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/hydrosphere/runoff/surface.py"
+  runtime_role: "surface_to_soil_infiltration_boundary_flux"
+  runtime_writer: "surface_runoff"

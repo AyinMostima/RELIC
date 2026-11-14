@@ -1,0 +1,418 @@
+schema_version: 2.0.0
+tier: relic
+namespace: hydrosphere.transport
+description: Transport coefficients and diffusion parameters for hydrosphere processes including molecular diffusivities and transport properties
+metadata:
+  created_by: RELIC Parameter System
+  last_modified: '2026-01-07T14:20:26Z'
+  schema_url: https://github.com/relic/parameter-schema/v2.0.0
+  version: 1.0.0
+parameters:
+  hydrosphere.transport.surface_water_diffusivity:
+    value: 1.0e-06
+    default: 1.0e-06
+    units: m2 s-1
+    dtype: float32
+    bounds:
+    - 1.0e-07
+    - 1.0e-05
+    category: transport_property
+    description: Effective diffusivity for surface water transport processes
+    references:
+    - Surface Water Hydrology Literature
+    tags:
+    - surface_water
+    - hydraulic_diffusivity
+    - transport_coefficient
+    dimension: diffusivity
+    requires_grad: false
+    provenance:
+      source: hydrological_modeling
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2024-08-25T00:00:00Z'
+  hydrosphere.transport.max_capillary_height:
+    value: 2.0
+    default: 2.0
+    units: m
+    dtype: float32
+    bounds:
+    - 0.5
+    - 10.0
+    category: hydraulic_parameter
+    description: Maximum height of capillary fringe (water table depth limit for significant capillary rise)
+    references:
+    - Gardner, W.R. (1958) Soil Science 85(4):228-232
+    - Eagleson, P.S. (1978) Water Resour. Res. 14(5):722-730
+    - RHESSys compute_capillary_rise.c
+    tags:
+    - capillary_rise
+    - hydraulic_property
+    - soil_specific
+    dimension: length
+    requires_grad: true
+    provenance:
+      source: gardner_eagleson_theory
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-09T00:00:00Z'
+  hydrosphere.transport.brooks_corey_pore_size_index:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 2.0
+    category: hydraulic_parameter
+    description: Brooks-Corey pore size distribution index (lambda) for capillary rise calculations
+    references:
+    - Brooks, R.H. & Corey, A.T. (1964) Colorado State University Hydrology Paper 3
+    - Clapp & Hornberger (1978) Water Resour. Res. 14:601-604
+    tags:
+    - capillary_rise
+    - brooks_corey
+    - soil_specific
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: brooks_corey_parameterization
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-09T00:00:00Z'
+  hydrosphere.transport.air_entry_pressure:
+    value: -0.102
+    default: -0.102
+    units: m
+    dtype: float32
+    bounds:
+    - -1.02
+    - -0.01
+    category: hydraulic_parameter
+    description: Brooks-Corey air entry pressure head (water column) for capillary rise calculations
+    references:
+    - Brooks, R.H. & Corey, A.T. (1964) Colorado State University Hydrology Paper 3
+    - Clapp & Hornberger (1978) Water Resour. Res. 14:601-604
+    tags:
+    - capillary_rise
+    - brooks_corey
+    - soil_specific
+    dimension: length
+    requires_grad: true
+    provenance:
+      source: brooks_corey_parameterization
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-09T00:00:00Z'
+  hydrosphere.transport.capillary_saturation_threshold_factor:
+    value: 0.9
+    default: 0.9
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.5
+    - 1.0
+    category: numerical_parameter
+    description: Fraction of surface porosity defining saturation threshold for capillary rise
+    references:
+    - Gardner (1958) Soil Sci. 85:228-232
+    - Eagleson (1978) Water Resour. Res. 14(5):722-730
+    tags:
+    - capillary_rise
+    - saturation
+    - numerical_stability
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: capillary_rise_parameterization
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-27T00:00:00Z'
+  hydrosphere.transport.capillary_saturation_bandwidth_factor:
+    value: 0.1
+    default: 0.1
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.01
+    - 0.5
+    category: numerical_parameter
+    description: Saturation bandwidth factor for capillary rise reduction near saturation
+    references:
+    - Numerical stabilization for capillary rise saturation constraint
+    tags:
+    - capillary_rise
+    - saturation
+    - numerical_stability
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: numerical_implementation
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-27T00:00:00Z'
+  hydrosphere.transport.hydraulic_parameterization_method:
+    value: brooks_corey
+    default: brooks_corey
+    units: dimensionless
+    dtype: string
+    bounds:
+    category: model_configuration
+    description: Hydraulic parameterization method (brooks_corey or van_genuchten)
+    references:
+    - Brooks-Corey (1964) vs Van Genuchten (1980) hydraulic functions
+    tags:
+    - capillary_rise
+    - model_choice
+    - configuration
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_configuration
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-09T00:00:00Z'
+  hydrosphere.transport.enable_capillary_depth_profile:
+    value: true
+    default: true
+    units: dimensionless
+    dtype: bool
+    bounds:
+    category: model_configuration
+    description: Enable depth-dependent capillary rise flux profile calculation
+    references:
+    - Eagleson, P.S. (1978) Water Resour. Res. 14(5):722-730
+    tags:
+    - capillary_rise
+    - model_option
+    - configuration
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_configuration
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-09T00:00:00Z'
+  hydrosphere.transport.capillary_profile_layer_count:
+    value: 5
+    default: 5
+    units: dimensionless
+    dtype: int32
+    bounds:
+    - 1
+    - 50
+    category: discretization_parameter
+    description: Default number of soil layers for capillary rise flux profile when not provided by caller
+    references:
+    - Eagleson (1978) Water Resour. Res. 14(5):722-730
+    - RHESSys compute_capillary_rise.c
+    tags:
+    - capillary_rise
+    - discretization
+    - profile
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: hydrosphere_flux_defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-19T00:00:00Z'
+  hydrosphere.transport.capillary_profile_layer_thickness:
+    value: 0.2
+    default: 0.2
+    units: m
+    dtype: float32
+    bounds:
+    - 0.01
+    - 1.0
+    category: discretization_parameter
+    description: Default layer thickness for capillary rise profile when not provided by caller
+    references:
+    - Eagleson (1978) Water Resour. Res. 14(5):722-730
+    - RHESSys compute_capillary_rise.c
+    tags:
+    - capillary_rise
+    - discretization
+    - profile
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: hydrosphere_flux_defaults
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-12-19T00:00:00Z'
+  hydrosphere.transport.vg_l:
+    value: 0.5
+    default: 0.5
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.0
+    - 1.0
+    category: soil_hydraulic_parameter
+    description: Mualem tortuosity parameter (l) for van Genuchten model
+    references:
+    - Mualem, Y. (1976) Water Resour. Res. 12:513-522
+    tags:
+    - van_genuchten
+    - mualem
+    - tortuosity
+    - vertical_percolation
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: mualem_1976
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-09T00:00:00Z'
+  hydrosphere.transport.bc_lambda:
+    value: 0.2
+    default: 0.2
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.1
+    - 1.0
+    category: soil_hydraulic_parameter
+    description: Brooks-Corey pore size distribution index (lambda)
+    references:
+    - Brooks & Corey (1964) Hydrol. Paper 3, Colorado State Univ.
+    tags:
+    - brooks_corey
+    - pore_size_distribution
+    - vertical_percolation
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: brooks_corey_1964
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-09T00:00:00Z'
+  hydrosphere.transport.ch_b_parameter:
+    value: 5.39
+    default: 5.39
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 2.0
+    - 12.0
+    category: soil_hydraulic_parameter
+    description: Clapp-Hornberger b parameter for loam soil
+    references:
+    - Clapp & Hornberger (1978) Water Resour. Res. 14:601-604
+    tags:
+    - clapp_hornberger
+    - hydraulic_function
+    - vertical_percolation
+    dimension: dimensionless
+    requires_grad: true
+    provenance:
+      source: clapp_hornberger_1978
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-09T00:00:00Z'
+  hydrosphere.transport.vertical_percolation.enable_temperature_effects:
+    value: true
+    default: true
+    units: dimensionless
+    dtype: bool
+    bounds:
+    category: model_configuration
+    description: Apply temperature dependence to drainage viscosity corrections
+    references:
+    - Liu & Dane (1995) Soil Sci. Soc. Am. J. 59:19-25
+    tags:
+    - vertical_percolation
+    - temperature_response
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: model_configuration
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-13T00:00:00Z'
+  hydrosphere.transport.vertical_percolation.hydraulic_model:
+    value: van_genuchten_mualem
+    default: van_genuchten_mualem
+    units: dimensionless
+    dtype: string
+    bounds:
+    category: model_configuration
+    description: Primary hydraulic conductivity formulation used by VerticalPercolationTransport.
+    references:
+    - van Genuchten, M.T. (1980) Soil Sci. Soc. Am. J. 44:892-898
+    - Brooks, R.H. & Corey, A.T. (1964) Hydrology Papers 3
+    - Clapp, R.B. & Hornberger, G.M. (1978) Water Resour. Res. 14:601-604
+    tags:
+    - vertical_percolation
+    - hydraulic_model
+    - transport_configuration
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: vertical_percolation_specification
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-11-14T00:00:00Z'
+  hydrosphere.transport.drainage_time_constant:
+    value: 3600.0
+    default: 3600.0
+    units: s
+    dtype: float32
+    bounds:
+    - 600.0
+    - 86400.0
+    category: drainage_parameter
+    description: Characteristic drainage time scale (1 hour default)
+    references:
+    - 'FAO-56: Allen et al. (1998) Crop evapotranspiration'
+    tags:
+    - drainage
+    - time_scale
+    - vertical_percolation
+    dimension: time
+    requires_grad: true
+    provenance:
+      source: drainage_modeling
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-09T00:00:00Z'
+  hydrosphere.transport.soil_layer_thickness:
+    value: 1.0
+    default: 1.0
+    units: m
+    dtype: float32
+    bounds:
+    - 0.1
+    - 5.0
+    category: discretization_parameter
+    description: Effective soil layer thickness for percolation calculations
+    references:
+    - Soil water dynamics literature
+    tags:
+    - layer_discretization
+    - vertical_transport
+    - vertical_percolation
+    dimension: length
+    requires_grad: false
+    provenance:
+      source: model_configuration
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2025-10-09T00:00:00Z'
+creation_info:
+  created_by: Yuchong Long
+  created_at: '2024-08-25T00:00:00Z'
+  schema_version: 1.0.0
+  tier: relic
+quality_control:
+  validated_by: Transport Properties Scientific Review Panel
+  validation_date: '2024-08-25T00:00:00Z'
+  validation_criteria:
+  - Experimental data validation
+  - Literature reference verification
+  - Temperature dependence assessment
+  - Pressure dependence evaluation
+  - Units and dimensional analysis
+  - Physical bounds verification
+  - Cross-property consistency

@@ -1,0 +1,55 @@
+variable: sensible_heat_flux
+title: "Sensible Heat Flux"
+description: "Surface upward sensible heat flux H = rho c_p u_* theta_* [W m-2] of Monin-Obukhov similarity, positive upward (surface to atmosphere), written by atmospheric_turbulence and read by atmospheric_advection_diffusion as the H of the Obukhov length L = -rho c_p T u_*^3 / (kappa g H) under the monin-obukhov stability scheme. The one RELIC variable of CF surface_upward_sensible_heat_flux; the former reader-side name surface_heat_flux and its 20 W m-2 state default are removed."
+kind: flux
+dimension:
+  udunits: "W m-2"
+  cf_standard_name: "surface_upward_sensible_heat_flux"
+# No unique owner: atmospheric_turbulence and the external adapters listed under writers are
+# alternative writers; registration admits one of them per configuration (the adapter
+# metadata declares ConflictResolutionPolicy.EXCLUSIVE).
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+numerics:
+  lower_bound: null
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "atmospheric_turbulence"
+      module: "relic.scientific.atmosphere.turbulence"
+      provides: ["sensible_heat_flux"]
+      unit: "W m-2"
+    - name: "CESMAdapter"
+      module: "relic.coupling.external.atmospheric_models.cesm_adapter"
+      provides: ["sensible_heat_flux"]
+      unit: "W m-2"
+    - name: "CMIP6Adapter"
+      module: "relic.coupling.external.climate_models.cmip6_adapter"
+      provides: ["sensible_heat_flux"]
+      unit: "W m-2"
+    - name: "WRFAdapter"
+      module: "relic.coupling.external.atmospheric_models.wrf_adapter"
+      provides: ["sensible_heat_flux"]
+      unit: "W m-2"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/atmosphere/turbulence.py"
+  runtime_role: "surface_sensible_heat_flux"
+  runtime_writer: "atmospheric_turbulence"
+  note: "Writer: atmospheric_turbulence, UpdateItem REPLACE in W m-2 (relic/scientific/atmosphere/turbulence.py:958-964); H = rho cp u* theta* from iterative_most_solution (turbulence.py:866; relic/scientific/atmosphere/most/stability_parameters.py:671) with rho the moist-air density of air_temperature, atmospheric_pressure and relative_humidity (turbulence.py:848, _moist_air_density :327). Reader: atmospheric_advection_diffusion with stability_scheme monin-obukhov (relic/scientific/atmosphere/transport/AtmosphericAdvectionDiffusionFunctor.py:183 declared input, :1040-1103 Obukhov length), ordered after atmospheric_turbulence by its optional declared dependency (:359); without that producer the flux must be supplied as forcing, and a missing value raises. External adapters map WRF HFX, CLM FSH and CMIP6 hfss to this variable (relic/coupling/external/common/schema.py:280,316,350); its external definition is coupling.external.variables.variable_definitions.sensible_heat_flux (standard_name surface_upward_sensible_heat_flux, W m-2, relic/parameters/database/relic/coupling/external_variables.yaml:443), so the CF identity has one RELIC holder."
+  adapter_writers:
+    - "CESMAdapter"
+    - "CMIP6Adapter"
+    - "WRFAdapter"

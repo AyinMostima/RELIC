@@ -1,0 +1,48 @@
+variable: isoprene_mixing_ratio
+title: "Atmospheric Isoprene Mixing Ratio"
+kind: state
+dimension:
+  udunits: "mol mol-1"
+  cf_standard_name: "mole_fraction_of_isoprene_in_air"
+owner: null
+aliases: []
+incrementable: true
+accumulates: null
+numerics:
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-15
+  rtol: 1.0e-9
+writers:
+  increments:
+    - name: "atmospheric_chemistry"
+      module: "relic.scientific.atmosphere.chemistry"
+      provides:
+        - "isoprene_mixing_ratio"
+      unit: "mol mol-1"
+    - name: "eddy_diffusion_blm"
+      module: "relic.scientific.atmosphere.transport.eddy_diffusion_blm"
+      provides:
+        - "isoprene_mixing_ratio"
+      unit: "mol mol-1"
+    - name: "boundary_layer_emission_source"
+      module: "relic.scientific.atmosphere.transport.boundary_layer_emission_source"
+      provides:
+        - "isoprene_mixing_ratio"
+      unit: "mol mol-1"
+  tendencies: []
+flux_contract:
+  allowed_in:
+    - "boundary_layer_emission_source"
+  allowed_out:
+    - "atmospheric_chemistry"
+    - "eddy_diffusion_blm"
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-15
+      rtol: 1.0e-9
+provenance:
+  source_file: "relic/contracts/variables/atmosphere/isoprene_mixing_ratio.yaml"
+  runtime_role: "additive_atmospheric_isoprene_state_ledger"
+  runtime_writer: null

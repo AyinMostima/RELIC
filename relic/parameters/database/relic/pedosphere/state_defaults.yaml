@@ -1,0 +1,136 @@
+﻿schema_version: 2.0.0
+tier: relic
+namespace: pedosphere.state_defaults
+description: Default pedosphere state variables used when model inputs omit the required reservoirs or flux demands. Values
+  follow temperate forest conditions reported by Barber (1995) and Manzoni & Porporato (2009).
+metadata:
+  created_by: RELIC Parameter System - Pedosphere Hardcoded Cleanup
+  last_modified: '2025-11-08T00:00:00Z'
+  schema_url: https://github.com/relic/parameter-schema/v2.0.0
+  notes: Replaces inline torch defaults in root nutrient uptake and related nutrient cycling functors.
+  version: 1.0.0
+parameters:
+  available_phosphorus:
+    value: 0.0
+    default: 0.0
+    units: g P m-2
+    dtype: float32
+    bounds:
+    - 0.0
+    - 10.0
+    category: state_default
+    description: Default labile soil phosphorus pool for uptake calculations.
+    references:
+    - Barber (1995) Soil Nutrient Bioavailability
+    tags:
+    - phosphorus
+    - default_value
+    dimension: mass_per_area
+    requires_grad: false
+    provenance:
+      source: Temperate forest topsoil profiles (Barber 1995)
+      schema_version: 2.0.0
+      created_by: Pedosphere Hardcoded Cleanup
+      last_modified: '2025-11-08T00:00:00Z'
+  clay_content:
+    value: 0.25
+    default: 0.25
+    units: dimensionless
+    dtype: float32
+    bounds:
+    - 0.05
+    - 0.6
+    category: state_default
+    description: Default soil clay fraction used when clay_content is missing.
+    references:
+    - Soil texture effects on decomposition
+    tags:
+    - soil_texture
+    - clay
+    - default_value
+    dimension: dimensionless
+    requires_grad: false
+    provenance:
+      source: Soil texture effects
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-01-08T00:00:00Z'
+  available_som_c:
+    value: 3100.0
+    default: 3100.0
+    units: g C m-2
+    dtype: float32
+    bounds:
+    - 0.0
+    - 20000.0
+    category: state_default
+    description: Aggregate available soil organic matter carbon pool used by microbial enzyme decomposition when explicit
+      pools are missing.
+    references:
+    - DOI:10.2136/sssaj1987.03615995005100050015x
+    - DOI:10.1029/1999GB001232
+    tags:
+    - carbon
+    - som
+    - default_value
+    dimension: mass_per_area
+    requires_grad: false
+    provenance:
+      source: Sum of CENTURY fast/slow/passive SOM defaults
+      schema_version: 2.0.0
+      created_by: Pedosphere Hardcoded Cleanup
+      last_modified: '2026-01-04T00:00:00Z'
+  infiltration_rate:
+    value: 0.0
+    default: 0.0
+    units: m s-1
+    dtype: float32
+    bounds:
+    - -1.0e-05
+    - 5.0e-05
+    category: state_default
+    description: 'Default vertical water influx at the soil surface when infiltration observations are absent; derived from
+      Schaake et al. (1996) exponential infiltration capacity closure used to approximate Richards boundary fluxes.
+
+      '
+    references:
+    - Schaake et al. (1996) Journal of Hydrology 176:211-232
+    - Hillel (1998) Environmental Soil Physics
+    tags:
+    - infiltration
+    - boundary_flux
+    - richards_upper_boundary
+    dimension: velocity
+    requires_grad: false
+    provenance:
+      source: Schaake infiltration capacity for temperate catchments
+      schema_version: 2.0.0
+      created_by: Pedosphere Hardcoded Cleanup
+      last_modified: '2025-11-17T00:00:00Z'
+  evapotranspiration_rate:
+    value: 0.0
+    default: 0.0
+    units: m s-1
+    dtype: float32
+    bounds:
+    - -5.0e-05
+    - 5.0e-05
+    category: state_default
+    description: 'Default evapotranspiration sink enforced when canopy energy-balance modules have not yet provided a flux;
+      scaled from FAO-56 reference ET0 and converted to SI flux units for Richards equation coupling.
+
+      '
+    references:
+    - Allen et al. (1998) FAO Irrigation and Drainage Paper 56
+    - Hillel (1998) Environmental Soil Physics
+    tags:
+    - evapotranspiration
+    - boundary_flux
+    - richards_upper_boundary
+    dimension: velocity
+    requires_grad: false
+    provenance:
+      source: FAO-56 reference evapotranspiration climatology
+      schema_version: 2.0.0
+      created_by: Pedosphere Hardcoded Cleanup
+      last_modified: '2025-11-17T00:00:00Z'

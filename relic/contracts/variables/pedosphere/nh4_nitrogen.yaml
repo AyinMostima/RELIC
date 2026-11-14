@@ -1,0 +1,60 @@
+variable: nh4_nitrogen
+title: "Ammonium Nitrogen Pool"
+kind: state
+dimension:
+  udunits: "g N m-2"
+  cf_standard_name: null
+owner: null
+aliases: []
+incrementable: true
+accumulates: nitrogen.total
+numerics:
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments:
+    - name: "mineralization"
+      module: "relic.scientific.pedosphere.nutrient_cycling.mineralization"
+      provides:
+        - "nh4_nitrogen"
+      unit: "g N m-2"
+    - name: "nitrification"
+      module: "relic.scientific.pedosphere.nutrient_cycling.nitrification"
+      provides:
+        - "nh4_nitrogen"
+      unit: "g N m-2"
+    - name: "root_nutrient_uptake"
+      module: "relic.scientific.pedosphere.nutrient_cycling.root_nutrient_uptake"
+      provides:
+        - "nh4_nitrogen"
+      unit: "g N m-2"
+    - name: "NitrogenCycling"
+      module: "relic.scientific.pedosphere.nutrient_cycling.nitrogen"
+      provides:
+        - "nh4_nitrogen"
+      unit: "g N m-2"
+  tendencies: []
+flux_contract:
+  allowed_in:
+    - "mineralization"
+    - "NitrogenCycling"
+  allowed_out:
+    - "mineralization"
+    - "nitrification"
+    - "root_nutrient_uptake"
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/pedosphere/nutrient_cycling/mineralization.py"
+  runtime_role: "additive_ammonium_state_ledger"
+  runtime_writer: null
+  runtime_writers:
+    - "mineralization"
+    - "nitrification"
+    - "root_nutrient_uptake"
+    - "NitrogenCycling"

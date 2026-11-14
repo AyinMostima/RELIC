@@ -1,0 +1,1268 @@
+schema_version: 2.0.0
+tier: relic
+namespace: atmosphere.chemistry
+description: Atmospheric box chemistry and NASA7 standard-state thermodynamic parameters
+metadata:
+  version: 1.1.0
+  units_standard: SI with cm3/molecule/s for rate constants
+  last_updated: '2026-09-13'
+parameters:
+  atmosphere.chemistry.chemistry_temperature_q10:
+    value: 1.5
+    default: 1.5
+    units: dimensionless
+    bounds:
+    - 1.0
+    - 3.0
+    description: 'Multiplier of the maximum NO2 photolysis frequency of the Trebs et al. (2009) relation, J_max = (1 + alpha) B1^2 / (4 |B2|), in the positive diagonal mobility of the level-3 structural Hodge audit of the open mechanism, star_rxn = diag(J_max Q10); it does not enter any production rate.'
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-27T00:00:00Z'
+      notes: 'MA-21 follow-up F3: no source gives a bulk chemistry Q10; the former reference, Atkinson et al. (2004), evaluates individual rate coefficients and states none. Role: positive scale of the audit-only Hodge mobility (ChemistryFunctor.build_hodge_contract).'
+    references:
+    - RELIC convention value (scale of the audit Hodge mobility; no literature value)
+    dtype: float64
+    category: empirical_parameter
+    tags:
+    - chemistry
+    - temperature
+    requires_grad: false
+    dimension: dimensionless
+  atmosphere.chemistry.temperature_min:
+    value: 200.0
+    default: 200.0
+    units: K
+    bounds:
+    - 200.0
+    - 300.0
+    description: Minimum temperature for chemistry validation checks
+    provenance:
+      source: auto_migrated_parameter_database
+      schema_version: 2.0.0
+      detail: auto_migrated_parameter_database_entry
+    references:
+    - Seinfeld & Pandis (2016)
+    dtype: float64
+    category: numerical_parameter
+    tags:
+    - validation
+    - temperature
+    requires_grad: false
+    dimension: temperature
+  atmosphere.chemistry.temperature_max:
+    value: 400.0
+    default: 400.0
+    units: K
+    bounds:
+    - 300.0
+    - 1000.0
+    description: Maximum temperature for chemistry validation checks
+    provenance:
+      source: auto_migrated_parameter_database
+      schema_version: 2.0.0
+      detail: auto_migrated_parameter_database_entry
+    references:
+    - Seinfeld & Pandis (2016)
+    dtype: float64
+    category: numerical_parameter
+    tags:
+    - validation
+    - temperature
+    requires_grad: false
+    dimension: temperature
+  atmosphere.chemistry.k_no_o3_298:
+    value: 1.8e-14
+    default: 1.8e-14
+    units: cm3 molecule-1 s-1
+    bounds:
+    - 1.4e-14
+    - 2.0e-14
+    description: 'NO + O3 -> NO2 + O2 rate coefficient at the Arrhenius reference temperature (IUPAC preferred k298).'
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-27T00:00:00Z'
+      notes: 'IUPAC I.A3.54 gives k298 = 1.8e-14 from the 298 K data and the Arrhenius fit 1.4e-12 exp(-1310/T) (1.73e-14 at 298 K) from a separate least-squares analysis over 195-308 K; the 4.1 percent difference is inside the stated reliability Delta log k(298) = +-0.08 (factor 1.20). The *_298 value is the IUPAC preferred rate coefficient at 298 K used as f(T_ref); with Ea = (E/R) R the kernel is the IUPAC Arrhenius expression scaled by k298 / (A exp(-(E/R)/298)), the anchoring from which IUPAC propagates its reliability, Delta log k(T) = Delta log k(298) + 0.4343 Delta(E/R) |1/T - 1/298|.'
+    references:
+    - 'Atkinson et al. (2004) Evaluated kinetic and photochemical data for atmospheric chemistry: Volume I, Atmos. Chem. Phys. 4, 1461-1738, doi:10.5194/acp-4-1461-2004; datasheet I.A3.54: k = 1.8e-14 cm3 molecule-1 s-1 at 298 K, Delta log k = +-0.08; k = 1.4e-12 exp(-1310/T) over 195-308 K'
+    - 'MCM v3.3.1 (Master Chemical Mechanism, http://mcm.york.ac.uk; Jenkin et al. 2015, Atmos. Chem. Phys. 15, 11433-11459, doi:10.5194/acp-15-11433-2015): NO + O3 = NO2, 1.4e-12 exp(-1310/T)'
+    uncertainty: 0.1
+    doi: 10.5194/acp-4-1461-2004
+    dtype: float64
+    category: numerical_parameter
+    tags: []
+    requires_grad: false
+    dimension: second_order_rate_constant
+  atmosphere.chemistry.k_no_o3_activation_energy:
+    value: 10891.9
+    default: 10891.9
+    units: J mol-1
+    bounds:
+    - 9229.1
+    - 12554.8
+    description: 'Activation energy Ea = (E/R) R of NO + O3 in f(T) = f(T_ref) exp(Ea/R (1/T_ref - 1/T)), T_ref = 298.15 K; E/R = 1310 K (IUPAC I.A3.54, MCM v3.3.1); positive: the rate increases with temperature. Bounds are the IUPAC reliability E/R +- 200 K.'
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-27T00:00:00Z'
+      notes: 'Ea = 1310 K x 8.314462618 J mol-1 K-1 = 10891.9 J mol-1 (was 10900.0, the rounded 10.9 kJ mol-1). The *_298 value is the IUPAC preferred rate coefficient at 298 K used as f(T_ref); with Ea = (E/R) R the kernel is the IUPAC Arrhenius expression scaled by k298 / (A exp(-(E/R)/298)), the anchoring from which IUPAC propagates its reliability, Delta log k(T) = Delta log k(298) + 0.4343 Delta(E/R) |1/T - 1/298|.'
+    references:
+    - 'Atkinson et al. (2004) Evaluated kinetic and photochemical data for atmospheric chemistry: Volume I, Atmos. Chem. Phys. 4, 1461-1738, doi:10.5194/acp-4-1461-2004; datasheet I.A3.54: k = 1.4e-12 exp(-1310/T), Delta(E/R) = +-200 K'
+    - 'MCM v3.3.1 (Master Chemical Mechanism, http://mcm.york.ac.uk; Jenkin et al. 2015, Atmos. Chem. Phys. 15, 11433-11459, doi:10.5194/acp-15-11433-2015): NO + O3 = NO2, 1.4e-12 exp(-1310/T)'
+    uncertainty: 1662.9
+    dtype: float64
+    category: numerical_parameter
+    tags: []
+    requires_grad: false
+    dimension: energy_per_amount
+  atmosphere.chemistry.k_isoprene_oh_298:
+    value: 1.0e-10
+    default: 1.0e-10
+    units: cm3 molecule-1 s-1
+    bounds:
+    - 9.0e-11
+    - 1.1e-10
+    description: 'Isoprene + OH -> products rate coefficient at the Arrhenius reference temperature (IUPAC preferred k298).'
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-27T00:00:00Z'
+      notes: 'The *_298 value is the IUPAC preferred rate coefficient at 298 K used as f(T_ref); with Ea = (E/R) R the kernel is the IUPAC Arrhenius expression scaled by k298 / (A exp(-(E/R)/298)), the anchoring from which IUPAC propagates its reliability, Delta log k(T) = Delta log k(298) + 0.4343 Delta(E/R) |1/T - 1/298|.'
+    references:
+    - 'Atkinson et al. (2006) Evaluated kinetic and photochemical data for atmospheric chemistry: Volume II, Atmos. Chem. Phys. 6, 3625-4055, doi:10.5194/acp-6-3625-2006; datasheet II.A2.10: k = 1.0e-10 cm3 molecule-1 s-1 at 298 K, Delta log k = +-0.10; k = 2.7e-11 exp(390/T) over 240-430 K'
+    - 'MCM v3.3.1 (Master Chemical Mechanism, http://mcm.york.ac.uk; Jenkin et al. 2015, Atmos. Chem. Phys. 15, 11433-11459, doi:10.5194/acp-15-11433-2015): C5H8 + OH, 2.7e-11 exp(390/T)'
+    - 'Atkinson and Arey (2003) Chem. Rev. 103, 4605-4638, doi:10.1021/cr0206420'
+    uncertainty: 0.15
+    doi: 10.1021/cr0206420
+    dtype: float64
+    category: numerical_parameter
+    tags: []
+    requires_grad: false
+    dimension: second_order_rate_constant
+  atmosphere.chemistry.k_isoprene_oh_activation_energy:
+    value: -3242.6
+    default: -3242.6
+    units: J mol-1
+    bounds:
+    - -4074.1
+    - -2411.2
+    description: 'Activation energy Ea = (E/R) R of isoprene + OH in f(T) = f(T_ref) exp(Ea/R (1/T_ref - 1/T)), T_ref = 298.15 K; E/R = -390 K (IUPAC II.A2.10, MCM v3.3.1); negative: OH addition slows with warming. Bounds are the IUPAC reliability E/R +- 100 K.'
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-27T00:00:00Z'
+      notes: 'Ea = -390 K x 8.314462618 J mol-1 K-1 = -3242.6 J mol-1; the former +3240 J mol-1 reversed the sign of exp(390/T). The *_298 value is the IUPAC preferred rate coefficient at 298 K used as f(T_ref); with Ea = (E/R) R the kernel is the IUPAC Arrhenius expression scaled by k298 / (A exp(-(E/R)/298)), the anchoring from which IUPAC propagates its reliability, Delta log k(T) = Delta log k(298) + 0.4343 Delta(E/R) |1/T - 1/298|.'
+    references:
+    - 'Atkinson et al. (2006) Evaluated kinetic and photochemical data for atmospheric chemistry: Volume II, Atmos. Chem. Phys. 6, 3625-4055, doi:10.5194/acp-6-3625-2006; datasheet II.A2.10: k = 2.7e-11 exp(390/T), E/R = -390 K, Delta(E/R) = +-100 K'
+    - 'MCM v3.3.1 (Master Chemical Mechanism, http://mcm.york.ac.uk; Jenkin et al. 2015, Atmos. Chem. Phys. 15, 11433-11459, doi:10.5194/acp-15-11433-2015): C5H8 + OH, 2.7e-11 exp(390/T)'
+    uncertainty: 831.4
+    dtype: float64
+    category: numerical_parameter
+    tags: []
+    requires_grad: false
+    dimension: energy_per_amount
+  atmosphere.chemistry.k_isoprene_o3_298:
+    value: 1.27e-17
+    default: 1.27e-17
+    units: cm3 molecule-1 s-1
+    bounds:
+    - 1.0e-17
+    - 1.5e-17
+    description: 'Isoprene + O3 -> products rate coefficient at the Arrhenius reference temperature (IUPAC preferred k298).'
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-27T00:00:00Z'
+      notes: 'Value 1.27e-17 (was 1.3e-17, the two-figure rounding). The *_298 value is the IUPAC preferred rate coefficient at 298 K used as f(T_ref); with Ea = (E/R) R the kernel is the IUPAC Arrhenius expression scaled by k298 / (A exp(-(E/R)/298)), the anchoring from which IUPAC propagates its reliability, Delta log k(T) = Delta log k(298) + 0.4343 Delta(E/R) |1/T - 1/298|.'
+    references:
+    - 'Atkinson et al. (2006) Evaluated kinetic and photochemical data for atmospheric chemistry: Volume II, Atmos. Chem. Phys. 6, 3625-4055, doi:10.5194/acp-6-3625-2006; datasheet II.A1.157: k = 1.27e-17 cm3 molecule-1 s-1 at 298 K, Delta log k = +-0.10; k = 1.03e-14 exp(-1995/T) over 240-360 K'
+    - 'MCM v3.3.1 (Master Chemical Mechanism, http://mcm.york.ac.uk; Jenkin et al. 2015, Atmos. Chem. Phys. 15, 11433-11459, doi:10.5194/acp-15-11433-2015): C5H8 + O3, 1.03e-14 exp(-1995/T)'
+    uncertainty: 0.2
+    dtype: float64
+    category: numerical_parameter
+    tags: []
+    requires_grad: false
+    dimension: second_order_rate_constant
+  atmosphere.chemistry.k_isoprene_o3_activation_energy:
+    value: 16587.4
+    default: 16587.4
+    units: J mol-1
+    bounds:
+    - 14924.5
+    - 18250.2
+    description: 'Activation energy Ea = (E/R) R of isoprene + O3 in f(T) = f(T_ref) exp(Ea/R (1/T_ref - 1/T)), T_ref = 298.15 K; E/R = 1995 K (IUPAC II.A1.157, MCM v3.3.1); positive: ozonolysis speeds up with warming. Bounds are the IUPAC reliability E/R +- 200 K.'
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-27T00:00:00Z'
+      notes: 'Ea = 1995 K x 8.314462618 J mol-1 K-1 = 16587.4 J mol-1; the former -16600 J mol-1 reversed the sign of exp(-1995/T). The *_298 value is the IUPAC preferred rate coefficient at 298 K used as f(T_ref); with Ea = (E/R) R the kernel is the IUPAC Arrhenius expression scaled by k298 / (A exp(-(E/R)/298)), the anchoring from which IUPAC propagates its reliability, Delta log k(T) = Delta log k(298) + 0.4343 Delta(E/R) |1/T - 1/298|.'
+    references:
+    - 'Atkinson et al. (2006) Evaluated kinetic and photochemical data for atmospheric chemistry: Volume II, Atmos. Chem. Phys. 6, 3625-4055, doi:10.5194/acp-6-3625-2006; datasheet II.A1.157: k = 1.03e-14 exp(-1995/T), Delta(E/R) = +-200 K'
+    - 'MCM v3.3.1 (Master Chemical Mechanism, http://mcm.york.ac.uk; Jenkin et al. 2015, Atmos. Chem. Phys. 15, 11433-11459, doi:10.5194/acp-15-11433-2015): C5H8 + O3, 1.03e-14 exp(-1995/T)'
+    uncertainty: 1662.9
+    dtype: float64
+    category: numerical_parameter
+    tags: []
+    requires_grad: false
+    dimension: energy_per_amount
+  atmosphere.chemistry.k_isoprene_no3_298:
+    value: 6.963486e-13
+    default: 6.963486e-13
+    units: cm3 molecule-1 s-1
+    bounds:
+    - 4.39e-13
+    - 1.11e-12
+    description: 'Isoprene + NO3 -> products (MCM v3.3.1 NO3 + C5H8 = NISOPO2) rate coefficient at the Arrhenius reference temperature T_ref = 298.15 K, evaluated from the MCM v3.3.1 expression 3.15e-12 exp(-450/T) cm3 molecule-1 s-1; the nighttime isoprene oxidant term of the chemical lifetime diagnostic.'
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-10-18T00:00:00Z'
+      notes: 'CR-A-03 decision (window A parameter owner, 2026-10-18): MCM v3.3.1 expression kept as the primary set with the existing IUPAC 2006 / MCM v3.3.1 isoprene + OH and isoprene + O3 rates. MCM tabulates no k298 and no reliability; k_298 = 3.15e-12 exp(-450/298.15) = 6.963486e-13 cm3 molecule-1 s-1 is computed from the Arrhenius form, so k(298.15 K) reproduces the MCM expression exactly. The IUPAC 2006 tabulated k298 = 7.0e-13 at 298 K is 0.5 % higher. Bounds are the IUPAC 2006 reliability Delta log k = +-0.2 at 298 K around k_298 (4.394e-13 to 1.1036e-12, rounded outward). Sensitivity value: IUPAC 2015 datasheet NO3_VOC8, 2.95e-12 exp(-450/T) (k298 = 6.5e-13 at 298 K, Delta log k = +-0.15, Delta(E/R) = +-200 K, 250-390 K); with the same E/R the two expressions differ by Delta log10 k = log10(3.15/2.95) = 0.0285 at every temperature, inside both reliabilities. Primary-source quotes: BVOCsdata paper_results/shared/scientific_source_qualification/20261018_cr_a03_sources_01/source_quotes.json.'
+    references:
+    - 'MCM v3.3.1 (Master Chemical Mechanism, http://mcm.york.ac.uk; Jenkin et al. 2015, Atmos. Chem. Phys. 15, 11433-11459, doi:10.5194/acp-15-11433-2015, supplement file MCM_C5H8_subset.fac line 112): NO3 + C5H8 = NISOPO2, 3.15e-12 exp(-450/T)'
+    - 'Atkinson et al. (2006) Evaluated kinetic and photochemical data for atmospheric chemistry: Volume II, Atmos. Chem. Phys. 6, 3625-4055, doi:10.5194/acp-6-3625-2006; datasheet II.A3.69: k = 7.0e-13 cm3 molecule-1 s-1 at 298 K, Delta log k = +-0.2; k = 3.15e-12 exp(-450/T) over 250-390 K'
+    - 'IUPAC Task Group on Atmospheric Chemical Kinetic Data, datasheet NO3_VOC8 (last evaluated July 2015, https://iupac-aeris.ipsl.fr/datasheets/pdf/NO3_VOC8.pdf): k = 6.5e-13 cm3 molecule-1 s-1 at 298 K, Delta log k = +-0.15; k = 2.95e-12 exp(-450/T) over 250-390 K (sensitivity value, not the default)'
+    dtype: float64
+    category: numerical_parameter
+    tags: []
+    requires_grad: false
+    dimension: second_order_rate_constant
+  atmosphere.chemistry.k_isoprene_no3_activation_energy:
+    value: 3741.508
+    default: 3741.508
+    units: J mol-1
+    bounds:
+    - 2078.6
+    - 5404.4
+    description: 'Activation energy Ea = (E/R) R of isoprene + NO3 in f(T) = f(T_ref) exp(Ea/R (1/T_ref - 1/T)), T_ref = 298.15 K; E/R = 450 K (MCM v3.3.1, IUPAC 2006 II.A3.69 and IUPAC 2015 NO3_VOC8); positive: NO3 addition speeds up with warming. Bounds are the IUPAC reliability E/R +- 200 K.'
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-10-18T00:00:00Z'
+      notes: 'Ea = 450 K x 8.314462618 J mol-1 K-1 = 3741.508 J mol-1; bounds (450 -+ 200 K) x R = 2078.6 to 5404.4 J mol-1 keep Ea positive. The evaluated temperature range of the expression is 250-390 K (IUPAC 2006 II.A3.69, IUPAC 2015 NO3_VOC8); below 250 K the kernel extrapolates the same Arrhenius form.'
+    references:
+    - 'MCM v3.3.1 (Master Chemical Mechanism, http://mcm.york.ac.uk; Jenkin et al. 2015, Atmos. Chem. Phys. 15, 11433-11459, doi:10.5194/acp-15-11433-2015, supplement file MCM_C5H8_subset.fac line 112): NO3 + C5H8 = NISOPO2, 3.15e-12 exp(-450/T)'
+    - 'Atkinson et al. (2006) Evaluated kinetic and photochemical data for atmospheric chemistry: Volume II, Atmos. Chem. Phys. 6, 3625-4055, doi:10.5194/acp-6-3625-2006; datasheet II.A3.69: k = 3.15e-12 exp(-450/T) over 250-390 K, E/R = 450 K, Delta(E/R) = +-200 K'
+    - 'IUPAC Task Group on Atmospheric Chemical Kinetic Data, datasheet NO3_VOC8 (last evaluated July 2015, https://iupac-aeris.ipsl.fr/datasheets/pdf/NO3_VOC8.pdf): k = 2.95e-12 exp(-450/T) over 250-390 K, Delta(E/R) = +-200 K (sensitivity value, not the default)'
+    uncertainty: 1662.9
+    dtype: float64
+    category: numerical_parameter
+    tags: []
+    requires_grad: false
+    dimension: energy_per_amount
+  atmosphere.chemistry.k_oh_co_298:
+    value: 2.3e-13
+    default: 2.3e-13
+    units: cm3 molecule-1 s-1
+    bounds:
+    - 2.0e-13
+    - 2.5e-13
+    description: OH + CO -> HO2 + CO2 rate at 298K
+    provenance:
+      source: auto_migrated_parameter_database
+      schema_version: 2.0.0
+      detail: auto_migrated_parameter_database_entry
+    references:
+    - 'MCM: pressure-dependent, simplified here'
+    - 'McCabe et al. (2001): Kinetics of OH + CO'
+    uncertainty: 0.1
+    dtype: float64
+    category: numerical_parameter
+    tags: []
+    requires_grad: false
+    dimension: second_order_rate_constant
+  atmosphere.chemistry.k_oh_co_activation_energy:
+    value: 0.0
+    default: 0.0
+    units: J mol-1
+    bounds:
+    - -.inf
+    - .inf
+    description: 'Activation energy of OH + CO in f(T) = f(T_ref) exp(Ea/R (1/T_ref - 1/T)), T_ref = 298.15 K. IUPAC II.A2.12 recommends a temperature-independent k = 1.44e-13 (1 + [N2]/4.2e19 molecule cm-3) over 200-300 K and 0-1 bar, so Ea = 0; the pressure term is folded into k_oh_co_298 at 1 atm. The Arrhenius form admits either sign of Ea, so the interval is unbounded.'
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-27T00:00:00Z'
+      notes: 'Ea = 0 per IUPAC II.A2.12; at 1 atm the expression gives 2.36e-13 (273.15 K), 2.28e-13 (298.15 K) and 2.24e-13 (313.15 K) through [N2] alone.'
+    references:
+    - 'Atkinson et al. (2006) Evaluated kinetic and photochemical data for atmospheric chemistry: Volume II, Atmos. Chem. Phys. 6, 3625-4055, doi:10.5194/acp-6-3625-2006; datasheet II.A2.12: k = 1.44e-13 (1 + [N2]/4.2e19) cm3 molecule-1 s-1, no temperature dependence over 200-300 K'
+    dtype: float64
+    category: numerical_parameter
+    tags:
+    - oh
+    - temperature
+    requires_grad: false
+    dimension: energy_per_amount
+  atmosphere.chemistry.k_oh_ch4_298:
+    value: 6.4e-15
+    default: 6.4e-15
+    units: cm3 molecule-1 s-1
+    bounds:
+    - 6.0e-15
+    - 7.0e-15
+    description: 'OH + CH4 -> CH3 + H2O rate coefficient at the Arrhenius reference temperature (IUPAC preferred k298).'
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-27T00:00:00Z'
+      notes: 'The *_298 value is the IUPAC preferred rate coefficient at 298 K used as f(T_ref); with Ea = (E/R) R the kernel is the IUPAC Arrhenius expression scaled by k298 / (A exp(-(E/R)/298)), the anchoring from which IUPAC propagates its reliability, Delta log k(T) = Delta log k(298) + 0.4343 Delta(E/R) |1/T - 1/298|.'
+    references:
+    - 'Atkinson et al. (2006) Evaluated kinetic and photochemical data for atmospheric chemistry: Volume II, Atmos. Chem. Phys. 6, 3625-4055, doi:10.5194/acp-6-3625-2006; datasheet II.A2.3: k = 6.4e-15 cm3 molecule-1 s-1 at 298 K, Delta log k = +-0.08; k = 1.85e-12 exp(-1690/T) over 200-300 K'
+    - 'MCM v3.3.1 (Master Chemical Mechanism, http://mcm.york.ac.uk; Jenkin et al. 2015, Atmos. Chem. Phys. 15, 11433-11459, doi:10.5194/acp-15-11433-2015): CH4 + OH, 1.85e-12 exp(-1690/T)'
+    uncertainty: 0.1
+    dtype: float64
+    category: numerical_parameter
+    tags: []
+    requires_grad: false
+    dimension: second_order_rate_constant
+  atmosphere.chemistry.k_oh_ch4_activation_energy:
+    value: 14051.4
+    default: 14051.4
+    units: J mol-1
+    bounds:
+    - 13220.0
+    - 14882.9
+    description: 'Activation energy Ea = (E/R) R of OH + CH4 in f(T) = f(T_ref) exp(Ea/R (1/T_ref - 1/T)), T_ref = 298.15 K; E/R = 1690 K (IUPAC II.A2.3, MCM v3.3.1); positive: H abstraction speeds up with warming. Bounds are the IUPAC reliability E/R +- 100 K.'
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-27T00:00:00Z'
+      notes: 'Ea = 1690 K x 8.314462618 J mol-1 K-1 = 14051.4 J mol-1; the former -14750 J mol-1 (E/R = -1774 K) had the wrong sign and magnitude. The *_298 value is the IUPAC preferred rate coefficient at 298 K used as f(T_ref); with Ea = (E/R) R the kernel is the IUPAC Arrhenius expression scaled by k298 / (A exp(-(E/R)/298)), the anchoring from which IUPAC propagates its reliability, Delta log k(T) = Delta log k(298) + 0.4343 Delta(E/R) |1/T - 1/298|.'
+    references:
+    - 'Atkinson et al. (2006) Evaluated kinetic and photochemical data for atmospheric chemistry: Volume II, Atmos. Chem. Phys. 6, 3625-4055, doi:10.5194/acp-6-3625-2006; datasheet II.A2.3: k = 1.85e-12 exp(-1690/T), Delta(E/R) = +-100 K'
+    - 'MCM v3.3.1 (Master Chemical Mechanism, http://mcm.york.ac.uk; Jenkin et al. 2015, Atmos. Chem. Phys. 15, 11433-11459, doi:10.5194/acp-15-11433-2015): CH4 + OH, 1.85e-12 exp(-1690/T)'
+    uncertainty: 831.4
+    dtype: float64
+    category: numerical_parameter
+    tags: []
+    requires_grad: false
+    dimension: energy_per_amount
+  atmosphere.chemistry.k_oh_no2_298:
+    value: 1.15e-11
+    default: 1.15e-11
+    units: cm3 molecule-1 s-1
+    bounds:
+    - 1.0e-11
+    - 1.2e-11
+    description: 'OH + NO2 (+M) -> HNO3 rate coefficient at 1 atm and T_ref = 298.15 K: the IUPAC I.A3.43 fall-off k = k0 kinf/(k0 + kinf) Fc^(1/(1 + (log10(k0/kinf)/N)^2)), N = 0.75 - 1.27 log10 Fc, evaluated at [N2] = p/(kB T) = 2.46e19 molecule cm-3.'
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-27T00:00:00Z'
+      notes: 'MA-21 follow-up F3: the former value 1.1e-11 cited Mollner et al. (2010), whose measured HONO2 channel is 9.2e-12 in air at 760 Torr (20 percent lower); the value matches the IUPAC (2004) fall-off, which gives 1.154e-11 at 1 atm and 298.15 K (k0 = 8.28e-11, kinf = 4.1e-11, F = 0.421), now stored to three figures (was 1.1e-11). Reliability: Delta log k0 = +-0.1 at 298 K.'
+    references:
+    - 'Atkinson et al. (2004) Evaluated kinetic and photochemical data for atmospheric chemistry: Volume I, Atmos. Chem. Phys. 4, 1461-1738, doi:10.5194/acp-4-1461-2004; datasheet I.A3.43: k0 = 3.3e-30 (T/300)^-3.0 [N2], kinf = 4.1e-11 cm3 molecule-1 s-1, Fc = 0.4'
+    - 'Mollner et al. (2010) Rate of gas phase association of hydroxyl radical and nitrogen dioxide, Science 330, 646-649, doi:10.1126/science.1193030: HONO2 channel 9.2e-12 (+-0.4e-12) cm3 molecule-1 s-1 in air at 760 Torr, 25 degC'
+    uncertainty: 0.1
+    note: Termination reaction, pressure-dependent; the fall-off is evaluated once at 1 atm, 298.15 K
+    dtype: float64
+    category: numerical_parameter
+    tags: []
+    requires_grad: false
+    dimension: second_order_rate_constant
+  atmosphere.chemistry.k_oh_no2_activation_energy:
+    value: 0.0
+    default: 0.0
+    units: J mol-1
+    bounds:
+    - -.inf
+    - .inf
+    description: 'Activation energy of OH + NO2 (+M) -> HNO3 in f(T) = f(T_ref) exp(Ea/R (1/T_ref - 1/T)), T_ref = 298.15 K. Convention Ea = 0: the termolecular falloff of IUPAC I.A3.43 is not implemented and k_oh_no2_298 is held at its 1 atm, 298.15 K value. The Arrhenius form admits either sign of Ea, so the interval is unbounded.'
+    provenance:
+      source: relic_convention
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-27T00:00:00Z'
+      notes: 'Role: temperature-independent approximation of a pressure-dependent termolecular rate. The IUPAC I.A3.43 falloff at 1 atm gives 1.35e-11 (273.15 K), 1.15e-11 (298.15 K) and 1.05e-11 (313.15 K), an effective E/R of about -558 K between 288 and 308 K; the falloff value is 17.7 percent above the constant 1.15e-11 at 273 K and 8.6 percent below it at 313 K. Implementing the Troe falloff is outside round 54.1.'
+    references:
+    - 'Atkinson et al. (2004) Evaluated kinetic and photochemical data for atmospheric chemistry: Volume I, Atmos. Chem. Phys. 4, 1461-1738, doi:10.5194/acp-4-1461-2004; datasheet I.A3.43: k0 = 3.3e-30 (T/300)^-3.0 [N2], k_inf = 4.1e-11 cm3 molecule-1 s-1, Fc = 0.4'
+    dtype: float64
+    category: numerical_parameter
+    tags:
+    - oh
+    - temperature
+    requires_grad: false
+    dimension: energy_per_amount
+  atmosphere.chemistry.j_no2_irradiance_linear_coefficient:
+    value: 1.47e-05
+    default: 1.47e-05
+    units: W-1 m2 s-1
+    dtype: float64
+    bounds:
+    - 1.44e-05
+    - 1.5e-05
+    category: empirical_parameter
+    description: 'NO2 photolysis frequency from the solar global irradiance G (shortwave_down): linear coefficient B1 = (1.47 +- 0.03) e-5 W-1 m2 s-1 of J_NO2 = (1 + alpha) (B1 G + B2 G^2). G already carries the solar geometry and the cloud attenuation. The concave polynomial rises to its vertex G_v = B1 / (2 |B2|) = 1519 W m-2; at and above G_v the vertex value is held (monotone extension beyond the fitted curvature). Bounds are the stated 1-sigma fit errors.'
+    references:
+    - 'Trebs, I., Bohn, B., Ammann, C., Rummel, U., Blumthaler, M., Konigstedt, R., Meixner, F.X., Fan, S. and Andreae, M.O. (2009) Relationship between the NO2 photolysis frequency and the solar global irradiance, Atmos. Meas. Tech. 2, 725-739, doi:10.5194/amt-2-725-2009; Eq. (1)-(2), abstract and Sect. 5: B1 = (1.47 +- 0.03) x 10-5 W-1 m2 s-1, B2 = (-4.84 +- 0.31) x 10-9 W-2 m4 s-1'
+    tags:
+    - photolysis
+    - no2
+    - irradiance
+    requires_grad: false
+    dimension: irradiance_response_coefficient
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-27T00:00:00Z'
+      notes: 'Eq. (1)-(2) of Trebs et al. (2009): J_NO2 = (1 + alpha) (B1 G + B2 G^2), G the solar global irradiance (shortwave_down); weighted fit to 10 W m-2 bins of half-hourly data of seven sites below 800 m a.s.l. (N = 4815, SZA 0-90 deg, cloudy and clear, G up to about 1000 W m-2); residual +-6e-4 s-1 (2 sigma), relative deviation above 40 percent for G < 100 W m-2, 10-40 percent for 100-500 W m-2 and below 10 percent above 500 W m-2; not valid in high mountains, above snow or ice and over sandy or dry soil. Replaces J0 (SW/SW_ref) cos(chi) (j_no2_reference 8e-3 s-1 at SW_ref = 800 W m-2), which counted the solar geometry twice because SW already contains cos(chi). At G = 800 W m-2 and alpha = 0.03 the relation gives 8.92e-3 s-1 (Warneck and Williams 2012 Table 6.7: 8.8e-3 s-1, overhead sun, albedo 0.03).'
+  atmosphere.chemistry.j_no2_irradiance_quadratic_coefficient:
+    value: -4.84e-09
+    default: -4.84e-09
+    units: W-2 m4 s-1
+    dtype: float64
+    bounds:
+    - -5.15e-09
+    - -4.53e-09
+    category: empirical_parameter
+    description: 'NO2 photolysis frequency from the solar global irradiance G (shortwave_down): quadratic coefficient B2 = (-4.84 +- 0.31) e-9 W-2 m4 s-1 of J_NO2 = (1 + alpha) (B1 G + B2 G^2). G already carries the solar geometry and the cloud attenuation. The concave polynomial rises to its vertex G_v = B1 / (2 |B2|) = 1519 W m-2; at and above G_v the vertex value is held (monotone extension beyond the fitted curvature). Bounds are the stated 1-sigma fit errors.'
+    references:
+    - 'Trebs, I., Bohn, B., Ammann, C., Rummel, U., Blumthaler, M., Konigstedt, R., Meixner, F.X., Fan, S. and Andreae, M.O. (2009) Relationship between the NO2 photolysis frequency and the solar global irradiance, Atmos. Meas. Tech. 2, 725-739, doi:10.5194/amt-2-725-2009; Eq. (1)-(2), abstract and Sect. 5: B1 = (1.47 +- 0.03) x 10-5 W-1 m2 s-1, B2 = (-4.84 +- 0.31) x 10-9 W-2 m4 s-1'
+    tags:
+    - photolysis
+    - no2
+    - irradiance
+    requires_grad: false
+    dimension: irradiance_quadratic_response_coefficient
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-27T00:00:00Z'
+      notes: 'Eq. (1)-(2) of Trebs et al. (2009): J_NO2 = (1 + alpha) (B1 G + B2 G^2), G the solar global irradiance (shortwave_down); weighted fit to 10 W m-2 bins of half-hourly data of seven sites below 800 m a.s.l. (N = 4815, SZA 0-90 deg, cloudy and clear, G up to about 1000 W m-2); residual +-6e-4 s-1 (2 sigma), relative deviation above 40 percent for G < 100 W m-2, 10-40 percent for 100-500 W m-2 and below 10 percent above 500 W m-2; not valid in high mountains, above snow or ice and over sandy or dry soil. Replaces J0 (SW/SW_ref) cos(chi) (j_no2_reference 8e-3 s-1 at SW_ref = 800 W m-2), which counted the solar geometry twice because SW already contains cos(chi). At G = 800 W m-2 and alpha = 0.03 the relation gives 8.92e-3 s-1 (Warneck and Williams 2012 Table 6.7: 8.8e-3 s-1, overhead sun, albedo 0.03).'
+  atmosphere.chemistry.uv_a_surface_albedo:
+    value: 0.03
+    default: 0.03
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 0.2
+    category: empirical_parameter
+    description: 'Site UV-A surface albedo alpha of J_NO2 = (1 + alpha) (B1 G + B2 G^2) (Trebs et al. 2009 Eq. 2); 0.03 is typical of grassland and vegetation (2-3 percent in the UV-A). The relation is not to be used for alpha > 0.2 (snow, ice, sand), which is the upper bound.'
+    references:
+    - 'Trebs, I., Bohn, B., Ammann, C., Rummel, U., Blumthaler, M., Konigstedt, R., Meixner, F.X., Fan, S. and Andreae, M.O. (2009) Relationship between the NO2 photolysis frequency and the solar global irradiance, Atmos. Meas. Tech. 2, 725-739, doi:10.5194/amt-2-725-2009; Sect. 4.6 and Table 1: UV-A surface albedo of vegetation about 2-3 percent, grassland 0.03 (Feister and Grewe 1995); the function should not be used for alpha > 0.2'
+    - 'Warneck, P. and Williams, J. (2012) The Atmospheric Chemist''s Companion, Springer, doi:10.1007/978-94-007-2275-0; Table 6.7: ground-level photolysis frequencies for overhead sun and surface albedo 0.03 (Jacobson 2005)'
+    tags:
+    - photolysis
+    - albedo
+    requires_grad: false
+    dimension: dimensionless
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-27T00:00:00Z'
+      notes: 'Trebs et al. (2009) state that the (1 + alpha) factor is not exactly justified because albedo is defined for irradiance; for their sites below 800 m the albedo effect lies within the fit uncertainty.'
+  atmosphere.chemistry.photolysis_temperature_mode:
+    value: 'none'
+    default: 'none'
+    units: dimensionless
+    dtype: string
+    bounds: null
+    allowed_values:
+    - 'none'
+    - 'spectral_quantum_yield'
+    category: configuration_flag
+    description: 'Air-temperature dependence of the photolysis frequencies J_NO2 and J(O1D). none (default): both are independent of air temperature; the NO2 quantum yield is 1.00 at 300-398 nm at 248 and 298 K and the NO2 cross-section temperature dependence is minimal (Warneck and Williams 2012 Tables 6.13a/b). spectral_quantum_yield: J_X(T) = J_X(T_ref) R_X(T), R_X(T) = sum_lambda sigma_X(lambda,T) phi_X(lambda,T) F(lambda) / sum_lambda sigma_X(lambda,T_ref) phi_X(lambda,T_ref) F(lambda), with the tables and the reference surface spectrum of atmosphere.chemistry.photolysis.*.'
+    references:
+    - 'Warneck, P. and Williams, J. (2012) The Atmospheric Chemist''s Companion, Springer, doi:10.1007/978-94-007-2275-0; Table 6.13a (NO2 cross sections, temperature dependence minimal) and Table 6.13b (NO2 quantum yields at 298 and 248 K, Troe 2000)'
+    - 'Warneck, P. and Williams, J. (2012) The Atmospheric Chemist''s Companion, Springer, doi:10.1007/978-94-007-2275-0; Tables 6.11a-c (O3 cross sections at two temperatures; O(1D) quantum yields, Matsumi et al. 2002)'
+    tags:
+    - photolysis
+    - temperature
+    - configuration_flag
+    requires_grad: false
+    dimension: dimensionless
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-27T00:00:00Z'
+      notes: 'Replaces the empirical Q10 factor photolysis_temperature_q10 (1.5, no literature value; it implied a factor 7.6 between 248 and 298 K). Spectral factors on the reference spectrum: R_NO2(248 K) = 0.971, R_O1D(223 K) = 0.737.'
+  atmosphere.chemistry.mcm_o1d_photolysis_l:
+    value: 6.073e-05
+    default: 6.073e-05
+    units: s-1
+    dtype: float64
+    bounds:
+    - 6.073e-05
+    - 6.073e-05
+    category: physical_parameter
+    description: 'MCM clear-sky photolysis parameter l of J1 (O3 -> O(1D) + O2) in J = l cos(chi)^m exp(-n sec(chi)); the ratio rho(chi) = J1/J4 = (l1/l4) cos(chi)^(m1-m4) exp(-(n1-n4) sec(chi)) converts the NO2 photolysis frequency into J(O1D) = J_NO2 rho(chi) (rho = 4.24e-3 for overhead sun).'
+    references:
+    - 'Saunders, S.M., Jenkin, M.E., Derwent, R.G. and Pilling, M.J. (2003) Protocol for the development of the Master Chemical Mechanism, MCM v3 (Part A), Atmos. Chem. Phys. 3, 161-180, doi:10.5194/acp-3-161-2003: J = l cos(chi)^m exp(-n sec(chi)); J1 O3 -> O(1D) + O2: l = 6.073e-5 s-1, m = 1.743, n = 0.474; J4 NO2 -> NO + O(3P): l = 1.165e-2 s-1, m = 0.244, n = 0.267 (clear sky)'
+    - 'MCM v3.3.1 photolysis rates, https://mcm.york.ac.uk/MCM/rates/photolysis (same J1 and J4 parameters)'
+    tags:
+    - photolysis
+    - oh
+    - mcm
+    requires_grad: false
+    dimension: frequency
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-27T00:00:00Z'
+      notes: 'Replaces oh_o3_photolysis_factor (J(O3) = 0.1 J_NO2, 17-24 times the evaluated ratio: Warneck and Williams 2012 Table 6.7 gives 5.1e-5/8.8e-3 = 5.8e-3 at the ground for overhead sun).'
+  atmosphere.chemistry.mcm_o1d_photolysis_m:
+    value: 1.743
+    default: 1.743
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 1.743
+    - 1.743
+    category: physical_parameter
+    description: 'MCM clear-sky photolysis parameter m of J1 (O3 -> O(1D) + O2) in J = l cos(chi)^m exp(-n sec(chi)); the ratio rho(chi) = J1/J4 = (l1/l4) cos(chi)^(m1-m4) exp(-(n1-n4) sec(chi)) converts the NO2 photolysis frequency into J(O1D) = J_NO2 rho(chi) (rho = 4.24e-3 for overhead sun).'
+    references:
+    - 'Saunders, S.M., Jenkin, M.E., Derwent, R.G. and Pilling, M.J. (2003) Protocol for the development of the Master Chemical Mechanism, MCM v3 (Part A), Atmos. Chem. Phys. 3, 161-180, doi:10.5194/acp-3-161-2003: J = l cos(chi)^m exp(-n sec(chi)); J1 O3 -> O(1D) + O2: l = 6.073e-5 s-1, m = 1.743, n = 0.474; J4 NO2 -> NO + O(3P): l = 1.165e-2 s-1, m = 0.244, n = 0.267 (clear sky)'
+    - 'MCM v3.3.1 photolysis rates, https://mcm.york.ac.uk/MCM/rates/photolysis (same J1 and J4 parameters)'
+    tags:
+    - photolysis
+    - oh
+    - mcm
+    requires_grad: false
+    dimension: dimensionless
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-27T00:00:00Z'
+      notes: 'Replaces oh_o3_photolysis_factor (J(O3) = 0.1 J_NO2, 17-24 times the evaluated ratio: Warneck and Williams 2012 Table 6.7 gives 5.1e-5/8.8e-3 = 5.8e-3 at the ground for overhead sun).'
+  atmosphere.chemistry.mcm_o1d_photolysis_n:
+    value: 0.474
+    default: 0.474
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.474
+    - 0.474
+    category: physical_parameter
+    description: 'MCM clear-sky photolysis parameter n of J1 (O3 -> O(1D) + O2) in J = l cos(chi)^m exp(-n sec(chi)); the ratio rho(chi) = J1/J4 = (l1/l4) cos(chi)^(m1-m4) exp(-(n1-n4) sec(chi)) converts the NO2 photolysis frequency into J(O1D) = J_NO2 rho(chi) (rho = 4.24e-3 for overhead sun).'
+    references:
+    - 'Saunders, S.M., Jenkin, M.E., Derwent, R.G. and Pilling, M.J. (2003) Protocol for the development of the Master Chemical Mechanism, MCM v3 (Part A), Atmos. Chem. Phys. 3, 161-180, doi:10.5194/acp-3-161-2003: J = l cos(chi)^m exp(-n sec(chi)); J1 O3 -> O(1D) + O2: l = 6.073e-5 s-1, m = 1.743, n = 0.474; J4 NO2 -> NO + O(3P): l = 1.165e-2 s-1, m = 0.244, n = 0.267 (clear sky)'
+    - 'MCM v3.3.1 photolysis rates, https://mcm.york.ac.uk/MCM/rates/photolysis (same J1 and J4 parameters)'
+    tags:
+    - photolysis
+    - oh
+    - mcm
+    requires_grad: false
+    dimension: dimensionless
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-27T00:00:00Z'
+      notes: 'Replaces oh_o3_photolysis_factor (J(O3) = 0.1 J_NO2, 17-24 times the evaluated ratio: Warneck and Williams 2012 Table 6.7 gives 5.1e-5/8.8e-3 = 5.8e-3 at the ground for overhead sun).'
+  atmosphere.chemistry.mcm_no2_photolysis_l:
+    value: 0.01165
+    default: 0.01165
+    units: s-1
+    dtype: float64
+    bounds:
+    - 0.01165
+    - 0.01165
+    category: physical_parameter
+    description: 'MCM clear-sky photolysis parameter l of J4 (NO2 -> NO + O(3P)) in J = l cos(chi)^m exp(-n sec(chi)); the ratio rho(chi) = J1/J4 = (l1/l4) cos(chi)^(m1-m4) exp(-(n1-n4) sec(chi)) converts the NO2 photolysis frequency into J(O1D) = J_NO2 rho(chi) (rho = 4.24e-3 for overhead sun).'
+    references:
+    - 'Saunders, S.M., Jenkin, M.E., Derwent, R.G. and Pilling, M.J. (2003) Protocol for the development of the Master Chemical Mechanism, MCM v3 (Part A), Atmos. Chem. Phys. 3, 161-180, doi:10.5194/acp-3-161-2003: J = l cos(chi)^m exp(-n sec(chi)); J1 O3 -> O(1D) + O2: l = 6.073e-5 s-1, m = 1.743, n = 0.474; J4 NO2 -> NO + O(3P): l = 1.165e-2 s-1, m = 0.244, n = 0.267 (clear sky)'
+    - 'MCM v3.3.1 photolysis rates, https://mcm.york.ac.uk/MCM/rates/photolysis (same J1 and J4 parameters)'
+    tags:
+    - photolysis
+    - oh
+    - mcm
+    requires_grad: false
+    dimension: frequency
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-27T00:00:00Z'
+      notes: 'Replaces oh_o3_photolysis_factor (J(O3) = 0.1 J_NO2, 17-24 times the evaluated ratio: Warneck and Williams 2012 Table 6.7 gives 5.1e-5/8.8e-3 = 5.8e-3 at the ground for overhead sun).'
+  atmosphere.chemistry.mcm_no2_photolysis_m:
+    value: 0.244
+    default: 0.244
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.244
+    - 0.244
+    category: physical_parameter
+    description: 'MCM clear-sky photolysis parameter m of J4 (NO2 -> NO + O(3P)) in J = l cos(chi)^m exp(-n sec(chi)); the ratio rho(chi) = J1/J4 = (l1/l4) cos(chi)^(m1-m4) exp(-(n1-n4) sec(chi)) converts the NO2 photolysis frequency into J(O1D) = J_NO2 rho(chi) (rho = 4.24e-3 for overhead sun).'
+    references:
+    - 'Saunders, S.M., Jenkin, M.E., Derwent, R.G. and Pilling, M.J. (2003) Protocol for the development of the Master Chemical Mechanism, MCM v3 (Part A), Atmos. Chem. Phys. 3, 161-180, doi:10.5194/acp-3-161-2003: J = l cos(chi)^m exp(-n sec(chi)); J1 O3 -> O(1D) + O2: l = 6.073e-5 s-1, m = 1.743, n = 0.474; J4 NO2 -> NO + O(3P): l = 1.165e-2 s-1, m = 0.244, n = 0.267 (clear sky)'
+    - 'MCM v3.3.1 photolysis rates, https://mcm.york.ac.uk/MCM/rates/photolysis (same J1 and J4 parameters)'
+    tags:
+    - photolysis
+    - oh
+    - mcm
+    requires_grad: false
+    dimension: dimensionless
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-27T00:00:00Z'
+      notes: 'Replaces oh_o3_photolysis_factor (J(O3) = 0.1 J_NO2, 17-24 times the evaluated ratio: Warneck and Williams 2012 Table 6.7 gives 5.1e-5/8.8e-3 = 5.8e-3 at the ground for overhead sun).'
+  atmosphere.chemistry.mcm_no2_photolysis_n:
+    value: 0.267
+    default: 0.267
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.267
+    - 0.267
+    category: physical_parameter
+    description: 'MCM clear-sky photolysis parameter n of J4 (NO2 -> NO + O(3P)) in J = l cos(chi)^m exp(-n sec(chi)); the ratio rho(chi) = J1/J4 = (l1/l4) cos(chi)^(m1-m4) exp(-(n1-n4) sec(chi)) converts the NO2 photolysis frequency into J(O1D) = J_NO2 rho(chi) (rho = 4.24e-3 for overhead sun).'
+    references:
+    - 'Saunders, S.M., Jenkin, M.E., Derwent, R.G. and Pilling, M.J. (2003) Protocol for the development of the Master Chemical Mechanism, MCM v3 (Part A), Atmos. Chem. Phys. 3, 161-180, doi:10.5194/acp-3-161-2003: J = l cos(chi)^m exp(-n sec(chi)); J1 O3 -> O(1D) + O2: l = 6.073e-5 s-1, m = 1.743, n = 0.474; J4 NO2 -> NO + O(3P): l = 1.165e-2 s-1, m = 0.244, n = 0.267 (clear sky)'
+    - 'MCM v3.3.1 photolysis rates, https://mcm.york.ac.uk/MCM/rates/photolysis (same J1 and J4 parameters)'
+    tags:
+    - photolysis
+    - oh
+    - mcm
+    requires_grad: false
+    dimension: dimensionless
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-27T00:00:00Z'
+      notes: 'Replaces oh_o3_photolysis_factor (J(O3) = 0.1 J_NO2, 17-24 times the evaluated ratio: Warneck and Williams 2012 Table 6.7 gives 5.1e-5/8.8e-3 = 5.8e-3 at the ground for overhead sun).'
+  atmosphere.chemistry.k_o1d_h2o_298:
+    value: 2.0e-10
+    default: 2.0e-10
+    units: cm3 molecule-1 s-1
+    dtype: float64
+    bounds:
+    - 0.0
+    - .inf
+    category: physical_parameter
+    description: 'O(1D) + H2O -> OH + OH rate coefficient at the Arrhenius reference temperature (tabulated k298); enters the fraction f = k_H2O[H2O] / (k_H2O[H2O] + k_N2[N2] + k_O2[O2]) of O(1D) that forms OH. A rate coefficient is positive; the source states no reliability interval.'
+    references:
+    - 'Warneck, P. and Williams, J. (2012) The Atmospheric Chemist''s Companion, Springer, doi:10.1007/978-94-007-2275-0; Table 7.1: O(1D) + H2O -> OH + OH, k298 = 2.0e-10, k = 1.63e-10 exp(60/T) cm3 molecule-1 s-1 (k = A exp(-B/T), B = -60 K), source of data Sander, S.P. et al. (2006) Chemical Kinetics and Photochemical Data for Use in Atmospheric Studies, Evaluation Number 15, JPL Publication 06-2'
+    tags:
+    - oh
+    - o1d
+    requires_grad: false
+    dimension: second_order_rate_constant
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-27T00:00:00Z'
+      notes: 'The *_298 value is the tabulated k298 used as f(T_ref) of k(T) = k_298 exp(Ea/R (1/T_ref - 1/T)), T_ref = 298.15 K, with Ea = B R; A exp(-B/298.15) differs from k298 by less than 0.5 percent.'
+  atmosphere.chemistry.k_o1d_h2o_activation_energy:
+    value: -498.9
+    default: -498.9
+    units: J mol-1
+    dtype: float64
+    bounds:
+    - -.inf
+    - .inf
+    category: physical_parameter
+    description: 'Activation energy Ea = B R of O(1D) + H2O -> OH + OH in f(T) = f(T_ref) exp(Ea/R (1/T_ref - 1/T)), T_ref = 298.15 K; B = -60 K: negative, the rate coefficient increases as the air cools. The Arrhenius form admits either sign of Ea, so the interval is unbounded.'
+    references:
+    - 'Warneck, P. and Williams, J. (2012) The Atmospheric Chemist''s Companion, Springer, doi:10.1007/978-94-007-2275-0; Table 7.1: O(1D) + H2O -> OH + OH, k298 = 2.0e-10, k = 1.63e-10 exp(60/T) cm3 molecule-1 s-1 (k = A exp(-B/T), B = -60 K), source of data Sander, S.P. et al. (2006) Chemical Kinetics and Photochemical Data for Use in Atmospheric Studies, Evaluation Number 15, JPL Publication 06-2'
+    tags:
+    - oh
+    - o1d
+    - temperature
+    requires_grad: false
+    dimension: energy_per_amount
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-27T00:00:00Z'
+      notes: 'Ea = -60 K x 8.314462618 J mol-1 K-1 = -498.9 J mol-1.'
+  atmosphere.chemistry.k_o1d_n2_298:
+    value: 3.1e-11
+    default: 3.1e-11
+    units: cm3 molecule-1 s-1
+    dtype: float64
+    bounds:
+    - 0.0
+    - .inf
+    category: physical_parameter
+    description: 'O(1D) + N2 -> O(3P) + N2 rate coefficient at the Arrhenius reference temperature (tabulated k298); enters the fraction f = k_H2O[H2O] / (k_H2O[H2O] + k_N2[N2] + k_O2[O2]) of O(1D) that forms OH. A rate coefficient is positive; the source states no reliability interval.'
+    references:
+    - 'Warneck, P. and Williams, J. (2012) The Atmospheric Chemist''s Companion, Springer, doi:10.1007/978-94-007-2275-0; Table 7.1: O(1D) + N2 -> O(3P) + N2, k298 = 3.1e-11, k = 2.15e-11 exp(110/T) cm3 molecule-1 s-1 (k = A exp(-B/T), B = -110 K), source of data Sander, S.P. et al. (2006) Chemical Kinetics and Photochemical Data for Use in Atmospheric Studies, Evaluation Number 15, JPL Publication 06-2'
+    tags:
+    - oh
+    - o1d
+    requires_grad: false
+    dimension: second_order_rate_constant
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-27T00:00:00Z'
+      notes: 'The *_298 value is the tabulated k298 used as f(T_ref) of k(T) = k_298 exp(Ea/R (1/T_ref - 1/T)), T_ref = 298.15 K, with Ea = B R; A exp(-B/298.15) differs from k298 by less than 0.5 percent.'
+  atmosphere.chemistry.k_o1d_n2_activation_energy:
+    value: -914.6
+    default: -914.6
+    units: J mol-1
+    dtype: float64
+    bounds:
+    - -.inf
+    - .inf
+    category: physical_parameter
+    description: 'Activation energy Ea = B R of O(1D) + N2 -> O(3P) + N2 in f(T) = f(T_ref) exp(Ea/R (1/T_ref - 1/T)), T_ref = 298.15 K; B = -110 K: negative, the rate coefficient increases as the air cools. The Arrhenius form admits either sign of Ea, so the interval is unbounded.'
+    references:
+    - 'Warneck, P. and Williams, J. (2012) The Atmospheric Chemist''s Companion, Springer, doi:10.1007/978-94-007-2275-0; Table 7.1: O(1D) + N2 -> O(3P) + N2, k298 = 3.1e-11, k = 2.15e-11 exp(110/T) cm3 molecule-1 s-1 (k = A exp(-B/T), B = -110 K), source of data Sander, S.P. et al. (2006) Chemical Kinetics and Photochemical Data for Use in Atmospheric Studies, Evaluation Number 15, JPL Publication 06-2'
+    tags:
+    - oh
+    - o1d
+    - temperature
+    requires_grad: false
+    dimension: energy_per_amount
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-27T00:00:00Z'
+      notes: 'Ea = -110 K x 8.314462618 J mol-1 K-1 = -914.6 J mol-1.'
+  atmosphere.chemistry.k_o1d_o2_298:
+    value: 4.0e-11
+    default: 4.0e-11
+    units: cm3 molecule-1 s-1
+    dtype: float64
+    bounds:
+    - 0.0
+    - .inf
+    category: physical_parameter
+    description: 'O(1D) + O2 -> O(3P) + O2 rate coefficient at the Arrhenius reference temperature (tabulated k298); enters the fraction f = k_H2O[H2O] / (k_H2O[H2O] + k_N2[N2] + k_O2[O2]) of O(1D) that forms OH. A rate coefficient is positive; the source states no reliability interval.'
+    references:
+    - 'Warneck, P. and Williams, J. (2012) The Atmospheric Chemist''s Companion, Springer, doi:10.1007/978-94-007-2275-0; Table 7.1: O(1D) + O2 -> O(3P) + O2, k298 = 4.0e-11, k = 3.2e-11 exp(67/T) cm3 molecule-1 s-1 (k = A exp(-B/T), B = -67 K), source of data Sander, S.P. et al. (2006) Chemical Kinetics and Photochemical Data for Use in Atmospheric Studies, Evaluation Number 15, JPL Publication 06-2'
+    tags:
+    - oh
+    - o1d
+    requires_grad: false
+    dimension: second_order_rate_constant
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-27T00:00:00Z'
+      notes: 'The *_298 value is the tabulated k298 used as f(T_ref) of k(T) = k_298 exp(Ea/R (1/T_ref - 1/T)), T_ref = 298.15 K, with Ea = B R; A exp(-B/298.15) differs from k298 by less than 0.5 percent.'
+  atmosphere.chemistry.k_o1d_o2_activation_energy:
+    value: -557.1
+    default: -557.1
+    units: J mol-1
+    dtype: float64
+    bounds:
+    - -.inf
+    - .inf
+    category: physical_parameter
+    description: 'Activation energy Ea = B R of O(1D) + O2 -> O(3P) + O2 in f(T) = f(T_ref) exp(Ea/R (1/T_ref - 1/T)), T_ref = 298.15 K; B = -67 K: negative, the rate coefficient increases as the air cools. The Arrhenius form admits either sign of Ea, so the interval is unbounded.'
+    references:
+    - 'Warneck, P. and Williams, J. (2012) The Atmospheric Chemist''s Companion, Springer, doi:10.1007/978-94-007-2275-0; Table 7.1: O(1D) + O2 -> O(3P) + O2, k298 = 4.0e-11, k = 3.2e-11 exp(67/T) cm3 molecule-1 s-1 (k = A exp(-B/T), B = -67 K), source of data Sander, S.P. et al. (2006) Chemical Kinetics and Photochemical Data for Use in Atmospheric Studies, Evaluation Number 15, JPL Publication 06-2'
+    tags:
+    - oh
+    - o1d
+    - temperature
+    requires_grad: false
+    dimension: energy_per_amount
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-27T00:00:00Z'
+      notes: 'Ea = -67 K x 8.314462618 J mol-1 K-1 = -557.1 J mol-1.'
+  atmosphere.chemistry.o1d_water_oh_yield:
+    value: 2.0
+    default: 2.0
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 2.0
+    - 2.0
+    category: physical_parameter
+    description: 'OH molecules formed per O(1D) + H2O reaction: the stoichiometry of O(1D) + H2O -> OH + OH in P_OH = y f J(O1D) [O3].'
+    references:
+    - 'Warneck, P. and Williams, J. (2012) The Atmospheric Chemist''s Companion, Springer, doi:10.1007/978-94-007-2275-0; Table 7.1: O(1D) + H2O -> OH + OH, source of data Sander, S.P. et al. (2006) Chemical Kinetics and Photochemical Data for Use in Atmospheric Studies, Evaluation Number 15, JPL Publication 06-2'
+    tags:
+    - oh
+    - o1d
+    - stoichiometry
+    requires_grad: false
+    dimension: dimensionless
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-09-27T00:00:00Z'
+      notes: 'Replaces oh_o1d_branching_ratio (2.0 with bounds 1.5-2.5): the yield is the reaction stoichiometry, not a free parameter.'
+  atmosphere.chemistry.minimum_concentration:
+    value: 1.0e-12
+    default: 1.0e-12
+    units: mol mol-1
+    bounds:
+    - 1.0e-15
+    - 1.0e-06
+    description: Positive concentration metric scale used only by the level-3 Hodge audit; not a runtime species floor
+    provenance:
+      source: auto_migrated_parameter_database
+      schema_version: 2.0.0
+      detail: auto_migrated_parameter_database_entry
+    note: Structural-audit metric only; runtime species values are validated without flooring or clipping
+    dtype: float64
+    category: numerical_parameter
+    references:
+    - Seinfeld & Pandis (2016) Atmospheric Chemistry and Physics, 3rd ed., Wiley
+    tags:
+    - structural_audit
+    - hodge_metric
+    requires_grad: false
+    dimension: dimensionless
+  atmosphere.chemistry.nasa7.model:
+    value: NASA7
+    units: dimensionless
+    dimension: dimensionless
+    dtype: string
+    bounds:
+    - NASA7
+    - NASA7
+    category: configuration_flag
+    description: Thermodynamic polynomial family; NASA9 coefficients are not interchangeable.
+    tags:
+      - chemistry
+      - thermodynamics
+      - configuration_flag
+    requires_grad: false
+    provenance: &nasa7_provenance
+      source: NASA7 gas fits, NASA TM-4513 dataset
+      schema_version: 2.0.0
+      source_uri: https://shepherd.caltech.edu/EDL/PublicResources/sdt/SDToolbox/data/NASA7/nasa7.dat
+      source_sha256: dd913113b0f052372ba5c1be4003a209c2ad8a83c41123a0ce96c5a106000dbb
+      conversion_source_uri: https://raw.githubusercontent.com/Cantera/cantera/6e0027548cf295bd478b8acfe34816f2db6dd58b/data/nasa_gas.yaml
+      conversion_source_sha256: 4de6199d65d2d3db782e30573720c723130953707336add59713b02d8667e4db
+      standard_pressure_constant: reference_pressure
+      species_notes:
+        'NO': TPIS89
+        NO2: L 7/88
+        O3: L 5/90
+        O2: TPIS89
+    references: &nasa7_references
+    - McBride, Gordon and Reno (1993), NASA TM-4513, NASA7 thermodynamic polynomials.
+  atmosphere.chemistry.nasa7.species_order:
+    value:
+    - 'NO'
+    - NO2
+    - O3
+    - O2
+    units: dimensionless
+    dimension: dimensionless
+    dtype: list
+    bounds:
+    - 'NO'
+    - O2
+    category: configuration_flag
+    description: Species order for the NASA7 coefficient row axis.
+    tags:
+      - chemistry
+      - thermodynamics
+      - nasa7
+    requires_grad: false
+    provenance: *nasa7_provenance
+    references: *nasa7_references
+    metadata:
+      shape:
+      - 4
+  atmosphere.chemistry.nasa7.temperature_ranges:
+    value:
+      type: tensor
+      data:
+      - 200.0
+      - 1000.0
+      - 6000.0
+      dtype: float64
+      shape:
+      - 3
+      requires_grad: false
+    units: K
+    dimension: temperature
+    dtype: float64
+    bounds:
+    - 200.0
+    - 6000.0
+    category: reference_parameter
+    description: Shared low/switch/high temperature limits of the frozen NASA7 fits.
+    tags:
+      - chemistry
+      - thermodynamics
+      - nasa7
+    requires_grad: false
+    provenance: *nasa7_provenance
+    references: *nasa7_references
+  atmosphere.chemistry.nasa7.a1:
+    value:
+      type: tensor
+      data:
+      - - 4.21859896
+        - 3.26071234
+      - - 3.94403907
+        - 4.88474429
+      - - 3.40738221
+        - 12.3302914
+      - - 3.78245636
+        - 3.66096083
+      dtype: float64
+      shape:
+      - 4
+      - 2
+      requires_grad: false
+    units: dimensionless
+    dimension: dimensionless
+    dtype: float64
+    bounds:
+    - 3.26071234
+    - 12.3302914
+    category: physical_parameter
+    description: NASA7 coefficient a1; rows follow species_order, columns are low/high temperature intervals.
+    tags:
+      - chemistry
+      - thermodynamics
+      - nasa7
+    requires_grad: false
+    provenance: *nasa7_provenance
+    references: *nasa7_references
+  atmosphere.chemistry.nasa7.a2:
+    value:
+      type: tensor
+      data:
+      - - -0.00463988124
+        - 0.00119101135
+      - - -0.00158547444
+        - 0.00217241639
+      - - 0.00205379063
+        - -0.0119324783
+      - - -0.00299673415
+        - 0.000656365523
+      dtype: float64
+      shape:
+      - 4
+      - 2
+      requires_grad: false
+    units: K-1
+    dimension: inverse_temperature
+    dtype: float64
+    bounds:
+    - -0.0119324783
+    - 0.00217241639
+    category: physical_parameter
+    description: NASA7 coefficient a2; rows follow species_order, columns are low/high temperature intervals.
+    tags:
+      - chemistry
+      - thermodynamics
+      - nasa7
+    requires_grad: false
+    provenance: *nasa7_provenance
+    references: *nasa7_references
+  atmosphere.chemistry.nasa7.a3:
+    value:
+      type: tensor
+      data:
+      - - 1.10443049e-05
+        - -4.29122646e-07
+      - - 1.66578984e-05
+        - -8.2807902e-07
+      - - 1.38486052e-05
+        - 7.98741278e-06
+      - - 9.847302e-06
+        - -1.41149485e-07
+      dtype: float64
+      shape:
+      - 4
+      - 2
+      requires_grad: false
+    units: K-2
+    dimension: inverse_temperature_squared
+    dtype: float64
+    bounds:
+    - -8.2807902e-07
+    - 1.66578984e-05
+    category: physical_parameter
+    description: NASA7 coefficient a3; rows follow species_order, columns are low/high temperature intervals.
+    tags:
+      - chemistry
+      - thermodynamics
+      - nasa7
+    requires_grad: false
+    provenance: *nasa7_provenance
+    references: *nasa7_references
+  atmosphere.chemistry.nasa7.a4:
+    value:
+      type: tensor
+      data:
+      - - -9.34055507e-09
+        - 6.94481463e-11
+      - - -2.04754478e-08
+        - 1.57477293e-10
+      - - -2.23311542e-08
+        - -1.77194552e-09
+      - - -9.68129508e-09
+        - 2.05797658e-11
+      dtype: float64
+      shape:
+      - 4
+      - 2
+      requires_grad: false
+    units: K-3
+    dimension: inverse_temperature_cubed
+    dtype: float64
+    bounds:
+    - -2.23311542e-08
+    - 1.57477293e-10
+    category: physical_parameter
+    description: NASA7 coefficient a4; rows follow species_order, columns are low/high temperature intervals.
+    tags:
+      - chemistry
+      - thermodynamics
+      - nasa7
+    requires_grad: false
+    provenance: *nasa7_provenance
+    references: *nasa7_references
+  atmosphere.chemistry.nasa7.a5:
+    value:
+      type: tensor
+      data:
+      - - 2.80554874e-12
+        - -4.03295681e-15
+      - - 7.83503265e-12
+        - -1.05110549e-14
+      - - 9.76073226e-12
+        - 1.26075824e-13
+      - - 3.24372836e-12
+        - -1.29913248e-15
+      dtype: float64
+      shape:
+      - 4
+      - 2
+      requires_grad: false
+    units: K-4
+    dimension: inverse_temperature_quartic
+    dtype: float64
+    bounds:
+    - -1.05110549e-14
+    - 9.76073226e-12
+    category: physical_parameter
+    description: NASA7 coefficient a5; rows follow species_order, columns are low/high temperature intervals.
+    tags:
+      - chemistry
+      - thermodynamics
+      - nasa7
+    requires_grad: false
+    provenance: *nasa7_provenance
+    references: *nasa7_references
+  atmosphere.chemistry.nasa7.a6:
+    value:
+      type: tensor
+      data:
+      - - 9845.09964
+        - 9921.43132
+      - - 2896.59865
+        - 2316.48462
+      - - 15864.4979
+        - 12675.5831
+      - - -1063.94356
+        - -1215.97725
+      dtype: float64
+      shape:
+      - 4
+      - 2
+      requires_grad: false
+    units: K
+    dimension: temperature
+    dtype: float64
+    bounds:
+    - -1215.97725
+    - 15864.4979
+    category: physical_parameter
+    description: NASA7 coefficient a6; rows follow species_order, columns are low/high temperature intervals.
+    tags:
+      - chemistry
+      - thermodynamics
+      - nasa7
+    requires_grad: false
+    provenance: *nasa7_provenance
+    references: *nasa7_references
+  atmosphere.chemistry.nasa7.a7:
+    value:
+      type: tensor
+      data:
+      - - 2.28061001
+        - 6.36900518
+      - - 6.31196225
+        - -0.117357075
+      - - 8.2824758
+        - -40.8823374
+      - - 3.65767573
+        - 3.41536184
+      dtype: float64
+      shape:
+      - 4
+      - 2
+      requires_grad: false
+    units: dimensionless
+    dimension: dimensionless
+    dtype: float64
+    bounds:
+    - -40.8823374
+    - 8.2824758
+    category: physical_parameter
+    description: NASA7 coefficient a7; rows follow species_order, columns are low/high temperature intervals.
+    tags:
+      - chemistry
+      - thermodynamics
+      - nasa7
+    requires_grad: false
+    provenance: *nasa7_provenance
+    references: *nasa7_references
+  atmosphere.chemistry.k_ro2_no_298:
+    value: 9.0e-12
+    default: 9.0e-12
+    units: cm3 molecule-1 s-1
+    dtype: float64
+    bounds:
+    - 4.5e-12
+    - 1.8e-11
+    category: physical_parameter
+    description: 'Organic peroxy radical + NO rate coefficient at the Arrhenius reference temperature (RO2 + NO -> RO + NO2, MCM v3.3.1 generic KRO2NO = 2.7e-12 exp(360/T) cm3 molecule-1 s-1, k298 = 9.0e-12 cm3 molecule-1 s-1); governs the high-NOx propagation branch of isoprene-derived peroxy radicals.'
+    references:
+    - 'Jenkin, M.E., Young, J.C. and Rickard, A.R. (2015) The MCM v3.3.1 degradation scheme for isoprene, Atmos. Chem. Phys. 15, 11433-11459, doi:10.5194/acp-15-11433-2015; generic peroxy radical rate coefficient KRO2NO = 2.7e-12 exp(360/T) cm3 molecule-1 s-1, k298 = 9.0e-12 cm3 molecule-1 s-1'
+    - 'Atkinson, R. et al. (2006) Evaluated kinetic and photochemical data for atmospheric chemistry: Volume II - gas phase reactions of organic species, Atmos. Chem. Phys. 6, 3625-4055, doi:10.5194/acp-6-3625-2006 (IUPAC datasheet II.A2.10 / peroxy + NO kinetics)'
+    - 'Saunders, S.M., Jenkin, M.E., Derwent, R.G. and Pilling, M.J. (2003) Protocol for the development of the Master Chemical Mechanism, MCM v3 (Part A), Atmos. Chem. Phys. 3, 161-180, doi:10.5194/acp-3-161-2003'
+    tags:
+    - bvoc
+    - isoprene
+    - ro2
+    - nox
+    requires_grad: false
+    dimension: second_order_rate_constant
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-10-15T00:00:00Z'
+      notes: 'MCM v3.3.1 KRO2NO = 2.7e-12 exp(360/T) cm3 molecule-1 s-1 evaluated at 298.15 K gives 9.03e-12 cm3 molecule-1 s-1 (tabulated k298 = 9.0e-12 cm3 molecule-1 s-1).'
+  atmosphere.chemistry.k_ro2_no_activation_energy:
+    value: -2993.2
+    default: -2993.2
+    units: J mol-1
+    dtype: float64
+    bounds:
+    - -4656.1
+    - -1330.3
+    category: physical_parameter
+    description: 'Activation energy Ea = (E/R) R for RO2 + NO -> RO + NO2 in k(T) = k_298 exp(Ea/R (1/T_ref - 1/T)), T_ref = 298.15 K; E/R = -360 K from MCM v3.3.1 KRO2NO = 2.7e-12 exp(360/T) cm3 molecule-1 s-1.'
+    references:
+    - 'Jenkin, M.E., Young, J.C. and Rickard, A.R. (2015) The MCM v3.3.1 degradation scheme for isoprene, Atmos. Chem. Phys. 15, 11433-11459, doi:10.5194/acp-15-11433-2015; KRO2NO = 2.7e-12 exp(360/T) cm3 molecule-1 s-1 (E/R = -360 K)'
+    - 'Atkinson, R. et al. (2006) Evaluated kinetic and photochemical data for atmospheric chemistry: Volume II - gas phase reactions of organic species, Atmos. Chem. Phys. 6, 3625-4055, doi:10.5194/acp-6-3625-2006'
+    tags:
+    - bvoc
+    - isoprene
+    - ro2
+    - temperature
+    requires_grad: false
+    dimension: energy_per_amount
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-10-15T00:00:00Z'
+      notes: 'Ea = -360 K x 8.314462618 J mol-1 K-1 = -2993.2 J mol-1; bounds correspond to Delta(E/R) = +-200 K.'
+  atmosphere.chemistry.k_ro2_termination_loss:
+    value: 0.02
+    default: 0.02
+    units: s-1
+    dtype: float64
+    bounds:
+    - 0.0
+    - 1.0
+    category: physical_parameter
+    description: 'Effective first-order non-NO loss rate coefficient k_loss,RO2 of isoprene hydroxyperoxy radicals (ISOPOO termination with HO2 and 1,6-H-shift unimolecular isomerization) in the branching fraction beta_NO = k_RO2_NO(T)[NO] / (k_RO2_NO(T)[NO] + k_loss,RO2).'
+    references:
+    - 'Peeters, J., Muller, J.-F., Stavrakou, T. and Nguyen, V.S. (2014) Hydroxyl radical recycling in isoprene oxidation driven by hydrogen bonding and hydrogen tunneling: The upgraded LIM1 mechanism, J. Phys. Chem. A 118, 8625-8643, doi:10.1021/jp5033146'
+    - 'Seinfeld, J.H. and Pandis, S.N. (2016) Atmospheric Chemistry and Physics, 3rd ed., Wiley, Chapter 6 (RO2 + NO vs RO2 + HO2 / isomerization branching)'
+    - 'Jenkin, M.E., Young, J.C. and Rickard, A.R. (2015) The MCM v3.3.1 degradation scheme for isoprene, Atmos. Chem. Phys. 15, 11433-11459, doi:10.5194/acp-15-11433-2015'
+    tags:
+    - bvoc
+    - isoprene
+    - ro2
+    requires_grad: false
+    dimension: frequency
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-10-15T00:00:00Z'
+      notes: 'At k_loss,RO2 = 0.02 s-1 and k_RO2_NO = 9.0e-12 cm3 molecule-1 s-1, the half-saturation NO concentration is [NO]_1/2 = 2.22e9 molecule cm-3 (~90 pptv at 298 K, 1 atm), capturing the canonical low-NOx to high-NOx regime transition.'
+  atmosphere.chemistry.isoprene_ro2_no2_stoichiometric_yield:
+    value: 2.0
+    default: 2.0
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 0.0
+    - 4.0
+    category: physical_parameter
+    description: 'Stoichiometric NO-to-NO2 conversions per OH-initiated isoprene oxidation event along the high-NOx peroxy radical propagation branch (RO2 + NO -> RO + NO2 followed by RO + O2 -> carbonyl + HO2 and HO2 + NO -> OH + NO2; gamma_NO2 = 2.0).'
+    references:
+    - 'Seinfeld, J.H. and Pandis, S.N. (2016) Atmospheric Chemistry and Physics, 3rd ed., Wiley, Chapter 6, Eqs. (6.45)-(6.49) (two NO -> NO2 conversions per OH-initiated hydrocarbon oxidation cycle)'
+    - 'Jenkin, M.E. and Clemitshaw, K.C. (2000) Ozone and other secondary photochemical pollutants: chemical processes governing their formation in the planetary boundary layer, Atmos. Environ. 34, 2499-2527, doi:10.1016/S1352-2310(99)00478-1'
+    tags:
+    - bvoc
+    - isoprene
+    - ro2
+    - stoichiometry
+    requires_grad: false
+    dimension: dimensionless
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-10-15T00:00:00Z'
+      notes: 'Two NO molecules are oxidized to NO2 per OH + C5H8 propagation cycle (RO2 + NO -> RO + NO2 and HO2 + NO -> OH + NO2).'
+  atmosphere.chemistry.isoprene_carbon_atoms:
+    value: 5.0
+    default: 5.0
+    units: dimensionless
+    dtype: float64
+    bounds:
+    - 5.0
+    - 5.0
+    category: physical_parameter
+    description: 'Carbon atoms per molecule of isoprene (2-methyl-1,3-butadiene, C5H8, N_C = 5.0) for the reactive carbon molar conservation ledger.'
+    references:
+    - 'Atkinson, R. and Arey, J. (2003) Atmospheric degradation of volatile organic compounds, Chem. Rev. 103, 4605-4638, doi:10.1021/cr0206420 (isoprene molecular formula C5H8)'
+    tags:
+    - bvoc
+    - isoprene
+    - stoichiometry
+    - carbon_ledger
+    requires_grad: false
+    dimension: dimensionless
+    provenance:
+      source: literature
+      schema_version: 2.0.0
+      created_by: Yuchong Long
+      last_modified: '2026-10-15T00:00:00Z'
+      notes: 'Exact molecular carbon stoichiometry of C5H8 (5 mol C per mol C5H8).'

@@ -1,0 +1,44 @@
+# Canonical woody biomass growth carbon flux.
+variable: growth_rate_stem
+title: "Growth Rate Stem"
+kind: flux
+dimension:
+  udunits: "kg C m-2 s-1"
+  cf_standard_name: null
+support:
+  spatial_kind: grid_cell
+  area_basis: ground_area
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: "biomass_allocation"
+aliases: []
+incrementable: false
+accumulates: carbon.total
+numerics:
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "biomass_allocation"
+      module: "relic.scientific.biosphere.growth.biomass_allocation"
+      provides:
+        - "growth_rate_stem"
+      unit: "kg C m-2 s-1"
+flux_contract:
+  allowed_in:
+    - "biomass_allocation"
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/biosphere/growth/biomass_allocation.py"
+  runtime_role: "canonical_wood_growth_carbon_flux"
+  runtime_writer: "biomass_allocation"

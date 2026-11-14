@@ -1,0 +1,160 @@
+certificate_version: '1.0'
+process_id: relic.scientific.biosphere.surrogates.simple_photosynthesis.SimpleCanopyPhotosynthesis
+module_name: SimpleCanopyPhotosynthesis
+canonical_role: reaction
+iphs_level: 2
+iphs_level_evidence:
+  classification: IPHS-wrapped reaction process certificate
+  compatible_basis: Reaction process is expressed through conserved or open stoichiometric ledgers
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: N_h r_h reaction-network state advance
+  level_2_limit: The canonical runtime wrapper is declared, but no executable typed-cochain or IPHS structural contribution is bound; strict level 4 or 5 evidence is not claimed.
+theory_document: docs\source\theory\surrogates.md
+theory_document_status: updated
+legacy_formula: GPP = G_max * (PPFD/(PPFD+K_PPFD)) * exp(-((T-T_opt)/T_width)^2) * f_w * LAI; Reco = R_base * Q10^((T-T_ref)/10) * LAI; NEE = Reco - GPP
+literature_formula: Rectangular-hyperbola PPFD response and fixed-Q10 empirical respiration response, with positive-to-atmosphere NEE = Reco - GPP
+iphs_formula: y_h = N_h r_h with r_h = [GPP, Reco] and N_h rows [1,0], [0,1], [-1,1]
+legacy_expression: GPP and Reco empirical rates with the canonical positive-to-atmosphere NEE orientation
+iphs_expression: y_h = N_h r_h with ParameterManager-backed rates and an explicit open carbon port
+input_variables:
+- ppfd
+- air_temperature
+- leaf_area_index
+- soil_moisture
+output_variables:
+- gross_primary_productivity
+- ecosystem_respiration
+- net_ecosystem_exchange
+- diagnostics.photosynthesis.water_stress
+- diagnostics.photosynthesis.temperature_factor
+parameter_keys:
+- biosphere.photosynthesis.surrogate.max_gpp_rate
+- biosphere.photosynthesis.surrogate.ppfd_half_saturation
+- biosphere.photosynthesis.surrogate.temperature_optimum
+- biosphere.photosynthesis.surrogate.temperature_width
+- biosphere.photosynthesis.surrogate.base_respiration_rate
+- biosphere.photosynthesis.surrogate.respiration_q10
+- biosphere.photosynthesis.surrogate.soil_moisture_optimum
+- biosphere.photosynthesis.surrogate.soil_moisture_width
+composition_ports:
+- gross_primary_productivity
+- ecosystem_respiration
+- net_ecosystem_exchange
+references:
+- Baly, E.C.C., Morgan, L.B. (1934). Nature 133:414.
+- Mahecha, M.D., et al. (2010). Science 329:838-840.
+- Chapin, F.S., et al. (2006). Ecosystems 9:1041-1050.
+- Baldocchi, D. (2003). Global Change Biology 9:479-492.
+baseline_tests:
+- test\integration\biosphere\simple_photosynthesis_opt_in_contract.test.py
+- test\audit\phase8_scientific_inventory.test.py
+validation_tests:
+- test\integration\biosphere\simple_photosynthesis_opt_in_contract.test.py
+- test\scientific\biosphere\surrogates\simple_photosynthesis_reference_trajectory.test.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  ppfd: ppfd photon-flux input provided by atmospheric_radiation
+  air_temperature: air_temperature mapped to canonical Phase 8 cochain basis
+  leaf_area_index: leaf_area_index mapped to canonical Phase 8 cochain basis
+  soil_moisture: soil_moisture mapped to canonical Phase 8 cochain basis
+parameter_map:
+  biosphere.photosynthesis.surrogate.max_gpp_rate: Maximum gross primary productivity [kg C m-2 s-1]
+  biosphere.photosynthesis.surrogate.ppfd_half_saturation: Half-saturation PPFD of the light response [umol photons m-2 s-1]
+  biosphere.photosynthesis.surrogate.temperature_optimum: Optimum canopy temperature [K]
+  biosphere.photosynthesis.surrogate.temperature_width: Width of the temperature response [K]
+  biosphere.photosynthesis.surrogate.base_respiration_rate: Ecosystem respiration rate at the reference temperature [kg C m-2 s-1]
+  biosphere.photosynthesis.surrogate.respiration_q10: Q10 of the ecosystem respiration [dimensionless]
+  biosphere.photosynthesis.surrogate.soil_moisture_optimum: Optimum volumetric soil moisture of photosynthesis [m3 m-3]
+  biosphere.photosynthesis.surrogate.soil_moisture_width: Width of the soil moisture response [m3 m-3]
+operator_map:
+  N_h: declared stoichiometric or output incidence map for this reaction process
+  r_h: ParameterManager-backed process-rate vector evaluated by the production forward path
+unit_map:
+  gross_primary_productivity: kg C m-2 s-1
+  ecosystem_respiration: kg C m-2 s-1
+  net_ecosystem_exchange: kg C m-2 s-1
+  diagnostics.photosynthesis.water_stress: '1'
+  diagnostics.photosynthesis.temperature_factor: '1'
+input_output_map:
+  air_temperature: same interface variable preserved between legacy and IPHS runtime contracts
+  diagnostics.photosynthesis.temperature_factor: same interface variable preserved between legacy and IPHS runtime contracts
+  diagnostics.photosynthesis.water_stress: same interface variable preserved between legacy and IPHS runtime contracts
+  ecosystem_respiration: same interface variable preserved between legacy and IPHS runtime contracts
+  gross_primary_productivity: same interface variable preserved between legacy and IPHS runtime contracts
+  leaf_area_index: same interface variable preserved between legacy and IPHS runtime contracts
+  net_ecosystem_exchange: same interface variable preserved between legacy and IPHS runtime contracts
+  ppfd: same interface variable preserved between empirical and wrapped runtime contracts
+  soil_moisture: same interface variable preserved between legacy and IPHS runtime contracts
+interface_map:
+  forward_signature: forward(self, state, time, dt)
+  bridge_class: BiologicalProcessFunctor
+  abstraction_contract: BiologicalProcess
+  state_write_mode: existing RELIC simulator and StateManager update path
+  legacy_inputs:
+  - ppfd
+  - air_temperature
+  - leaf_area_index
+  - soil_moisture
+  iphs_inputs:
+  - ppfd
+  - air_temperature
+  - leaf_area_index
+  - soil_moisture
+  legacy_outputs:
+  - gross_primary_productivity
+  - ecosystem_respiration
+  - net_ecosystem_exchange
+  - diagnostics.photosynthesis.water_stress
+  - diagnostics.photosynthesis.temperature_factor
+  iphs_outputs:
+  - gross_primary_productivity
+  - ecosystem_respiration
+  - net_ecosystem_exchange
+  - diagnostics.photosynthesis.water_stress
+  - diagnostics.photosynthesis.temperature_factor
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: ParameterManager-backed empirical GPP and Reco rates are preserved while PPFD, NEE orientation, and validation use the canonical contract.
+  no_legacy_mode: No selectable legacy runtime branch is exposed for Phase 8 completion.
+state_advancement_map:
+  potential_basis: declared RELIC open carbon-flux port basis
+  effort_variable: not claimed for this level 2 empirical reaction wrapper
+  state_advancer: y_h = N_h r_h with explicit stoichiometric_N and rates evaluated by advance_reaction_network
+  runtime_usage: SimpleCanopyPhotosynthesis.forward calls advance_reaction_network with declared stoichiometric_N and rates before emitting canonical outputs.
+  explicit_stoichiometric_usage: SimpleCanopyPhotosynthesis.forward materializes stoichiometric_N and rates, then lowers x_dot=N_h r_h through advance_reaction_network.
+parameter_management_map:
+  biosphere.photosynthesis.surrogate.max_gpp_rate:
+    source: ParameterManager YAML
+  biosphere.photosynthesis.surrogate.ppfd_half_saturation:
+    source: ParameterManager YAML
+  biosphere.photosynthesis.surrogate.temperature_optimum:
+    source: ParameterManager YAML
+  biosphere.photosynthesis.surrogate.temperature_width:
+    source: ParameterManager YAML
+  biosphere.photosynthesis.surrogate.base_respiration_rate:
+    source: ParameterManager YAML
+  biosphere.photosynthesis.surrogate.respiration_q10:
+    source: ParameterManager YAML
+  biosphere.photosynthesis.surrogate.soil_moisture_optimum:
+    source: ParameterManager YAML
+  biosphere.photosynthesis.surrogate.soil_moisture_width:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares interfaces, execution phase, and conservation semantics
+  state_contract: existing simulator state update path is preserved
+  validation_rule: phase8 scientific inventory and equivalence certificate checks
+dependency_interconnection_map:
+  dependencies: atmospheric_radiation is process-owned; the factory appends exactly one selected phenology owner without replacing it
+  direct_functor_calls: none declared by certificate
+overflow_routing_map:
+  diagnostic_residuals: no clipping residual is generated; invalid domains fail before calculation and bounded response functions require no clipping
+  discarded_residuals: all valid-domain carbon is represented by gross_primary_productivity, ecosystem_respiration, and net_ecosystem_exchange; invalid domains and non-finite calculated fluxes are rejected and the local carbon identity is audited
+conservation_map:
+  conserved_quantities: carbon
+  balance_expression: NEE - (Reco - GPP) = 0 with NEE positive from ecosystem to atmosphere
+entropy_audit:
+  operator_sign: no thermodynamic operator-sign claim is made at level 2
+  sigma_expression: no entropy-production claim is made for this empirical flux wrapper
+equivalence_type: reaction_network

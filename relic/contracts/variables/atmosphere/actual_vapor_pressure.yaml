@@ -1,0 +1,43 @@
+variable: actual_vapor_pressure
+title: "Actual Vapour Pressure"
+description: "Daily actual (partial) vapour pressure e_a of water vapour in the near-surface air in Pa (CF water_vapor_partial_pressure_in_air), for example e0 of the daily dewpoint temperature (FAO-56 Eq. 14). Read by the daylight_gauss temporal support (relic/scientific/atmosphere/daylight_quadrature.py) of farquhar_photosynthesis, medlyn_stomatal_conductance and leaf_energy_balance, which hold e_a constant through the day and form the vapour pressure deficit of each sample as D_k = max(e0(T_k) - e_a, 0) with the Tetens e0 of the shared psychrometrics helper (FAO-56 Eq. 11); with this support it replaces their vapor_pressure_deficit input. No RELIC Functor writes it: it is supplied as forcing."
+kind: forcing
+dimension:
+  udunits: "Pa"
+  cf_standard_name: "water_vapor_partial_pressure_in_air"
+support:
+  spatial_kind: grid_cell
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Allen, R.G. et al. (1998). Crop evapotranspiration. FAO Irrigation and Drainage Paper 56, Eqs. 11, 13 and 14"
+  - "CF Standard Name Table v94: water_vapor_partial_pressure_in_air (canonical units Pa)"
+numerics:
+  # Partial pressure: e_a >= 0 Pa.
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies: []
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/atmosphere/daylight_quadrature.py"
+  runtime_role: "daylight_support_actual_vapor_pressure_forcing"
+  runtime_writer: null
+  note: "Declared input only with config temporal_support daylight_gauss of its readers; a negative or non-finite value raises ValueError (vapor_pressure_deficit_samples). Support as vapor_pressure_deficit (one value per cell, labelled instantaneous like the other daily forcings). No RELIC Functor writes it."

@@ -1,0 +1,234 @@
+certificate_version: '1.0'
+process_id: relic.scientific.pedosphere.transport.SoilWaterTransportFunctor.SoilWaterTransportFunctor
+module_name: soil_water_transport
+canonical_role: transport
+iphs_level: 3
+iphs_level_evidence:
+  classification: IPHS-structured transport process certificate
+  compatible_basis: Process declares composition-safe IPHS or DEC structure
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: DEC/IPHS transport operator with conservative flux routing
+  structural_contribution: Cochain, Hodge, flux, and port structures are declared for assembly audit
+  assembly_participation: Certificate participates in Phase 8 inventory and GraphIR structural audit
+  executable_scope: One-dimensional Richards transport with the van Genuchten--Mualem hydraulic closure only
+  level_3_limit: Typed form, Hodge, port, or related structure is declared, but no runtime-linked IPHSStructureSpec contribution and executable level 4 or 5 certificate binding is present.
+theory_document: docs\source\theory\soil_hydraulics.md
+theory_document_status: updated
+legacy_formula: dtheta/dt = div(K(theta) * grad(h + z)) + S
+literature_formula: Mixed-form Richards water balance with Darcy flux q = -K(theta) grad(h + z) and storage tendency dtheta/dt = -div(q) + S.
+iphs_formula: theta_dot = -D_h q_h + G_h u_h; q_h = -star_K d(h + z); u_h = (infiltration_flux - evapotranspiration_flux) / water_density; star_K = star_K.T >= 0.
+legacy_expression: dtheta/dt = div(K(theta) * grad(h + z)) + S
+iphs_expression: theta_dot = -D_h q_h + G_h u_h; q_h = -star_K X_h; X_h = d(h + z); sigma = X_h.T star_K X_h >= 0.
+input_variables:
+- soil_moisture
+- pressure_head
+- infiltration_flux
+- evapotranspiration_flux
+output_variables:
+- soil_moisture
+- diagnostics.soil_water_transport.clipping_residual
+- diagnostics.soil_water_transport.water_balance_residual
+- diagnostics.soil_water_transport.darcy_flux
+- diagnostics.soil_water_transport.richards_iterations
+parameter_keys:
+- pedosphere.grid.dz
+- pedosphere.hydraulic.saturated_conductivity
+- pedosphere.moisture.wilting_point
+- pedosphere.soil.porosity
+- pedosphere.van_genuchten.alpha_vg
+- pedosphere.van_genuchten.n_vg
+- pedosphere.transport.gravity_head_gradient
+- transport.numerical.min_timestep
+- transport.numerical.richards_tolerance
+- transport.numerical.max_richards_iterations
+- pedosphere.numerical.cfl_number
+- pedosphere.numerical.epsilon_length
+- pedosphere.numerical.epsilon_diffusivity
+- pedosphere.numerical.water_capacity_epsilon
+- pedosphere.numerical.harmonic_mean_factor
+- pedosphere.numerical.linear_solver_tolerance
+- pedosphere.numerical.under_relaxation_factor
+composition_ports:
+- surface_water_flux_boundary
+- bottom_drainage_boundary
+references:
+- Darcy, H. (1856). Les fontaines publiques de la ville de Dijon.
+- Richards, L.A. (1931). Capillary conduction of liquids through porous mediums. Physics, 1, 318-333.
+- Celia, M.A., Bouloutas, E.T., and Zarba, R.L. (1990). A general mass-conservative numerical solution for the unsaturated flow equation. Water Resources Research, 26, 1483-1496.
+- van Genuchten, M.Th. (1980). A closed-form equation for predicting the hydraulic conductivity of unsaturated soils. Soil Science Society of America Journal, 44, 892-898.
+- Mualem, Y. (1976). A new model for predicting the hydraulic conductivity of unsaturated porous media. Water Resources Research, 12, 513-522.
+- Hirani, A.N. (2003). Discrete Exterior Calculus.
+baseline_tests:
+- test\unit\scientific\pedosphere\transport\soil_water_transport_hodge_contract.test.py
+- test\pedosphere\transport\soil_water_transport_solver.test.py
+- test\pedosphere\transport\test_soil_water_transport_defaults.py
+- test\pedosphere\transport\test_soil_water_transport_parameters.py
+- test\audit\phase8_scientific_inventory.test.py
+validation_tests:
+- test\unit\scientific\pedosphere\transport\soil_water_transport_hodge_contract.test.py
+- test\pedosphere\transport\soil_water_transport_solver.test.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  soil_moisture: required cellwise volumetric-water-content profile and absolute StateManager full state theta_(n+1)
+  pressure_head: effort potential h on primal 0-cochains
+  infiltration_flux: required surface matter-port inflow [kg m-2 s-1]
+  evapotranspiration_flux: required surface matter-port outflow [kg m-2 s-1]
+  diagnostics.soil_water_transport.clipping_residual: theta_raw - clamp(theta_raw, wilting_point, porosity)
+  diagnostics.soil_water_transport.water_balance_residual: Delta W - q_surface dt + q_bottom dt
+  diagnostics.soil_water_transport.darcy_flux: downward-positive interface Darcy flux profile
+  diagnostics.soil_water_transport.richards_iterations: successful Picard iteration count
+parameter_map:
+  pedosphere.grid.dz: Vertical grid spacing [m]
+  pedosphere.hydraulic.saturated_conductivity: Saturated hydraulic conductivity [m s-1]
+  pedosphere.moisture.wilting_point: Wilting point water content [m3 m-3]
+  pedosphere.soil.porosity: Soil porosity [m3 m-3]
+  pedosphere.van_genuchten.alpha_vg: Van Genuchten alpha parameter [m-1]
+  pedosphere.van_genuchten.n_vg: Van Genuchten n parameter [dimensionless]
+  pedosphere.transport.gravity_head_gradient: Gravity head gradient [dimensionless]
+  transport.numerical.min_timestep: Minimum stable time step [s]
+  transport.numerical.richards_tolerance: Richards Picard convergence tolerance [dimensionless]
+  transport.numerical.max_richards_iterations: Maximum Richards Picard iterations [dimensionless]
+  pedosphere.numerical.cfl_number: CFL safety coefficient [dimensionless]
+  pedosphere.numerical.epsilon_length: Finite difference perturbation length [m]
+  pedosphere.numerical.epsilon_diffusivity: Diffusivity epsilon [dimensionless]
+  pedosphere.numerical.water_capacity_epsilon: Minimum water capacity scale [dimensionless]
+  pedosphere.numerical.harmonic_mean_factor: Harmonic interface mean coefficient [dimensionless]
+  pedosphere.numerical.linear_solver_tolerance: Tridiagonal solver tolerance [dimensionless]
+  pedosphere.numerical.under_relaxation_factor: Picard under-relaxation factor [dimensionless]
+operator_map:
+  D_h: existing one-dimensional finite-difference divergence used by the shared RichardsNumericalSolver modified-Picard correction
+  star_K: build_hodge_contract and build_hodge_terms HodgeStarSpec with saturated_conductivity
+  source_port: (infiltration_flux - evapotranspiration_flux) / water_density
+  boundary_operator: one-dimensional Richards boundary handling with q_bottom = K(theta_bottom) g_z for free drainage and explicit surface/drainage PortSpecIPHS declarations
+unit_map:
+  soil_moisture: m3 m-3
+  pressure_head: m
+  infiltration_flux: kg m-2 s-1
+  evapotranspiration_flux: kg m-2 s-1
+  diagnostics.soil_water_transport.clipping_residual: m3 m-3
+  diagnostics.soil_water_transport.water_balance_residual: m
+  diagnostics.soil_water_transport.darcy_flux: m s-1
+  diagnostics.soil_water_transport.richards_iterations: dimensionless
+  surface_water_flux_boundary: m s-1
+input_output_map:
+  soil_moisture: required cellwise profile and absolute full-state REPLACE output
+  pressure_head: optional effort reconstructed only by the same van Genuchten closure when absent
+  infiltration_flux: required canonical surface inflow converted with water_density
+  evapotranspiration_flux: required canonical surface outflow converted with water_density
+  diagnostics.soil_water_transport.clipping_residual: explicit clipping route
+  diagnostics.soil_water_transport.water_balance_residual: explicit column ledger residual
+  diagnostics.soil_water_transport.darcy_flux: downward-positive interface flux observation
+  diagnostics.soil_water_transport.richards_iterations: successful convergence observation
+interface_map:
+  forward_signature: forward(self, state, time, dt)
+  bridge_class: TransportMechanismFunctor
+  abstraction_contract: TransportMechanism
+  state_write_mode: soil_moisture uses REPLACE with per_timestep=false and contains the absolute theta_(n+1) full state
+  legacy_inputs:
+  - soil_moisture
+  - pressure_head
+  - infiltration_flux
+  - evapotranspiration_flux
+  iphs_inputs:
+  - soil_moisture
+  - pressure_head
+  - infiltration_flux
+  - evapotranspiration_flux
+  legacy_outputs:
+  - soil_moisture
+  - diagnostics.soil_water_transport.clipping_residual
+  - diagnostics.soil_water_transport.water_balance_residual
+  - diagnostics.soil_water_transport.darcy_flux
+  - diagnostics.soil_water_transport.richards_iterations
+  iphs_outputs:
+  - soil_moisture
+  - diagnostics.soil_water_transport.clipping_residual
+  - diagnostics.soil_water_transport.water_balance_residual
+  - diagnostics.soil_water_transport.darcy_flux
+  - diagnostics.soil_water_transport.richards_iterations
+  supported_configuration: the one-dimensional van Genuchten-Mualem column (SPATIAL_DIMS = 1; no dimension or closure selector keyword), positive finite scalar dt, finite in-domain one-dimensional storage, and required finite non-negative scalar boundary mass fluxes
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: _compute_iphs_richards_state_update
+  preserved_numerics: The shared RichardsNumericalSolver modified-Picard correction evaluates the canonical mixed residual; dh/dtheta is differentiated from the same van Genuchten pressure-head relation.
+  no_legacy_mode: Unsupported closures, non-1D grids, missing boundary fluxes, non-convergence, and unstable requested timesteps fail before an update; no rate alias, zero default, cubic, or generic-diffusion fallback remains callable.
+state_advancement_map:
+  potential_basis: cellwise volumetric-water-content profile theta_h; column storage is derived with dz
+  effort_variable: hydraulic-head gradient X_h = d(h + z) with conductivity mobility star_K
+  state_advancer: theta_dot = -D_h q_h + G_h u_h; q_h = -star_K X_h
+  runtime_usage: _compute_iphs_richards_state_update applies the shared canonical mixed-residual correction, accepts only configured residual or verified machine-precision convergence, and routes mass residual diagnostics.
+physical_constant_ssot:
+  water_density: get_physical_constant("water_density") converts kg m-2 s-1 boundary fluxes to m s-1
+parameter_management_map:
+  pedosphere.grid.dz:
+    source: ParameterManager YAML
+  pedosphere.hydraulic.saturated_conductivity:
+    source: ParameterManager YAML
+  pedosphere.moisture.wilting_point:
+    source: ParameterManager YAML
+  pedosphere.soil.porosity:
+    source: ParameterManager YAML
+  pedosphere.van_genuchten.alpha_vg:
+    source: ParameterManager YAML
+  pedosphere.van_genuchten.n_vg:
+    source: ParameterManager YAML
+  pedosphere.transport.gravity_head_gradient:
+    source: ParameterManager YAML
+  transport.numerical.min_timestep:
+    source: ParameterManager YAML
+  transport.numerical.richards_tolerance:
+    source: ParameterManager YAML
+  transport.numerical.max_richards_iterations:
+    source: ParameterManager YAML
+  pedosphere.numerical.cfl_number:
+    source: ParameterManager YAML
+  pedosphere.numerical.epsilon_length:
+    source: ParameterManager YAML
+  pedosphere.numerical.epsilon_diffusivity:
+    source: ParameterManager YAML
+  pedosphere.numerical.water_capacity_epsilon:
+    source: ParameterManager YAML
+  pedosphere.numerical.harmonic_mean_factor:
+    source: ParameterManager YAML
+  pedosphere.numerical.linear_solver_tolerance:
+    source: ParameterManager YAML
+  pedosphere.numerical.under_relaxation_factor:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares transport abstraction, variables, units, references, and conservation laws
+  structural_protocol: declared_forms, required_parameters, build_hodge_terms, dissipative_structure, ports
+  state_contract: explicit soil_moisture UpdateItem uses REPLACE and per_timestep=false through StateManager
+  compiler_gate: existing compile_graph, validate_graph, and ValidationRegistry assertions
+  ports:
+  - surface_water_flux_boundary
+  - bottom_drainage_boundary
+dependency_interconnection_map:
+  dependencies: get_dependencies declares surface_runoff and the two mutually exclusive ET closures as lagged alternatives; canonical boundary ports may instead be supplied by the external StateManager adapter
+  lagged_dependencies:
+  - surface_runoff
+  - penman_monteith_et
+  - priestley_taylor_et
+  coupling_interfaces:
+  - pedosphere.hydrology
+  - pedosphere.biology
+  chain_maps:
+  - cellwise soil_moisture profile to the absolute soil_moisture full state
+  - canonical boundary mass fluxes through water_density to the volumetric surface port
+  direct_functor_calls: none_no_direct_functor_calls
+overflow_routing_map:
+  saturation_bounds: theta_raw - clamp(theta_raw, wilting_point, porosity) is emitted as diagnostics.soil_water_transport.clipping_residual
+  conservation_residual: diagnostics.soil_water_transport.water_balance_residual receives the absolute column balance residual in m
+  boundary_flux_residual: surface and drainage fluxes are represented by declared matter ports
+  unsupported_configuration: non-1D grids, unsupported hydraulic closures, nonpositive time steps, and non-finite numerical states or ledgers are rejected before state advancement
+  discarded_residuals: none_no_discarded_residuals
+conservation_map:
+  conserved_quantity: water
+  balance_expression: sum(theta_new - theta_old) dz = (q_surface - q_bottom) dt + residual
+  local_check: _check_water_conservation returns diagnostics.soil_water_transport.water_balance_residual and check_conservation_laws binds the FunctorBase guard to that open-column ledger
+  functor_law: FunctorMetadata.conservation_laws includes mass and water
+entropy_audit:
+  dissipative_operator: star_K and M_h are symmetric positive semidefinite
+  sigma_expression: sigma = X_h.T star_K X_h >= 0
+  validation_hook: build_hodge_contract(strict=True) and dissipative_structure eigenvalue checks
+equivalence_type: port_equivalent

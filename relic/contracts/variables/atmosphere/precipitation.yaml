@@ -1,0 +1,63 @@
+variable: precipitation_flux
+title: "Surface Precipitation Mass Flux"
+kind: forcing
+dimension:
+  udunits: "kg m-2 s-1"
+  cf_standard_name: "precipitation_flux"
+support:
+  spatial_kind: grid_cell
+  area_basis: ground_area
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+numerics:
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "CESMAdapter"
+      module: "relic.coupling.external.atmospheric_models.cesm_adapter"
+      provides: ["precipitation_flux"]
+      unit: "kg m-2 s-1"
+    - name: "CMIP6Adapter"
+      module: "relic.coupling.external.climate_models.cmip6_adapter"
+      provides: ["precipitation_flux"]
+      unit: "kg m-2 s-1"
+    - name: "SWATAdapter"
+      module: "relic.coupling.external.hydrological_models.swat_adapter"
+      provides: ["precipitation_flux"]
+      unit: "kg m-2 s-1"
+    - name: "VICAdapter"
+      module: "relic.coupling.external.hydrological_models.vic_adapter"
+      provides: ["precipitation_flux"]
+      unit: "kg m-2 s-1"
+    - name: "WRFAdapter"
+      module: "relic.coupling.external.atmospheric_models.wrf_adapter"
+      provides: ["precipitation_flux"]
+      unit: "kg m-2 s-1"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "external_forcing_adapter"
+  runtime_role: "external_precipitation_mass_flux_forcing"
+  runtime_writer: null
+  adapter_writers:
+    - "CESMAdapter"
+    - "CMIP6Adapter"
+    - "SWATAdapter"
+    - "VICAdapter"
+    - "WRFAdapter"

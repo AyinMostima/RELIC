@@ -1,0 +1,156 @@
+certificate_version: '1.0'
+process_id: relic.scientific.atmosphere.stochastic_temperature.OrnsteinUhlenbeckTemperatureFunctor
+module_name: OrnsteinUhlenbeckTemperatureFunctor
+canonical_role: field
+iphs_level: 2
+iphs_level_evidence:
+  classification: IPHS-wrapped continuous-SDE field process certificate (external forcing noise, category continuous_sde)
+  compatible_basis: One prognostic anomaly state cochain stochastic_air_temperature_anomaly [K] with ParameterManager-backed drift and diagonal diffusion coefficients
+  runtime_replacement: forward evaluates exactly one fixed-step Euler-Maruyama step through the existing relic.stochastic.sde_solver.EulerMaruyamaSolver with a Functor-owned Wiener substream exposed through module extra state; no legacy branch exists
+  canonical_operator: dX = -alpha X dt + sigma dW with X_{n+1} = X_n - alpha X_n dt + sigma dW_n, dW_n ~ N(0, dt)
+  level_2_limit: The canonical stochastic runtime wrapper is declared and executed, but no typed-cochain IPHS structure, Hamiltonian, entropy, or fluctuation-dissipation relation is claimed; strict level 4 or 5 evidence is not applicable to this external-forcing noise model.
+theory_document: docs\source\theory\atmosphere_stochastic_temperature.md
+theory_document_status: updated
+legacy_formula: dX = -alpha X dt + sigma dW
+literature_formula: Ornstein-Uhlenbeck anomaly dX = -alpha X dt + sigma dW (Hasselmann 1976; Gardiner 2009) integrated by Euler-Maruyama X_{n+1} = X_n - alpha X_n dt + sigma sqrt(dt) xi (Kloeden and Platen 1992; Higham 2001)
+iphs_formula: x_dot = a(x) + b dW/dt with a(x) = -alpha x and diagonal b = sigma executed by the canonical EulerMaruyamaSolver; no IPHS operator is claimed
+legacy_expression: dX = -alpha X dt + sigma dW
+iphs_expression: X_{n+1} = X_n - alpha X_n dt + sigma dW_n, dW_n ~ N(0, dt), Functor-owned Wiener substream
+input_variables:
+- stochastic_air_temperature_anomaly
+output_variables:
+- stochastic_air_temperature_anomaly
+- diagnostics.stochastic_temperature.drift
+- diagnostics.stochastic_temperature.diffusion
+- diagnostics.stochastic_temperature.wiener_increment
+parameter_keys:
+- stochastic.weather.temperature.reversion_rate
+- stochastic.weather.temperature.volatility
+composition_ports: []
+references:
+- Hasselmann, K. (1976). Stochastic climate models Part I. Tellus 28, 473-485
+- Gardiner, C. (2009). Stochastic Methods, 4th ed., Springer
+- Kloeden, P.E. & Platen, E. (1992). Numerical Solution of Stochastic Differential Equations, Springer
+- Higham, D.J. (2001). SIAM Review 43, 525-546
+baseline_tests:
+- test\unit\atmosphere\test_stochastic_temperature.py
+- test\audit\phase8_scientific_inventory.test.py
+validation_tests:
+- test\unit\atmosphere\test_stochastic_temperature.py
+- test\integration\test_stochastic_temperature_integration.py
+- test\integration\stochastic\workflows.test.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  stochastic_air_temperature_anomaly: prognostic Ornstein-Uhlenbeck anomaly state X [K]; input state and accumulated increment
+  diagnostics.stochastic_temperature.drift: drift a(X) = -alpha X at the step start [K day-1]
+  diagnostics.stochastic_temperature.diffusion: diagonal diffusion coefficient sigma [K day-0.5]
+  diagnostics.stochastic_temperature.wiener_increment: Wiener increment dW = sqrt(dt) xi from the Functor-owned substream [day-0.5]
+parameter_map:
+  stochastic.weather.temperature.reversion_rate: mean reversion rate alpha from ParameterManager [day-1]
+  stochastic.weather.temperature.volatility: volatility sigma from ParameterManager [K day-0.5]
+operator_map:
+  drift_operator: a(x) = -alpha x evaluated by the Functor and validated by EulerMaruyamaSolver
+  diffusion_operator: diagonal b = sigma broadcast to the state shape; correlated or general diffusion is [N] in SDEParameters
+  time_conversion: the simulator step in seconds is converted once to days through the SSOT time constant SECONDS_PER_DAY
+unit_map:
+  stochastic_air_temperature_anomaly: K
+  diagnostics.stochastic_temperature.drift: K day-1
+  diagnostics.stochastic_temperature.diffusion: K day-0.5
+  diagnostics.stochastic_temperature.wiener_increment: day-0.5
+input_output_map:
+  stochastic_air_temperature_anomaly: canonical state input and UpdateItem ACCUMULATE increment in K, per_timestep true
+  diagnostics.stochastic_temperature.drift: canonical REPLACE observation of the step drift
+  diagnostics.stochastic_temperature.diffusion: canonical REPLACE observation of the step diffusion coefficient
+  diagnostics.stochastic_temperature.wiener_increment: canonical REPLACE observation of the Wiener increment used by the emitted step
+interface_map:
+  forward_signature: forward(self, state, time, dt, **kwargs)
+  bridge_class: PhysicalFieldFunctor
+  abstraction_contract: PhysicalField
+  constructor_selection: "OrnsteinUhlenbeckTemperatureFunctor(config={'seed': integer})"
+  state_write_mode: UpdateItem ACCUMULATE with per_timestep true for the anomaly and REPLACE observations for diagnostics
+  legacy_inputs:
+  - stochastic_air_temperature_anomaly
+  iphs_inputs:
+  - stochastic_air_temperature_anomaly
+  legacy_outputs:
+  - stochastic_air_temperature_anomaly
+  - diagnostics.stochastic_temperature.drift
+  - diagnostics.stochastic_temperature.diffusion
+  - diagnostics.stochastic_temperature.wiener_increment
+  iphs_outputs:
+  - stochastic_air_temperature_anomaly
+  - diagnostics.stochastic_temperature.drift
+  - diagnostics.stochastic_temperature.diffusion
+  - diagnostics.stochastic_temperature.wiener_increment
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward -> relic.stochastic.sde_solver.EulerMaruyamaSolver.sample
+  preserved_numerics: The single forward path evaluates one Euler-Maruyama step with the declared drift and diagonal diffusion and emits the exact increment; no alternative kinetic branch exists.
+  no_legacy_mode: No selectable legacy runtime branch is exposed; the Functor was introduced directly on the canonical stochastic owner.
+  non_strict_reason: Level 2 declares the canonical stochastic runtime wrapper; no IPHS structure, Hamiltonian, entropy, or fluctuation-dissipation claim is made for external forcing noise.
+state_advancement_map:
+  potential_basis: prognostic anomaly state X on the declared cell basis; no storage functional is claimed
+  effort_variable: none; the drift a(X) = -alpha X is a linear relaxation, not a variational effort
+  state_advancer: Delta X = -alpha X dt + sigma dW_n from one EulerMaruyamaSolver.sample step with num_steps=1 and the Functor-owned generator
+  runtime_usage: OrnsteinUhlenbeckTemperatureFunctor.forward validates the state and step, converts dt to days, evaluates one Euler-Maruyama step, increments the substream draw count, and emits one ACCUMULATE increment plus three REPLACE diagnostics; a rejected step leaves the substream position unchanged.
+parameter_management_map:
+  stochastic.weather.temperature.reversion_rate:
+    source: ParameterManager YAML
+  stochastic.weather.temperature.volatility:
+    source: ParameterManager YAML
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares one state input, one state output, three diagnostics, no dependencies, and no conservation law
+  state_contract: SCM contract stochastic_air_temperature_anomaly (K, state) and the three diagnostics.stochastic_temperature.* contracts type the GraphIR ports
+  validation_rule: stochastic_sdae_check with the continuous_sde execution binding, phase8 scientific inventory, and equivalence certificate checks
+  public_entrypoints: relic.stochastic.workflows.build_bound_continuous_sde_graph / execute_bound_continuous_sde serve POST /stochastic/sde and the CLI command stochastic sde; both fail closed for unbound process names and per-run parameter overrides
+dependency_interconnection_map:
+  dependencies: no Functor dependencies; get_dependencies() returns an empty list
+  direct_functor_calls: none; only the canonical EulerMaruyamaSolver is invoked
+overflow_routing_map:
+  invalid_state_route: missing, non-tensor, non-floating, or non-finite anomaly states fail before any draw or UpdateItem
+  inadmissible_timestep_route: a step with alpha dt outside (0, 1) fails before any draw; no clipping of the explicit step
+  substream_route: the Wiener substream advances only when a step is emitted; rollback restores the module extra state
+  discarded_residuals: no residual is discarded; every rejected input or step fails before a draw or an UpdateItem is emitted
+conservation_map:
+  conserved_quantities: none; the anomaly is a stochastic forcing state without a mass or energy budget
+  balance_expression: E[X_{n+1} | X_n] = (1 - alpha dt) X_n and Var[X_{n+1} | X_n] = sigma^2 dt for the emitted step
+entropy_audit:
+  operator_sign: alpha > 0 and sigma > 0 by ParameterManager bounds; the drift is dissipative in the mean
+  sigma_expression: no entropy-production or fluctuation-dissipation claim is made; the noise is an external forcing closure
+stochastic_sdae_map:
+  runtime_owner: relic.stochastic.sde_solver.EulerMaruyamaSolver
+  declares_stochastic_terms: true
+  requires_noise_covariance: false
+  declares_fdt_noise: false
+  requires_conservative_noise_flux: false
+  requires_descriptor_constraint: false
+  requires_jump_reset: false
+  stochastic_terms:
+  - name: air_temperature_anomaly_noise
+    classification: external_forcing
+    runtime_owner: relic.stochastic.sde_solver.EulerMaruyamaSolver
+    state_vars:
+    - stochastic_air_temperature_anomaly
+    parameter_keys:
+    - stochastic.weather.temperature.reversion_rate
+    - stochastic.weather.temperature.volatility
+    noise_type: white
+    solver_name: euler_maruyama
+  execution_binding:
+    functor_class: relic.scientific.atmosphere.stochastic_temperature.OrnsteinUhlenbeckTemperatureFunctor
+    forward_owner: relic.scientific.atmosphere.stochastic_temperature.OrnsteinUhlenbeckTemperatureFunctor.forward
+    solver_owner: relic.stochastic.sde_solver.EulerMaruyamaSolver
+    rng_state_scope: functor_extra_state
+    validation_test: test\unit\atmosphere\test_stochastic_temperature.py
+stochastic_reproducibility_map:
+  random_seed: 7
+  noise_type: white
+  solver_method: euler_maruyama
+  uses_ensemble: false
+  checkpoint_owner: relic.core.simulator.checkpoint
+  rng_state_owner: relic.core.simulator.checkpoint
+  rng_substream: stochastic_air_temperature
+  restart_policy: restore_and_replay
+  time_step_mode: fixed
+equivalence_type: exact

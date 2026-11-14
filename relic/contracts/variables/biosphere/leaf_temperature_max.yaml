@@ -1,0 +1,51 @@
+variable: leaf_temperature_max
+title: "Daily Maximum Leaf Temperature Estimate"
+description: "Declared estimate of the daily maximum leaf temperature in K of the representative big leaf, written by leaf_energy_balance on its daily support (temporal_support daily, dt = 86400 s): T_leaf,max = T_max + dT, the daily maximum air temperature shifted by the leaf-air difference dT of the 24-hour mean energy balance (the dT of leaf_temperature), and T_leaf,max = T_max where leaf_area_index <= 0 (no canopy). Not a literature law: it is exact only if dT were constant over the day; where the daytime available energy exceeds its 24-hour mean the leaf-air difference at the time of T_max exceeds the daily-mean dT, so the estimate is biased low there (and high where nights dominate). Read by thermal_stress with air_temperature_source leaf_temperature_max (the heat threshold on the leaf maximum)."
+kind: diagnostic
+dimension:
+  udunits: "K"
+  cf_standard_name: null
+  cell_methods: "time: maximum"
+# Same support as leaf_temperature (one representative leaf per cell); like the
+# forcing air_temperature_max the daily maximum is a point-in-time sample
+# (instantaneous) with the CF qualifier cell_methods "time: maximum".
+support:
+  spatial_kind: leaf
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: "leaf_energy_balance"
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Allen, R.G. et al. (1998). Crop evapotranspiration. FAO Irrigation and Drainage Paper 56, Eqs. 3, 4 and 42 (24-hour support)"
+  - "Jones, H.G. (2014). Plants and Microclimate, 3rd ed. Cambridge University Press, Chapter 9 (linearised leaf energy balance)"
+  - "CF-1.8 section 7.3: cell_methods time: maximum"
+numerics:
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "leaf_energy_balance"
+      module: "relic.scientific.biosphere.photosynthesis.leaf_energy_balance"
+      provides: ["leaf_temperature_max"]
+      unit: "K"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/biosphere/photosynthesis/leaf_energy_balance.py"
+  runtime_role: "big_leaf_daily_maximum_leaf_temperature_estimate"
+  runtime_writer: "leaf_energy_balance"
+  note: "Declared output of LeafEnergyBalance only with config temporal_support daily (DAILY_OUTPUTS), which also declares the inputs air_temperature_max and air_temperature_min; UpdateItem(REPLACE, per_timestep=False) in K. Reader: ThermalStress with air_temperature_source leaf_temperature_max."

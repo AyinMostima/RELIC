@@ -1,0 +1,352 @@
+certificate_version: '1.0'
+process_id: relic.scientific.pedosphere.decomposition.first_order.FirstOrderDecomposition
+module_name: FirstOrderDecomposition
+canonical_role: reaction
+iphs_level: 2
+iphs_level_evidence:
+  classification: IPHS-wrapped reaction process certificate
+  compatible_basis: Reaction process is expressed through conserved or open stoichiometric ledgers
+  runtime_replacement: Production forward path uses the existing canonical wrapper or declaration contract; strict runtime replacement is not claimed at this certificate level.
+  canonical_operator: N_h r_h reaction-network state advance
+  level_2_limit: The canonical runtime wrapper is declared, but no executable typed-cochain or IPHS structural contribution is bound; strict level 4 or 5 evidence is not claimed.
+theory_document: docs\source\theory\decomposition.md
+theory_document_status: updated
+legacy_formula: dC/dt = -k(T,theta) * C with k(T,theta) = k_ref * f_T(T) * f_theta(theta)
+literature_formula: dC/dt = -k(T,theta) * C with k(T,theta) = k_ref * f_T(T) * f_theta(theta)
+iphs_formula: x_dot = N_h r_h with ParameterManager-backed process rates r_h and declared stoichiometric/output map N_h
+legacy_expression: dC/dt = -k(T,theta) * C with k(T,theta) = k_ref * f_T(T) * f_theta(theta)
+iphs_expression: x_dot = N_h r_h with ParameterManager-backed process rates r_h and declared stoichiometric/output map N_h
+input_variables:
+- metabolic_litter_c
+- structural_litter_c
+- fast_som_c
+- slow_som_c
+- passive_som_c
+- soil_temperature
+- soil_moisture
+- metabolic_litter_input
+- structural_litter_input
+- lignin_n_ratio
+- clay_content
+output_variables:
+- metabolic_litter_c
+- structural_litter_c
+- fast_som_c
+- slow_som_c
+- passive_som_c
+- carbon_decomposition_rate
+- heterotrophic_respiration
+- diagnostics.first_order_decomposition.metabolic_litter_decomposition_flux
+- diagnostics.first_order_decomposition.structural_litter_decomposition_flux
+- diagnostics.first_order_decomposition.fast_som_decomposition_flux
+- diagnostics.first_order_decomposition.slow_som_decomposition_flux
+- diagnostics.first_order_decomposition.passive_som_decomposition_flux
+- diagnostics.first_order_decomposition.metabolic_to_fast_transfer_flux
+- diagnostics.first_order_decomposition.structural_to_slow_transfer_flux
+- diagnostics.first_order_decomposition.fast_to_passive_transfer_flux
+- diagnostics.first_order_decomposition.temperature_modifier
+- diagnostics.first_order_decomposition.moisture_modifier
+- diagnostics.first_order_decomposition.environmental_modifier
+- diagnostics.first_order_decomposition.step_seconds
+parameter_keys:
+- pedosphere.decomposition.param_25
+- pedosphere.decomposition.clay_enhancement_coefficient
+- pedosphere.decomposition.max_clay_factor
+- pedosphere.decomposition.clay_protection_coefficient
+- pedosphere.decomposition.k_metabolic
+- pedosphere.decomposition.k_structural
+- pedosphere.decomposition.k_fast_som
+- pedosphere.decomposition.k_slow_som
+- pedosphere.decomposition.k_passive_som
+- pedosphere.decomposition.t_met_fast
+- pedosphere.decomposition.t_met_slow
+- pedosphere.decomposition.t_str_fast
+- pedosphere.decomposition.t_str_slow
+- pedosphere.decomposition.t_fast_slow
+- pedosphere.decomposition.t_fast_passive
+- pedosphere.decomposition.t_slow_fast
+- pedosphere.decomposition.t_slow_passive
+- pedosphere.decomposition.temp_response_type
+- pedosphere.physical.q10_decomposition
+- pedosphere.physical.activation_energy_decomposition
+- pedosphere.decomposition.moisture_response_power
+- pedosphere.decomposition.field_capacity
+- pedosphere.decomposition.wilting_point
+- pedosphere.numerical.clamp_min
+- pedosphere.numerical.clamp_max
+- pedosphere.physical.temperature_minimum_biological
+- pedosphere.physical.temperature_maximum_biological
+- pedosphere.numerical.temperature_response_min
+- pedosphere.numerical.temperature_response_max
+- pedosphere.numerical.unity_multiplier
+- pedosphere.decomposition.lignin_inhibition_coefficient
+- pedosphere.decomposition.max_lignin_n_ratio
+composition_ports:
+- metabolic_litter_input
+- structural_litter_input
+- carbon_decomposition_rate
+- heterotrophic_respiration
+references:
+- Coleman, K. & Jenkinson, D.S. (1996). RothC-26.3 model
+- Parton, W.J. et al. (1987). CENTURY model decomposition
+- Sierra, C.A. et al. (2012). SoilR decomposition framework
+- Lloyd, J. & Taylor, J.A. (1994). Temperature dependence
+baseline_tests:
+- test\pedosphere\decomposition\test_first_order.py
+- test\unit\pedosphere\test_first_order_decomposition.py
+- test\integration\pedosphere\decomposition\first_order_yaml_integration.test.py
+- test\integration\pedosphere\test_l2_pedosphere_integration.py
+- test\pedosphere\integration\test_conservation_laws.py
+- test\pedosphere\system\test_long_term_simulation.py
+- test\audit\phase8_scientific_inventory.test.py
+validation_tests:
+- test\validation\l1_unit\test_scientific_pedosphere.py
+- test\test_pedosphere_comprehensive.py
+- test\pedosphere\integration\test_dependency_coupling.py
+- test\system\parameters\test_parameter_system.py
+- test\core\simulator_registration_and_step_guards.test.py
+- test\audit\phase8_scientific_inventory.test.py
+state_map:
+  metabolic_litter_c: required canonical pool state; missing or non-finite values fail before calculation
+  structural_litter_c: required canonical pool state; missing or non-finite values fail before calculation
+  fast_som_c: required canonical pool state; missing or non-finite values fail before calculation
+  slow_som_c: required canonical pool state; missing or non-finite values fail before calculation
+  passive_som_c: required canonical pool state; missing or non-finite values fail before calculation
+  soil_temperature: required finite driver within ParameterManager biological bounds
+  soil_moisture: required finite non-negative volumetric driver within the declared fractional bound
+  metabolic_litter_input: required finite non-negative metabolic litter carbon boundary flux
+  structural_litter_input: required finite non-negative structural litter carbon boundary flux
+  lignin_n_ratio: required finite non-negative litter-quality driver used only for decomposition inhibition
+  clay_content: required finite soil-texture driver within the declared fractional bound
+parameter_map:
+  pedosphere.decomposition.param_25: Q10 normalization value from ParameterManager
+  pedosphere.decomposition.clay_enhancement_coefficient: clay transfer coefficient from ParameterManager
+  pedosphere.decomposition.max_clay_factor: clay multiplier bound from ParameterManager
+  pedosphere.decomposition.clay_protection_coefficient: clay decay protection coefficient from ParameterManager
+  pedosphere.decomposition.k_metabolic: metabolic litter decay rate from ParameterManager
+  pedosphere.decomposition.k_structural: structural litter decay rate from ParameterManager
+  pedosphere.decomposition.k_fast_som: fast SOM decay rate from ParameterManager
+  pedosphere.decomposition.k_slow_som: slow SOM decay rate from ParameterManager
+  pedosphere.decomposition.k_passive_som: passive SOM decay rate from ParameterManager
+  pedosphere.decomposition.t_met_fast: metabolic-to-fast transfer fraction from ParameterManager
+  pedosphere.decomposition.t_met_slow: metabolic-to-slow transfer fraction from ParameterManager
+  pedosphere.decomposition.t_str_fast: structural-to-fast transfer fraction from ParameterManager
+  pedosphere.decomposition.t_str_slow: structural-to-slow transfer fraction from ParameterManager
+  pedosphere.decomposition.t_fast_slow: fast-to-slow transfer fraction from ParameterManager
+  pedosphere.decomposition.t_fast_passive: fast-to-passive transfer fraction from ParameterManager
+  pedosphere.decomposition.t_slow_fast: slow-to-fast transfer fraction from ParameterManager
+  pedosphere.decomposition.t_slow_passive: slow-to-passive transfer fraction from ParameterManager
+  pedosphere.decomposition.temp_response_type: temperature response selector from ParameterManager
+  pedosphere.physical.q10_decomposition: active Q10 response coefficient from ParameterManager
+  pedosphere.physical.activation_energy_decomposition: active Arrhenius activation energy from ParameterManager
+  pedosphere.decomposition.moisture_response_power: moisture response exponent from ParameterManager
+  pedosphere.decomposition.field_capacity: field-capacity water content from ParameterManager
+  pedosphere.decomposition.wilting_point: wilting-point water content from ParameterManager
+  pedosphere.numerical.clamp_min: numerical lower response bound from ParameterManager
+  pedosphere.numerical.clamp_max: numerical upper response bound from ParameterManager
+  pedosphere.physical.temperature_minimum_biological: biological minimum temperature from ParameterManager
+  pedosphere.physical.temperature_maximum_biological: biological maximum temperature from ParameterManager
+  pedosphere.numerical.temperature_response_min: minimum temperature multiplier from ParameterManager
+  pedosphere.numerical.temperature_response_max: maximum temperature multiplier from ParameterManager
+  pedosphere.numerical.unity_multiplier: unit response multiplier from ParameterManager
+  pedosphere.decomposition.lignin_inhibition_coefficient: lignin inhibition coefficient from ParameterManager (structural litter pool only; the metabolic pool decays at k f_T f_theta C)
+  pedosphere.decomposition.max_lignin_n_ratio: lignin-to-nitrogen upper bound from ParameterManager
+operator_map:
+  N_h: six-channel identity wrapper for five net pool tendencies and the heterotrophic export; this is level-2 wrapping, not strict stoichiometric evidence
+  r_h: ParameterManager-backed vector of five net pool tendencies and the heterotrophic respiration rate
+  boundary_route: metabolic_litter_input plus structural_litter_input is the declared carbon source and heterotrophic_respiration is the declared atmospheric export
+unit_map:
+  metabolic_litter_c: g C m-2
+  structural_litter_c: g C m-2
+  fast_som_c: g C m-2
+  slow_som_c: g C m-2
+  passive_som_c: g C m-2
+  soil_temperature: K
+  soil_moisture: m3 m-3
+  metabolic_litter_input: g C m-2 s-1
+  structural_litter_input: g C m-2 s-1
+  lignin_n_ratio: dimensionless
+  clay_content: dimensionless
+  carbon_decomposition_rate: g C m-2 s-1
+  heterotrophic_respiration: g C m-2 s-1
+  diagnostics.first_order_decomposition.metabolic_litter_decomposition_flux: g C m-2 s-1
+  diagnostics.first_order_decomposition.structural_litter_decomposition_flux: g C m-2 s-1
+  diagnostics.first_order_decomposition.fast_som_decomposition_flux: g C m-2 s-1
+  diagnostics.first_order_decomposition.slow_som_decomposition_flux: g C m-2 s-1
+  diagnostics.first_order_decomposition.passive_som_decomposition_flux: g C m-2 s-1
+  diagnostics.first_order_decomposition.metabolic_to_fast_transfer_flux: g C m-2 s-1
+  diagnostics.first_order_decomposition.structural_to_slow_transfer_flux: g C m-2 s-1
+  diagnostics.first_order_decomposition.fast_to_passive_transfer_flux: g C m-2 s-1
+  diagnostics.first_order_decomposition.temperature_modifier: dimensionless
+  diagnostics.first_order_decomposition.moisture_modifier: dimensionless
+  diagnostics.first_order_decomposition.environmental_modifier: dimensionless
+  diagnostics.first_order_decomposition.step_seconds: s
+input_output_map:
+  metabolic_litter_c: canonical state input and per-step ACCUMULATE output
+  structural_litter_c: canonical state input and per-step ACCUMULATE output
+  fast_som_c: canonical state input and per-step ACCUMULATE output
+  slow_som_c: canonical state input and per-step ACCUMULATE output
+  passive_som_c: canonical state input and per-step ACCUMULATE output
+  soil_temperature: environmental temperature driver
+  soil_moisture: environmental moisture driver
+  metabolic_litter_input: required mapper-owned metabolic litter carbon boundary input
+  structural_litter_input: required mapper-owned structural litter carbon boundary input
+  lignin_n_ratio: required litter-quality driver used only for decomposition inhibition
+  clay_content: required soil-texture driver
+  carbon_decomposition_rate: canonical gross internal transformation rate consumed by Mineralization and excluded from the elemental boundary ledger
+  heterotrophic_respiration: canonical atmospheric carbon export rate routed through the carbon.total boundary ledger
+  diagnostics.first_order_decomposition.metabolic_litter_decomposition_flux: metabolic litter gross decay observation
+  diagnostics.first_order_decomposition.structural_litter_decomposition_flux: structural litter gross decay observation
+  diagnostics.first_order_decomposition.fast_som_decomposition_flux: fast SOM gross decay observation
+  diagnostics.first_order_decomposition.slow_som_decomposition_flux: slow SOM gross decay observation
+  diagnostics.first_order_decomposition.passive_som_decomposition_flux: passive SOM gross decay observation
+  diagnostics.first_order_decomposition.metabolic_to_fast_transfer_flux: metabolic-to-fast transfer observation
+  diagnostics.first_order_decomposition.structural_to_slow_transfer_flux: structural-to-slow transfer observation
+  diagnostics.first_order_decomposition.fast_to_passive_transfer_flux: fast-to-passive transfer observation
+  diagnostics.first_order_decomposition.temperature_modifier: temperature response observation
+  diagnostics.first_order_decomposition.moisture_modifier: moisture response observation
+  diagnostics.first_order_decomposition.environmental_modifier: combined response observation
+  diagnostics.first_order_decomposition.step_seconds: declared step length of the returned per-step proposal, read by the public ledger
+interface_map:
+  forward_signature: forward(self, state, time, dt)
+  bridge_class: BiologicalProcessFunctor
+  abstraction_contract: BiologicalProcess
+  state_write_mode: explicit UpdateItem ACCUMULATE per-step pool increments and REPLACE rate or diagnostic outputs
+  legacy_inputs:
+  - metabolic_litter_c
+  - structural_litter_c
+  - fast_som_c
+  - slow_som_c
+  - passive_som_c
+  - soil_temperature
+  - soil_moisture
+  - metabolic_litter_input
+  - structural_litter_input
+  - lignin_n_ratio
+  - clay_content
+  iphs_inputs:
+  - metabolic_litter_c
+  - structural_litter_c
+  - fast_som_c
+  - slow_som_c
+  - passive_som_c
+  - soil_temperature
+  - soil_moisture
+  - metabolic_litter_input
+  - structural_litter_input
+  - lignin_n_ratio
+  - clay_content
+  legacy_outputs:
+  - metabolic_litter_c
+  - structural_litter_c
+  - fast_som_c
+  - slow_som_c
+  - passive_som_c
+  - carbon_decomposition_rate
+  - heterotrophic_respiration
+  - diagnostics.first_order_decomposition.metabolic_litter_decomposition_flux
+  - diagnostics.first_order_decomposition.structural_litter_decomposition_flux
+  - diagnostics.first_order_decomposition.fast_som_decomposition_flux
+  - diagnostics.first_order_decomposition.slow_som_decomposition_flux
+  - diagnostics.first_order_decomposition.passive_som_decomposition_flux
+  - diagnostics.first_order_decomposition.metabolic_to_fast_transfer_flux
+  - diagnostics.first_order_decomposition.structural_to_slow_transfer_flux
+  - diagnostics.first_order_decomposition.fast_to_passive_transfer_flux
+  - diagnostics.first_order_decomposition.temperature_modifier
+  - diagnostics.first_order_decomposition.moisture_modifier
+  - diagnostics.first_order_decomposition.environmental_modifier
+  - diagnostics.first_order_decomposition.step_seconds
+  iphs_outputs:
+  - metabolic_litter_c
+  - structural_litter_c
+  - fast_som_c
+  - slow_som_c
+  - passive_som_c
+  - carbon_decomposition_rate
+  - heterotrophic_respiration
+  - diagnostics.first_order_decomposition.metabolic_litter_decomposition_flux
+  - diagnostics.first_order_decomposition.structural_litter_decomposition_flux
+  - diagnostics.first_order_decomposition.fast_som_decomposition_flux
+  - diagnostics.first_order_decomposition.slow_som_decomposition_flux
+  - diagnostics.first_order_decomposition.passive_som_decomposition_flux
+  - diagnostics.first_order_decomposition.metabolic_to_fast_transfer_flux
+  - diagnostics.first_order_decomposition.structural_to_slow_transfer_flux
+  - diagnostics.first_order_decomposition.fast_to_passive_transfer_flux
+  - diagnostics.first_order_decomposition.temperature_modifier
+  - diagnostics.first_order_decomposition.moisture_modifier
+  - diagnostics.first_order_decomposition.environmental_modifier
+  - diagnostics.first_order_decomposition.step_seconds
+  historical_aliases_removed: litter_inputs, decomposition_rate, carbon_flux, co2_production, respiration_rate, pool-specific respiration aliases, and unnamespaced transfer or modifier aliases
+runtime_replacement_map:
+  runtime_uses_iphs: false
+  legacy_removed: false
+  replacement_entrypoint: forward
+  preserved_numerics: Existing ParameterManager-backed calculations define canonical IPHS operator coefficients, rates, ports, or observations.
+  no_legacy_mode: No selectable legacy runtime branch is exposed for Phase 8 completion.
+state_advancement_map:
+  potential_basis: declared RELIC state, port, or observation cochain basis
+  effort_variable: empirical temperature, moisture, litter-quality, and texture drivers; no Hamiltonian effort is claimed
+  state_advancer: x_dot = N_h r_h with a six-channel identity wrapper evaluated by advance_reaction_network
+  runtime_usage: FirstOrderDecomposition.forward evaluates five net pool tendencies and heterotrophic respiration once through advance_reaction_network before emitting canonical outputs.
+  explicit_stoichiometric_usage: The identity N_h wrapper is explicit level-2 runtime structure and is not evidence for strict stoichiometry or free-energy closure.
+parameter_management_map:
+  pedosphere.decomposition.param_25: ParameterManager YAML
+  pedosphere.decomposition.clay_enhancement_coefficient: ParameterManager YAML
+  pedosphere.decomposition.max_clay_factor: ParameterManager YAML
+  pedosphere.decomposition.clay_protection_coefficient: ParameterManager YAML
+  pedosphere.decomposition.k_metabolic: ParameterManager YAML
+  pedosphere.decomposition.k_structural: ParameterManager YAML
+  pedosphere.decomposition.k_fast_som: ParameterManager YAML
+  pedosphere.decomposition.k_slow_som: ParameterManager YAML
+  pedosphere.decomposition.k_passive_som: ParameterManager YAML
+  pedosphere.decomposition.t_met_fast: ParameterManager YAML
+  pedosphere.decomposition.t_met_slow: ParameterManager YAML
+  pedosphere.decomposition.t_str_fast: ParameterManager YAML
+  pedosphere.decomposition.t_str_slow: ParameterManager YAML
+  pedosphere.decomposition.t_fast_slow: ParameterManager YAML
+  pedosphere.decomposition.t_fast_passive: ParameterManager YAML
+  pedosphere.decomposition.t_slow_fast: ParameterManager YAML
+  pedosphere.decomposition.t_slow_passive: ParameterManager YAML
+  pedosphere.decomposition.temp_response_type: ParameterManager YAML
+  pedosphere.physical.q10_decomposition: ParameterManager YAML
+  pedosphere.physical.activation_energy_decomposition: ParameterManager YAML
+  pedosphere.decomposition.moisture_response_power: ParameterManager YAML
+  pedosphere.decomposition.field_capacity: ParameterManager YAML
+  pedosphere.decomposition.wilting_point: ParameterManager YAML
+  pedosphere.numerical.clamp_min: ParameterManager YAML
+  pedosphere.numerical.clamp_max: ParameterManager YAML
+  pedosphere.physical.temperature_minimum_biological: ParameterManager YAML
+  pedosphere.physical.temperature_maximum_biological: ParameterManager YAML
+  pedosphere.numerical.temperature_response_min: ParameterManager YAML
+  pedosphere.numerical.temperature_response_max: ParameterManager YAML
+  pedosphere.numerical.unity_multiplier: ParameterManager YAML
+  pedosphere.decomposition.lignin_inhibition_coefficient: ParameterManager YAML
+  pedosphere.decomposition.max_lignin_n_ratio: ParameterManager YAML
+composition_management_map:
+  functor_metadata: existing FunctorMetadata declares the two mapper-owned litter inputs, the Mineralization-facing gross rate, execution phase, and conservation semantics
+  state_contract: existing simulator StateManager and SCM candidate-writer contracts apply this model's pool increments only when it is the selected variant
+  litter_mapping: LitterfallInterfaceMapper is the sole fresh-litter partition owner and writes the two required target ports
+  environmental_drivers: soil_temperature and soil_moisture are declared forcing interfaces rather than material composition ports
+  validation_rule: phase8 scientific inventory and equivalence certificate checks
+dependency_interconnection_map:
+  dependencies: graph configuration orders this process after litterfall_interface_mapper when phenology litterfall is selected
+  downstream_interconnection: carbon_decomposition_rate is the required carbon-rate input of Mineralization
+  model_selection: mutually exclusive with PoolsMatrix and MicrobialEnzymeDecomposition
+  direct_functor_calls: none; litter inputs and downstream mineralization connect through graph ports and no peer process instance is invoked
+overflow_routing_map:
+  diagnostic_residuals: the exact carbon ledger is recomputed from the supplied UpdateItem payloads; dimensionless response bounds do not discard carbon
+  invalid_state_route: missing required inputs, non-finite drivers, out-of-range temperature, negative pools, and invalid transfer sums fail before state advance
+  discarded_residuals: temperature and moisture bounds define dimensionless rate coefficients only, untransferred carbon is explicit heterotrophic_respiration, overdraw is rejected, and check_conservation_laws recomputes the complete carbon ledger
+conservation_map:
+  conserved_quantities: carbon|mass
+  balance_expression: sum_i(Delta C_i) + R_hetero*dt - (I_metabolic + I_structural)*dt = 0
+  transfer_constraint: for each source pool, 0 <= T_ji and sum_j(T_ji) <= 1; the remainder is heterotrophic respiration
+  open_system_routes: metabolic_litter_input and structural_litter_input are boundary sources and heterotrophic_respiration is the atmosphere-facing export
+entropy_audit:
+  operator_sign: empirical decay and transfer rates are non-negative or bounded by ParameterManager-backed controls
+  sigma_expression: no strict entropy-production or GENERIC degeneracy claim is made at level 2
+equivalence_type: thermodynamic_embedding
+physical_constant_ssot:
+  seconds_per_year: get_physical_constant("seconds_per_year")
+  reference_temperature: get_physical_constant("reference_temperature")
+  gas_constant: get_physical_constant("gas_constant")

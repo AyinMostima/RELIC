@@ -1,0 +1,47 @@
+variable: equilibrium_total_solute_mass
+title: "Equilibrium Sorption Total Solute Mass"
+kind: state
+dimension:
+  udunits: "kg m-3"
+  cf_standard_name: null
+support:
+  spatial_kind: grid_cell
+  area_basis: grid_area
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions:
+      - cell
+owner: null
+aliases: []
+incrementable: true
+accumulates: null
+references:
+  - "Jury, W.A. & Horton, R. (2004). Soil Physics, 6th ed., Wiley, ch. 7"
+  - "Hairer, E. & Wanner, G. (1996). Solving Ordinary Differential Equations II, Springer, ch. VI"
+numerics:
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments:
+    - name: "equilibrium_sorption"
+      module: "relic.scientific.pedosphere.transport.equilibrium_sorption"
+      provides:
+        - "equilibrium_total_solute_mass"
+      unit: "kg m-3"
+  tendencies: []
+flux_contract:
+  allowed_in: ["equilibrium_sorption"]
+  allowed_out: ["equilibrium_sorption"]
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-12
+      rtol: 1.0e-9
+provenance:
+  source_file: "relic/scientific/pedosphere/transport/equilibrium_sorption.py"
+  runtime_role: "equilibrium_sorption_dae_state"
+  runtime_writer: "equilibrium_sorption"
+  note: "Prognostic total solute mass per bulk soil volume y = theta C + rho_b S of the equilibrium sorption DAE."

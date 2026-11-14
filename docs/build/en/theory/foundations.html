@@ -1,0 +1,950 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mathematical Foundations, State, Units, and Conservation &mdash; RELIC 1.0.0 Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=mono5" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=a12e3537"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      <script src="../_static/language_switch.js?v=mono5"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="DEC, IPHS, GENERIC, Ports, and Reaction Structure" href="dec_iphs_generic.html" />
+    <link rel="prev" title="Scientific Theory and Governing Equations" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            RELIC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">RELIC Guide</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../architecture.html">System Architecture</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#scope-and-architectural-contract">Scope and architectural contract</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#architecture-capability-map">Architecture capability map</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#package-ownership-and-seven-layer-map">Package ownership and seven-layer map</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#four-scientific-abstractions">Four scientific abstractions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#functor-lifecycle-and-metadata">Functor lifecycle and metadata</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#variable-roles-and-state-ownership">Variable roles and state ownership</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#parameters-constants-units-and-time">Parameters, constants, units, and time</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#simulator-execution-rates-and-device-policy">Simulator, execution rates, and device policy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#structural-scientific-layer">Structural scientific layer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#end-to-end-assembly-and-execution">End-to-end assembly and execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#connection-and-conservation-rules">Connection and conservation rules</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Scientific Theory and Governing Equations</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Mathematical Foundations, State, Units, and Conservation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#architectural-contract-and-notation">Architectural contract and notation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#four-scientific-abstractions-and-functor-lifecycle">Four scientific abstractions and Functor lifecycle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#spatial-quantity-basis-and-temporal-overlap-laws">Spatial quantity basis and temporal overlap laws</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#universal-conservation-and-balance-laws">Universal conservation and balance laws</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#transactional-statemanager-governance-i1-i7">Transactional StateManager governance (<code class="docutils literal notranslate"><span class="pre">I1</span></code>–<code class="docutils literal notranslate"><span class="pre">I7</span></code>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#centralized-parametermanager-and-physical-constant-ssot">Centralized ParameterManager and physical-constant SSOT</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#piecewise-smooth-discrete-adjoint-differentiation-and-device-policy">Piecewise-smooth discrete adjoint differentiation and device policy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bounded-mathematical-contracts-and-runtime-boundary-i-vs-n">Bounded mathematical contracts and runtime boundary (<code class="docutils literal notranslate"><span class="pre">[I]</span></code> vs <code class="docutils literal notranslate"><span class="pre">[N]</span></code>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="dec_iphs_generic.html">DEC, IPHS, GENERIC, Ports, and Reaction Structure</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="dec_iphs_generic.html#structural-governance-lifecycle">Structural governance lifecycle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dec_iphs_generic.html#discrete-exterior-calculus-relic-computation-operators-dec">Discrete exterior calculus (<code class="docutils literal notranslate"><span class="pre">relic.computation.operators.dec</span></code>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dec_iphs_generic.html#irreversible-port-hamiltonian-and-generic-lowering">Irreversible port-Hamiltonian and GENERIC lowering</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dec_iphs_generic.html#equivalence-certificates-and-live-repository-inventory">Equivalence certificates and live repository inventory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dec_iphs_generic.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="numerics.html">Numerical Integration, Splitting, Stability, Scale Coupling, and Hybrid Events</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="numerics.html#method-of-lines-formulation-and-solver-registry">Method-of-lines formulation and solver registry</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numerics.html#deterministic-time-stepping-linear-and-nonlinear-solvers">Deterministic time-stepping, linear, and nonlinear solvers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numerics.html#multi-rate-execution-operator-splitting-and-step-control">Multi-rate execution, operator splitting, and step control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numerics.html#transport-stability-and-nonlinear-richards-closure">Transport stability and nonlinear Richards closure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numerics.html#conservative-spatial-remapping-and-internal-cross-domain-couplers">Conservative spatial remapping and internal cross-domain couplers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numerics.html#transverse-hybrid-events-and-saltation-matrix-sensitivities">Transverse hybrid events and saltation-matrix sensitivities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numerics.html#stochastic-memory-ale-dae-and-topology-transition-families">Stochastic, memory, ALE, DAE, and topology-transition families</a></li>
+<li class="toctree-l3"><a class="reference internal" href="numerics.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="atmosphere.html">Atmosphere Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="atmosphere.html#scope-process-inventory-and-certificate-map">Scope, process inventory, and certificate map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="atmosphere.html#solar-thermal-and-canopy-radiation">Solar, thermal, and canopy radiation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="atmosphere.html#surface-layer-turbulence-and-boundary-layer-tracer-transport">Surface-layer turbulence and boundary-layer tracer transport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="atmosphere.html#gas-phase-chemistry-open-tropospheric-kinetics-and-closed-level-5-generic-point">Gas-phase chemistry: open tropospheric kinetics and closed Level-5 GENERIC point</a></li>
+<li class="toctree-l3"><a class="reference internal" href="atmosphere.html#stochastic-atmospheric-forcing-and-replay-contracts">Stochastic atmospheric forcing and replay contracts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="atmosphere.html#atmospheric-observation-operators">Atmospheric observation operators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="atmosphere.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="biosphere.html">Biosphere Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="biosphere.html#scope-process-inventory-and-certificate-map">Scope, process inventory, and certificate map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="biosphere.html#photosynthesis-and-stomatal-conductance">Photosynthesis and stomatal conductance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="biosphere.html#autotrophic-respiration-allocation-and-structural-growth">Autotrophic respiration, allocation, and structural growth</a></li>
+<li class="toctree-l3"><a class="reference internal" href="biosphere.html#phenology-and-abiotic-stress-closures">Phenology and abiotic stress closures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="biosphere.html#biogenic-volatile-organic-compound-bvoc-synthesis-and-emission">Biogenic volatile organic compound (BVOC) synthesis and emission</a></li>
+<li class="toctree-l3"><a class="reference internal" href="biosphere.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hydrosphere.html">Hydrosphere Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hydrosphere.html#scope-process-inventory-and-certificate-map">Scope, process inventory, and certificate map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydrosphere.html#evapotranspiration-closures">Evapotranspiration closures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydrosphere.html#snowpack-mass-energy-balance-and-snow-albedo">Snowpack mass-energy balance and snow albedo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydrosphere.html#soil-water-retention-bucket-storage-and-richards-vadose-flow">Soil-water retention, bucket storage, and Richards vadose flow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydrosphere.html#surface-runoff-and-hybrid-event-driven-hortonian-ponding">Surface runoff and hybrid event-driven Hortonian ponding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydrosphere.html#subsurface-stormflow-vadose-aquifer-exchange-and-groundwater">Subsurface stormflow, vadose-aquifer exchange, and groundwater</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydrosphere.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pedosphere.html">Pedosphere Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pedosphere.html#scope-process-inventory-and-certificate-map">Scope, process inventory, and certificate map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pedosphere.html#soil-organic-carbon-turnover-and-cross-sphere-interface-maps">Soil organic carbon turnover and cross-sphere interface maps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pedosphere.html#soil-nitrogen-root-p-uptake-and-c-n-stoichiometry-boundaries">Soil nitrogen, root P uptake, and C:N stoichiometry boundaries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pedosphere.html#wetland-methane-request-and-coupler-architecture">Wetland methane request-and-coupler architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pedosphere.html#porous-media-water-gas-solute-dae-ale-and-memory-transport">Porous-media water, gas, solute, DAE, ALE, and memory transport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pedosphere.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="anthroposphere.html">Anthroposphere Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="anthroposphere.html#scope-process-inventory-and-fail-closed-boundary-status">Scope, process inventory, and fail-closed boundary status</a></li>
+<li class="toctree-l3"><a class="reference internal" href="anthroposphere.html#fail-closed-level-0-boundaries-vs-implemented-emission-operators">Fail-closed Level-0 boundaries vs implemented emission operators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="anthroposphere.html#continuous-time-markov-land-use-transitions-and-parameter-projection">Continuous-time Markov land-use transitions and parameter projection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="anthroposphere.html#management-coordination-and-agricultural-water-nutrient-ports">Management coordination and agricultural water-nutrient ports</a></li>
+<li class="toctree-l3"><a class="reference internal" href="anthroposphere.html#managed-biomass-removal-livestock-grazing-fire-and-tillage">Managed biomass removal, livestock grazing, fire, and tillage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="anthroposphere.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="isotopes_transport.html">Stable Isotopes and General Transport Theory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="isotopes_transport.html#scope-component-inventory-and-certificate-map">Scope, component inventory, and certificate map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="isotopes_transport.html#stable-isotope-ratios-exact-binary-fractionation-and-fail-closed-ledger-status">Stable-isotope ratios, exact binary fractionation, and fail-closed ledger status</a></li>
+<li class="toctree-l3"><a class="reference internal" href="isotopes_transport.html#general-conservative-transport-functors">General conservative transport Functors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="isotopes_transport.html#references">References</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../science/index.html">Core Scientific Class Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../science/anthroposphere.html">Anthroposphere Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#atmosphere-coupling">atmosphere_coupling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#sector-allocation">sector_allocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#species-mapping">species_mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#anthroposphere-interface-mapping">anthroposphere_interface_mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#emission-inventory">emission_inventory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#land-use-parameter-mapping">land_use_parameter_mapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#land-use-transitions">land_use_transitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#management-coordinator">management_coordinator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#fertilization-management">fertilization_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#fire-management">fire_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#grazing-management">grazing_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#harvest-management">harvest_management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#irrigationmanagement">IrrigationManagement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/anthroposphere.html#tillagemanagement">TillageManagement</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/atmosphere.html">Atmosphere Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#chemistryfunctor">ChemistryFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#class-atmosphere-chemistry-chemistry-functor-closed-constant-volume">ChemistryFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#environmentalforcingfunctor">EnvironmentalForcingFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#radiationenergyconservationvalidator">RadiationEnergyConservationValidator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#radiationfield">RadiationField</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#radiationfunctor">RadiationFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#markedpoissonrainfallfunctor">MarkedPoissonRainfallFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#ornsteinuhlenbecktemperaturefunctor">OrnsteinUhlenbeckTemperatureFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#atmosphericadvectiondiffusionfunctor">AtmosphericAdvectionDiffusionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#drydepositionaggregator">DryDepositionAggregator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#eddydiffusionblmfunctor">EddyDiffusionBLMFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/atmosphere.html#turbulencefunctor">TurbulenceFunctor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/biosphere.html">Biosphere Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#meganmodel">MEGANModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#isoprenesynthesis">IsopreneSynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#monoterpenesynthesis">MonoterpeneSynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#sesquiterpenestressmodel">SesquiterpeneStressModel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#sesquiterpenesynthesis">SesquiterpeneSynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#biomassallocation">BiomassAllocation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#phenologygrowth">PhenologyGrowth</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#structuralgrowth">StructuralGrowth</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#cropphenology">CropPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#gddphenology">GDDPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#gsiphenology">GSIPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#staticphenology">StaticPhenology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#phenologyfunctor">PhenologyFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#farquharphotosynthesis">FarquharPhotosynthesis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#medlynstomatalconductance">MedlynStomatalConductance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#autotrophicrespiration">AutotrophicRespiration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#growthrespiration">GrowthRespiration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#maintenancerespiration">MaintenanceRespiration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#nutrientstress">NutrientStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#ozonestress">OzoneStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#thermalstress">ThermalStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#waterstress">WaterStress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/biosphere.html#simplecanopyphotosynthesis">SimpleCanopyPhotosynthesis</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/hydrosphere.html">Hydrosphere Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#penman-monteith-et">penman_monteith_et</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#priestley-taylor-et">priestley_taylor_et</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#groundwater-dynamics">groundwater_dynamics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#subsurface-runoff">subsurface_runoff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#hortonianpondingeventfunctor">HortonianPondingEventFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#surfacepondingfunctor">SurfacePondingFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#surface-runoff">surface_runoff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#snow-albedo">snow_albedo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#snow-pack">snow_pack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#bucket-soil-moisture">bucket_soil_moisture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#soilwaterretention">SoilWaterRetention</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#richards-soil-moisture">richards_soil_moisture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#capillary-rise-transport">capillary_rise_transport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/hydrosphere.html#vertical-percolation-transport">vertical_percolation_transport</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/pedosphere.html">Pedosphere Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#carbonpoolsfunctor">CarbonPoolsFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#poolsmatrix">PoolsMatrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#firstorderdecomposition">FirstOrderDecomposition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#microbialenzymedecomposition">MicrobialEnzymeDecomposition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#litterfallinterfacemapper">LitterfallInterfaceMapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#pedosphereinterfacemapper">PedosphereInterfaceMapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methanebudgetcoupler">MethaneBudgetCoupler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methaneoxidationfunctor">MethaneOxidationFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methaneproductionfunctor">MethaneProductionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methanescalecouplingfunctor">MethaneScaleCouplingFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#methanetransportfunctor">MethaneTransportFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#denitrification-process">denitrification_process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#mineralizationprocess">MineralizationProcess</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#nitrification-process">nitrification_process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#nitrogenleachingprocess">NitrogenLeachingProcess</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#nitrogencycling">NitrogenCycling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#rootnutrientuptake">RootNutrientUptake</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#stoichiometryconstraint">StoichiometryConstraint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#equilibriumsorptionfunctor">EquilibriumSorptionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#gasdiffusion1d">GasDiffusion1D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#movingdomaindiffusionfunctor">MovingDomainDiffusionFunctor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#soil-water-transport">soil_water_transport</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#soluteadvectiondiffusion1d">SoluteAdvectionDiffusion1D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/pedosphere.html#tworegionmasstransferfunctor">TwoRegionMassTransferFunctor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/isotopes.html">Stable-Isotope Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/isotopes.html#isotopeheartbeatfunctor">IsotopeHeartbeatFunctor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/transport.html">General Transport Scientific Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#advection-diffusion">advection_diffusion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#linear-advection">linear_advection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#fickian-diffusion">fickian_diffusion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../science/transport.html#class-transport-diffusion-fickian-diffusion-strict-runtime-point">fickian_diffusion</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../science/index.html#complete-coverage-matrix">Complete coverage matrix</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">RELIC Workflows</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#learning-tracks">Learning tracks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#how-to-use-a-tutorial">How to use a tutorial</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/installation_and_imports.html">Installation and Imports</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/configuration_and_parameters.html">Configuration and Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/state_functors_and_simulation.html">State, Functors, and Simulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/graph_validation_and_execution.html">Graph Validation and Execution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/persistence_outputs_and_data_io.html">Persistence, Outputs, and Data I/O</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/coupling_workflows.html">Coupling Workflows</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/calibration_sensitivity_and_uq.html">Calibration, Sensitivity Analysis, and Uncertainty Quantification</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/devices_and_distributed.html">Devices and Distributed Execution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../workflows/cli_and_extensions.html">CLI and Extensions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestration.html">Graph Orchestration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#canonical-owners">Canonical owners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#graphir">GraphIR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#portspec-and-the-contract-boundary">PortSpec and the contract boundary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#validation">Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#adapters">Adapters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#compilation-and-execution">Compilation and execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../orchestration.html#strict-iphs-dec-boundary">Strict IPHS/DEC boundary</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../operations.html">Operations Quick Start</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#select-a-workflow">Select a workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#environment-preflight">Environment preflight</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#first-successful-run">First successful run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#benchmark-style-acceptance-checklist">Benchmark-style acceptance checklist</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#minimal-runtime-sequence">Minimal runtime sequence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#troubleshooting-order">Troubleshooting order</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../operations.html#immediate-stop-conditions">Immediate stop conditions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../extension_contracts.html">Extension Contracts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#reuse-first-decision">Reuse-first decision</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#adding-a-scientific-functor">Adding a scientific Functor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#parameter-extension">Parameter extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#variable-contract-extension">Variable contract extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#graph-and-adapter-extension">Graph and adapter extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#external-extension-paths">External extension paths</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#scientific-structure-claims">Scientific structure claims</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#explicit-unavailable-scientific-boundaries">Explicit unavailable scientific boundaries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../extension_contracts.html#anti-redundancy-boundary">Anti-redundancy boundary</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">Core API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/index.html#coverage-contract">Coverage contract</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/core_runtime.html">Core Runtime API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/parameters_contracts.html">Parameters and Parameter Contracts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/orchestration_validation.html">Orchestration, Contracts, and Validation API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/scientific_structure_extensions.html">Scientific Structure and Extension APIs</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">RELIC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Scientific Theory and Governing Equations</a></li>
+      <li class="breadcrumb-item active">Mathematical Foundations, State, Units, and Conservation</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="mathematical-foundations-state-units-and-conservation">
+<h1>Mathematical Foundations, State, Units, and Conservation<a class="headerlink" href="#mathematical-foundations-state-units-and-conservation" title="Link to this heading"></a></h1>
+<section id="architectural-contract-and-notation">
+<h2>Architectural contract and notation<a class="headerlink" href="#architectural-contract-and-notation" title="Link to this heading"></a></h2>
+<p>The Recomposable Ecosystem Library for Integrated Coupling (RELIC) represents a
+terrestrial biogeochemical model as a directed composition of typed scientific
+Functors under shared parameter and state governance (<em>Methods of Ecological
+Analysis</em>, Chapters 1–5, 10, 11, and 14). Each concrete Functor maps declared
+read-only state and external forcing tensors to typed update records without
+mutating shared storage in place:</p>
+<div class="math notranslate nohighlight">
+\[
+\mathcal{F}_{\boldsymbol{\theta}_i}:
+(\mathbf{S}_t,\; \boldsymbol{\xi}_t,\; t,\; \Delta t)
+\longmapsto
+\{\Delta \mathbf{S}_i,\; \mathbf{q}_i,\; \mathbf{d}_i\},
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathbf{S}_t\)</span> is the prognostic state vector, <span class="math notranslate nohighlight">\(\boldsymbol{\xi}_t\)</span> is
+external forcing, <span class="math notranslate nohighlight">\(\boldsymbol{\theta}_i\)</span> is the <code class="docutils literal notranslate"><span class="pre">ParameterManager</span></code>-owned
+parameter vector, <span class="math notranslate nohighlight">\(\mathbf{q}_i\)</span> denotes flux or tendency outputs, and
+<span class="math notranslate nohighlight">\(\mathbf{d}_i\)</span> denotes diagnostic observations. <code class="docutils literal notranslate"><span class="pre">RELICSimulator</span></code>
+(<code class="docutils literal notranslate"><span class="pre">relic.core.simulator</span></code>) governs topological execution and multi-rate
+scheduling, while <code class="docutils literal notranslate"><span class="pre">StateManager</span></code> (<code class="docutils literal notranslate"><span class="pre">relic.core.state.manager</span></code>) executes unit
+validation, bounds accounting, elemental conservation ledgers, and atomic
+commits.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Symbol</p></th>
+<th class="head"><p>Meaning</p></th>
+<th class="head"><p>Canonical SI units</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\mathbf{S}\)</span>, <span class="math notranslate nohighlight">\(x\)</span></p></td>
+<td><p>Prognostic reservoir or intensive state vector</p></td>
+<td><p>variable-specific</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\boldsymbol{\xi}\)</span>, <span class="math notranslate nohighlight">\(f\)</span></p></td>
+<td><p>Externally supplied meteorological or boundary forcing</p></td>
+<td><p>variable-specific</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(\boldsymbol{\theta}\)</span></p></td>
+<td><p>Versioned model parameter vector</p></td>
+<td><p>parameter-specific</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(q\)</span>, <span class="math notranslate nohighlight">\(\mathbf{F}\)</span></p></td>
+<td><p>Scalar transfer rate or vector flux density</p></td>
+<td><p>storage unit s<span class="math notranslate nohighlight">\(^{-1}\)</span>, or storage unit m<span class="math notranslate nohighlight">\(^{-2}\)</span> s<span class="math notranslate nohighlight">\(^{-1}\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(r\)</span></p></td>
+<td><p>Stoichiometric reaction or process-rate vector</p></td>
+<td><p>mol m<span class="math notranslate nohighlight">\(^{-3}\)</span> s<span class="math notranslate nohighlight">\(^{-1}\)</span>, kg m<span class="math notranslate nohighlight">\(^{-2}\)</span> s<span class="math notranslate nohighlight">\(^{-1}\)</span>, or declared equivalent</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(N\)</span></p></td>
+<td><p>Stoichiometric or output-incidence matrix</p></td>
+<td><p>state unit per reaction extent</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(C\)</span></p></td>
+<td><p>Linear elemental conservation-ledger matrix</p></td>
+<td><p>element unit per state unit</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(u\)</span>, <span class="math notranslate nohighlight">\(y\)</span></p></td>
+<td><p>Conjugate boundary-port input and output</p></td>
+<td><p>effort/flow product unit</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(J\)</span>, <span class="math notranslate nohighlight">\(L\)</span></p></td>
+<td><p>Reversible skew-symmetric interconnection or Poisson operator</p></td>
+<td><p>operator-specific</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(R\)</span>, <span class="math notranslate nohighlight">\(M\)</span></p></td>
+<td><p>Irreversible symmetric positive-semidefinite resistance or mobility operator</p></td>
+<td><p>operator-specific</p></td>
+</tr>
+<tr class="row-even"><td><p><span class="math notranslate nohighlight">\(E\)</span>, <span class="math notranslate nohighlight">\(S\)</span>, <span class="math notranslate nohighlight">\(H\)</span></p></td>
+<td><p>Energy, entropy, and storage or free-energy functionals</p></td>
+<td><p>J, J K<span class="math notranslate nohighlight">\(^{-1}\)</span>, and declared storage unit</p></td>
+</tr>
+<tr class="row-odd"><td><p><span class="math notranslate nohighlight">\(\Delta t\)</span></p></td>
+<td><p>Effective execution step duration</p></td>
+<td><p>s</p></td>
+</tr>
+</tbody>
+</table>
+<p>Units are resolved from state variable contracts (<code class="docutils literal notranslate"><span class="pre">relic.contracts</span></code>),
+certificate unit maps, and <code class="docutils literal notranslate"><span class="pre">ParameterManager</span></code> YAML metadata. A literal
+<code class="docutils literal notranslate"><span class="pre">dimensionless</span></code> quantity carries unit <span class="math notranslate nohighlight">\(1\)</span>; an omitted unit fails validation and
+never defaults to dimensionless.</p>
+</section>
+<section id="four-scientific-abstractions-and-functor-lifecycle">
+<h2>Four scientific abstractions and Functor lifecycle<a class="headerlink" href="#four-scientific-abstractions-and-functor-lifecycle" title="Link to this heading"></a></h2>
+<p>Every concrete scientific module implements one of four abstract contracts in
+<code class="docutils literal notranslate"><span class="pre">relic.core.abstractions</span></code> and enters the runtime lifecycle through its matching
+canonical bridge in <code class="docutils literal notranslate"><span class="pre">relic.core.functor.functor_bridges</span></code>, inheriting from
+<code class="docutils literal notranslate"><span class="pre">FunctorBase</span></code> (<code class="docutils literal notranslate"><span class="pre">relic.core.functor.functor_base</span></code>, a subclass of
+<code class="docutils literal notranslate"><span class="pre">torch.nn.Module</span></code>):</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Abstract contract (<code class="docutils literal notranslate"><span class="pre">relic.core.abstractions</span></code>)</p></th>
+<th class="head"><p>Canonical bridge (<code class="docutils literal notranslate"><span class="pre">relic.core.functor.functor_bridges</span></code>)</p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">ProcessCategory</span></code> (<code class="docutils literal notranslate"><span class="pre">relic.core.functor.functor_types</span></code>)</p></th>
+<th class="head"><p>Governing mathematical mapping</p></th>
+<th class="head"><p>Representative spheres and processes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">PhysicalField</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">PhysicalFieldFunctor</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">PHYSICAL_FIELD</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(\phi: \Omega \times \mathcal{T} \rightarrow \mathcal{V}\)</span></p></td>
+<td><p>Shortwave/longwave radiation, vapour pressure deficit, snowpack, snow albedo, groundwater head, gas-phase photochemistry</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">BiologicalProcess</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">BiologicalProcessFunctor</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">BIOLOGICAL_PROCESS</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(\frac{\mathrm{d}x}{\mathrm{d}t} = N\,r_{\mathrm{bio}}(x, \boldsymbol{\xi}; \boldsymbol{\theta})\)</span></p></td>
+<td><p>Photosynthesis, stomatal conductance, respiration, phenology, allocation, BVOC synthesis, litter/SOM decomposition, N/CH<span class="math notranslate nohighlight">\(_4\)</span> kinetics</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">TransportMechanism</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">TransportMechanismFunctor</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">TRANSPORT_MECHANISM</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(\frac{\mathrm{d}x}{\mathrm{d}t} = -D_{\mathrm{div}}\mathbf{F} + q_{\mathrm{bnd}}\)</span></p></td>
+<td><p>Advection-diffusion, Monin-Obukhov turbulence, dry deposition, evapotranspiration, Richards moisture flow, runoff, solute leaching, managed transfers</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ScaleCoupling</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ScaleCouplingFunctor</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">SCALE_COUPLING</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(y = \mathcal{M}_{a \rightarrow b}(x)\)</span></p></td>
+<td><p>Conservative spatial remapping, temporal aggregation, emission sector/species mapping, litterfall and hydrological interface mappers</p></td>
+</tr>
+</tbody>
+</table>
+<p>Across the live repository, <code class="docutils literal notranslate"><span class="pre">90</span></code> unique concrete scientific <code class="docutils literal notranslate"><span class="pre">Functor</span></code> classes
+are registered across these four bridge families (<code class="docutils literal notranslate"><span class="pre">37</span></code>
+<code class="docutils literal notranslate"><span class="pre">BiologicalProcessFunctor</span></code>, <code class="docutils literal notranslate"><span class="pre">27</span></code> <code class="docutils literal notranslate"><span class="pre">TransportMechanismFunctor</span></code>, <code class="docutils literal notranslate"><span class="pre">14</span></code>
+<code class="docutils literal notranslate"><span class="pre">PhysicalFieldFunctor</span></code>, and <code class="docutils literal notranslate"><span class="pre">12</span></code> <code class="docutils literal notranslate"><span class="pre">ScaleCouplingFunctor</span></code>; <code class="docutils literal notranslate"><span class="pre">0</span></code> uncertified).</p>
+<section id="variable-roles-and-scheduling-metadata">
+<h3>Variable roles and scheduling metadata<a class="headerlink" href="#variable-roles-and-scheduling-metadata" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">FunctorMetadata</span></code> (<code class="docutils literal notranslate"><span class="pre">relic.core.functor.functor_base</span></code>) declares
+<code class="docutils literal notranslate"><span class="pre">input_variables</span></code>, <code class="docutils literal notranslate"><span class="pre">output_variables</span></code>, <code class="docutils literal notranslate"><span class="pre">spatial_scale</span></code> (<code class="docutils literal notranslate"><span class="pre">SpatialScale</span></code>),
+<code class="docutils literal notranslate"><span class="pre">temporal_scale</span></code> (<code class="docutils literal notranslate"><span class="pre">TemporalScale</span></code>), <code class="docutils literal notranslate"><span class="pre">variable_kind</span></code> (<code class="docutils literal notranslate"><span class="pre">VariableKind</span></code>),
+<code class="docutils literal notranslate"><span class="pre">execution_phase</span></code> (<code class="docutils literal notranslate"><span class="pre">ExecutionPhase</span></code>), and <code class="docutils literal notranslate"><span class="pre">sub_flow_accuracy</span></code>
+(<code class="docutils literal notranslate"><span class="pre">SubFlowAccuracy</span></code>). Six <code class="docutils literal notranslate"><span class="pre">VariableKind</span></code> enumerators classify tensor I/O
+(<code class="docutils literal notranslate"><span class="pre">STATE</span></code>, <code class="docutils literal notranslate"><span class="pre">FORCING</span></code>, <code class="docutils literal notranslate"><span class="pre">PARAMETER</span></code>, <code class="docutils literal notranslate"><span class="pre">FLUX</span></code>, <code class="docutils literal notranslate"><span class="pre">DIAGNOSTIC</span></code>, plus the <code class="docutils literal notranslate"><span class="pre">UNKNOWN</span></code>
+sentinel for undeclared roles):</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Role (<code class="docutils literal notranslate"><span class="pre">VariableKind</span></code>)</p></th>
+<th class="head"><p>Runtime meaning</p></th>
+<th class="head"><p>Governed write semantics</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">STATE</span></code></p></td>
+<td><p>Prognostic reservoir or field carried across steps</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StateManager</span></code> transactional <code class="docutils literal notranslate"><span class="pre">UpdateItem</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">FORCING</span></code></p></td>
+<td><p>Externally supplied meteorological or boundary driver</p></td>
+<td><p>Read-only input; unmodified by consuming Functors</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">PARAMETER</span></code></p></td>
+<td><p>Versioned coefficient, prior, or material property</p></td>
+<td><p>Resolved via <code class="docutils literal notranslate"><span class="pre">ParameterManager</span></code> (<code class="docutils literal notranslate"><span class="pre">self.get_parameter_value</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">FLUX</span></code></p></td>
+<td><p>Rate of exchange, transport, or stoichiometric transformation</p></td>
+<td><p>Applied as a rate tendency (<code class="docutils literal notranslate"><span class="pre">per_timestep=False</span></code>), step increment, or typed port</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DIAGNOSTIC</span></code></p></td>
+<td><p>Derived observable without prognostic storage ownership</p></td>
+<td><p>Partitioned to diagnostic channel (<code class="docutils literal notranslate"><span class="pre">StateWriteMode.DERIVED</span></code>)</p></td>
+</tr>
+</tbody>
+</table>
+<p><code class="docutils literal notranslate"><span class="pre">spatial_scale</span></code>, <code class="docutils literal notranslate"><span class="pre">temporal_scale</span></code>, and <code class="docutils literal notranslate"><span class="pre">variable_kind</span></code> apply to the Functor as
+a whole: <code class="docutils literal notranslate"><span class="pre">spatial_scale</span></code> drives label-level compatibility checks,
+<code class="docutils literal notranslate"><span class="pre">variable_kind</span></code> drives single-writer overlap checks
+(<code class="docutils literal notranslate"><span class="pre">relic.core.simulator.output_overlap_governance</span></code>), and <code class="docutils literal notranslate"><span class="pre">temporal_scale</span></code>
+assigns default <code class="docutils literal notranslate"><span class="pre">fast</span></code>, <code class="docutils literal notranslate"><span class="pre">medium</span></code>, or <code class="docutils literal notranslate"><span class="pre">slow</span></code> execution groups when neither
+<code class="docutils literal notranslate"><span class="pre">execution_group</span></code> nor <code class="docutils literal notranslate"><span class="pre">characteristic_time_days</span></code> is specified (any explicit
+<code class="docutils literal notranslate"><span class="pre">process_groups</span></code> entry must match or registration raises <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>).</p>
+</section>
+</section>
+<section id="spatial-quantity-basis-and-temporal-overlap-laws">
+<h2>Spatial quantity basis and temporal overlap laws<a class="headerlink" href="#spatial-quantity-basis-and-temporal-overlap-laws" title="Link to this heading"></a></h2>
+<p>Scale labels do not define cell geometry, cell areas, or extensivity. Basis-aware
+spatial operators (<code class="docutils literal notranslate"><span class="pre">ConservativeRemap</span></code>, <code class="docutils literal notranslate"><span class="pre">ConservativeRegridder</span></code>,
+<code class="docutils literal notranslate"><span class="pre">SpatialAggregation</span></code>, <code class="docutils literal notranslate"><span class="pre">HierarchicalAggregator</span></code>, <code class="docutils literal notranslate"><span class="pre">ScaleManager</span></code>, simulator
+auto-regridding, and external-forcing adapters) require an explicit
+<code class="docutils literal notranslate"><span class="pre">SpatialQuantityBasis</span></code> (<code class="docutils literal notranslate"><span class="pre">relic.coupling.scales.types</span></code>) via <code class="docutils literal notranslate"><span class="pre">spatial_basis</span></code>
+metadata or the <code class="docutils literal notranslate"><span class="pre">quantity_basis</span></code> argument (<em>Methods of Ecological Analysis</em>,
+Chapters 2 and 14):</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p><code class="docutils literal notranslate"><span class="pre">SpatialQuantityBasis</span></code></p></th>
+<th class="head"><p>Value on cell <span class="math notranslate nohighlight">\(i\)</span></p></th>
+<th class="head"><p>Conserved cell amount</p></th>
+<th class="head"><p>Cross-scale reduction rule</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">intensive</span></code></p></td>
+<td><p>Intensive state <span class="math notranslate nohighlight">\(x_i\)</span> (e.g., K, mol mol<span class="math notranslate nohighlight">\(^{-1}\)</span>)</p></td>
+<td><p>Undefined</p></td>
+<td><p>Area- or overlap-weighted mean</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">cell_total</span></code></p></td>
+<td><p>Extensive cell amount <span class="math notranslate nohighlight">\(X_i\)</span> (e.g., kg)</p></td>
+<td><p><span class="math notranslate nohighlight">\(X_i\)</span></p></td>
+<td><p>Direct sum <span class="math notranslate nohighlight">\(\sum_i X_i\)</span> or overlap-fraction partition</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">area_density</span></code></p></td>
+<td><p>Areal density <span class="math notranslate nohighlight">\(x_i\)</span> (e.g., kg m<span class="math notranslate nohighlight">\(^{-2}\)</span>, W m<span class="math notranslate nohighlight">\(^{-2}\)</span>)</p></td>
+<td><p><span class="math notranslate nohighlight">\(X_i = x_i A_i\)</span> (<span class="math notranslate nohighlight">\(A_i &gt; 0\)</span> in m<span class="math notranslate nohighlight">\(^2\)</span>)</p></td>
+<td><p>Area-weighted integral divided by target area <span class="math notranslate nohighlight">\(A_J\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">categorical</span></code></p></td>
+<td><p>Discrete class code <span class="math notranslate nohighlight">\(c_i\)</span></p></td>
+<td><p>Undefined; arithmetic forbidden</p></td>
+<td><p>Area-weighted mode (ties broken toward smallest code) or nearest neighbour</p></td>
+</tr>
+</tbody>
+</table>
+<p>Bare <code class="docutils literal notranslate"><span class="pre">&quot;extensive&quot;</span></code> is rejected with <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> because it fails to distinguish
+per-cell totals from areal densities. Exact conversion between <code class="docutils literal notranslate"><span class="pre">cell_total</span></code> and
+<code class="docutils literal notranslate"><span class="pre">area_density</span></code> (<code class="docutils literal notranslate"><span class="pre">convert_spatial_basis</span></code>) requires strictly positive cell areas
+<span class="math notranslate nohighlight">\(A_i &gt; 0\)</span> (<span class="math notranslate nohighlight">\(X_i = x_i A_i\)</span>); conversions involving <code class="docutils literal notranslate"><span class="pre">intensive</span></code> or <code class="docutils literal notranslate"><span class="pre">categorical</span></code>
+raise <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>. Note that <code class="docutils literal notranslate"><span class="pre">SpatialQuantityBasis</span></code> governs spatial support
+transfer and is distinct from <code class="docutils literal notranslate"><span class="pre">CochainSpaceSpec.extensivity</span></code> in
+<code class="docutils literal notranslate"><span class="pre">relic.computation.operators.dec.forms</span></code>.</p>
+<p>For first-order overlap remapping with source-target overlap area <span class="math notranslate nohighlight">\(A_{iJ} \ge 0\)</span>,
+source area <span class="math notranslate nohighlight">\(A_i &gt; 0\)</span>, target area <span class="math notranslate nohighlight">\(A_J &gt; 0\)</span>, covered target area
+<span class="math notranslate nohighlight">\(C_J = \sum_i A_{iJ}\)</span>, and covered source fraction
+<span class="math notranslate nohighlight">\(f_i = \sum_J A_{iJ}/A_i \le 1\)</span>, <code class="docutils literal notranslate"><span class="pre">ConservativeRemap</span></code> and <code class="docutils literal notranslate"><span class="pre">ConservativeRegridder</span></code>
+evaluate:</p>
+<div class="math notranslate nohighlight">
+\[
+Y_J = \sum_i X_i\,\frac{A_{iJ}}{A_i} \quad (\texttt{cell\_total}),
+\qquad
+y_J = \frac{1}{A_J}\sum_i x_i A_{iJ} \quad (\texttt{area\_density}),
+\qquad
+y_J = \frac{1}{C_J}\sum_i x_i A_{iJ} \quad (\texttt{intensive}).
+\]</div>
+<p>Amounts are conserved strictly over covered support:</p>
+<div class="math notranslate nohighlight">
+\[
+\sum_J Y_J = \sum_i f_i X_i,
+\qquad
+U = \sum_i (1 - f_i)\,X_i,
+\]</div>
+<p>where uncovered source mass <span class="math notranslate nohighlight">\(U\)</span> is reported in diagnostics and never rescaled
+onto covered target cells. Explicit cell bounds, overlap matrices, or polygon
+vertices are mandatory; bounds are never inferred from coordinate spacing.
+External-model ingestion reads Climate and Forecast (CF) bounds for 1D
+rectilinear coordinates and rejects 2D curvilinear grids lacking explicit cell
+corners during conservative remapping (<code class="docutils literal notranslate"><span class="pre">SpatialScaling.regrid</span></code> with
+<code class="docutils literal notranslate"><span class="pre">method=&quot;conservative&quot;</span></code> on a coordinate-free grid descriptor switches to
+non-conservative nearest-neighbour lookup).</p>
+<p>In time, <code class="docutils literal notranslate"><span class="pre">TemporalAggregator</span></code> and <code class="docutils literal notranslate"><span class="pre">TemporalDisaggregator</span></code>
+(<code class="docutils literal notranslate"><span class="pre">relic.coupling.scales.temporal</span></code>) require explicit <code class="docutils literal notranslate"><span class="pre">temporal_semantics</span></code>
+(<code class="docutils literal notranslate"><span class="pre">interval_mean</span></code>, <code class="docutils literal notranslate"><span class="pre">rate</span></code>, <code class="docutils literal notranslate"><span class="pre">interval_accumulation</span></code>, or <code class="docutils literal notranslate"><span class="pre">state_at_boundary</span></code>;
+<code class="docutils literal notranslate"><span class="pre">point_sample</span></code> and <code class="docutils literal notranslate"><span class="pre">categorical</span></code> are rejected) together with explicit source and
+target units. Over target interval <span class="math notranslate nohighlight">\(j\)</span> of duration <span class="math notranslate nohighlight">\(\tau_j\)</span> with source-target
+overlap durations <span class="math notranslate nohighlight">\(O_{ij}\)</span> and validity mask <span class="math notranslate nohighlight">\(m_i \in \{0, 1\}\)</span>, <code class="docutils literal notranslate"><span class="pre">interval_mean</span></code>
+and rate-to-rate mappings evaluate:</p>
+<div class="math notranslate nohighlight">
+\[
+\bar{x}_j = \frac{\sum_i m_i O_{ij}\,x_i}{\sum_i m_i O_{ij}},
+\qquad
+c_j = \frac{1}{\tau_j}\sum_i m_i O_{ij},
+\]</div>
+<p>returning <span class="math notranslate nohighlight">\(\bar{x}_j\)</span> when dimensionless coverage <span class="math notranslate nohighlight">\(c_j\)</span> meets
+<code class="docutils literal notranslate"><span class="pre">coupling.scales.temporal.coverage_threshold</span></code> and <code class="docutils literal notranslate"><span class="pre">NaN</span></code> below threshold without
+extrapolating missing intervals. <code class="docutils literal notranslate"><span class="pre">TemporalScaling</span></code> maps fixed SI durations via
+<code class="docutils literal notranslate"><span class="pre">method</span></code> (<code class="docutils literal notranslate"><span class="pre">mean</span></code>, <code class="docutils literal notranslate"><span class="pre">rate</span></code>, <code class="docutils literal notranslate"><span class="pre">sum</span></code>, <code class="docutils literal notranslate"><span class="pre">total</span></code>, <code class="docutils literal notranslate"><span class="pre">extensive</span></code>, or law names) and rejects
+calendar-dependent <code class="docutils literal notranslate"><span class="pre">month</span></code> or <code class="docutils literal notranslate"><span class="pre">year</span></code> intervals.</p>
+</section>
+<section id="universal-conservation-and-balance-laws">
+<h2>Universal conservation and balance laws<a class="headerlink" href="#universal-conservation-and-balance-laws" title="Link to this heading"></a></h2>
+<section id="local-stoichiometric-and-control-volume-balances">
+<h3>Local, stoichiometric, and control-volume balances<a class="headerlink" href="#local-stoichiometric-and-control-volume-balances" title="Link to this heading"></a></h3>
+<p>For a conserved scalar density <span class="math notranslate nohighlight">\(c(\mathbf{x}, t)\)</span> with velocity <span class="math notranslate nohighlight">\(\mathbf{v}\)</span>,
+diffusivity <span class="math notranslate nohighlight">\(D\)</span>, internal stoichiometric network <span class="math notranslate nohighlight">\(N r(c, \boldsymbol{\theta}, \boldsymbol{\xi})\)</span>,
+and open-boundary exchange <span class="math notranslate nohighlight">\(s_{\mathrm{bnd}}\)</span>, the continuum and integral
+control-volume balances on domain <span class="math notranslate nohighlight">\(\Omega\)</span> with outward normal <span class="math notranslate nohighlight">\(\mathbf{n}\)</span> are
+(<em>Methods of Ecological Analysis</em>, Chapters 3–5):</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\partial c}{\partial t} + \nabla \cdot \left(\mathbf{v}c - D\nabla c\right)
+= N r + s_{\mathrm{bnd}},
+\qquad
+\frac{\mathrm{d}}{\mathrm{d}t}\int_{\Omega} c\,\mathrm{d}V
+= -\int_{\partial\Omega} \mathbf{F}\cdot\mathbf{n}\,\mathrm{d}A
++ \int_{\Omega} N r\,\mathrm{d}V
++ \int_{\Omega} s_{\mathrm{bnd}}\,\mathrm{d}V.
+\]</div>
+<p>After spatial discretization into prognostic reservoir vector
+<span class="math notranslate nohighlight">\(\mathbf{S}(t) \in \mathbb{R}^n\)</span> with internal process stoichiometries
+<span class="math notranslate nohighlight">\(\{\mathbf{N}_p\}_{p \in \mathcal{P}_{\mathrm{int}}}\)</span> and boundary port
+operators <span class="math notranslate nohighlight">\(\{\mathbf{B}_q\}_{q \in \mathcal{P}_{\mathrm{ext}}}\)</span>, the
+semi-discrete coupled evolution is:</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\mathrm{d}\mathbf{S}}{\mathrm{d}t}
+= \sum_{p \in \mathcal{P}_{\mathrm{int}}}
+\mathbf{N}_p\,\mathbf{J}_p(\mathbf{S}, \boldsymbol{\xi}, \boldsymbol{\theta}, t)
++ \sum_{q \in \mathcal{P}_{\mathrm{ext}}}
+\mathbf{B}_q\,\mathbf{u}_q(\mathbf{S}, \boldsymbol{\xi}, \boldsymbol{\theta}, t).
+\]</div>
+<p>For any conserved elemental ledger matrix <span class="math notranslate nohighlight">\(C\)</span> (rows encoding water, carbon,
+nitrogen, phosphorus, or charge content per state unit), internal closure
+requires the stoichiometric nullspace condition:</p>
+<div class="math notranslate nohighlight">
+\[
+C \mathbf{N}_p = 0 \quad \forall p \in \mathcal{P}_{\mathrm{int}}
+\qquad \Longrightarrow \qquad
+\frac{\mathrm{d}}{\mathrm{d}t}(C\mathbf{S})
+= \sum_{q \in \mathcal{P}_{\mathrm{ext}}} C\mathbf{B}_q\,\mathbf{u}_q.
+\]</div>
+<p>Non-zero changes in <span class="math notranslate nohighlight">\(C\mathbf{S}\)</span> must traverse an explicit port, boundary
+export, managed export, diagnostic residual, or observation route.</p>
+</section>
+<section id="energy-and-entropy-balances">
+<h3>Energy and entropy balances<a class="headerlink" href="#energy-and-entropy-balances" title="Link to this heading"></a></h3>
+<p>When a process declares thermodynamic energy <span class="math notranslate nohighlight">\(E(\mathbf{S})\)</span>, entropy
+<span class="math notranslate nohighlight">\(S(\mathbf{S})\)</span>, and conjugate port effort-flow pairs <span class="math notranslate nohighlight">\((e_{\mathrm{port}}, f_{\mathrm{port}})\)</span>
+with port power <span class="math notranslate nohighlight">\(P_{\mathrm{port}} = e_{\mathrm{port}}^{\mathsf{T}} f_{\mathrm{port}}\)</span>,
+the first- and second-law balances take the form:</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\mathrm{d}E}{\mathrm{d}t} = P_{\mathrm{in}} - P_{\mathrm{out}} - D_E,
+\quad D_E \ge 0,
+\qquad
+\frac{\mathrm{d}S}{\mathrm{d}t} = \Phi_S + \sigma,
+\quad \sigma \ge 0,
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(D_E\)</span> is internal mechanical/thermal dissipation, <span class="math notranslate nohighlight">\(\Phi_S\)</span> is boundary
+entropy flux, and <span class="math notranslate nohighlight">\(\sigma\)</span> is internal entropy production. Empirical rate laws
+without declared potentials and operators are audited through mass/energy budget
+ledgers at certificate Levels 1–3 without fabricating synthetic thermodynamic
+potentials.</p>
+</section>
+</section>
+<section id="transactional-statemanager-governance-i1-i7">
+<h2>Transactional StateManager governance (<code class="docutils literal notranslate"><span class="pre">I1</span></code>–<code class="docutils literal notranslate"><span class="pre">I7</span></code>)<a class="headerlink" href="#transactional-statemanager-governance-i1-i7" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">partition_outputs</span></code> (<code class="docutils literal notranslate"><span class="pre">relic.core.state.types</span></code>) splits every Functor return
+mapping into state updates (<code class="docutils literal notranslate"><span class="pre">UpdateItem</span></code>), diagnostics, and immutable
+<code class="docutils literal notranslate"><span class="pre">ExternalIntent</span></code> records according to <code class="docutils literal notranslate"><span class="pre">UpdateMode</span></code> (<code class="docutils literal notranslate"><span class="pre">ACCUMULATE</span></code>, <code class="docutils literal notranslate"><span class="pre">REPLACE</span></code>,
+<code class="docutils literal notranslate"><span class="pre">FLUX</span></code>) and <code class="docutils literal notranslate"><span class="pre">StateWriteMode</span></code> (<code class="docutils literal notranslate"><span class="pre">MUTABLE</span></code>, <code class="docutils literal notranslate"><span class="pre">IMMUTABLE</span></code>, <code class="docutils literal notranslate"><span class="pre">DERIVED</span></code>):</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbf{S}_{n+1} = \mathbf{S}_n + \Delta t\,\mathbf{q}
+\quad (\texttt{ACCUMULATE}/\texttt{FLUX},\; \texttt{per\_timestep=False}),
+\qquad
+\mathbf{S}_{n+1} = \mathbf{S}_n + \Delta\mathbf{S}
+\quad (\texttt{ACCUMULATE},\; \texttt{per\_timestep=True}),
+\qquad
+\mathbf{S}_{n+1} = \mathbf{S}_{\mathrm{new}}
+\quad (\texttt{REPLACE}).
+\]</div>
+<p>All Functor-to-<code class="docutils literal notranslate"><span class="pre">StateManager</span></code> commits enforce seven runtime invariants (<code class="docutils literal notranslate"><span class="pre">I1</span></code>–<code class="docutils literal notranslate"><span class="pre">I7</span></code>,
+<em>Methods of Ecological Analysis</em>, Chapter 11):</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>ID</p></th>
+<th class="head"><p>Invariant</p></th>
+<th class="head"><p>Mathematical and runtime contract</p></th>
+<th class="head"><p>Enforcement owner</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">I1</span></code></p></td>
+<td><p>No side effects</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Functor.forward()</span></code> operates on read-only tensor views; prognostic mutations occur exclusively via returned <code class="docutils literal notranslate"><span class="pre">UpdateItem</span></code> records</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">FunctorBase</span></code>, <code class="docutils literal notranslate"><span class="pre">StateManager</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">I2</span></code></p></td>
+<td><p>Unit consistency</p></td>
+<td><p>Every <code class="docutils literal notranslate"><span class="pre">UpdateItem.unit</span></code> is dimensionally compatible with the target state contract (<code class="docutils literal notranslate"><span class="pre">per_timestep=False</span></code> rates carry time-derivative units)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">relic.core.units.validator</span></code>, <code class="docutils literal notranslate"><span class="pre">StateManager</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">I3</span></code></p></td>
+<td><p>Conservation closure</p></td>
+<td><p>Five active ledgers (<code class="docutils literal notranslate"><span class="pre">water</span></code>, <code class="docutils literal notranslate"><span class="pre">carbon</span></code>, <code class="docutils literal notranslate"><span class="pre">nitrogen</span></code>, <code class="docutils literal notranslate"><span class="pre">phosphorus</span></code>, <code class="docutils literal notranslate"><span class="pre">energy</span></code>) satisfy <span class="math notranslate nohighlight">\(\lvert r_n^{(E)} \rvert \le \epsilon_E\)</span> over <span class="math notranslate nohighlight">\([t_n, t_n + \Delta t]\)</span></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">relic.core.state.conservation</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">I4</span></code></p></td>
+<td><p>Additive reversibility</p></td>
+<td><p>Applying <span class="math notranslate nohighlight">\(+\delta\mathbf{S}\)</span> followed by <span class="math notranslate nohighlight">\(-\delta\mathbf{S}\)</span> under <code class="docutils literal notranslate"><span class="pre">UpdateMode.ACCUMULATE</span></code> restores <span class="math notranslate nohighlight">\(\mathbf{S}_n\)</span> to floating-point precision</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StateManager</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">I5</span></code></p></td>
+<td><p>Commutativity of independent increments</p></td>
+<td><p>Synchronous <code class="docutils literal notranslate"><span class="pre">ACCUMULATE</span></code> increments to disjoint or additive pools commute up to floating-point rounding (<code class="docutils literal notranslate"><span class="pre">output_overlap_governance</span></code> guards shared writers)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StateManager</span></code>, <code class="docutils literal notranslate"><span class="pre">relic.core.simulator.output_overlap_governance</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">I6</span></code></p></td>
+<td><p>Explicit <span class="math notranslate nohighlight">\(\Delta t\)</span>-scaling</p></td>
+<td><p>Rate tendencies (<code class="docutils literal notranslate"><span class="pre">per_timestep=False</span></code>) scale once by committed interval <span class="math notranslate nohighlight">\(\Delta t\)</span>; integrated increments (<code class="docutils literal notranslate"><span class="pre">per_timestep=True</span></code>) apply without a second <span class="math notranslate nohighlight">\(\Delta t\)</span> factor</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">UpdateItem</span></code>, <code class="docutils literal notranslate"><span class="pre">StateManager</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">I7</span></code></p></td>
+<td><p>Accounted bounds clipping</p></td>
+<td><p>Box-bound projection <span class="math notranslate nohighlight">\(\widetilde{S}_i = \min(\max(S_i, S_{i,\min}), S_{i,\max})\)</span> records exact truncated mass/energy in <code class="docutils literal notranslate"><span class="pre">clip_loss</span></code> or explicit overflow routes</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StateManager</span></code>, <code class="docutils literal notranslate"><span class="pre">relic.validation.framework.rules.overflow_routing</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p>Discrete conservation residuals audited by
+<code class="docutils literal notranslate"><span class="pre">StateManager.generate_conservation_report()</span></code> across <code class="docutils literal notranslate"><span class="pre">validation/conservation.yaml</span></code>
+tolerances (<span class="math notranslate nohighlight">\(\epsilon_{\mathrm{H_2O}} = 10^{-9}\)</span>, <span class="math notranslate nohighlight">\(\epsilon_{\mathrm{C}} = 10^{-9}\)</span>,
+<span class="math notranslate nohighlight">\(\epsilon_{\mathrm{N}} = 10^{-11}\)</span>, <span class="math notranslate nohighlight">\(\epsilon_{\mathrm{P}} = 10^{-12}\)</span>,
+<span class="math notranslate nohighlight">\(\epsilon_{\mathrm{E}} = 10^{-6}\)</span>) satisfy:</p>
+<div class="math notranslate nohighlight">
+\[
+r_n^{(E)}
+= \sum_{i \in \mathcal{V}_E}\left(Q_{i,n+1}^{(E)} - Q_{i,n}^{(E)}\right)
+- \Delta t\left(\sum_{j \in \mathcal{S}_{\mathrm{ext}}(E)} F_{j,n}^{(E)}
+- \sum_{k \in \mathcal{L}_{\mathrm{ext}}(E)} F_{k,n}^{(E)}\right)
++ Q_{\mathrm{clip},n}^{(E)}.
+\]</div>
+</section>
+<section id="centralized-parametermanager-and-physical-constant-ssot">
+<h2>Centralized ParameterManager and physical-constant SSOT<a class="headerlink" href="#centralized-parametermanager-and-physical-constant-ssot" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">ParameterManager</span></code> (<code class="docutils literal notranslate"><span class="pre">relic.parameters.manager</span></code>) owns all model coefficients,
+bounds, units, dtypes, references, and gradient flags. In the live database
+under <code class="docutils literal notranslate"><span class="pre">relic/parameters/database/</span></code>, <code class="docutils literal notranslate"><span class="pre">138</span></code> YAML files (<code class="docutils literal notranslate"><span class="pre">134</span></code> under <code class="docutils literal notranslate"><span class="pre">relic/</span></code> and
+<code class="docutils literal notranslate"><span class="pre">4</span></code> under <code class="docutils literal notranslate"><span class="pre">calibrated/</span></code>) define <code class="docutils literal notranslate"><span class="pre">4,751</span></code> leaf entries (<code class="docutils literal notranslate"><span class="pre">4,642</span></code> core + <code class="docutils literal notranslate"><span class="pre">109</span></code>
+calibrated overrides), resolving to <code class="docutils literal notranslate"><span class="pre">4,643</span></code> active default runtime parameters of
+which <code class="docutils literal notranslate"><span class="pre">810</span></code> carry <code class="docutils literal notranslate"><span class="pre">with_gradients:</span> <span class="pre">true</span></code> for differentiable calibration. Inside
+a Functor, parameters are retrieved exclusively via
+<code class="docutils literal notranslate"><span class="pre">self.get_parameter_value(name,</span> <span class="pre">required=...)</span></code>.</p>
+<p>Universal and material physical constants (CODATA gas constant <span class="math notranslate nohighlight">\(R\)</span>,
+Stefan-Boltzmann constant <span class="math notranslate nohighlight">\(\sigma\)</span>, Avogadro constant <span class="math notranslate nohighlight">\(N_A\)</span>, standard gravity
+<span class="math notranslate nohighlight">\(g\)</span>, von Karman constant <span class="math notranslate nohighlight">\(\kappa\)</span>, molar masses, and phase-change enthalpies)
+reside solely in <code class="docutils literal notranslate"><span class="pre">relic/parameters/database/relic/physical/constants.yaml</span></code> as a
+Single Source of Truth (SSOT) and are accessed via <code class="docutils literal notranslate"><span class="pre">get_physical_constant</span></code>
+(<code class="docutils literal notranslate"><span class="pre">relic.utils.physical_constants</span></code>). Domain YAML files and Python modules never
+redefine physical constants. Dimensional conversions preserve exact stoichiometry;
+converting molar assimilation <span class="math notranslate nohighlight">\(A\)</span> [<span class="math notranslate nohighlight">\(\mu\)</span>mol CO<span class="math notranslate nohighlight">\(_2\)</span> m<span class="math notranslate nohighlight">\(^{-2}\)</span> s<span class="math notranslate nohighlight">\(^{-1}\)</span>] to carbon
+mass flux <span class="math notranslate nohighlight">\(F_{\mathrm{C}}\)</span> [kg C m<span class="math notranslate nohighlight">\(^{-2}\)</span> s<span class="math notranslate nohighlight">\(^{-1}\)</span>] applies
+<span class="math notranslate nohighlight">\(F_{\mathrm{C}} = A\,M_{\mathrm{C}}\,10^{-9}\)</span> using SSOT carbon molar mass
+<span class="math notranslate nohighlight">\(M_{\mathrm{C}}\)</span> [g mol<span class="math notranslate nohighlight">\(^{-1}\)</span>].</p>
+</section>
+<section id="piecewise-smooth-discrete-adjoint-differentiation-and-device-policy">
+<h2>Piecewise-smooth discrete adjoint differentiation and device policy<a class="headerlink" href="#piecewise-smooth-discrete-adjoint-differentiation-and-device-policy" title="Link to this heading"></a></h2>
+<p>Because <code class="docutils literal notranslate"><span class="pre">FunctorBase</span></code> subclasses <code class="docutils literal notranslate"><span class="pre">torch.nn.Module</span></code>, macro-step transitions
+<span class="math notranslate nohighlight">\(\mathbf{S}_t = \Phi_t(\mathbf{S}_{t-1}, \boldsymbol{\theta})\)</span> (<span class="math notranslate nohighlight">\(t = 1, \dots, N_t\)</span>)
+from initial state <span class="math notranslate nohighlight">\(\mathbf{S}_0(\boldsymbol{\theta})\)</span> construct an exact
+reverse-mode discrete adjoint graph in <code class="docutils literal notranslate"><span class="pre">torch.autograd</span></code> (<em>Methods of Ecological
+Analysis</em>, Chapter 10). Because <span class="math notranslate nohighlight">\(\boldsymbol{\theta}\)</span> enters every step
+transition <span class="math notranslate nohighlight">\(\Phi_t\)</span> directly, the total terminal objective gradient
+<span class="math notranslate nohighlight">\(\frac{\mathrm{d}\mathcal{L}(\mathbf{S}_{N_t}, \boldsymbol{\theta})}{\mathrm{d}\boldsymbol{\theta}}\)</span>
+accumulates step-wise parameter Jacobians across the full trajectory:</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\mathrm{d}\mathcal{L}}{\mathrm{d}\boldsymbol{\theta}}
+= \frac{\partial \mathcal{L}}{\partial \boldsymbol{\theta}}
++ \frac{\partial \mathcal{L}}{\partial \mathbf{S}_{N_t}}
+\left(\prod_{k=1}^{N_t} \frac{\partial \Phi_k}{\partial \mathbf{S}_{k-1}}\right)
+\frac{\partial \mathbf{S}_0}{\partial \boldsymbol{\theta}}
++ \sum_{t=1}^{N_t}
+\frac{\partial \mathcal{L}}{\partial \mathbf{S}_{N_t}}
+\left(\prod_{k=t+1}^{N_t} \frac{\partial \Phi_k}{\partial \mathbf{S}_{k-1}}\right)
+\frac{\partial \Phi_t}{\partial \boldsymbol{\theta}},
+\]</div>
+<p>where matrix products are ordered from left (<span class="math notranslate nohighlight">\(k = N_t\)</span>) to right (<span class="math notranslate nohighlight">\(k = 1\)</span> or
+<span class="math notranslate nohighlight">\(k = t + 1\)</span>) and the empty product at <span class="math notranslate nohighlight">\(t = N_t\)</span> equals the identity matrix
+<span class="math notranslate nohighlight">\(\mathbf{I}_n\)</span>. Smooth PyTorch tensor paths, linear overlap remaps without
+post-clipping, and implicit scalar roots solved via <code class="docutils literal notranslate"><span class="pre">BracketedBisectionSolver</span></code>
+(using implicit-function differentiation) propagate exact discrete sensitivities.
+Transversal guard crossings require explicit saltation-matrix factors
+(<code class="docutils literal notranslate"><span class="pre">relic.computation.solvers.hybrid_events</span></code>; see <a class="reference internal" href="numerics.html"><span class="std std-doc">Numerical Integration, Splitting, Stability, and Stochastic Processes</span></a>), whereas hard bounds
+clipping, discrete regime switches, adaptive step-size rejections, and NumPy-based
+external ingestion regridding act as non-differentiable boundaries.</p>
+<p>Device placement is governed centrally by <code class="docutils literal notranslate"><span class="pre">relic.core.device_policy</span></code> (<code class="docutils literal notranslate"><span class="pre">device</span></code>,
+<code class="docutils literal notranslate"><span class="pre">require_gpu</span></code>, <code class="docutils literal notranslate"><span class="pre">device_overrides</span></code>, <code class="docutils literal notranslate"><span class="pre">module_device_overrides</span></code>). <code class="docutils literal notranslate"><span class="pre">FunctorBase.__init__</span></code>
+allocates CPU placeholders, and simulator registration migrates modules to the
+resolved target device (GPU-first with automatic CPU fallback unless
+<code class="docutils literal notranslate"><span class="pre">require_gpu:</span> <span class="pre">true</span></code> or an unsatisfied <code class="docutils literal notranslate"><span class="pre">enable_distributed:</span> <span class="pre">true</span></code> contract
+raises). Scientific modules never invoke <code class="docutils literal notranslate"><span class="pre">torch.cuda.is_available()</span></code> directly.</p>
+</section>
+<section id="bounded-mathematical-contracts-and-runtime-boundary-i-vs-n">
+<h2>Bounded mathematical contracts and runtime boundary (<code class="docutils literal notranslate"><span class="pre">[I]</span></code> vs <code class="docutils literal notranslate"><span class="pre">[N]</span></code>)<a class="headerlink" href="#bounded-mathematical-contracts-and-runtime-boundary-i-vs-n" title="Link to this heading"></a></h2>
+<p>Three decidable finite-dimensional operator contracts in
+<code class="docutils literal notranslate"><span class="pre">relic.computation.operators</span></code> provide numerical verification against
+<code class="docutils literal notranslate"><span class="pre">validation/iphs.yaml</span></code> tolerances (<em>Methods of Ecological Analysis</em>, Chapters
+1–3 and 10):</p>
+<ol class="arabic simple">
+<li><p><strong>Typed linear chain maps (<code class="docutils literal notranslate"><span class="pre">[I]</span></code>)</strong>: <code class="docutils literal notranslate"><span class="pre">LinearChainMap</span></code>
+(<code class="docutils literal notranslate"><span class="pre">relic.computation.operators.dec.chain_map</span></code>) maps declared 10-field
+<code class="docutils literal notranslate"><span class="pre">CochainSpaceSpec</span></code> spaces, verifies unit-scaled ledger preservation
+<span class="math notranslate nohighlight">\(\lVert C_t(u M) - C_s \rVert_\infty \le \varepsilon_{\mathrm{cm}}\)</span>, and
+bounds perturbation growth by <span class="math notranslate nohighlight">\(\lVert u M \rVert_2 \lVert \delta x \rVert_2\)</span>.
+Exact <code class="docutils literal notranslate"><span class="pre">equals</span></code> is an equivalence relation; <code class="docutils literal notranslate"><span class="pre">close_within</span></code>
+(<span class="math notranslate nohighlight">\(\lVert u_1 M_1 - u_2 M_2 \rVert_2 \le \varepsilon\)</span>) is reflexive and
+symmetric without transitivity. Production consumer:
+<code class="docutils literal notranslate"><span class="pre">LitterfallInterfaceMapper</span></code>.</p></li>
+<li><p><strong>Metzler resource-activity invasion threshold (<code class="docutils literal notranslate"><span class="pre">[I]</span></code>)</strong>:
+<code class="docutils literal notranslate"><span class="pre">activity_threshold</span></code> and <code class="docutils literal notranslate"><span class="pre">is_nonsingular_m_matrix</span></code>
+(<code class="docutils literal notranslate"><span class="pre">relic.computation.operators.invasion_threshold</span></code>) verify non-negative growth
+<span class="math notranslate nohighlight">\(G \ge 0\)</span> and nonsingular M-matrix loss <span class="math notranslate nohighlight">\(\Delta\)</span> (<span class="math notranslate nohighlight">\(Z\)</span>-matrix sign structure
+and <span class="math notranslate nohighlight">\(\Delta^{-1} \ge 0\)</span>), evaluate the next-generation spectral radius
+<span class="math notranslate nohighlight">\(\mathcal{R}_{\mathrm{act}} = \rho(\Delta^{-1} G)\)</span>, and cross-check
+<span class="math notranslate nohighlight">\(\operatorname{sign}(\mathcal{R}_{\mathrm{act}} - 1) = \operatorname{sign}(s(G - \Delta))\)</span>.
+Values inside <span class="math notranslate nohighlight">\(\lvert \mathcal{R}_{\mathrm{act}} - 1 \rvert \le \varepsilon_{\mathrm{crit}}\)</span>
+return <code class="docutils literal notranslate"><span class="pre">verdict=&quot;critical&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">hyperbolic=False</span></code> without claiming global
+bifurcation or persistence. Production consumer: linearized activity-free
+<code class="docutils literal notranslate"><span class="pre">MicrobialEnzymeDecomposition</span></code>.</p></li>
+<li><p><strong>Affine-leaf relative storage and passivity ledger (<code class="docutils literal notranslate"><span class="pre">[I]</span></code>)</strong>:
+<code class="docutils literal notranslate"><span class="pre">relative_storage</span></code>, <code class="docutils literal notranslate"><span class="pre">certify_relative_storage</span></code>, and <code class="docutils literal notranslate"><span class="pre">feedback_power_ledger</span></code>
+(<code class="docutils literal notranslate"><span class="pre">relic.computation.operators.relative_storage</span></code>) retain the full Bregman
+first-order term
+<span class="math notranslate nohighlight">\(V(x) = F(x) - F(x^\ast) - \nabla F(x^\ast)^{\mathsf{T}}(x - x^\ast)\)</span>,
+verify constrained stationarity <span class="math notranslate nohighlight">\(\nabla F(x^\ast) \in \operatorname{im}(C^{\mathsf{T}})\)</span>
+and projected Hessian positivity <span class="math notranslate nohighlight">\(Z^{\mathsf{T}}\nabla^2 F(x^\ast) Z \succ 0\)</span>
+on an SVD basis <span class="math notranslate nohighlight">\(Z\)</span> of <span class="math notranslate nohighlight">\(\ker C\)</span> in <code class="docutils literal notranslate"><span class="pre">float64</span></code>, and audit open-system Willems
+power balance <span class="math notranslate nohighlight">\(\dot{F} = y_F^{\mathsf{T}} u - \mathcal{D} + \Phi_F\)</span>. Curved
+nonlinear conservation manifolds lie outside this contract. Production
+consumer: closed 1D <code class="docutils literal notranslate"><span class="pre">FickianDiffusion</span></code>.</p></li>
+</ol>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Architectural or theoretical element</p></th>
+<th class="head"><p>Status</p></th>
+<th class="head"><p>Scope boundary</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Four-pillar ABCs, canonical bridges, <code class="docutils literal notranslate"><span class="pre">FunctorBase</span></code>, <code class="docutils literal notranslate"><span class="pre">ParameterManager</span></code> (<code class="docutils literal notranslate"><span class="pre">4,643</span></code> parameters), <code class="docutils literal notranslate"><span class="pre">StateManager</span></code> (<code class="docutils literal notranslate"><span class="pre">I1</span></code>–<code class="docutils literal notranslate"><span class="pre">I7</span></code>), <code class="docutils literal notranslate"><span class="pre">GraphIR</span></code>, <code class="docutils literal notranslate"><span class="pre">SpatialQuantityBasis</span></code>, and bounded operator contracts</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[I]</span></code></p></td>
+<td><p>Live runtime governance across <code class="docutils literal notranslate"><span class="pre">relic.core</span></code>, <code class="docutils literal notranslate"><span class="pre">relic.parameters</span></code>, <code class="docutils literal notranslate"><span class="pre">relic.orchestration</span></code>, <code class="docutils literal notranslate"><span class="pre">relic.coupling</span></code>, and <code class="docutils literal notranslate"><span class="pre">relic.computation</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Category-theoretic specification (<code class="docutils literal notranslate"><span class="pre">relic.core.category_theory</span></code>)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[M]</span></code></p></td>
+<td><p>Standalone design-specification module; not imported by <code class="docutils literal notranslate"><span class="pre">GraphIR</span></code> compilation or <code class="docutils literal notranslate"><span class="pre">execution_loop</span></code>, with no compiler identity-elision pass</p></td>
+</tr>
+<tr class="row-even"><td><p>Multi-isotope prognostic pool ledger (<code class="docutils literal notranslate"><span class="pre">IsotopeHeartbeatFunctor</span></code>)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[N]</span></code></p></td>
+<td><p>Fail-closed <code class="docutils literal notranslate"><span class="pre">runtime_unbound</span></code> Level 0 boundary (historical design context <code class="docutils literal notranslate"><span class="pre">[H]</span></code>); excluded from the five active default conservation ledgers</p></td>
+</tr>
+<tr class="row-odd"><td><p>Textbook structural six-tuple <span class="math notranslate nohighlight">\(\mathfrak{S} = (\mathcal{K}, \mathcal{C}^\bullet, \mathcal{H}, \mathcal{J}-\mathcal{R}, \mathcal{G}, \mathcal{C}_{\mathrm{ledger}})\)</span></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[N]</span></code></p></td>
+<td><p>Analytical synthesis in <em>Methods of Ecological Analysis</em> (Chapters 1, 21–24) realized across distributed DEC/IPHS modules without a monolithic wrapper class</p></td>
+</tr>
+<tr class="row-even"><td><p>Five-term total simulation bias decomposition <span class="math notranslate nohighlight">\(\lVert \widehat{\mathbf{y}}_T - \mathbf{y}_T^\star \rVert \le E_1^{\mathrm{model}} + E_2^{\mathrm{param}} + E_3^{\mathrm{spatial}} + E_4^{\mathrm{temporal/split}} + E_5^{\mathrm{obs}}\)</span></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[N]</span></code></p></td>
+<td><p>Analytical telescoping error bound (<em>Methods of Ecological Analysis</em>, Chapters 14, 25–30); no online runtime <code class="docutils literal notranslate"><span class="pre">E1</span></code>–<code class="docutils literal notranslate"><span class="pre">E5</span></code> decomposition estimator is implemented</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Berman, A. and Plemmons, R. J. (1994). <em>Nonnegative Matrices in the Mathematical Sciences</em>. SIAM.</p></li>
+<li><p>Bonan, G. B. (2019). <em>Climate Change and Terrestrial Ecosystem Modeling</em>. Cambridge University Press.</p></li>
+<li><p>de Groot, S. R. and Mazur, P. (1984). <em>Non-Equilibrium Thermodynamics</em>. Dover.</p></li>
+<li><p>Farquhar, G. D., von Caemmerer, S., and Berry, J. A. (1980). A biochemical model of photosynthetic CO<span class="math notranslate nohighlight">\(_2\)</span> assimilation in leaves of C<span class="math notranslate nohighlight">\(_3\)</span> species. <em>Planta</em> 149, 78–90.</p></li>
+<li><p>Griewank, A. and Walther, A. (2008). <em>Evaluating Derivatives: Principles and Techniques of Algorithmic Differentiation</em>, 2nd ed. SIAM.</p></li>
+<li><p>Hairer, E., Lubich, C., and Wanner, G. (2006). <em>Geometric Numerical Integration</em>, 2nd ed. Springer.</p></li>
+<li><p>Jones, P. W. (1999). First- and second-order conservative remapping schemes for grids in spherical coordinates. <em>Monthly Weather Review</em> 127, 2204–2210.</p></li>
+<li><p>LeVeque, R. J. (2002). <em>Finite Volume Methods for Hyperbolic Problems</em>. Cambridge University Press.</p></li>
+<li><p>Richards, L. A. (1931). Capillary conduction of liquids through porous mediums. <em>Physics</em> 1, 318–333.</p></li>
+<li><p>Willems, J. C. (1972). Dissipative dynamical systems, Part I: General theory. <em>Archive for Rational Mechanics and Analysis</em> 45, 321–351.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Scientific Theory and Governing Equations" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="dec_iphs_generic.html" class="btn btn-neutral float-right" title="DEC, IPHS, GENERIC, Ports, and Reaction Structure" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

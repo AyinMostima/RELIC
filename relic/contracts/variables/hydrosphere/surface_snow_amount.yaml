@@ -1,0 +1,48 @@
+variable: surface_snow_amount
+title: "Surface Snow Amount"
+description: "Mass of the surface snowpack per unit ground area (kg m-2): VIC OUT_SWE, a liquid-equivalent water depth converted with the water density (declared source transform water_depth). It is not snow_water_equivalent, the snow_pack prognostic liquid-water-equivalent depth in mm (CF lwe_thickness_of_surface_snow_amount). Supplied as forcing by external adapters; no RELIC Functor reads it. CF v94 surface_snow_amount (kg m-2)."
+kind: forcing
+dimension:
+  udunits: "kg m-2"
+  cf_standard_name: "surface_snow_amount"
+support:
+  spatial_kind: grid_cell
+  area_basis: ground_area
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: null
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "CF Standard Name Table v94: surface_snow_amount (canonical units kg m-2)"
+  - "Hamman et al. (2018) Geosci. Model Dev. 11:3481-3496 (VIC 5 snow water equivalent OUT_SWE)"
+# Sign convention: a storage amount, >= 0.
+numerics:
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "VICAdapter"
+      module: "relic.coupling.external.hydrological_models.vic_adapter"
+      provides: ["surface_snow_amount"]
+      unit: "kg m-2"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "external_forcing_adapter"
+  runtime_role: "external_surface_snow_amount_forcing"
+  runtime_writer: null
+  adapter_writers:
+    - "VICAdapter"

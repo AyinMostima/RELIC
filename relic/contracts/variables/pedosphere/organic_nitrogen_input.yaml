@@ -1,0 +1,32 @@
+variable: organic_nitrogen_input
+title: "Organic Litter Nitrogen Input Flux"
+kind: flux
+dimension:
+  udunits: "g N m-2 s-1"
+  cf_standard_name: null
+owner: "litterfall_interface_mapper"
+aliases: []
+incrementable: false
+accumulates: nitrogen.total
+numerics:
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "litterfall_interface_mapper"
+      module: "relic.scientific.pedosphere.interface_mapping"
+      provides: ["organic_nitrogen_input"]
+      unit: "g N m-2 s-1"
+flux_contract:
+  allowed_in: ["litterfall_interface_mapper"]
+  allowed_out: ["mineralization"]
+  budget_check:
+    guardian: null
+    tolerance: {atol: 1.0e-10, rtol: 1.0e-8}
+provenance:
+  source_file: "relic/scientific/pedosphere/interface_mapping.py"
+  runtime_role: "biosphere_management_to_pedosphere_organic_nitrogen_input"
+  runtime_writer: "litterfall_interface_mapper"

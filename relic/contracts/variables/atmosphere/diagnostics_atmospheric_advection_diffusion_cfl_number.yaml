@@ -1,0 +1,47 @@
+variable: diagnostics.atmospheric_advection_diffusion.cfl_number
+title: "Atmospheric Transport Cell Courant Sum"
+description: "Grid maximum of the cell-centred advective Courant sum C = max(dt * sum_k |u_k| / dx_k) of the requested atmospheric tracer step (Courant et al. 1928), computed by compute_cfl_number from the cell wind components before the step. atmospheric_advection_diffusion rejects a value above transport.numerical.cfl_advection_max before any state advance. Dimensionless and non-negative, unsigned (no direction). Named apart from diagnostics.cfl_number, the finite-volume outward-face Courant sum of linear_advection and advection_diffusion, which equals this value only for uniform wind. Written only by atmospheric_advection_diffusion as a read-only step diagnostic."
+kind: diagnostic
+dimension:
+  udunits: "1"
+  cf_standard_name: null
+support:
+  spatial_kind: null
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: []
+owner: "atmospheric_advection_diffusion"
+aliases: []
+incrementable: false
+accumulates: null
+references:
+  - "Courant, R., Friedrichs, K. & Lewy, H. (1928). Math. Ann. 100, 32-74"
+numerics:
+  # A sum of non-negative terms; the admissible limit is the ParameterManager
+  # value transport.numerical.cfl_advection_max, not a declared bound.
+  lower_bound: 0.0
+  upper_bound: null
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "atmospheric_advection_diffusion"
+      module: "relic.scientific.atmosphere.transport.AtmosphericAdvectionDiffusionFunctor"
+      provides: ["diagnostics.atmospheric_advection_diffusion.cfl_number"]
+      unit: "1"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "relic/scientific/atmosphere/transport/AtmosphericAdvectionDiffusionFunctor.py"
+  runtime_role: "atmospheric_transport_cell_courant_observation"
+  runtime_writer: "atmospheric_advection_diffusion"
+  note: "Scalar torch.max of the diagnostics.cfl_calculator field (compute_cfl_number, relic/computation/operators/functional.py:931: C = sum_k |u_k| dt / dx_k), checked against transport.numerical.cfl_advection_max before the combined operator runs and written as a raw diagnostics.* output (partitioned out of state, ingested per step)."

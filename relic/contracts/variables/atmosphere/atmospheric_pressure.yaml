@@ -1,0 +1,56 @@
+variable: atmospheric_pressure
+title: "Atmospheric Pressure"
+kind: forcing
+dimension:
+  udunits: "Pa"
+  cf_standard_name: "surface_air_pressure"
+support:
+  spatial_kind: grid_cell
+  area_basis: null
+  temporal_basis: instantaneous
+  vertical_basis: none
+  shape:
+    dimensions: [cell]
+owner: null
+aliases:
+  - "air_pressure"
+incrementable: false
+accumulates: null
+references:
+  - "CF Conventions 1.11"
+numerics:
+  lower_bound: 5000.0
+  upper_bound: 110000.0
+  atol: 1.0e-12
+  rtol: 1.0e-9
+writers:
+  increments: []
+  tendencies:
+    - name: "CESMAdapter"
+      module: "relic.coupling.external.atmospheric_models.cesm_adapter"
+      provides: ["atmospheric_pressure"]
+      unit: "Pa"
+    - name: "CMIP6Adapter"
+      module: "relic.coupling.external.climate_models.cmip6_adapter"
+      provides: ["atmospheric_pressure"]
+      unit: "Pa"
+    - name: "WRFAdapter"
+      module: "relic.coupling.external.atmospheric_models.wrf_adapter"
+      provides: ["atmospheric_pressure"]
+      unit: "Pa"
+flux_contract:
+  allowed_in: []
+  allowed_out: []
+  budget_check:
+    guardian: null
+    tolerance:
+      atol: 1.0e-10
+      rtol: 1.0e-8
+provenance:
+  source_file: "external_forcing_adapter"
+  runtime_role: "canonical_atmospheric_pressure_forcing"
+  runtime_writer: null
+  adapter_writers:
+    - "CESMAdapter"
+    - "CMIP6Adapter"
+    - "WRFAdapter"

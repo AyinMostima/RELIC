@@ -47,7 +47,10 @@ This directory hosts the lightweight preview PDF editions of the bilingual theor
 
 ## Companion Video Lecture Series (Bilibili & YouTube) / 配套十三集可视化教程视频
 
-A 13-episode animated mathematical and code-walkthrough lecture series (bilingual subtitles; published simultaneously on **Bilibili** and **YouTube**) accompanies this monograph and the [`tutorial/`](../tutorial/) notebooks. Video links will be populated in the root [`README.md`](../README.md#video-tutorials-bilibili--youtube) immediately upon upload.
+A 13-episode animated mathematical and code-walkthrough lecture series (~7.3 hours total) accompanies this monograph and the [`tutorial/`](../tutorial/) notebooks:
+
+- **Bilibili Channel (哔哩哔哩视频空间):** **[https://space.bilibili.com/3690975918557825/upload/video](https://space.bilibili.com/3690975918557825/upload/video)**
+- **Full 13-Episode Index (`EP01`--`EP13` direct `BV` links):** See the **[Video Tutorials table in the root `README.md`](../README.md#video-tutorials-bilibili--youtube)** (`BV1Uisp6VE3c` through `BV1snsH6vE16`).
 
 ---
 

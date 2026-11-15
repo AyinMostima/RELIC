@@ -28,6 +28,7 @@ _Initiated under the Lunar Architecture Programme_
 [![License: MIT](https://img.shields.io/badge/License-MIT-silver?style=for-the-badge)](LICENSE)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000?style=for-the-badge)](https://github.com/psf/black)
 [![Docs](https://img.shields.io/badge/docs-Sphinx%20(EN%20%7C%20%E4%B8%AD%E6%96%87)-0075A8?style=for-the-badge&logo=readthedocs&logoColor=white)](https://ayinmostima.github.io/RELIC/)
+[![Bilibili](https://img.shields.io/badge/Bilibili-13%20Video%20Lectures-00A1D6?style=for-the-badge&logo=bilibili&logoColor=white)](https://space.bilibili.com/3690975918557825/upload/video)
 [![Data: Zenodo](https://img.shields.io/badge/data-Zenodo%20DOIs-024E78?style=for-the-badge&logo=zenodo&logoColor=white)](#companion-publications--public-datasets-zenodo)
 
 [Overview](#overview) | [Docs Website (EN / 中文)](https://ayinmostima.github.io/RELIC/) | [Monographs](#monographs--theory-books) | [Video Tutorials](#video-tutorials-bilibili--youtube) | [Public Data (Zenodo)](#companion-publications--public-datasets-zenodo) | [Capabilities](#key-capabilities) | [Getting Started](#getting-started) | [Quick Start](#quick-start) | [Architecture](#architecture) | [Documentation](#documentation) | [Testing](#testing) | [Citation](#author--citation) | [License](#license)
@@ -461,23 +462,25 @@ Hands-on executable notebooks (`00`--`29`) and theory scripts paired with the 30
 
 ## Video Tutorials (Bilibili & YouTube)
 
-A 13-episode animated mathematical derivation and code-walkthrough lecture series (bilingual Chinese/English subtitles) accompanies *Methods of Ecological Analysis* and the RELIC codebase, hosted simultaneously on **Bilibili (哔哩哔哩)** and **YouTube**:
+A 13-episode animated mathematical derivation and code-walkthrough lecture series (~7.3 hours total) accompanies *Methods of Ecological Analysis* and the RELIC codebase:
 
-| Episode | Act | Title (English / 中文) | Bilibili (B站) | YouTube |
-| :---: | :---: | :--- | :---: | :---: |
-| **EP01** | I | Structure-Function Relations, Conservation Ledgers & Quantity Quintuples<br>公理化迷思与地球账本：可跨环境比较的结构与功能关系 | *Uploading soon* | *Uploading soon* |
-| **EP02** | I | Positive-Cone Linear Algebra: Metzler Matrices, Stoichiometric Nullspaces & KKT<br>正锥与守恒的线性代数：Metzler 矩阵、化学计量左零空间与凸 KKT | *Uploading soon* | *Uploading soon* |
-| **EP03** | I | Ledgers on Curved Meshes: Generalized Stokes, Discrete Exterior Calculus & Hodge Stars<br>弯曲空间的账本：从广义 Stokes 定理到离散外微分（DEC）与 Hodge 星 | *Uploading soon* | *Uploading soon* |
-| **EP04** | II | Port-Hamiltonian Systems, GENERIC Double Degeneracy & BIHSS Canonical Form<br>当哈密顿遇上热力学第二定律：pH、GENERIC 与 BIHSS 标准形 | *Uploading soon* | *Uploading soon* |
-| **EP05** | II | Category Theory & Governed Operators: Typed Cochain Morphisms to `FunctorBase`<br>范畴论与受治理算子：从带类型上链态射到 `FunctorBase` 生命周期 | *Uploading soon* | *Uploading soon* |
-| **EP06** | II | Composable Scheduling: Four-Graph Compilation, Multi-Rate Transactions & Parameter SSOT<br>可组合调度：四类图编译、多速率事务与参数 SSOT | *Uploading soon* | *Uploading soon* |
-| **EP07** | III | Atmosphere & Hydrosphere Laws: MOST Turbulence, Unified FVM & Richards Soil Water<br>大气与水圈的流动法则：MOST 相似理论、统一 FVM 与 Richards 土水方程 | *Uploading soon* | *Uploading soon* |
-| **EP08** | III | Leaf Trade-Offs: Farquhar Photosynthesis, Medlyn Stomata & Dual-Driver Isoprene<br>叶片里的权衡：Farquhar 光合、Medlyn 最优气孔与异戊二烯双驱动 | *Uploading soon* | *Uploading soon* |
-| **EP09** | III | Pedosphere & Anthroposphere: Multi-Pool C-N-P, Freeze-Thaw ALE & Land Transitions<br>地下周转与人类活动：多库 C-N-P 计量、冻融 ALE 网格与土地转换 | *Uploading soon* | *Uploading soon* |
-| **EP10** | IV | Structure-Preserving Scale Transport: Jensen Curvature, Adjoint Remapping & Fibre Defects<br>保结构换尺度：Jensen 曲率缺口、伴随重映射与链映射交换缺陷 | *Uploading soon* | *Uploading soon* |
-| **EP11** | IV | Stiffness & Pulses: Lie/Strang Splitting, BCH Expansion, Saltation & Causal Stochasticity<br>跨越刚性与脉冲：Lie/Strang 分裂、BCH 展开、跳跃矩阵与因果随机 | *Uploading soon* | *Uploading soon* |
-| **EP12** | IV | Structural Identifiability & Differentiable Assimilation: VarPro, Adjoints, EnKF/HMC & L1--L4<br>机制可辨识与可微同化：VarPro、伴随波、EnKF/HMC 与 L1–L4 全景验证 | *Uploading soon* | *Uploading soon* |
-| **EP13** | Finale | Synthesis: Vegetation Greening, Surface Ozone Regimes & Certified Sign Bounds<br>绿化与近地面臭氧：五项实验结构、奇氧微分账本与双侧误差界符号证书 | *Uploading soon* | *Uploading soon* |
+- **Bilibili Channel (哔哩哔哩视频合集主页):** **[https://space.bilibili.com/3690975918557825/upload/video](https://space.bilibili.com/3690975918557825/upload/video)**
+
+| Episode | Act | Title (中文 / English) | Duration | Bilibili (B站直达) | YouTube |
+| :---: | :---: | :--- | :---: | :---: | :---: |
+| **EP01** | I | 【RELIC·生态学分析方法概论 01】公理化迷思与地球收支账本中的双端配对守恒<br>*Myth of Axiomatization & Paired Endpoint Conservation in Earth Budget Ledgers* | 34:43 | [`BV1Uisp6VE3c`](https://www.bilibili.com/video/BV1Uisp6VE3c) | *Uploading soon* |
+| **EP02** | I | 【RELIC·生态学分析方法概论 02】非负正锥上的梅茨勒矩阵流与化学计量守恒<br>*Metzler Matrix Flows on the Non-Negative Orthant & Stoichiometric Conservation* | 34:06 | [`BV1t5sH6zELE`](https://www.bilibili.com/video/BV1t5sH6zELE) | *Uploading soon* |
+| **EP03** | I | 【RELIC·生态学分析方法概论 03】边界的边界为零 · 离散斯托克斯恒等式与霍奇星算子<br>*Boundary of a Boundary Is Zero: Discrete Stokes Identity & Hodge Star Operators* | 33:25 | [`BV11JsH6KEfB`](https://www.bilibili.com/video/BV11JsH6KEfB) | *Uploading soon* |
+| **EP04** | II | 【RELIC·生态学分析方法概论 04】开放耦合系统中的端口哈密顿结构与热力学第二定律<br>*Port-Hamiltonian Structure & the Second Law of Thermodynamics in Open Coupled Systems* | 31:09 | [`BV1xJsH6KE6s`](https://www.bilibili.com/video/BV1xJsH6KE6s) | *Uploading soon* |
+| **EP05** | II | 【RELIC·生态学分析方法概论 05】从定型端口范畴到受治理算子的函子缺陷传播界<br>*From Typed Port Categories to Functorial Defect Propagation Bounds of Governed Operators* | 32:13 | [`BV1hgsH6GEck`](https://www.bilibili.com/video/BV1hgsH6GEck) | *Uploading soon* |
+| **EP06** | II | 【RELIC·生态学分析方法概论 06】四图中间表示下的无竞态并行调度与单源状态治理<br>*Race-Free Parallel Scheduling & Single-Owner State Governance under Four-Graph IR* | 33:37 | [`BV1DMsH6CEqp`](https://www.bilibili.com/video/BV1DMsH6CEqp) | *Uploading soon* |
+| **EP07** | III | 【RELIC·生态学分析方法概论 07】大气—冠层—土壤通量闭合与混合型理查兹守恒求解<br>*Atmosphere–Canopy–Soil Flux Closure & Conservative Mixed-Form Richards Solving* | 35:50 | [`BV1DMsH6CEmW`](https://www.bilibili.com/video/BV1DMsH6CEmW) | *Uploading soon* |
+| **EP08** | III | 【RELIC·生态学分析方法概论 08】叶片光合气孔最优耦合与叶绿体异戊二烯合成机理<br>*Optimal Leaf Photosynthesis–Stomatal Coupling & Chloroplastic Isoprene Biosynthesis* | 34:44 | [`BV183sH6rEjG`](https://www.bilibili.com/video/BV183sH6rEjG) | *Uploading soon* |
+| **EP09** | III | 【RELIC·生态学分析方法概论 09】冻融移动土层中的碳氮磷化学计量与马尔可夫碳龄<br>*C–N–P Stoichiometry & Markov Carbon Age in Freeze–Thaw Moving Soil Layers* | 35:01 | [`BV1wbsH6cEce`](https://www.bilibili.com/video/BV1wbsH6cEce) | *Uploading soon* |
+| **EP10** | IV | 【RELIC·生态学分析方法概论 10】跨尺度聚合的琴生曲率偏差与海森—协方差二阶闭合<br>*Jensen Curvature Bias in Cross-Scale Aggregation & Hessian–Covariance Second-Order Closure* | 32:14 | [`BV1r4sH6hE82`](https://www.bilibili.com/video/BV1r4sH6hE82) | *Uploading soon* |
+| **EP11** | IV | 【RELIC·生态学分析方法概论 11】多速率算子分裂、阈值跳跃矩阵与结构因果时间窗<br>*Multi-Rate Operator Splitting, Threshold Saltation Matrices & Structural Causal Windows* | 33:57 | [`BV1JhsH6ZEbJ`](https://www.bilibili.com/video/BV1JhsH6ZEbJ) | *Uploading soon* |
+| **EP12** | IV | 【RELIC·生态学分析方法概论 12】突破参数补偿狭谷的变量投影伴随反演与封存证伪<br>*Breaking Parameter Compensation Valleys via Variable-Projection Adjoint Inversion & Holdout Falsification* | 30:20 | [`BV1n8sH6bE5B`](https://www.bilibili.com/video/BV1n8sH6bE5B) | *Uploading soon* |
+| **EP13** | Finale | 【RELIC·生态学分析方法概论 13】城市绿化怎样改变近地面臭氧 · 通路开关分解与氮氧化物临界值<br>*How Urban Greening Alters Surface Ozone: Pathway-Switch Decomposition & Critical NOx Thresholds* | 33:15 | [`BV1snsH6vE16`](https://www.bilibili.com/video/BV1snsH6vE16) | *Uploading soon* |
 
 ---
 

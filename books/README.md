@@ -47,10 +47,12 @@ This directory hosts the lightweight preview PDF editions of the bilingual theor
 
 ## Companion Video Lecture Series (Bilibili & YouTube) / 配套十三集可视化教程视频
 
-A 13-episode animated mathematical and code-walkthrough lecture series (~7.3 hours total) accompanies this monograph and the [`tutorial/`](../tutorial/) notebooks:
+A 13-episode animated mathematical and code-walkthrough lecture series (~7.3 hours total across English and Chinese editions) accompanies this monograph and the [`tutorial/`](../tutorial/) notebooks:
 
+- **YouTube Playlist (`EN` 13-Episode Series):** **[RELIC · Introduction to Ecological Analysis Methods (`PLSO_0xFOPZBo`)](https://www.youtube.com/playlist?list=PLSO_0xFOPZBo)**
+- **YouTube Channel (`@AyinMostima`, all 26 `EN` + `中文` videos):** **[https://www.youtube.com/@AyinMostima/videos](https://www.youtube.com/@AyinMostima/videos)** · **[Playlists](https://www.youtube.com/@AyinMostima/playlists)**
 - **Bilibili Channel (哔哩哔哩视频空间):** **[https://space.bilibili.com/3690975918557825/upload/video](https://space.bilibili.com/3690975918557825/upload/video)**
-- **Full 13-Episode Index (`EP01`--`EP13` direct `BV` links):** See the **[Video Tutorials table in the root `README.md`](../README.md#video-tutorials-bilibili--youtube)** (`BV1Uisp6VE3c` through `BV1snsH6vE16`).
+- **Full 13-Episode Index (`EP01`--`EP13` direct Bilibili & YouTube `EN`/`中文` links):** See the **[Video Tutorials table in the root `README.md`](../README.md#video-tutorials-bilibili--youtube)**.
 
 ---
 
